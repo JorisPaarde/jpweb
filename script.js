@@ -19,5 +19,25 @@ nav.addEventListener("click", (event) => {
   }
 });
 
+const revealCards = document.querySelectorAll(".reveal-card");
+
+if ("IntersectionObserver" in window) {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.16 }
+  );
+
+  revealCards.forEach((card) => revealObserver.observe(card));
+} else {
+  revealCards.forEach((card) => card.classList.add("is-visible"));
+}
+
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
