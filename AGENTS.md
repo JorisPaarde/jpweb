@@ -64,33 +64,51 @@ README lists the staging target:
 - domain: `test.jpwebcreation.nl`
 - document root: `/home/jpwebcreation/test.jpwebcreation.nl`
 
-There is currently no deploy script in this repo. The expected deploy flow is to
-log in to the server terminal, go to the site document root/repo, and pull the
-latest `main` branch there. Do not assume files need to be uploaded manually
-unless the server checkout is missing or broken.
+There is currently no deploy script in this repo. The document root is not a git
+repository. The expected deploy flow is to keep a checkout in
+`/home/jpwebcreation/repos/jpweb`, pull there, then sync the static files into
+the document root.
 
-Likely flow after logging in:
+Use this from the server terminal:
 
 ```sh
-cd /home/jpwebcreation/test.jpwebcreation.nl
+mkdir -p /home/jpwebcreation/repos
+if [ -d /home/jpwebcreation/repos/jpweb/.git ]; then
+  cd /home/jpwebcreation/repos/jpweb
+  git fetch origin main
+  git checkout main
+  git pull --ff-only origin main
+else
+  git clone https://github.com/JorisPaarde/jpweb.git /home/jpwebcreation/repos/jpweb
+  cd /home/jpwebcreation/repos/jpweb
+fi
+
 git status
-git pull origin main
+rsync -av --exclude='.git' --exclude='README.md' --exclude='AGENTS.md' /home/jpwebcreation/repos/jpweb/ /home/jpwebcreation/test.jpwebcreation.nl/
 ```
 
-SSH was tested with:
+Do not run `git status`, `git pull`, or other git commands directly inside
+`/home/jpwebcreation/test.jpwebcreation.nl`; it has no `.git` directory and will
+fail with `fatal: not a git repository`.
+
+## SSH Access
+
+Local SSH alias `jpweb` is configured in `~/.ssh/config` on this machine:
+
+```sshconfig
+Host jpweb
+  HostName test.jpwebcreation.nl
+  User jpwebcreation
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+  ServerAliveInterval 30
+```
+
+The matching public key has been added to the server's
+`~/.ssh/authorized_keys`. SSH was verified from this machine with:
 
 ```sh
-ssh -o BatchMode=yes -o ConnectTimeout=10 jpwebcreation@test.jpwebcreation.nl pwd
+ssh jpweb 'pwd && whoami'
 ```
 
-The host key can be accepted with `StrictHostKeyChecking=accept-new`, but the
-server then failed authentication:
-
-```text
-Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).
-```
-
-That means this local SSH command did not have the right authentication at that
-moment. If the user says server access is available, use the normal server
-terminal/login route and run `git pull` from the checkout instead of trying to
-rsync/upload the static files.
+Use `ssh jpweb 'command here'` for future deploy checks.
