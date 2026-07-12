@@ -863,6 +863,26 @@ h3 {
   padding-left: 22px;
 }
 
+.case-result {
+  margin: 30px 0;
+  padding: 24px;
+  background: rgba(232, 178, 76, 0.13);
+  border-left: 4px solid var(--amber);
+}
+
+.case-result .eyebrow {
+  margin-bottom: 8px;
+  color: var(--green);
+}
+
+.case-result h3 {
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+}
+
+.case-result p:last-child {
+  margin-bottom: 0;
+}
+
 .case-actions {
   display: flex;
   flex-wrap: wrap;

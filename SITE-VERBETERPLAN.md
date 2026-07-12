@@ -77,7 +77,7 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Bevestig de prijspresentatie: geen bedragen op de site; eerst de vraag bespreken. Projecten via een vaste offerte, beheer en losse werkzaamheden op uurbasis.
 - [~] Bevestig de werkwijze na het eerste gesprek: vrijblijvende kennismaking en bij grotere maatwerkvragen eventueel een betaalde discovery. Doorlooptijden zijn nog niet bevestigd.
 - [x] Selecteer drie sterke bestaande Google-reviews en controleer de exacte tekst en attributie via de huidige Trustindex-weergave.
-- [ ] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect.
+- [~] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect. Bevestigd voor Mike's Pianoshow, Haveka Installatie en Supper Services; de overige cases staan nog open.
 
 ### Gewenste resultaatinformatie per case
 
@@ -257,7 +257,7 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ## T06 — Projectcases resultaatgerichter maken
 
-**Status:** [!]  
+**Status:** [~]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** alle bestanden onder `projecten/*/index.html`
@@ -277,11 +277,11 @@ Per case niet alleen vertellen wat is gebouwd, maar aantonen welk bedrijfsproble
 
 ### Werkzaamheden
 
-- [ ] Controleer iedere intro op een duidelijke probleem-resultaatrelatie.
-- [ ] Maak lange featurelijsten ondergeschikt aan het resultaat.
-- [ ] Voeg per case een zichtbaar blok `Resultaat` of `Wat dit veranderde` toe.
-- [ ] Gebruik cijfers alleen na bevestiging in T01.
-- [ ] Gebruik zonder cijfers alleen concrete, verifieerbare effecten.
+- [~] Controleer iedere intro op een duidelijke probleem-resultaatrelatie. Afgerond voor Mike's Pianoshow, Haveka Installatie en Supper Services.
+- [~] Maak lange featurelijsten ondergeschikt aan het resultaat. Afgerond voor de drie bevestigde cases.
+- [~] Voeg per case een zichtbaar blok `Resultaat` of `Wat dit veranderde` toe. Drie van de zes cases zijn bevestigd en bijgewerkt.
+- [x] Gebruik cijfers alleen na bevestiging in T01; er zijn geen nieuwe cijfers toegevoegd.
+- [x] Gebruik zonder cijfers alleen concrete, door Joris bevestigde effecten.
 - [ ] Voeg waar mogelijk één relevante klantquote toe.
 - [ ] Behoud technische termen alleen wanneer ze de complexiteit of deskundigheid begrijpelijk maken.
 
