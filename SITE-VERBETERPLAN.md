@@ -74,8 +74,8 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Bevestig welke reactietermijn bij contact mag worden beloofd: binnen één werkdag.
 - [x] Kies de voorkeursroute voor leads: formulier op eigen hosting, telefoon en e-mail.
 - [x] Kies hoe het formulier technisch wordt verzonden: een eigen PHP-handler stuurt naar `info@jpwebcreation.nl`; bezorging moet na deployment live worden getest.
-- [ ] Bevestig of een globale prijsindicatie of minimumbudget mag worden genoemd.
-- [ ] Bevestig realistische doorlooptijden en de werkwijze na het eerste gesprek.
+- [x] Bevestig de prijspresentatie: geen bedragen op de site; eerst de vraag bespreken. Projecten via een vaste offerte, beheer en losse werkzaamheden op uurbasis.
+- [~] Bevestig de werkwijze na het eerste gesprek: vrijblijvende kennismaking en bij grotere maatwerkvragen eventueel een betaalde discovery. Doorlooptijden zijn nog niet bevestigd.
 - [x] Selecteer drie sterke bestaande Google-reviews en controleer de exacte tekst en attributie via de huidige Trustindex-weergave.
 - [ ] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect.
 
@@ -401,8 +401,8 @@ Belangrijke twijfels wegnemen voordat een potentiële klant contact opneemt.
 - [ ] Werk je alleen met WordPress?
 - [x] Kan ik de website zelf beheren?
 - [x] Kun je hosting, onderhoud en doorontwikkeling verzorgen?
-- [ ] Hoe verloopt een traject na het eerste gesprek?
-- [ ] Wat kost een website of online tool ongeveer?
+- [x] Hoe verloopt een traject na het eerste gesprek?
+- [x] Hoe wordt de prijs voor een website of online tool bepaald?
 - [ ] Hoe lang duurt een gemiddeld traject?
 
 Vier antwoorden die aantoonbaar door de bestaande site en cases worden ondersteund zijn toegevoegd. Vragen over prijs, doorlooptijd en het exacte traject blijven geblokkeerd totdat Joris de antwoorden heeft bevestigd.
