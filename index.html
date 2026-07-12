@@ -10,7 +10,7 @@
     >
     <link rel="canonical" href="https://jpwebcreation.nl/">
     <link rel="preconnect" href="https://jpwebcreation.nl">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=16">
   </head>
   <body>
     <header class="site-header">
@@ -376,6 +376,46 @@
             omslachtig of wil je onderzoeken of een online tool kan helpen. Ik denk met je mee over
             wat praktisch past.
           </p>
+          <p class="contact-promise">Je ontvangt binnen één werkdag een reactie.</p>
+          <form class="contact-form" action="/contact.php" method="post" accept-charset="UTF-8">
+            <div class="form-row">
+              <label>
+                Naam
+                <input type="text" name="name" autocomplete="name" maxlength="120" required>
+              </label>
+              <label>
+                Bedrijf <span>(optioneel)</span>
+                <input type="text" name="company" autocomplete="organization" maxlength="160">
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                E-mailadres
+                <input type="email" name="email" autocomplete="email" maxlength="254" required>
+              </label>
+              <label>
+                Telefoonnummer <span>(optioneel)</span>
+                <input type="tel" name="phone" autocomplete="tel" maxlength="40">
+              </label>
+            </div>
+            <label>
+              Waar loop je tegenaan?
+              <textarea name="message" rows="6" minlength="10" maxlength="5000" required></textarea>
+            </label>
+            <label class="form-honeypot" aria-hidden="true">
+              Website
+              <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
+            <label class="form-consent">
+              <input type="checkbox" name="privacy" value="accepted" required>
+              <span>
+                Ik ga ermee akkoord dat mijn gegevens worden gebruikt om op mijn vraag te reageren.
+                Lees de <a href="privacyverklaring/">privacyverklaring</a>.
+              </span>
+            </label>
+            <p id="contact-status" class="form-status" role="status" aria-live="polite" hidden></p>
+            <button class="button primary" type="submit">Verstuur je vraag</button>
+          </form>
         </div>
         <div class="contact-panel">
           <a href="tel:+31621228884">
@@ -402,6 +442,6 @@
       </nav>
     </footer>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
   </body>
 </html>

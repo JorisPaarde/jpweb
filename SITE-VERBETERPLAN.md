@@ -71,9 +71,9 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Bevestig welke drie hoofddiensten actief verkocht moeten worden: websites, online tools en technisch beheer/doorontwikkeling.
 - [x] Bepaal de positie van AI: AI-tools worden binnen online tools aangeboden om bedrijfsprocessen te stroomlijnen, zonder onbewezen resultaatclaims.
 - [x] Lever of selecteer een geschikte portretfoto van Joris: gebruik de bestaande foto van de huidige website na visuele controle.
-- [ ] Bevestig welke reactietermijn bij contact mag worden beloofd, bijvoorbeeld één werkdag.
-- [ ] Kies de voorkeursroute voor leads: formulier, telefoon, e-mail en eventueel WhatsApp of afspraakplanner.
-- [ ] Kies hoe het formulier technisch wordt verzonden. De huidige site is statisch; implementeer geen externe formulierenservice zonder goedkeuring.
+- [x] Bevestig welke reactietermijn bij contact mag worden beloofd: binnen één werkdag.
+- [x] Kies de voorkeursroute voor leads: formulier op eigen hosting, telefoon en e-mail.
+- [x] Kies hoe het formulier technisch wordt verzonden: een eigen PHP-handler stuurt naar `info@jpwebcreation.nl`; bezorging moet na deployment live worden getest.
 - [ ] Bevestig of een globale prijsindicatie of minimumbudget mag worden genoemd.
 - [ ] Bevestig realistische doorlooptijden en de werkwijze na het eerste gesprek.
 - [ ] Selecteer drie sterke, onafhankelijke klantreviews en controleer de exacte tekst en attributie.
@@ -349,7 +349,7 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 
 Contact opnemen laagdrempelig maken voor bezoekers die nog geen uitgewerkt plan hebben.
 
-De contacttekst en rechtstreekse contactroutes zijn aangescherpt. Een formulier blijft geblokkeerd totdat een verzendmethode is gekozen en getest.
+De contacttekst, rechtstreekse contactroutes en het eigen formulier zijn geïmplementeerd. De daadwerkelijke e-mailbezorging op de productieserver moet na deployment worden getest.
 
 ### Aanbevolen inhoud
 
@@ -368,14 +368,14 @@ De contacttekst en rechtstreekse contactroutes zijn aangescherpt. Een formulier 
 
 ### Werkzaamheden
 
-- [ ] Kies eerst een goedgekeurde verzendmethode voor de statische site.
-- [ ] Voeg een kort formulier toe zonder onnodige verplichte velden.
-- [ ] Voeg duidelijke fout-, verzend- en succesmeldingen toe.
-- [ ] Bescherm het formulier passend tegen spam zonder bezoekers onnodig te hinderen.
-- [ ] Link naar de privacyverklaring.
-- [ ] Behoud telefoon en e-mail als alternatieve contactroutes.
-- [ ] Voeg alleen een reactietermijn toe als deze in T01 is bevestigd.
-- [ ] Log geen gevoelige formulierinhoud in analytics.
+- [x] Kies eerst een goedgekeurde verzendmethode voor de statische site.
+- [x] Voeg een kort formulier toe zonder onnodige verplichte velden.
+- [x] Voeg duidelijke fout-, verzend- en succesmeldingen toe.
+- [x] Bescherm het formulier met een honeypot, servervalidatie en een korte rate limit.
+- [x] Link naar de privacyverklaring.
+- [x] Behoud telefoon en e-mail als alternatieve contactroutes.
+- [x] Voeg de bevestigde reactietermijn van één werkdag toe.
+- [x] Log geen formulierinhoud in analytics.
 
 ### Acceptatiecriteria
 

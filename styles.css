@@ -880,6 +880,99 @@ h3 {
   font-size: 1.18rem;
 }
 
+.contact-section .contact-promise {
+  margin: 20px 0 0;
+  color: var(--amber);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.contact-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--white);
+  font-weight: 800;
+}
+
+.contact-form label > span {
+  font-weight: 500;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 13px 14px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 0;
+  font: inherit;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form input:focus-visible,
+.contact-form textarea:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.contact-form .form-consent {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.form-consent input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.form-consent a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.form-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-section .form-status {
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 1rem;
+}
+
+.contact-section .form-status.is-success {
+  background: #d9f4e8;
+}
+
+.contact-section .form-status.is-error {
+  background: #ffe0dc;
+}
+
 .contact-panel {
   padding: 30px;
   color: var(--ink);
@@ -1158,6 +1251,10 @@ h3 {
   .project-hero-overlap-title h1 {
     font-size: clamp(2rem, 8.8vw, 2.45rem);
     white-space: nowrap;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 
   .button {

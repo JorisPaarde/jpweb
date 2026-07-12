@@ -1,6 +1,7 @@
 const header = document.querySelector(".site-header");
 const toggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
+const contactStatus = document.querySelector("#contact-status");
 
 function updateHeader() {
   header.classList.toggle("is-scrolled", window.scrollY > 18);
@@ -41,3 +42,31 @@ if ("IntersectionObserver" in window) {
 
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
+
+if (contactStatus) {
+  const contactResult = new URLSearchParams(window.location.search).get("contact");
+  const messages = {
+    success: {
+      text: "Bedankt. Je bericht is verzonden.",
+      className: "is-success",
+    },
+    invalid: {
+      text: "Controleer de ingevulde gegevens en probeer het opnieuw.",
+      className: "is-error",
+    },
+    wait: {
+      text: "Wacht even voordat je het formulier opnieuw verstuurt.",
+      className: "is-error",
+    },
+    error: {
+      text: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
+      className: "is-error",
+    },
+  };
+
+  if (contactResult && messages[contactResult]) {
+    contactStatus.textContent = messages[contactResult].text;
+    contactStatus.classList.add(messages[contactResult].className);
+    contactStatus.hidden = false;
+  }
+}
