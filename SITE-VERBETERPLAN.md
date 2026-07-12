@@ -424,7 +424,7 @@ Publiceer alleen antwoorden die door Joris zijn bevestigd. Als een vaste prijs o
 
 ## T10 — Bestaande URL's inventariseren en migratieplan maken
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P0 vóór livegang  
 **Resultaat:** een gecontroleerde URL-mapping, bijvoorbeeld `URL-MIGRATIE.md` of `url-migratie.csv`
 
@@ -434,8 +434,8 @@ Voorkomen dat de sterkere nieuwe site bij livegang organisch verkeer, backlinks 
 
 ### Werkzaamheden
 
-- [ ] Exporteer alle bestaande URL's uit:
-  - de huidige XML-sitemaps;
+- [~] Exporteer alle bestaande URL's uit:
+  - [x] de huidige XML-sitemaps;
   - Google Search Console, indien beschikbaar;
   - analytics of serverlogs, indien beschikbaar;
   - een crawl van de huidige website;
