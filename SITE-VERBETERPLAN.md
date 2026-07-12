@@ -343,7 +343,7 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 
 ## T08 — Contactsectie en contactformulier verbeteren
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P0  
 **Afhankelijk van:** T01  
 **Bestanden:** minimaal `index.html`, `styles.css`, mogelijk `script.js` en een goedgekeurde server- of formulierintegratie
@@ -351,6 +351,8 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 ### Doel
 
 Contact opnemen laagdrempelig maken voor bezoekers die nog geen uitgewerkt plan hebben.
+
+De contacttekst en rechtstreekse contactroutes zijn aangescherpt. Een formulier blijft geblokkeerd totdat een verzendmethode is gekozen en getest.
 
 ### Aanbevolen inhoud
 
