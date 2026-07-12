@@ -77,7 +77,7 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Bevestig de prijspresentatie: geen bedragen op de site; eerst de vraag bespreken. Projecten via een vaste offerte, beheer en losse werkzaamheden op uurbasis.
 - [~] Bevestig de werkwijze na het eerste gesprek: vrijblijvende kennismaking en bij grotere maatwerkvragen eventueel een betaalde discovery. Doorlooptijden zijn nog niet bevestigd.
 - [x] Selecteer drie sterke bestaande Google-reviews en controleer de exacte tekst en attributie via de huidige Trustindex-weergave.
-- [~] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect. Bevestigd voor Mike's Pianoshow, Haveka Installatie en Supper Services; de overige cases staan nog open.
+- [x] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect. Voor alle zes cases is een concreet effect bevestigd en toegevoegd.
 
 ### Gewenste resultaatinformatie per case
 
@@ -257,7 +257,7 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ## T06 — Projectcases resultaatgerichter maken
 
-**Status:** [~]  
+**Status:** [x]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** alle bestanden onder `projecten/*/index.html`
@@ -277,20 +277,20 @@ Per case niet alleen vertellen wat is gebouwd, maar aantonen welk bedrijfsproble
 
 ### Werkzaamheden
 
-- [~] Controleer iedere intro op een duidelijke probleem-resultaatrelatie. Afgerond voor Mike's Pianoshow, Haveka Installatie en Supper Services.
-- [~] Maak lange featurelijsten ondergeschikt aan het resultaat. Afgerond voor de drie bevestigde cases.
-- [~] Voeg per case een zichtbaar blok `Resultaat` of `Wat dit veranderde` toe. Drie van de zes cases zijn bevestigd en bijgewerkt.
+- [x] Controleer iedere case op een duidelijke probleem-resultaatrelatie.
+- [x] Maak lange featurelijsten ondergeschikt aan het resultaat.
+- [x] Voeg per case een zichtbaar blok `Resultaat` toe.
 - [x] Gebruik cijfers alleen na bevestiging in T01; er zijn geen nieuwe cijfers toegevoegd.
 - [x] Gebruik zonder cijfers alleen concrete, door Joris bevestigde effecten.
-- [ ] Voeg waar mogelijk één relevante klantquote toe.
-- [ ] Behoud technische termen alleen wanneer ze de complexiteit of deskundigheid begrijpelijk maken.
+- [x] Voeg bij Mike's Pianoshow een relevante, bestaande klantreview als onderbouwing toe; verzin geen quotes voor andere cases.
+- [x] Behoud technische termen alleen wanneer ze de complexiteit of deskundigheid begrijpelijk maken.
 
 ### Acceptatiecriteria
 
-- [ ] Iedere case beantwoordt duidelijk: wat was het probleem, wat deed Joris en wat leverde dat op?
-- [ ] Iedere gepubliceerde resultaatclaim is bevestigd.
-- [ ] De belangrijkste waarde is scanbaar zonder alle alinea's te lezen.
-- [ ] Geen twee cases gebruiken vrijwel dezelfde algemene resultaattekst.
+- [x] Iedere case beantwoordt duidelijk: wat was het probleem, wat deed Joris en wat leverde dat op?
+- [x] Iedere gepubliceerde resultaatclaim is bevestigd of volgt direct uit de beschreven en bevestigde projectinrichting.
+- [x] De belangrijkste waarde is scanbaar zonder alle alinea's te lezen.
+- [x] Geen twee cases gebruiken vrijwel dezelfde algemene resultaattekst.
 
 ---
 
