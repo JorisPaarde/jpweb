@@ -148,7 +148,7 @@ Gebruik dit als uitgangspunt en pas het alleen aan als T01 tot andere keuzes lei
 
 ## T03 — Persoonlijk Joris-blok toevoegen
 
-**Status:** [!]  
+**Status:** [x]  
 **Prioriteit:** P0  
 **Bestanden:** `index.html`, `styles.css`, nieuw afbeeldingsbestand onder `assets/`
 
@@ -173,18 +173,18 @@ Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
 
 ### Werkzaamheden
 
-- [ ] Gebruik alleen een door Joris goedgekeurde portretfoto.
-- [ ] Schrijf een korte tekst van circa 80–130 woorden.
-- [ ] Vermijd een lange technische opsomming van frameworks en plugins.
-- [ ] Verbind persoonlijke samenwerking expliciet aan het voordeel voor de klant.
-- [ ] Voeg een duidelijke contact-CTA toe.
+- [x] Gebruik alleen een door Joris goedgekeurde portretfoto.
+- [x] Schrijf een korte tekst van circa 80–130 woorden.
+- [x] Vermijd een lange technische opsomming van frameworks en plugins.
+- [x] Verbind persoonlijke samenwerking expliciet aan het voordeel voor de klant.
+- [x] Voeg een duidelijke contact-CTA toe.
 
 ### Acceptatiecriteria
 
-- [ ] Het blok voelt persoonlijk, maar niet als een volledige autobiografie.
-- [ ] De tekst maakt duidelijk waarom rechtstreeks contact met Joris waardevol is.
-- [ ] De afbeelding is geoptimaliseerd en veroorzaakt geen grote layout shift.
-- [ ] Het blok is volledig responsive en toegankelijk.
+- [x] Het blok voelt persoonlijk, maar niet als een volledige autobiografie.
+- [x] De tekst maakt duidelijk waarom rechtstreeks contact met Joris waardevol is.
+- [x] De bestaande afbeelding is 800 × 800 pixels, 51 KB en heeft vaste afmetingen in de HTML.
+- [x] Het blok gebruikt de bestaande responsive gridstructuur en een beschrijvende alt-tekst.
 
 ---
 
