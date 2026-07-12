@@ -572,6 +572,11 @@ h3 {
   line-height: 1.12;
 }
 
+.quote-detailed p {
+  font-size: clamp(1.08rem, 1.65vw, 1.4rem);
+  line-height: 1.32;
+}
+
 .quote small {
   display: block;
   margin-bottom: 18px;

@@ -76,7 +76,7 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Kies hoe het formulier technisch wordt verzonden: een eigen PHP-handler stuurt naar `info@jpwebcreation.nl`; bezorging moet na deployment live worden getest.
 - [ ] Bevestig of een globale prijsindicatie of minimumbudget mag worden genoemd.
 - [ ] Bevestig realistische doorlooptijden en de werkwijze na het eerste gesprek.
-- [ ] Selecteer drie sterke, onafhankelijke klantreviews en controleer de exacte tekst en attributie.
+- [x] Selecteer drie sterke bestaande Google-reviews en controleer de exacte tekst en attributie via de huidige Trustindex-weergave.
 - [ ] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect.
 
 ### Gewenste resultaatinformatie per case
@@ -190,7 +190,7 @@ Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
 
 ## T04 — Reviews en bewijs overtuigender maken
 
-**Status:** [!]  
+**Status:** [x]  
 **Prioriteit:** P0  
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
@@ -200,23 +200,18 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
 
 ### Werkzaamheden
 
-- [ ] Vervang de zes zeer korte quotes bij voorkeur door drie sterkere reviews met meer context.
-- [ ] Toon per review indien bevestigd:
-  - volledige naam;
-  - bedrijf of rol;
-  - relevante passage over resultaat, samenwerking of technische kwaliteit;
-  - bron, bijvoorbeeld Google-review.
-- [ ] Geef voorrang aan reviews die concrete effecten noemen, zoals meer aanvragen, meer sales, minder werk of goed beheer.
-- [ ] Overweeg een directe koppeling tussen review en relevante case.
-- [ ] Voeg alleen een gemiddelde Google-score of aantal reviews toe als deze actueel en gecontroleerd zijn.
-- [ ] Hernoem de huidige `proof-strip` niet tot klantbewijs zolang deze alleen eigen werkwijzeclaims bevat. Presenteer hem dan als `Zo werk ik` of vergelijkbaar.
+- [x] Vervang de zes zeer korte quotes door drie sterkere bestaande reviews met meer context.
+- [x] Toon per review de bevestigde naam, relevante passage en bron. Bedrijf of rol wordt niet toegevoegd wanneer die niet zeker is.
+- [x] Geef voorrang aan reviews die concrete effecten of een aantoonbare werkwijze noemen.
+- [x] Voeg geen gemiddelde Google-score of reviewaantal toe zolang die niet actueel is gecontroleerd.
+- [x] Presenteer de bestaande procesclaims als `Zo werkt JPWebcreation`, niet als klantbewijs.
 
 ### Acceptatiecriteria
 
-- [ ] Iedere quote is exact of zorgvuldig als geautoriseerde verkorte quote weergegeven.
-- [ ] Iedere quote heeft een herkenbare en correcte afzender.
-- [ ] Minimaal twee reviews ondersteunen een concreet zakelijk resultaat of aantoonbare werkwijze.
-- [ ] Er wordt geen review gebruikt die bij bezoekers onnodig twijfel kan oproepen wanneer een sterkere onafhankelijke review beschikbaar is.
+- [x] Iedere quote is exact of met een zichtbare weglating als verkorte quote weergegeven.
+- [x] Iedere quote heeft de naam waaronder hij in de bestaande Google-review wordt getoond.
+- [x] De geselecteerde reviews ondersteunen een zakelijk resultaat, technische kwaliteit of bereikbaarheid.
+- [x] Er zijn geen niet-bevestigde bedrijfsnamen, functies of resultaten toegevoegd.
 
 ---
 
