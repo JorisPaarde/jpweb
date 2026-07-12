@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function redirect_with_status(string $status): void
 {
-    header('Location: /?contact=' . rawurlencode($status) . '#contact', true, 303);
+    header('Location: /?contact=' . rawurlencode($status), true, 303);
     exit;
 }
 

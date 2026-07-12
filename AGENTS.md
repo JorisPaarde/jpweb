@@ -84,7 +84,7 @@ else
 fi
 
 git status
-rsync -av --exclude='.git' --exclude='README.md' --exclude='AGENTS.md' /home/jpwebcreation/repos/jpweb/ /home/jpwebcreation/test.jpwebcreation.nl/
+rsync -av --exclude='.git' --exclude='*.md' /home/jpwebcreation/repos/jpweb/ /home/jpwebcreation/test.jpwebcreation.nl/
 ```
 
 Do not run `git status`, `git pull`, or other git commands directly inside

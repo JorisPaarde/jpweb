@@ -68,5 +68,9 @@ if (contactStatus) {
     contactStatus.textContent = messages[contactResult].text;
     contactStatus.classList.add(messages[contactResult].className);
     contactStatus.hidden = false;
+
+    window.requestAnimationFrame(() => {
+      contactStatus.scrollIntoView({ block: "center", behavior: "auto" });
+    });
   }
 }
