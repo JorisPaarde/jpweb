@@ -488,7 +488,7 @@ De nieuwe statische site indexeerbaar maken zonder bestaande SEO-signalen onnodi
 - [~] Zorg dat de stagingomgeving `test.jpwebcreation.nl` niet in zoekmachines wordt geïndexeerd, bij voorkeur via een omgevingsspecifieke `X-Robots-Tag: noindex, nofollow` of gelijkwaardige serverinstelling. De hostafhankelijke header staat in `.htaccess`, maar moet na deployment op de server worden gecontroleerd.
 - [ ] Blokkeer productie niet per ongeluk wanneer de stagingblokkade wordt ingesteld.
 - [x] Maak een bruikbare 404-pagina met routes naar homepage, cases en contact.
-- [ ] Voeg alleen structured data toe die overeenkomt met zichtbare en verifieerbare inhoud.
+- [x] Voeg `ProfessionalService` structured data toe met uitsluitend de zichtbare en verifieerbare naam, URL, e-mail, telefoon en adresgegevens.
 
 ### Acceptatiecriteria
 
