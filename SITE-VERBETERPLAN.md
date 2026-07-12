@@ -544,14 +544,14 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 
 ## T13 — Inhoudelijke, functionele en responsive QA uitvoeren
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P0  
 **Afhankelijk van:** alle te publiceren wijzigingen
 
 ### Inhoudelijke controle
 
-- [ ] Controleer spelling, interpunctie en Nederlandse diakritische tekens, zoals `coöperatie` en `oriëntatie`.
-- [ ] Gebruik `Mike's Pianoshow`, `JPWebcreation` en andere namen overal consequent.
+- [x] Controleer spelling, interpunctie en Nederlandse diakritische tekens, zoals `coöperatie` en `oriëntatie`.
+- [x] Gebruik `Mike's Pianoshow`, `JPWebcreation` en andere namen overal consequent.
 - [ ] Controleer consequente ik-vorm en aanspreekvorm.
 - [ ] Verwijder dubbele, algemene of niet-onderbouwde claims.
 - [ ] Controleer dat iedere sectie een nieuwe functie in de klantreis heeft.
