@@ -594,6 +594,40 @@ h3 {
   padding: 26px;
 }
 
+.faq {
+  border-top: 1px solid var(--line);
+}
+
+.faq-list {
+  display: grid;
+  max-width: 920px;
+  gap: 12px;
+}
+
+.faq-list details {
+  padding: 0 24px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.faq-list summary {
+  padding: 22px 34px 22px 0;
+  font-size: 1.12rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.faq-list p {
+  max-width: 760px;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.faq-list details[open] summary {
+  color: var(--green);
+}
+
 .contact-section {
   display: grid;
   grid-template-columns: minmax(280px, 0.95fr) minmax(280px, 0.7fr);

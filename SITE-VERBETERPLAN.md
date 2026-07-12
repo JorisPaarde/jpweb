@@ -265,7 +265,7 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ## T06 — Projectcases resultaatgerichter maken
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** alle bestanden onder `projecten/*/index.html`
@@ -412,6 +412,8 @@ Belangrijke twijfels wegnemen voordat een potentiële klant contact opneemt.
 - [ ] Hoe verloopt een traject na het eerste gesprek?
 - [ ] Wat kost een website of online tool ongeveer?
 - [ ] Hoe lang duurt een gemiddeld traject?
+
+Vier antwoorden die aantoonbaar door de bestaande site en cases worden ondersteund zijn toegevoegd. Vragen over prijs, doorlooptijd en het exacte traject blijven geblokkeerd totdat Joris de antwoorden heeft bevestigd.
 
 Publiceer alleen antwoorden die door Joris zijn bevestigd. Als een vaste prijs of doorlooptijd niet passend is, leg dan helder uit waarvan deze afhangt en wat de bezoeker na een eerste gesprek ontvangt.
 
