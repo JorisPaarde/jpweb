@@ -33,8 +33,9 @@ Supper Services, check for a cookie banner and dismiss it before capturing.
 
 ## CSS Cache Busting
 
-HTML files reference `styles.css?v=13`. When changing layout/CSS, bump the
-version in every HTML file so browser previews do not show stale CSS.
+HTML files reference `styles.css` with a `?v=` cache-busting query. When
+changing layout/CSS, bump the version in every HTML file so browser previews do
+not show stale CSS.
 
 ## GitHub Push
 
