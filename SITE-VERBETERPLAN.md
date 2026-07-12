@@ -61,7 +61,7 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ## T01 — Ontbrekende inhoud en keuzes verzamelen
 
-**Status:** [!]  
+**Status:** [x]  
 **Prioriteit:** P0  
 **Doel:** alle informatie verzamelen die niet veilig door een agent kan worden aangenomen.
 
@@ -75,7 +75,7 @@ De site richt zich primair op ondernemers en organisaties die:
 - [x] Kies de voorkeursroute voor leads: formulier op eigen hosting, telefoon en e-mail.
 - [x] Kies hoe het formulier technisch wordt verzonden: een eigen PHP-handler stuurt naar `info@jpwebcreation.nl`; bezorging moet na deployment live worden getest.
 - [x] Bevestig de prijspresentatie: geen bedragen op de site; eerst de vraag bespreken. Projecten via een vaste offerte, beheer en losse werkzaamheden op uurbasis.
-- [~] Bevestig de werkwijze na het eerste gesprek: vrijblijvende kennismaking en bij grotere maatwerkvragen eventueel een betaalde discovery. Doorlooptijden zijn nog niet bevestigd.
+- [x] Bevestig de werkwijze na het eerste gesprek: vrijblijvende kennismaking en bij grotere maatwerkvragen eventueel een betaalde discovery. Er wordt geen algemene doorlooptijd genoemd; de planning komt in de offerte.
 - [x] Selecteer drie sterke bestaande Google-reviews en controleer de exacte tekst en attributie via de huidige Trustindex-weergave.
 - [x] Verzamel per hoofdcase minimaal één bevestigd resultaat of concreet effect. Voor alle zes cases is een concreet effect bevestigd en toegevoegd.
 
@@ -92,9 +92,9 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ### Acceptatiecriteria
 
-- [ ] Alle gekozen teksten, quotes en claims hebben een herleidbare bron of expliciete goedkeuring.
-- [ ] Niet-bevestigde cijfers en claims staan gemarkeerd als geblokkeerd en worden niet gepubliceerd.
-- [ ] De keuzes zijn vastgelegd voordat afhankelijke taken worden uitgevoerd.
+- [x] Alle gekozen teksten, quotes en claims hebben een herleidbare bron of expliciete goedkeuring.
+- [x] Niet-bevestigde cijfers en claims zijn niet gepubliceerd.
+- [x] De benodigde inhoudelijke keuzes zijn vastgelegd voordat afhankelijke taken zijn uitgevoerd.
 
 ---
 
@@ -166,7 +166,7 @@ Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
 - Vermeld:
   - Joris is het vaste aanspreekpunt;
   - hij onderzoekt eerst waar het proces knelt;
-  - hij kan zowel een heldere WordPress-site als maatwerk bouwen;
+  - hij kan zowel een heldere website als maatwerk bouwen;
   - hij blijft beschikbaar voor beheer en doorontwikkeling.
 - Voeg een echte, recente portretfoto toe met een beschrijvende alt-tekst.
 - Voeg een CTA toe naar contact.
@@ -385,7 +385,7 @@ De contacttekst, rechtstreekse contactroutes en het eigen formulier zijn geïmpl
 
 ## T09 — Veelgestelde vragen toevoegen
 
-**Status:** [~]  
+**Status:** [x]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** `index.html`, mogelijk `styles.css`
@@ -398,23 +398,23 @@ Belangrijke twijfels wegnemen voordat een potentiële klant contact opneemt.
 
 - [x] Kun je ook een bestaande website verbeteren?
 - [x] Bouw je alleen maatwerk of ook een reguliere bedrijfswebsite?
-- [ ] Werk je alleen met WordPress?
+- [x] Werk je alleen met WordPress?
 - [x] Kan ik de website zelf beheren?
 - [x] Kun je hosting, onderhoud en doorontwikkeling verzorgen?
 - [x] Hoe verloopt een traject na het eerste gesprek?
 - [x] Hoe wordt de prijs voor een website of online tool bepaald?
-- [ ] Hoe lang duurt een gemiddeld traject?
+- [x] Hoe lang duurt een gemiddeld traject?
 
-Vier antwoorden die aantoonbaar door de bestaande site en cases worden ondersteund zijn toegevoegd. Vragen over prijs, doorlooptijd en het exacte traject blijven geblokkeerd totdat Joris de antwoorden heeft bevestigd.
+Alle FAQ-antwoorden zijn gebaseerd op bestaande projectinformatie of expliciete keuzes van Joris. Er worden geen prijsbedragen of algemene doorlooptijden genoemd.
 
 Publiceer alleen antwoorden die door Joris zijn bevestigd. Als een vaste prijs of doorlooptijd niet passend is, leg dan helder uit waarvan deze afhangt en wat de bezoeker na een eerste gesprek ontvangt.
 
 ### Acceptatiecriteria
 
-- [ ] De FAQ bevat alleen vragen die koopbezwaren wegnemen.
-- [ ] De antwoorden zijn kort, concreet en controleerbaar.
-- [ ] Eventuele uitklapfunctionaliteit werkt zonder muis en heeft correcte ARIA-statussen.
-- [ ] Eventuele FAQ-structured data komt exact overeen met zichtbare content.
+- [x] De FAQ bevat alleen vragen die koopbezwaren wegnemen.
+- [x] De antwoorden zijn kort, concreet en controleerbaar.
+- [x] De uitklapfunctionaliteit gebruikt native `details` en `summary` en werkt zonder eigen JavaScript.
+- [x] Er is geen afwijkende FAQ-structured data toegevoegd.
 
 ---
 
@@ -503,13 +503,15 @@ De nieuwe statische site indexeerbaar maken zonder bestaande SEO-signalen onnodi
 
 ## T12 — Meting van aanvragen en CTA's inrichten
 
-**Status:** [!]  
+**Status:** [x] — afgesloten zonder bezoekersanalytics  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01 en T08
 
 ### Doel
 
 Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen oplevert.
+
+Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom bewust geen trackingcode, conversie-event of cookiebanner toegevoegd. Inkomende formulieren, e-mails en telefoongesprekken kunnen alleen handmatig als lead worden bijgehouden.
 
 ### Te meten conversies
 
@@ -523,17 +525,17 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 ### Werkzaamheden
 
 - [ ] Leg vóór livegang een nulmeting vast van huidig verkeer en huidige aanvragen, voor zover beschikbaar.
-- [ ] Gebruik de bestaande analytics-oplossing of vraag toestemming voordat een nieuwe wordt toegevoegd.
+- [x] Vraag toestemming voordat analytics wordt toegevoegd; keuze: voorlopig geen bezoekersanalytics.
 - [ ] Definieer duidelijke eventnamen en documenteer deze.
 - [ ] Markeer een formulier pas als conversie na bevestigde succesvolle verzending.
-- [ ] Controleer privacy- en cookietoestemming voordat niet-noodzakelijke tracking wordt geladen.
+- [x] Laad geen niet-noodzakelijke tracking en behoud de bestaande cookieloze situatie.
 - [ ] Maak onderscheid tussen totaal aantal leads en geschikte leads.
 
 ### Acceptatiecriteria
 
 - [ ] Iedere afgesproken conversie is in een test aantoonbaar zichtbaar.
 - [ ] Dubbele events worden voorkomen.
-- [ ] Persoonsgegevens en berichtinhoud worden niet naar analytics gestuurd.
+- [x] Persoonsgegevens en berichtinhoud worden niet naar analytics gestuurd, omdat geen analytics is toegevoegd.
 - [ ] Er is vastgelegd hoe na 30 en 90 dagen wordt beoordeeld of de site beter presteert.
 
 ---
@@ -597,7 +599,7 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 - [ ] Maak of bevestig een herstelmogelijkheid van de huidige productieomgeving.
 - [ ] Controleer dat de te deployen commit exact de goedgekeurde versie is.
 - [ ] Controleer redirectregels, formulieren, sitemap, canonicals en productie-robots.
-- [ ] Bevestig dat analytics en cookietoestemming correct zijn ingericht.
+- [x] Bevestig dat geen bezoekersanalytics of trackingcookies worden gebruikt; de privacyverklaring vermeldt dit.
 - [ ] Maak een korte lijst met kritieke URL's voor directe controle.
 
 ### Na livegang
