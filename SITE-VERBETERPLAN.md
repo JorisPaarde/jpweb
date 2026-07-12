@@ -472,7 +472,7 @@ Voorkomen dat de sterkere nieuwe site bij livegang organisch verkeer, backlinks 
 
 ## T11 — Redirects en technische SEO-basis implementeren
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P0 vóór livegang  
 **Afhankelijk van:** T10
 
@@ -482,16 +482,16 @@ De nieuwe statische site indexeerbaar maken zonder bestaande SEO-signalen onnodi
 
 ### Werkzaamheden
 
-- [ ] Implementeer de goedgekeurde 301-mapping in de configuratie die op de LiteSpeed/Apache-server actief is.
+- [~] Implementeer de goedgekeurde 301-mapping in de configuratie die op de LiteSpeed/Apache-server actief is. De twee onbetwiste projectredirects zijn toegevoegd; overige URL's wachten op data en goedkeuring.
 - [ ] Voorkom redirectketens en loops.
-- [ ] Voeg per indexeerbare pagina een correcte canonical naar het productiedomein toe.
+- [x] Voeg per indexeerbare pagina een correcte canonical naar het productiedomein toe.
 - [ ] Controleer unieke page titles en meta descriptions.
 - [ ] Voeg relevante Open Graph- en social metadata toe.
-- [ ] Maak een XML-sitemap met alleen canonieke, indexeerbare productie-URL's.
-- [ ] Maak een passende `robots.txt` die naar de sitemap verwijst.
-- [ ] Zorg dat de stagingomgeving `test.jpwebcreation.nl` niet in zoekmachines wordt geïndexeerd, bij voorkeur via een omgevingsspecifieke `X-Robots-Tag: noindex, nofollow` of gelijkwaardige serverinstelling.
+- [x] Maak een XML-sitemap met alleen canonieke, indexeerbare productie-URL's.
+- [x] Maak een passende `robots.txt` die naar de sitemap verwijst.
+- [~] Zorg dat de stagingomgeving `test.jpwebcreation.nl` niet in zoekmachines wordt geïndexeerd, bij voorkeur via een omgevingsspecifieke `X-Robots-Tag: noindex, nofollow` of gelijkwaardige serverinstelling. De hostafhankelijke header staat in `.htaccess`, maar moet na deployment op de server worden gecontroleerd.
 - [ ] Blokkeer productie niet per ongeluk wanneer de stagingblokkade wordt ingesteld.
-- [ ] Maak een bruikbare 404-pagina met routes naar homepage, cases en contact.
+- [x] Maak een bruikbare 404-pagina met routes naar homepage, cases en contact.
 - [ ] Voeg alleen structured data toe die overeenkomt met zichtbare en verifieerbare inhoud.
 
 ### Acceptatiecriteria
