@@ -103,7 +103,7 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ## T02 — Hero en primaire CTA aanscherpen
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P0  
 **Bestand:** `index.html`
 
@@ -134,10 +134,10 @@ Gebruik dit als uitgangspunt en pas het alleen aan als T01 tot andere keuzes lei
 
 ### Werkzaamheden
 
-- [ ] Vervang de hero-inhoud zonder de kernpositionering af te zwakken.
-- [ ] Laat de primaire CTA naar een werkend contactformulier of contactgedeelte verwijzen.
-- [ ] Laat de secundaire CTA naar de cases verwijzen.
-- [ ] Controleer dat de hero niet suggereert dat alleen complex maatwerk mogelijk is.
+- [x] Vervang de hero-inhoud zonder de kernpositionering af te zwakken.
+- [x] Laat de primaire CTA naar een werkend contactformulier of contactgedeelte verwijzen.
+- [x] Laat de secundaire CTA naar de cases verwijzen.
+- [x] Controleer dat de hero niet suggereert dat alleen complex maatwerk mogelijk is.
 - [ ] Controleer regellengte en leesbaarheid op mobiel.
 
 ### Acceptatiecriteria
