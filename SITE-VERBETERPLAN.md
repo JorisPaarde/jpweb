@@ -225,7 +225,7 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
 
 ## T05 — CTA onder iedere projectcase toevoegen
 
-**Status:** [ ]  
+**Status:** [x]  
 **Prioriteit:** P0  
 **Bestanden:** alle bestanden onder `projecten/*/index.html`, mogelijk `styles.css`
 
@@ -235,11 +235,11 @@ Voorkomen dat een geïnteresseerde bezoeker na een case alleen naar de klantwebs
 
 ### Werkzaamheden
 
-- [ ] Voeg onder iedere case een apart conversieblok toe.
-- [ ] Schrijf de kop en tekst passend bij het probleem van die case.
-- [ ] Laat de primaire CTA verwijzen naar `../../#contact` of naar de latere definitieve contactpagina.
-- [ ] Houd `Bekijk live site` als secundaire actie.
-- [ ] Zorg dat de CTA niet suggereert dat iedere klant exact dezelfde oplossing nodig heeft.
+- [x] Voeg onder iedere case een apart conversieblok toe.
+- [x] Schrijf de kop en tekst passend bij het probleem van die case.
+- [x] Laat de primaire CTA verwijzen naar `../../#contact` of naar de latere definitieve contactpagina.
+- [x] Houd `Bekijk live site` als secundaire actie.
+- [x] Zorg dat de CTA niet suggereert dat iedere klant exact dezelfde oplossing nodig heeft.
 
 ### Voorgestelde CTA-richtingen
 
@@ -256,10 +256,10 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ### Acceptatiecriteria
 
-- [ ] Iedere projectpagina eindigt met een duidelijke route naar JPWebcreation.
-- [ ] De primaire CTA blijft op het JPWebcreation-domein.
-- [ ] De externe klantwebsite is visueel secundair aan contact opnemen.
-- [ ] Alle links werken vanaf iedere mapdiepte.
+- [x] Iedere projectpagina eindigt met een duidelijke route naar JPWebcreation.
+- [x] De primaire CTA blijft op het JPWebcreation-domein.
+- [x] De externe klantwebsite is visueel secundair aan contact opnemen.
+- [x] Alle links werken vanaf iedere mapdiepte.
 
 ---
 
