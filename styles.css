@@ -572,6 +572,11 @@ h3 {
   line-height: 1.12;
 }
 
+.quote-detailed p {
+  font-size: clamp(1.08rem, 1.65vw, 1.4rem);
+  line-height: 1.32;
+}
+
 .quote small {
   display: block;
   margin-bottom: 18px;
@@ -584,6 +589,42 @@ h3 {
   font-weight: 850;
 }
 
+.about-section {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(280px, 0.72fr);
+  gap: clamp(36px, 8vw, 110px);
+  align-items: center;
+  background: var(--paper);
+}
+
+.about-copy {
+  max-width: 760px;
+}
+
+.about-copy p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+}
+
+.about-portrait {
+  display: flex;
+  min-height: 420px;
+  align-items: end;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(232, 178, 76, 0.72), transparent 36%),
+    linear-gradient(145deg, var(--green), var(--green-dark));
+  border: 1px solid var(--line);
+}
+
+.about-portrait img {
+  display: block;
+  width: min(100%, 620px);
+  height: auto;
+}
+
 .service-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -592,6 +633,40 @@ h3 {
 
 .service-grid article {
   padding: 26px;
+}
+
+.faq {
+  border-top: 1px solid var(--line);
+}
+
+.faq-list {
+  display: grid;
+  max-width: 920px;
+  gap: 12px;
+}
+
+.faq-list details {
+  padding: 0 24px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.faq-list summary {
+  padding: 22px 34px 22px 0;
+  font-size: 1.12rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.faq-list p {
+  max-width: 760px;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.faq-list details[open] summary {
+  color: var(--green);
 }
 
 .contact-section {
@@ -788,6 +863,26 @@ h3 {
   padding-left: 22px;
 }
 
+.case-result {
+  margin: 30px 0;
+  padding: 24px;
+  background: rgba(232, 178, 76, 0.13);
+  border-left: 4px solid var(--amber);
+}
+
+.case-result .eyebrow {
+  margin-bottom: 8px;
+  color: var(--green);
+}
+
+.case-result h3 {
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+}
+
+.case-result p:last-child {
+  margin-bottom: 0;
+}
+
 .case-actions {
   display: flex;
   flex-wrap: wrap;
@@ -808,6 +903,99 @@ h3 {
   max-width: 620px;
   color: rgba(255, 255, 255, 0.82);
   font-size: 1.18rem;
+}
+
+.contact-section .contact-promise {
+  margin: 20px 0 0;
+  color: var(--amber);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.contact-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--white);
+  font-weight: 800;
+}
+
+.contact-form label > span {
+  font-weight: 500;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 13px 14px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 0;
+  font: inherit;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form input:focus-visible,
+.contact-form textarea:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.contact-form .form-consent {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.form-consent input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.form-consent a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.form-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-section .form-status {
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 1rem;
+}
+
+.contact-section .form-status.is-success {
+  background: #d9f4e8;
+}
+
+.contact-section .form-status.is-error {
+  background: #ffe0dc;
 }
 
 .contact-panel {
@@ -960,6 +1148,7 @@ h3 {
   .pain-grid,
   .testimonial-band,
   .service-grid,
+  .about-section,
   .contact-section,
   .project-hero,
   .project-meta,
@@ -1087,6 +1276,10 @@ h3 {
   .project-hero-overlap-title h1 {
     font-size: clamp(2rem, 8.8vw, 2.45rem);
     white-space: nowrap;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 
   .button {

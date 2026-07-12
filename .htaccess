@@ -1,0 +1,15 @@
+DirectoryIndex index.html
+Options -Indexes
+
+ErrorDocument 404 /404.html
+
+Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
+Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
+
+<IfModule mod_setenvif.c>
+  SetEnvIfNoCase Host "^test\.jpwebcreation\.nl(?::[0-9]+)?$" staging_host
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow" env=staging_host
+</IfModule>
