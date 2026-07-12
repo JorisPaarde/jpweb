@@ -554,34 +554,35 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 
 ### Functionele controle
 
-- [ ] Start de lokale preview volgens `AGENTS.md`.
-- [ ] Test alle navigatie-, telefoon-, mail-, case-, externe en privacy-links.
+- [x] Start de lokale preview volgens `AGENTS.md` en controleer alle statische publieksroutes.
+- [x] Test alle navigatie-, telefoon-, mail-, case-, externe en privacy-links op bestemming en bestaand bestand/anker.
 - [ ] Test het mobiele menu met muis, toetsenbord en touch.
 - [ ] Test het contactformulier volledig, inclusief foutscenario's.
 - [ ] Controleer console en netwerkverzoeken op fouten.
-- [ ] Controleer dat externe links veilig worden geopend.
+- [x] Controleer dat externe links veilig worden geopend en tijdens de audit HTTP 200 geven.
 
 ### Responsive en toegankelijkheid
 
 - [ ] Controleer minimaal 320, 375, 768, 1024 en 1440 pixels breed.
 - [ ] Controleer focusstijlen, contrast, headingvolgorde en landmarkstructuur.
-- [ ] Controleer alt-teksten en voorkom decoratieve ruis voor schermlezers.
-- [ ] Controleer carrousels met `prefers-reduced-motion`.
-- [ ] Controleer dat belangrijke inhoud zonder animatie of JavaScript bereikbaar blijft.
+- [x] Controleer de headingvolgorde en aanwezigheid van alt-attributen; visuele kwaliteit en schermlezertest blijven open.
+- [x] Controleer dat carrouselanimaties met `prefers-reduced-motion` worden uitgeschakeld.
+- [x] Controleer dat belangrijke inhoud als gewone HTML aanwezig blijft zonder animatie of JavaScript.
 
 ### Performance
 
-- [ ] Optimaliseer nieuwe afbeeldingen.
+- [x] Controleer de nieuwe portretfoto op bestandstype, afmetingen en bestandsgrootte.
 - [ ] Controleer layout shifts, laadtijd en mobiele leesbaarheid.
 - [ ] Voer een Lighthouse- of gelijkwaardige controle uit en los regressies met hoge impact op.
 
 ### Acceptatiecriteria
 
 - [ ] Geen bekende kapotte links, consolefouten of formulierfouten.
-- [ ] Geen onbevestigde inhoud staat live.
+- [x] Er zijn geen kapotte interne links of externe projectlinks gevonden; console en formulierwerking blijven open.
+- [x] Geen onbevestigde inhoud is aan de verbeterbranch toegevoegd.
 - [ ] Alle P0-taken zijn aantoonbaar afgerond.
 - [ ] De site is bruikbaar met toetsenbord en op kleine mobiele schermen.
-- [ ] Eventuele resterende punten zijn expliciet gedocumenteerd.
+- [x] Resterende browser-, PHP-, server- en productietests zijn expliciet gedocumenteerd in `QA-RAPPORT.md`.
 
 ---
 
