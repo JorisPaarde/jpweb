@@ -61,7 +61,7 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ## T01 — Ontbrekende inhoud en keuzes verzamelen
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P0  
 **Doel:** alle informatie verzamelen die niet veilig door een agent kan worden aangenomen.
 
@@ -151,7 +151,7 @@ Gebruik dit als uitgangspunt en pas het alleen aan als T01 tot andere keuzes lei
 
 ## T03 — Persoonlijk Joris-blok toevoegen
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P0  
 **Bestanden:** `index.html`, `styles.css`, nieuw afbeeldingsbestand onder `assets/`
 
@@ -193,7 +193,7 @@ Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
 
 ## T04 — Reviews en bewijs overtuigender maken
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P0  
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
@@ -265,7 +265,7 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ## T06 — Projectcases resultaatgerichter maken
 
-**Status:** [~]  
+**Status:** [!]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** alle bestanden onder `projecten/*/index.html`
@@ -304,7 +304,7 @@ Per case niet alleen vertellen wat is gebouwd, maar aantonen welk bedrijfsproble
 
 ## T07 — Diensten terugbrengen tot duidelijke ingangen
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P1  
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
@@ -393,7 +393,7 @@ De contacttekst en rechtstreekse contactroutes zijn aangescherpt. Een formulier 
 
 ## T09 — Veelgestelde vragen toevoegen
 
-**Status:** [ ]  
+**Status:** [~]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01  
 **Bestanden:** `index.html`, mogelijk `styles.css`
@@ -404,11 +404,11 @@ Belangrijke twijfels wegnemen voordat een potentiële klant contact opneemt.
 
 ### Onderwerpen
 
-- [ ] Kun je ook een bestaande website verbeteren?
-- [ ] Bouw je alleen maatwerk of ook een reguliere bedrijfswebsite?
+- [x] Kun je ook een bestaande website verbeteren?
+- [x] Bouw je alleen maatwerk of ook een reguliere bedrijfswebsite?
 - [ ] Werk je alleen met WordPress?
-- [ ] Kan ik de website zelf beheren?
-- [ ] Kun je hosting, onderhoud en doorontwikkeling verzorgen?
+- [x] Kan ik de website zelf beheren?
+- [x] Kun je hosting, onderhoud en doorontwikkeling verzorgen?
 - [ ] Hoe verloopt een traject na het eerste gesprek?
 - [ ] Wat kost een website of online tool ongeveer?
 - [ ] Hoe lang duurt een gemiddeld traject?
@@ -511,7 +511,7 @@ De nieuwe statische site indexeerbaar maken zonder bestaande SEO-signalen onnodi
 
 ## T12 — Meting van aanvragen en CTA's inrichten
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P1  
 **Afhankelijk van:** T01 en T08
 
@@ -595,7 +595,7 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 
 ## T14 — Livegang en controle na livegang
 
-**Status:** [ ]  
+**Status:** [!]  
 **Prioriteit:** P0  
 **Afhankelijk van:** T10–T13 en expliciete toestemming van Joris
 
