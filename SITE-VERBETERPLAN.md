@@ -67,13 +67,10 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ### Benodigde keuzes van Joris
 
-- [ ] Bevestig de belangrijkste gewenste klantgroep:
-  - organisaties met proces- of maatwerkvragen;
-  - reguliere mkb-websites;
-  - of een duidelijke combinatie van beide.
-- [ ] Bevestig welke drie hoofddiensten actief verkocht moeten worden.
-- [ ] Beslis of AI zichtbaar als zelfstandige dienst blijft, alleen als mogelijkheid wordt genoemd of voorlopig wordt verwijderd.
-- [ ] Lever of selecteer een geschikte portretfoto van Joris.
+- [x] Bevestig de belangrijkste gewenste klantgroep: een combinatie van reguliere websiteklanten en organisaties met proces- of maatwerkvragen.
+- [x] Bevestig welke drie hoofddiensten actief verkocht moeten worden: websites, online tools en technisch beheer/doorontwikkeling.
+- [x] Bepaal de positie van AI: AI-tools worden binnen online tools aangeboden om bedrijfsprocessen te stroomlijnen, zonder onbewezen resultaatclaims.
+- [x] Lever of selecteer een geschikte portretfoto van Joris: gebruik de bestaande foto van de huidige website na visuele controle.
 - [ ] Bevestig welke reactietermijn bij contact mag worden beloofd, bijvoorbeeld één werkdag.
 - [ ] Kies de voorkeursroute voor leads: formulier, telefoon, e-mail en eventueel WhatsApp of afspraakplanner.
 - [ ] Kies hoe het formulier technisch wordt verzonden. De huidige site is statisch; implementeer geen externe formulierenservice zonder goedkeuring.
@@ -304,7 +301,7 @@ Per case niet alleen vertellen wat is gebouwd, maar aantonen welk bedrijfsproble
 
 ## T07 — Diensten terugbrengen tot duidelijke ingangen
 
-**Status:** [!]  
+**Status:** [x]  
 **Prioriteit:** P1  
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
@@ -325,19 +322,19 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 
 ### Werkzaamheden
 
-- [ ] Vervang of hergroepeer de huidige zes diensten.
-- [ ] Maak bij iedere hoofddienst duidelijk voor welk probleem deze bedoeld is.
-- [ ] Benoem expliciet dat een gewone, professionele website ook mogelijk is als maatwerk niet nodig is.
-- [ ] Verplaats koppelingen, WooCommerce, AI en vergelijkbare mogelijkheden naar ondersteunende voorbeelden.
-- [ ] Toon AI alleen als zelfstandige dienst na een bewuste keuze in T01 en met voldoende bewijs.
-- [ ] Voeg per hoofddienst een passende route naar cases of contact toe.
+- [x] Vervang of hergroepeer de huidige zes diensten.
+- [x] Maak bij iedere hoofddienst duidelijk voor welk probleem deze bedoeld is.
+- [x] Benoem expliciet dat een gewone, professionele website ook mogelijk is als maatwerk niet nodig is.
+- [x] Verwerk webshops, koppelingen en AI als mogelijkheden binnen websites en online tools.
+- [x] Positioneer AI als onderdeel van online tools voor het stroomlijnen van bedrijfsprocessen, zonder onbewezen cases of resultaten te suggereren.
+- [x] Laat de diensten logisch aansluiten op de bestaande cases en het contactgedeelte.
 
 ### Acceptatiecriteria
 
-- [ ] Een bezoeker kan binnen tien seconden kiezen welke hoofddienst bij zijn vraag past.
-- [ ] De sectie straalt geen onnodige complexiteit uit naar klanten die alleen een goede website nodig hebben.
-- [ ] De maatwerkcapaciteit blijft duidelijk zichtbaar.
-- [ ] De drie diensten overlappen inhoudelijk zo min mogelijk.
+- [x] Een bezoeker kan kiezen uit drie duidelijk onderscheiden hoofddiensten.
+- [x] De sectie straalt geen onnodige complexiteit uit naar klanten die alleen een goede website nodig hebben.
+- [x] De maatwerkcapaciteit blijft duidelijk zichtbaar.
+- [x] De drie diensten overlappen inhoudelijk zo min mogelijk.
 
 ---
 
