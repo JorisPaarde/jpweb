@@ -1,16 +1,16 @@
 :root {
-  --ink: #13211f;
-  --muted: #596965;
-  --paper: #fbfcf8;
-  --mist: #edf5f1;
-  --green: #007878;
-  --green-dark: #073f40;
-  --leaf: #6f9d8a;
-  --amber: #007878;
-  --coral: #007878;
+  --ink: #18201d;
+  --muted: #5e6862;
+  --paper: #fbfaf6;
+  --mist: #eef1ec;
+  --green: #315f4f;
+  --green-dark: #15392f;
+  --leaf: #6f8f78;
+  --amber: #e7ad52;
+  --coral: #c95f45;
   --white: #ffffff;
-  --line: rgba(0, 128, 128, 0.16);
-  --shadow: 0 22px 70px rgba(7, 63, 64, 0.16);
+  --line: rgba(24, 32, 29, 0.14);
+  --shadow: 0 22px 70px rgba(21, 57, 47, 0.18);
   --type-hero: clamp(3.1rem, 6.2vw, 5.6rem);
   --type-section: clamp(2.45rem, 4.4vw, 4rem);
   --type-section-compact: clamp(2.2rem, 3.45vw, 3.35rem);
@@ -143,7 +143,7 @@ img {
 
 .hero-media {
   background:
-    linear-gradient(130deg, #062b2c 0%, #007878 58%, #2d5f5a 100%);
+    linear-gradient(130deg, #12241f 0%, #315f4f 62%, #b8863c 100%);
 }
 
 .hero-carousel {
@@ -218,7 +218,7 @@ img {
 }
 
 .hero .eyebrow {
-  color: #b8d6ce;
+  color: var(--amber);
 }
 
 h1,
@@ -277,7 +277,7 @@ h3 {
 }
 
 .button.primary {
-  color: var(--white);
+  color: var(--ink);
   background: var(--amber);
 }
 
@@ -453,9 +453,9 @@ main section[id] {
   height: 52px;
   place-items: center;
   margin: 0;
-  border: 1px solid rgba(0, 128, 128, 0.28);
+  border: 1px solid rgba(49, 95, 79, 0.26);
   border-radius: 999px;
-  background: rgba(0, 120, 120, 0.08);
+  background: rgba(49, 95, 79, 0.08);
   color: var(--green-dark);
   font-size: 0.88rem;
   font-weight: 900;
@@ -560,7 +560,7 @@ main section[id] {
 .work-shot {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(0, 128, 128, 0.14);
+  border: 1px solid rgba(49, 95, 79, 0.16);
   border-radius: 8px;
   background: #e5f0ec;
 }
@@ -587,7 +587,7 @@ main section[id] {
 .work-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow);
-  border-color: rgba(0, 128, 128, 0.34);
+  border-color: rgba(49, 95, 79, 0.32);
 }
 
 .work-feature:hover .work-shot img,
@@ -629,7 +629,7 @@ main section[id] {
   min-height: 30px;
   align-items: center;
   padding: 6px 10px;
-  border: 1px solid rgba(0, 128, 128, 0.18);
+  border: 1px solid rgba(49, 95, 79, 0.18);
   border-radius: 999px;
   color: var(--green-dark);
   background: var(--mist);
@@ -742,7 +742,7 @@ main section[id] {
     radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0) 38%),
     linear-gradient(145deg, #edf0ea 0%, #dfe6dc 58%, #cbd8d0 100%);
   border: 1px solid var(--line);
-  box-shadow: inset 0 -80px 120px rgba(0, 128, 128, 0.14);
+  box-shadow: inset 0 -80px 120px rgba(49, 95, 79, 0.16);
 }
 
 .about-portrait img {
