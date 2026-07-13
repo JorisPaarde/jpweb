@@ -335,17 +335,18 @@ main section[id] {
 
 .intro-grid {
   display: grid;
-  grid-template-columns: minmax(340px, 860px) minmax(320px, 640px);
+  grid-template-columns: minmax(260px, 520px) minmax(420px, 900px);
   justify-content: center;
-  gap: clamp(30px, 5vw, 74px);
+  gap: clamp(34px, 7vw, 110px);
   align-items: center;
   padding-top: clamp(48px, 6vw, 76px);
   padding-bottom: clamp(28px, 4vw, 52px);
 }
 
 .intro-grid h2 {
-  max-width: 720px;
+  max-width: 520px;
   margin-bottom: 0;
+  font-size: var(--type-section-compact);
 }
 
 .lead-copy {
@@ -771,12 +772,27 @@ main section[id] {
 }
 
 .faq {
+  display: grid;
+  grid-template-columns: minmax(260px, 520px) minmax(420px, 900px);
+  justify-content: center;
+  gap: clamp(34px, 7vw, 110px);
+  align-items: start;
   border-top: 1px solid var(--line);
+}
+
+.faq .section-heading {
+  display: block;
+  max-width: 520px;
+  margin-bottom: 0;
+}
+
+.faq .section-heading h2 {
+  font-size: var(--type-section-compact);
 }
 
 .faq-list {
   display: grid;
-  max-width: 920px;
+  width: 100%;
   gap: 12px;
 }
 
@@ -1377,6 +1393,7 @@ main section[id] {
   .pain-points,
   .process,
   .services,
+  .faq,
   .pain-grid,
   .testimonial-band,
   .service-grid,
