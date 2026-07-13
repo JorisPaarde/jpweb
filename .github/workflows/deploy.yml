@@ -86,6 +86,8 @@ jobs:
             fi
           done
 
+          bash .github/scripts/check-redirects.sh "$BASE_URL"
+
           headers="$(curl --silent --show-error --head \
             --retry 5 --retry-delay 2 --retry-all-errors \
             "$BASE_URL/")"
@@ -181,6 +183,8 @@ jobs:
               exit 1
             fi
           done
+
+          bash .github/scripts/check-redirects.sh "$BASE_URL"
 
           headers="$(curl --silent --show-error --head \
             --retry 5 --retry-delay 2 --retry-all-errors \

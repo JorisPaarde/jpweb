@@ -3,8 +3,19 @@ Options -Indexes
 
 ErrorDocument 404 /404.html
 
+# Oude WordPress-routes gaan rechtstreeks naar hun definitieve bestemming.
+# Houd deze regels op één hop; voeg geen tussenliggende legacy-URL's toe.
+Redirect 301 /contact-voor-hulp-met-jouw-website/ /#contact
 Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
 Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
+Redirect 301 /page-sitemap.xml /sitemap.xml
+Redirect 301 /post-sitemap.xml /sitemap.xml
+Redirect 301 /sitemap_index.xml /sitemap.xml
+Redirect 301 /wp-sitemap.xml /sitemap.xml
+
+# De verwijderde stad- en blogcollecties hebben geen één-op-één vervanger.
+RedirectMatch 301 ^/stad(?:/.*)?$ /
+RedirectMatch 301 ^/(?:blog|general|uncategorized)(?:/.*)?$ /
 
 AddType image/webp .webp
 

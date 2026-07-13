@@ -1,146 +1,114 @@
 # URL-migratie JPWebcreation
 
-Feitelijke URL-inventaris voor de overgang van de huidige WordPress-site naar de statische site in deze repository.
+Definitieve één-hop redirectkaart voor de overgang van de oude WordPress-site
+naar de statische site. De regels staan in `.htaccess`, passend bij de huidige
+Apache/LiteSpeed-stack.
 
-## Bronnen en beperkingen
+## Bronnen
 
-- Opgehaald op 12 juli 2026 uit:
-  - `https://jpwebcreation.nl/page-sitemap.xml`
-  - `https://jpwebcreation.nl/post-sitemap.xml`
-- De twee sitemaps bevatten samen 47 pagina-URL's: 3 pagina's en 44 berichten.
-- Op 13 juli 2026 toont `https://jpwebcreation.nl/` nog de bestaande
-  WordPress-site. De statische site uit deze repository wordt automatisch naar
-  test gedeployed; productie blijft een afzonderlijke handmatige deploy.
-- Verkeer, vertoningen, conversies en backlinks zijn nog niet bekend. In dit document worden daar geen aannames over gedaan.
-- Een voorgestelde redirect wordt pas definitief nadat Joris de mapping heeft goedgekeurd.
-- Redirect oude inhoud niet zonder inhoudelijke overeenkomst naar de homepage.
+- `site:jpwebcreation.nl`-zoekopdrachten, opnieuw uitgevoerd op 13 juli 2026;
+- de eerder geëxporteerde `page-sitemap.xml` en `post-sitemap.xml` van de oude
+  WordPress-site: samen 47 URL's (3 pagina's en 44 berichten/projecten);
+- de publieke routes en bestanden in deze repository.
 
-## Statuslegenda
+De zoekopdracht toont momenteel de homepage en de oude contactpagina. De
+redirects dekken daarnaast bewust alle 47 eerder bekende WordPress-URL's af,
+zodat een nog niet zichtbaar of later opnieuw gecrawld oud resultaat niet op
+een 404 uitkomt.
 
-- `BEHOUDEN`: pad bestaat ook in de nieuwe site.
-- `301 VOORGESTELD`: inhoudelijk logische bestemming, nog goed te keuren.
-- `301 IN REPO`: redirectregel staat in `.htaccess`, maar moet na de
-  productiedeploy nog op statuscode en bestemming worden getest.
-- `DATA NODIG`: eerst Search Console, analytics en eventuele backlinks beoordelen.
-- `NIEUW`: bestaat alleen in de nieuwe statische site; geen oude URL te migreren.
+## Bestaande URL's die 200 blijven geven
 
-## Directe en project-URL's
-
-| Oude URL | Status | Voorgestelde nieuwe URL | Toelichting |
-| --- | --- | --- | --- |
-| `/` | BEHOUDEN | `/` | Homepage blijft het hoofdpunt. |
-| `/contact-voor-hulp-met-jouw-website/` | 301 VOORGESTELD | `/#contact` | Nieuwe homepage bevat het contactgedeelte. Goedkeuring nodig. |
-| `/projecten/website-mikes-pianoshow/` | 301 IN REPO | `/projecten/mikes-pianoshow/` | Dezelfde case met een nieuw pad; regel staat in `.htaccess`. |
-| `/projecten/website-wildfloweroffice/` | 301 IN REPO | `/projecten/wildfloweroffice/` | Dezelfde case met een nieuw pad; regel staat in `.htaccess`. |
-| `/projecten/archipel-bouwadvies/` | BEHOUDEN | `/projecten/archipel-bouwadvies/` | Pad blijft gelijk. |
-
-## Nieuwe cases zonder oude URL in de sitemaps
-
-| Nieuwe URL | Status |
+| URL | Actie |
 | --- | --- |
-| `/projecten/haveka-installatie/` | NIEUW |
-| `/projecten/supper-services/` | NIEUW |
-| `/projecten/ec-eens/` | NIEUW |
+| `/` | Behouden |
+| `/projecten/archipel-bouwadvies/` | Behouden |
 
-## Blogoverzicht
+## Definitieve redirecttabel
 
-| Oude URL | Status | Benodigde beslissing |
-| --- | --- | --- |
-| `/blog/` | DATA NODIG | Blog behouden, vervangen door een kennisoverzicht of redirecten naar een relevante nieuwe pagina. |
+Alle bestemmingen hieronder zijn definitieve live routes. Geen enkele regel
+verwijst naar een andere legacy-URL.
 
-## Algemene website- en webdesignartikelen
-
-Deze pagina's overlappen inhoudelijk mogelijk sterk. Bepaal met Search Console en backlinks welke pagina's waarde hebben. Voeg waardevolle informatie daarna samen tot een beperkt aantal sterke dienst- of kennispagina's.
-
-| Oude URL | Status |
+| Oude URL | Nieuwe URL |
 | --- | --- |
-| `/general/nieuwe-site-laten-bouwen/` | DATA NODIG |
-| `/general/snel-website-laten-ontwikkelen/` | DATA NODIG |
-| `/general/professioneel-webdesign-laten-maken/` | DATA NODIG |
-| `/general/professionele-website-laten-bouwen/` | DATA NODIG |
-| `/general/webdesign-laten-maken/` | DATA NODIG |
-| `/general/professionele-webdesign/` | DATA NODIG |
-| `/general/website-maken-met-squarespace-of-elementor/` | DATA NODIG |
-| `/general/betaalbare-website-laten-maken/` | DATA NODIG |
-| `/general/complete-website-laten-maken/` | DATA NODIG |
-| `/general/internetsite-laten-maken/` | DATA NODIG |
-| `/general/website-maken/` | DATA NODIG |
-| `/general/professioneel-webdesign/` | DATA NODIG |
-| `/general/eigen-professionele-website-maken/` | DATA NODIG |
-| `/general/betaalbare-website-laten-ontwikkelen/` | DATA NODIG |
-| `/general/betaalbare-website-laten-bouwen/` | DATA NODIG |
-| `/general/eenvoudige-website-laten-bouwen/` | DATA NODIG |
-| `/general/betaalbaar-webdesign/` | DATA NODIG |
-| `/general/een-professioneel-website-laten-ontwerpen/` | DATA NODIG |
-| `/general/een-website-laten-bouwen/` | DATA NODIG |
-| `/uncategorized/maken-van-website/` | DATA NODIG |
-| `/general/snel-website-laten-bouwen/` | DATA NODIG |
+| `/contact-voor-hulp-met-jouw-website/` | `/#contact` |
+| `/projecten/website-mikes-pianoshow/` | `/projecten/mikes-pianoshow/` |
+| `/projecten/website-wildfloweroffice/` | `/projecten/wildfloweroffice/` |
+| `/blog/` | `/` |
+| `/general/nieuwe-site-laten-bouwen/` | `/` |
+| `/general/snel-website-laten-ontwikkelen/` | `/` |
+| `/general/professioneel-webdesign-laten-maken/` | `/` |
+| `/general/professionele-website-laten-bouwen/` | `/` |
+| `/general/webdesign-laten-maken/` | `/` |
+| `/general/professionele-webdesign/` | `/` |
+| `/general/website-maken-met-squarespace-of-elementor/` | `/` |
+| `/general/betaalbare-website-laten-maken/` | `/` |
+| `/general/complete-website-laten-maken/` | `/` |
+| `/general/internetsite-laten-maken/` | `/` |
+| `/general/website-maken/` | `/` |
+| `/general/professioneel-webdesign/` | `/` |
+| `/general/eigen-professionele-website-maken/` | `/` |
+| `/general/betaalbare-website-laten-ontwikkelen/` | `/` |
+| `/general/betaalbare-website-laten-bouwen/` | `/` |
+| `/general/eenvoudige-website-laten-bouwen/` | `/` |
+| `/general/betaalbaar-webdesign/` | `/` |
+| `/general/een-professioneel-website-laten-ontwerpen/` | `/` |
+| `/general/een-website-laten-bouwen/` | `/` |
+| `/uncategorized/maken-van-website/` | `/` |
+| `/general/snel-website-laten-bouwen/` | `/` |
+| `/general/nieuwe-website-laten-maken-prijs/` | `/` |
+| `/general/professionele-website-laten-maken-prijs/` | `/` |
+| `/general/site-laten-maken-prijs/` | `/` |
+| `/general/prijzen-webdesign/` | `/` |
+| `/general/kosten-professionele-website-laten-maken/` | `/` |
+| `/general/professionele-webshop-laten-bouwen/` | `/` |
+| `/general/webdesigner-webshop/` | `/` |
+| `/general/professionele-webshop-bouwen/` | `/` |
+| `/general/webshop-laten-ontwerpen/` | `/` |
+| `/general/webshop-laten-ontwikkelen/` | `/` |
+| `/general/website-teksten-schrijven/` | `/` |
+| `/general/waarom-het-belangrijk-is-om-je-website-goed-te-onderhouden/` | `/` |
+| `/general/effectief-communiceren-met-je-website/` | `/` |
+| `/general/verbeter-seo-door-relevante-content/` | `/` |
+| `/general/hulp-bij-uw-website-nodig-wij-staan-direct-voor-u-klaar/` | `/` |
+| `/uncategorized/professionele-website-laten-maken-haarlem/` | `/` |
+| `/stad/professionele-website-laten-maken-heemstede/` | `/` |
+| `/stad/professionele-website-laten-maken-haarlem-2/` | `/` |
+| `/stad/professionele-website-laten-maken-hoofddorp/` | `/` |
+| `/stad/professionele-website-laten-maken-beverwijk/` | `/` |
 
-## Prijsartikelen
+De oude WordPress-sitemaproutes gaan rechtstreeks naar de nieuwe sitemap:
 
-| Oude URL | Status |
+| Oude URL | Nieuwe URL |
 | --- | --- |
-| `/general/nieuwe-website-laten-maken-prijs/` | DATA NODIG |
-| `/general/professionele-website-laten-maken-prijs/` | DATA NODIG |
-| `/general/site-laten-maken-prijs/` | DATA NODIG |
-| `/general/prijzen-webdesign/` | DATA NODIG |
-| `/general/kosten-professionele-website-laten-maken/` | DATA NODIG |
+| `/page-sitemap.xml` | `/sitemap.xml` |
+| `/post-sitemap.xml` | `/sitemap.xml` |
+| `/sitemap_index.xml` | `/sitemap.xml` |
+| `/wp-sitemap.xml` | `/sitemap.xml` |
 
-## Webshopartikelen
-
-| Oude URL | Status |
-| --- | --- |
-| `/general/professionele-webshop-laten-bouwen/` | DATA NODIG |
-| `/general/webdesigner-webshop/` | DATA NODIG |
-| `/general/professionele-webshop-bouwen/` | DATA NODIG |
-| `/general/webshop-laten-ontwerpen/` | DATA NODIG |
-| `/general/webshop-laten-ontwikkelen/` | DATA NODIG |
-
-## Content, SEO, onderhoud en hulp
-
-| Oude URL | Status |
-| --- | --- |
-| `/general/website-teksten-schrijven/` | DATA NODIG |
-| `/general/waarom-het-belangrijk-is-om-je-website-goed-te-onderhouden/` | DATA NODIG |
-| `/general/effectief-communiceren-met-je-website/` | DATA NODIG |
-| `/general/verbeter-seo-door-relevante-content/` | DATA NODIG |
-| `/general/hulp-bij-uw-website-nodig-wij-staan-direct-voor-u-klaar/` | DATA NODIG |
-
-## Lokale landingspagina's
-
-Deze pagina's niet verwijderen of samenvoegen zonder eerst lokale zoekvertoningen, verkeer en aanvragen te controleren.
-
-| Oude URL | Status |
-| --- | --- |
-| `/uncategorized/professionele-website-laten-maken-haarlem/` | DATA NODIG |
-| `/stad/professionele-website-laten-maken-heemstede/` | DATA NODIG |
-| `/stad/professionele-website-laten-maken-haarlem-2/` | DATA NODIG |
-| `/stad/professionele-website-laten-maken-hoofddorp/` | DATA NODIG |
-| `/stad/professionele-website-laten-maken-beverwijk/` | DATA NODIG |
-
-## Nog benodigde gegevens
-
-- [ ] Exporteer uit Google Search Console per pagina de laatste 12–16 maanden:
-  - klikken;
-  - vertoningen;
-  - gemiddelde positie;
-  - belangrijkste zoekopdrachten.
-- [ ] Controleer organische landingen en conversies in de beschikbare analytics.
-- [ ] Controleer backlinks naar oude pagina's.
-- [ ] Bevestig welke diensten en plaatsen commercieel belangrijk blijven.
-- [ ] Keur iedere `301 VOORGESTELD`-mapping goed.
-- [ ] Kies per `DATA NODIG`-URL: behouden, herschrijven, samenvoegen, 301 of bewust verwijderen.
-
-## Redirects die al in de statische site staan
+## Geïmplementeerde Apache/LiteSpeed-regels
 
 ```apache
+Redirect 301 /contact-voor-hulp-met-jouw-website/ /#contact
 Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
 Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
+Redirect 301 /page-sitemap.xml /sitemap.xml
+Redirect 301 /post-sitemap.xml /sitemap.xml
+Redirect 301 /sitemap_index.xml /sitemap.xml
+Redirect 301 /wp-sitemap.xml /sitemap.xml
+RedirectMatch 301 ^/stad(?:/.*)?$ /
+RedirectMatch 301 ^/(?:blog|general|uncategorized)(?:/.*)?$ /
 ```
 
-Deze regels zijn nog niet aangemerkt als productiegetest. Controleer na de
-handmatige productiedeploy met `curl -I` dat iedere oude URL exact één `301`
-geeft en rechtstreeks naar de genoemde nieuwe URL verwijst.
+## Acceptatiecontrole na productiedeploy
 
-De contactredirect wordt pas toegevoegd na goedkeuring van de bestemming. De
-overige URL's wachten op data en een inhoudelijke beslissing.
+Controleer iedere exacte URL uit de tabel met redirects uitgeschakeld in de
+HTTP-client:
+
+1. eerste response is `301`;
+2. `Location` is exact de bestemming uit de tabel;
+3. de bestemming geeft `200`;
+4. maximaal één redirect voordat de bestemming wordt bereikt;
+5. geen oude URL geeft `404`.
+
+De regels zijn in de repository gecontroleerd, maar zijn pas productiegetest
+nadat de handmatige productiedeploy is uitgevoerd.
