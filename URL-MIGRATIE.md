@@ -112,3 +112,27 @@ HTTP-client:
 
 De regels zijn in de repository gecontroleerd, maar zijn pas productiegetest
 nadat de handmatige productiedeploy is uitgevoerd.
+
+De workflow voert deze controle automatisch uit met
+`.github/scripts/check-redirects.sh`. Het script bevat 49 legacyroutes en faalt
+wanneer de eerste response geen `301` is, de bestemming afwijkt, meer dan één
+redirect nodig is of de eindbestemming geen `200` geeft. Zowel test als
+productie roepen hetzelfde script aan; productie wordt alleen via de handmatige
+workflow gestart.
+
+## Google Search Console-status
+
+De repositorywijzigingen voeren geen Search Console-acties uit. Op 13 juli 2026
+was in de werkomgeving geen geautoriseerde Search Console-koppeling beschikbaar.
+Daarom zijn de volgende acties nog niet uitgevoerd en wordt hier geen succes
+voor geclaimd:
+
+- `https://jpwebcreation.nl/sitemap.xml` indienen;
+- herindexering aanvragen voor homepage, `/ai/` en de zes projectcases;
+- verwijderingsverzoeken indienen voor oude `/stad/`, `/blog/`, `/general/`,
+  `/uncategorized/`, contact- en projectresultaten;
+- bevestigen dat nul ingediende sitemap-URL's de status 404 hebben.
+
+Voer dit pas na een geslaagde handmatige productiedeploy uit. Leg daarna per
+actie datum, gebruikte Search Console-property en zichtbare status vast in
+`QA-RAPPORT.md`.
