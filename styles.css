@@ -50,6 +50,10 @@ img {
   height: auto;
 }
 
+picture {
+  display: block;
+}
+
 .site-header {
   position: fixed;
   z-index: 20;

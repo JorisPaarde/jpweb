@@ -6,6 +6,8 @@ ErrorDocument 404 /404.html
 Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
 Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
 
+AddType image/webp .webp
+
 <IfModule LiteSpeed>
   CacheDisable public /
 </IfModule>
