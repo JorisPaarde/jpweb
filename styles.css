@@ -18,6 +18,7 @@
   --type-lead: clamp(1.08rem, 1.4vw, 1.22rem);
   --type-body-large: clamp(1.03rem, 1.1vw, 1.12rem);
   --type-item-title: clamp(1.12rem, 1.3vw, 1.3rem);
+  --site-max: 1600px;
 }
 
 * {
@@ -36,6 +37,12 @@ body {
   line-height: 1.5;
 }
 
+body > main,
+body > footer {
+  max-width: var(--site-max);
+  margin-inline: auto;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -50,14 +57,15 @@ img {
   position: fixed;
   z-index: 20;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  width: min(100%, var(--site-max));
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 28px;
   padding: 18px clamp(20px, 4vw, 56px);
   color: var(--white);
+  transform: translateX(-50%);
   transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
