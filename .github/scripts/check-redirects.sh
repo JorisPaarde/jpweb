@@ -77,7 +77,7 @@ for mapping in "${redirects[@]}"; do
 
   read -r final_status redirect_count < <(curl --silent --show-error --location \
     --max-redirs 1 --output /dev/null --retry 5 --retry-delay 2 \
-    --retry-all-errors --write-out '%{http_code} %{num_redirects}' "$url")
+    --retry-all-errors --write-out '%{http_code} %{num_redirects}\n' "$url")
 
   if [ "$final_status" != "200" ] || [ "$redirect_count" != "1" ]; then
     echo "$old_path eindigde met HTTP $final_status na $redirect_count redirects." >&2
