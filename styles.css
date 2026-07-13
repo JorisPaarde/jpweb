@@ -188,7 +188,6 @@ picture {
   inset: 0;
   transform-style: preserve-3d;
   animation: hero-carousel-spin 22s linear infinite;
-  opacity: 0.86;
 }
 
 .hero-carousel-panel {
@@ -207,6 +206,7 @@ picture {
     rotateY(calc(var(--i) * 60deg))
     translateZ(var(--carousel-radius));
   backface-visibility: hidden;
+  opacity: 0.86;
 }
 
 .hero-carousel-panel img {
@@ -1527,7 +1527,7 @@ main section[id] {
     transform: translateX(-50%);
   }
 
-  .hero-carousel-track {
+  .hero-carousel-panel {
     opacity: 0.76;
   }
 
@@ -1641,7 +1641,7 @@ main section[id] {
     transform: translateX(-50%);
   }
 
-  .hero-carousel-track {
+  .hero-carousel-panel {
     opacity: 0.62;
   }
 

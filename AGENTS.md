@@ -61,6 +61,12 @@ shared logic in `script.js`. Keep the pause control on new carousels. Animation
 must pause on hover and keyboard focus, respect a manual pause for the rest of
 the page view, and remain disabled under `prefers-reduced-motion: reduce`.
 
+The homepage carousel relies on a preserved 3D context. Never apply `opacity`,
+`filter`, `overflow`, `clip-path`, `mask` or another flattening/grouping effect
+to `.hero-carousel-track`; that exposes mirrored back faces. Apply visual
+opacity to the individual `.hero-carousel-panel` elements instead and verify in
+a real browser that only front-facing screenshots are visible.
+
 ## CSS Cache Busting
 
 HTML files reference `styles.css` with a `?v=` cache-busting query. When
