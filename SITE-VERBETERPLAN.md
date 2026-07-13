@@ -195,7 +195,7 @@ Het blok staat na de belangrijkste cases en vóór de reviews en diensten.
 
 **Status:** [x]
 **Prioriteit:** P0
-**Bestanden:** `index.html`, mogelijk `styles.css`
+**Bestanden:** `index.html`, `projecten/mikes-pianoshow/index.html`, `styles.css`
 
 ### Doel
 
@@ -208,6 +208,15 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
 - [x] Geef voorrang aan reviews die concrete effecten of een aantoonbare werkwijze noemen.
 - [x] Voeg geen gemiddelde Google-score of reviewaantal toe zolang die niet actueel is gecontroleerd.
 - [x] Presenteer de bestaande procesclaims als `Zo werkt JPWebcreation`, niet als klantbewijs.
+- [x] Geef de reviewsectie een eigen introductie en label de drie reviews op het
+  bewijs dat ze leveren: resultaat en meedenken, techniek en uitleg, of
+  bereikbaarheid.
+- [x] Koppel Michael Schuurmans zichtbaar aan Mike's Pianoshow en link vanuit
+  zijn review naar de bijbehorende case.
+- [x] Toon Michaels bestaande review ook in de case zelf, direct onder het
+  resultaat waarop de review betrekking heeft.
+- [x] Vervang één algemene procesclaim bovenaan de homepage door het
+  controleerbare aantal van zes gepubliceerde praktijkcases.
 
 ### Acceptatiecriteria
 
@@ -215,6 +224,8 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
 - [x] Iedere quote heeft de naam waaronder hij in de bestaande Google-review wordt getoond.
 - [x] De geselecteerde reviews ondersteunen een zakelijk resultaat, technische kwaliteit of bereikbaarheid.
 - [x] Er zijn geen niet-bevestigde bedrijfsnamen, functies of resultaten toegevoegd.
+- [x] Er zijn geen klantfoto's, sterren, functies of directe Google-links
+  toegevoegd zonder gecontroleerde bron en waar nodig toestemming.
 
 ---
 
