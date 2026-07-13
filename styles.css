@@ -270,6 +270,10 @@ picture {
   font-size: 0.9em;
 }
 
+.hero .carousel-toggle {
+  right: clamp(110px, 10vw, 140px);
+}
+
 .hero-overlay {
   z-index: 1;
   background:
@@ -1529,6 +1533,10 @@ main section[id] {
 
   .hero-carousel-panel {
     opacity: 0.76;
+  }
+
+  .hero .carousel-toggle {
+    right: 14px;
   }
 
   .hero-carousel-panel {
