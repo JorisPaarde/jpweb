@@ -56,13 +56,20 @@ De site richt zich primair op ondernemers en organisaties die:
 | T12 | P1 | Meting van aanvragen en CTA’s inrichten | T01, T08 |
 | T13 | P0 | Inhoudelijke, functionele en responsive QA uitvoeren | T02–T12 |
 | T14 | P0 | Livegang en controle na livegang | T10–T13, aparte toestemming |
+| T15 | P1 | Homepage-projecten als editorial showcase presenteren | T06 |
+| T16 | P1 | Automatische carrousels pauzeerbaar maken | — |
+| T17 | P0 | Zichtbare focusstijl voor alle interacties toevoegen | — |
+| T18 | P1 | Laden van hero- en projectafbeeldingen optimaliseren | T15 |
+| T19 | P1 | JavaScript-cacheversie sitebreed gelijkmaken | — |
+| T20 | P0 | Automatische rooktest na deployment toevoegen | T11 |
+| T21 | P1 | Formulierinvoer bij validatiefouten veilig behouden | T08 |
 
 ---
 
 ## T01 — Ontbrekende inhoud en keuzes verzamelen
 
-**Status:** [x]  
-**Prioriteit:** P0  
+**Status:** [x]
+**Prioriteit:** P0
 **Doel:** alle informatie verzamelen die niet veilig door een agent kan worden aangenomen.
 
 ### Benodigde keuzes van Joris
@@ -100,8 +107,8 @@ De site richt zich primair op ondernemers en organisaties die:
 
 ## T02 — Hero en primaire CTA aanscherpen
 
-**Status:** [~]  
-**Prioriteit:** P0  
+**Status:** [~]
+**Prioriteit:** P0
 **Bestand:** `index.html`
 
 ### Doel
@@ -113,21 +120,18 @@ Binnen enkele seconden duidelijk maken:
 3. dat zowel een gewone website als maatwerk mogelijk is;
 4. wat de bezoeker nu kan doen.
 
-### Voorgestelde inhoud
+### Huidige inhoud
 
-Gebruik dit als uitgangspunt en pas het alleen aan als T01 tot andere keuzes leidt:
-
-- Eyebrow: `Websites en online tools voor ondernemers die willen doorgroeien`
-- H1: `Een website die klanten helpt én werk uit handen neemt`
+- Eyebrow: `Voor ondernemers die online minder handwerk willen`
+- H1: `Websites die voor je werken`
 - Hoofdtekst:
 
   > Loop je vast met aanvragen, bestellingen, beheer of systemen die niet samenwerken? Ik kijk hoe je organisatie werkt en bouw een website of online tool die klanten helpt en jou tijd, fouten en losse handelingen bespaart.
 
 - Primaire CTA: `Vertel waar het knelt`
 - Secundaire CTA: `Bekijk wat ik heb gebouwd`
-- Microcopy bij de primaire CTA, alleen na bevestiging in T01:
-
-  > Vrijblijvend kennismaken · rechtstreeks contact met Joris · reactie binnen één werkdag
+- De bevestigde reactietermijn staat bij het contactformulier en wordt niet als
+  extra regel in de hero herhaald.
 
 ### Werkzaamheden
 
@@ -148,21 +152,21 @@ Gebruik dit als uitgangspunt en pas het alleen aan als T01 tot andere keuzes lei
 
 ## T03 — Persoonlijk Joris-blok toevoegen
 
-**Status:** [x]  
-**Prioriteit:** P0  
+**Status:** [x]
+**Prioriteit:** P0
 **Bestanden:** `index.html`, `styles.css`, nieuw afbeeldingsbestand onder `assets/`
 
 ### Doel
 
 Vertrouwen opbouwen door vroeg genoeg te laten zien dat klanten rechtstreeks met Joris samenwerken en dat hij zowel meedenkt als bouwt.
 
-### Aanbevolen positie
+### Huidige positie
 
-Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
+Het blok staat na de belangrijkste cases en vóór de reviews en diensten.
 
 ### Inhoudelijke richting
 
-- Kop: `Je werkt rechtstreeks met degene die meedenkt én bouwt`
+- Kop: `Eén partner die blijft meedenken`
 - Vermeld:
   - Joris is het vaste aanspreekpunt;
   - hij onderzoekt eerst waar het proces knelt;
@@ -190,8 +194,8 @@ Plaats het blok na de belangrijkste cases en vóór de reviews of diensten.
 
 ## T04 — Reviews en bewijs overtuigender maken
 
-**Status:** [x]  
-**Prioriteit:** P0  
+**Status:** [x]
+**Prioriteit:** P0
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
 ### Doel
@@ -217,8 +221,8 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
 
 ## T05 — CTA onder iedere projectcase toevoegen
 
-**Status:** [x]  
-**Prioriteit:** P0  
+**Status:** [x]
+**Prioriteit:** P0
 **Bestanden:** alle bestanden onder `projecten/*/index.html`, mogelijk `styles.css`
 
 ### Doel
@@ -257,9 +261,9 @@ Gebruik als primaire knop bijvoorbeeld `Bespreek jouw situatie` of `Vertel waar 
 
 ## T06 — Projectcases resultaatgerichter maken
 
-**Status:** [x]  
-**Prioriteit:** P1  
-**Afhankelijk van:** T01  
+**Status:** [x]
+**Prioriteit:** P1
+**Afhankelijk van:** T01
 **Bestanden:** alle bestanden onder `projecten/*/index.html`
 
 ### Doel
@@ -296,8 +300,8 @@ Per case niet alleen vertellen wat is gebouwd, maar aantonen welk bedrijfsproble
 
 ## T07 — Diensten terugbrengen tot duidelijke ingangen
 
-**Status:** [x]  
-**Prioriteit:** P1  
+**Status:** [x]
+**Prioriteit:** P1
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
 ### Doel
@@ -306,13 +310,13 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 
 ### Aanbevolen drie hoofdingangen
 
-1. **Website die duidelijk uitlegt en aanvragen ondersteunt**  
+1. **Website die duidelijk uitlegt en aanvragen ondersteunt**
    Voor een nieuwe of bestaande bedrijfswebsite, inhoud, structuur, vindbaarheid en conversie.
 
-2. **Webshop of online tool die handwerk vermindert**  
+2. **Webshop of online tool die handwerk vermindert**
    Voor bestellen, offertes, configuratie, planning, klantomgevingen en koppelingen.
 
-3. **Technisch beheer en doorontwikkeling**  
+3. **Technisch beheer en doorontwikkeling**
    Voor onderhoud, hosting, foutopsporing, optimalisatie en uitbreiding na livegang.
 
 ### Werkzaamheden
@@ -335,16 +339,19 @@ Bezoekers snel laten herkennen waarvoor ze JPWebcreation concreet kunnen inschak
 
 ## T08 — Contactsectie en contactformulier verbeteren
 
-**Status:** [~]  
-**Prioriteit:** P0  
-**Afhankelijk van:** T01  
+**Status:** [~]
+**Prioriteit:** P0
+**Afhankelijk van:** T01
 **Bestanden:** minimaal `index.html`, `styles.css`, mogelijk `script.js` en een goedgekeurde server- of formulierintegratie
 
 ### Doel
 
 Contact opnemen laagdrempelig maken voor bezoekers die nog geen uitgewerkt plan hebben.
 
-De contacttekst, rechtstreekse contactroutes en het eigen formulier zijn geïmplementeerd. De daadwerkelijke e-mailbezorging op de productieserver moet na deployment worden getest.
+De contacttekst, rechtstreekse contactroutes, het eigen formulier en een aparte
+succesweergave zijn geïmplementeerd. De statische site staat nog niet op
+productie; daadwerkelijke e-mailbezorging moet daarom na de handmatige
+productiedeploy opnieuw worden getest.
 
 ### Aanbevolen inhoud
 
@@ -385,9 +392,9 @@ De contacttekst, rechtstreekse contactroutes en het eigen formulier zijn geïmpl
 
 ## T09 — Veelgestelde vragen toevoegen
 
-**Status:** [x]  
-**Prioriteit:** P1  
-**Afhankelijk van:** T01  
+**Status:** [x]
+**Prioriteit:** P1
+**Afhankelijk van:** T01
 **Bestanden:** `index.html`, mogelijk `styles.css`
 
 ### Doel
@@ -420,8 +427,8 @@ Publiceer alleen antwoorden die door Joris zijn bevestigd. Als een vaste prijs o
 
 ## T10 — Bestaande URL's inventariseren en migratieplan maken
 
-**Status:** [~]  
-**Prioriteit:** P0 vóór livegang  
+**Status:** [~]
+**Prioriteit:** P0 vóór livegang
 **Resultaat:** een gecontroleerde URL-mapping, bijvoorbeeld `URL-MIGRATIE.md` of `url-migratie.csv`
 
 ### Doel
@@ -468,8 +475,8 @@ Voorkomen dat de sterkere nieuwe site bij livegang organisch verkeer, backlinks 
 
 ## T11 — Redirects en technische SEO-basis implementeren
 
-**Status:** [~]  
-**Prioriteit:** P0 vóór livegang  
+**Status:** [~]
+**Prioriteit:** P0 vóór livegang
 **Afhankelijk van:** T10
 
 ### Doel
@@ -503,8 +510,8 @@ De nieuwe statische site indexeerbaar maken zonder bestaande SEO-signalen onnodi
 
 ## T12 — Meting van aanvragen en CTA's inrichten
 
-**Status:** [x] — afgesloten zonder bezoekersanalytics  
-**Prioriteit:** P1  
+**Status:** [x] — bewust afgesloten zonder bezoekersanalytics
+**Prioriteit:** P1
 **Afhankelijk van:** T01 en T08
 
 ### Doel
@@ -513,7 +520,7 @@ Kunnen vaststellen of de nieuwe site daadwerkelijk meer en betere aanvragen ople
 
 Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom bewust geen trackingcode, conversie-event of cookiebanner toegevoegd. Inkomende formulieren, e-mails en telefoongesprekken kunnen alleen handmatig als lead worden bijgehouden.
 
-### Te meten conversies
+### Alleen bij een latere, expliciet goedgekeurde analyticsfase
 
 - [ ] Succesvolle formulierinzending.
 - [ ] Klik op telefoonnummer.
@@ -533,17 +540,18 @@ Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom
 
 ### Acceptatiecriteria
 
-- [ ] Iedere afgesproken conversie is in een test aantoonbaar zichtbaar.
-- [ ] Dubbele events worden voorkomen.
+- [x] Er zijn nu geen afgesproken analyticsconversies om te testen.
+- [x] Dubbele analytics-events zijn niet van toepassing zolang geen tracking is toegevoegd.
 - [x] Persoonsgegevens en berichtinhoud worden niet naar analytics gestuurd, omdat geen analytics is toegevoegd.
-- [ ] Er is vastgelegd hoe na 30 en 90 dagen wordt beoordeeld of de site beter presteert.
+- [ ] Leg vóór productie vast hoe Joris zonder bezoekersanalytics handmatig de
+  aantallen en geschiktheid van aanvragen na 30 en 90 dagen beoordeelt.
 
 ---
 
 ## T13 — Inhoudelijke, functionele en responsive QA uitvoeren
 
-**Status:** [~]  
-**Prioriteit:** P0  
+**Status:** [~]
+**Prioriteit:** P0
 **Afhankelijk van:** alle te publiceren wijzigingen
 
 ### Inhoudelijke controle
@@ -570,6 +578,9 @@ Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom
 - [x] Controleer de headingvolgorde en aanwezigheid van alt-attributen; visuele kwaliteit en schermlezertest blijven open.
 - [x] Controleer dat carrouselanimaties met `prefers-reduced-motion` worden uitgeschakeld.
 - [x] Controleer dat belangrijke inhoud als gewone HTML aanwezig blijft zonder animatie of JavaScript.
+- [ ] Controleer de nieuwe editorial projectrijen afzonderlijk op 320, 375, 768,
+  1024 en 1440 pixels: beeldvolgorde, uitsnede, regellengte, tussenruimte,
+  scheidingslijnen en de twee compacte secundaire projectlinks.
 
 ### Performance
 
@@ -590,8 +601,8 @@ Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom
 
 ## T14 — Livegang en controle na livegang
 
-**Status:** [!]  
-**Prioriteit:** P0  
+**Status:** [!]
+**Prioriteit:** P0
 **Afhankelijk van:** T10–T13 en expliciete toestemming van Joris
 
 ### Voor livegang
@@ -623,6 +634,282 @@ Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom
 
 ---
 
+## T15 — Homepage-projecten als editorial showcase presenteren
+
+**Status:** [~]
+**Prioriteit:** P1
+**Bestanden:** `index.html`, `styles.css`
+
+### Doel
+
+De projecten niet als een generieke kaartmuur tonen, maar als een rustig,
+redactioneel bewijs van hoe JPWebcreation bedrijfsproblemen oplost.
+
+### Vastgelegde ontwerpkeuze
+
+- Vier primaire cases staan als brede rijen onder elkaar: Mike's Pianoshow,
+  Haveka Installatie, Supper Services en EC EEns.
+- Oneven rijen tonen beeld links en tekst rechts; even rijen draaien dit op
+  desktop visueel om.
+- De DOM-volgorde blijft bij iedere case afbeelding en daarna tekst. Op mobiel
+  verschijnt iedere case daardoor consequent als afbeelding gevolgd door tekst.
+- Projectonderdelen staan als gewone inline tekst met puntscheiding, niet als
+  pill badges.
+- De rijen hebben geen buitenrand, kaartachtergrond of omhoog springende
+  hoveranimatie. Witruimte en horizontale lijnen maken de structuur.
+- Archipel Bouwadvies en Wildfloweroffice staan onderaan als compacte
+  secundaire links onder `Ook gebouwd`.
+
+### Werkzaamheden
+
+- [x] Vervang `.work-feature`, `.work-grid` en `.work-card` door
+  `.work-list`, `.work-item` en `.work-more`.
+- [x] Behoud alle zes bestaande case-URL's op de homepage.
+- [x] Voeg per primaire case een nummer, resultaatgerichte bovenregel, korte
+  probleem-oplossingstekst, projectonderdelen en `Bekijk case` toe.
+- [x] Laat screenshots maximaal circa 2,5% vergroten bij hover en verplaats
+  alleen de CTA-pijl; voeg geen kaarthover of zware extra schaduw toe.
+- [x] Verhoog de CSS-cacheversie in alle HTML-bestanden.
+- [ ] Voer de specifieke responsive en visuele controles uit die bij T13 staan.
+- [ ] Controleer na testdeployment dat alle zes cases vanuit de homepage openen.
+
+### Acceptatiecriteria
+
+- [ ] De desktopsectie leest als opeenvolgende cases en niet als een card grid.
+- [ ] De mobiele volgorde is voor alle vier primaire cases afbeelding, tekst en
+  CTA, zonder CSS-gridpositie uit de desktopvariant.
+- [ ] De twee secundaire projecten blijven zichtbaar en toetsenbordbedienbaar.
+- [ ] Geen screenshot wordt uitgerekt of toont een ongewenste uitsnede op de
+  afgesproken controlebreedtes.
+
+---
+
+## T16 — Automatische carrousels pauzeerbaar maken
+
+**Status:** [ ]
+**Prioriteit:** P1
+**Bestanden:** `index.html`, alle projectpagina's met een carrousel,
+`styles.css`, `script.js`
+
+### Probleem
+
+De hero op de homepage en de projecthero's draaien continu. De bestaande
+`prefers-reduced-motion`-regel stopt animatie voor bezoekers die die
+voorkeur hebben ingesteld, maar andere bezoekers hebben nog geen zichtbare
+manier om de beweging zelf te pauzeren.
+
+### Uitvoering
+
+- Voeg per automatisch draaiende carrousel één echte `button` toe met een
+  zichtbare tekst of duidelijk icoon plus toegankelijke naam
+  `Animatie pauzeren`.
+- Laat de knop met `aria-pressed` of een even duidelijke status aangeven of
+  de carrousel draait.
+- Voeg één herbruikbare CSS-klasse toe die de relevante
+  `animation-play-state` op `paused` zet; maak geen losse implementatie per
+  project.
+- Pauzeer ook zolang een carrousel of de pauzeknop toetsenbordfocus heeft en
+  zolang een aanwijzer erboven staat. Start alleen automatisch opnieuw wanneer
+  de bezoeker niet zelf op pauze heeft gedrukt.
+- Initialiseer de animatie direct als gepauzeerd wanneer
+  `prefers-reduced-motion: reduce` actief is.
+- Controleer dat de knop zonder JavaScript geen content of links verbergt.
+
+### Acceptatiecriteria
+
+- [ ] De bediening werkt met muis, touch, Enter en spatie.
+- [ ] De gekozen pauzestatus blijft behouden tijdens dezelfde paginaweergave.
+- [ ] Er ontstaat geen layout shift wanneer knoptekst of status verandert.
+- [ ] Homepage en alle zes projectpagina's gebruiken hetzelfde gedrag.
+
+---
+
+## T17 — Zichtbare focusstijl voor alle interacties toevoegen
+
+**Status:** [ ]
+**Prioriteit:** P0 vóór productie
+**Bestand:** `styles.css`
+
+### Probleem
+
+Formuliervelden hebben een expliciete focusstijl, maar navigatielinks, knoppen,
+projectrijen, FAQ-samenvattingen, secundaire projectlinks en footerlinks
+vertrouwen grotendeels op browserdefaults. Dat is visueel inconsistent en kan
+op de groene en lichte achtergronden onvoldoende zichtbaar zijn.
+
+### Uitvoering
+
+- Definieer één sitebrede `:focus-visible`-stijl met minimaal 3 px outline en
+  minimaal 3 px outline-offset.
+- Gebruik op lichte achtergronden `var(--green-dark)` en op donkergroene
+  achtergronden `var(--amber)` of een andere bestaande kleur met aantoonbaar
+  voldoende contrast.
+- Pas de stijl expliciet toe op `a`, `button`, `summary`, invoervelden en
+  de volledige klikbare `.work-item`- en `.work-more-list a`-elementen.
+- Verwijder nergens `outline` zonder in dezelfde regel een gelijkwaardig
+  zichtbaar alternatief te bieden.
+- Controleer focusvolgorde vanaf de header tot en met de footer zonder muis.
+
+### Acceptatiecriteria
+
+- [ ] Elk interactief element is tijdens toetsenbordnavigatie direct herkenbaar.
+- [ ] Focus wordt niet afgesneden door `overflow: hidden` van screenshots,
+  kaarten of containers.
+- [ ] De stijl is zichtbaar op `var(--paper)`, `var(--white)`,
+  `var(--mist)`, `var(--green)` en `var(--green-dark)`.
+
+---
+
+## T18 — Laden van hero- en projectafbeeldingen optimaliseren
+
+**Status:** [ ]
+**Prioriteit:** P1
+**Bestanden:** `index.html`, projectpagina's, bestanden onder
+`assets/projects/`
+
+### Probleem
+
+De homepagehero bevat zes grote carrouselafbeeldingen boven de vouw. Als meerdere
+afbeeldingen tegelijk hoge laadprioriteit krijgen, concurreren ze met tekst,
+CSS en de eerste zichtbare afbeelding. De platte screenshots hebben bovendien
+vaste bronbestanden zonder `srcset` voor kleinere schermen.
+
+### Uitvoering
+
+- Meet eerst per hero- en projectafbeelding de huidige pixelafmetingen en
+  bestandsgrootte; noteer die in de taakdiff of QA-uitvoer.
+- Geef alleen de afbeelding die bij de eerste weergave daadwerkelijk zichtbaar
+  moet zijn `fetchpriority="high"`. Verwijder hoge prioriteit bij alle andere
+  panelen.
+- Bepaal met browsernetwerkcontrole of niet-eerste panelen veilig
+  `loading="lazy"` kunnen gebruiken zonder lege panelen tijdens de eerste
+  omwenteling. Pas lazy loading alleen toe als die controle slaagt.
+- Genereer waar dat aantoonbaar bytes bespaart minimaal een kleinere WebP-variant
+  voor mobiele schermen en gebruik `srcset` plus een correcte `sizes`-waarde.
+- Behoud de bestaande JPG- of PNG-fallback wanneer die nog nodig is.
+- Wijzig geen uitsnede of compositie zonder de projectsectie en alle
+  projecthero's opnieuw visueel te controleren.
+
+### Acceptatiecriteria
+
+- [ ] Slechts één heroafbeelding heeft expliciet hoge laadprioriteit.
+- [ ] De eerste zichtbare carouselweergave bevat geen leeg of later inspringend
+  paneel.
+- [ ] Afbeeldingen behouden hun aspectratio en er ontstaat geen extra layout
+  shift.
+- [ ] Lighthouse of een gelijkwaardige meting toont geen nieuwe
+  afbeeldingswaarschuwing met hoge impact.
+
+---
+
+## T19 — JavaScript-cacheversie sitebreed gelijkmaken
+
+**Status:** [ ]
+**Prioriteit:** P1
+**Bestanden:** alle HTML-bestanden
+
+### Probleem
+
+Alle pagina's verwijzen naar hetzelfde `script.js`, maar gebruiken momenteel
+verschillende queryversies (`v=3`, `v=4` en `v=5`). Daardoor kan een
+bezoeker afhankelijk van de route verschillende gecachte versies van hetzelfde
+bestand gebruiken.
+
+### Uitvoering
+
+- Kies één nieuw geheel versienummer dat hoger is dan de hoogste huidige
+  versie.
+- Vervang in ieder HTML-bestand uitsluitend de querywaarde van
+  `script.js?v=`; verander geen relatieve padniveaus.
+- Controleer met
+  `rg -n 'script\\.js\\?v=' --glob '*.html'` dat alle regels hetzelfde
+  versienummer tonen.
+- Open homepage, 404, privacy en minimaal één projectpagina en controleer menu,
+  revealgedrag en formulierstatus op JavaScript-fouten.
+
+### Acceptatiecriteria
+
+- [ ] Er komt exact één JavaScript-versienummer voor in alle HTML-bestanden.
+- [ ] Alle relatieve scriptpaden verwijzen nog naar het bestaande
+  `script.js`.
+- [ ] De wijziging bevat geen functionele JavaScript-aanpassing.
+
+---
+
+## T20 — Automatische rooktest na deployment toevoegen
+
+**Status:** [ ]
+**Prioriteit:** P0 vóór productie
+**Bestand:** `.github/workflows/deploy.yml`
+
+### Probleem
+
+De workflow stopt na `rsync`. Een geslaagde bestandsoverdracht bewijst niet dat
+de webserver de juiste routes, statuscodes en stagingheaders teruggeeft.
+
+### Uitvoering
+
+- Voeg na de testdeploy een aparte stap `Verify test deployment` toe.
+- Laat deze stap met `curl --fail --show-error --location` minimaal
+  `/`, `/privacyverklaring/`, alle zes projectroutes,
+  `/sitemap.xml` en `/robots.txt` ophalen.
+- Controleer afzonderlijk met headers dat test
+  `X-Robots-Tag: noindex, nofollow` bevat.
+- Vraag een bewust niet-bestaand pad op en controleer zowel HTTP-status 404 als
+  aanwezigheid van een unieke tekst uit `404.html`.
+- Voeg na de handmatige productiedeploy een overeenkomstige stap toe die
+  controleert dat productie géén `X-Robots-Tag: noindex` bevat.
+- Verstuur vanuit deze rooktest geen contactformulier en volg geen externe
+  klantlinks.
+
+### Acceptatiecriteria
+
+- [ ] De workflow faalt wanneer een kritieke route geen verwachte status geeft.
+- [ ] Test faalt wanneer de noindexheader ontbreekt.
+- [ ] Productie faalt wanneer een noindexheader aanwezig is.
+- [ ] De uitvoer noemt de falende route zonder secrets of serverpaden te tonen.
+
+---
+
+## T21 — Formulierinvoer bij validatiefouten veilig behouden
+
+**Status:** [ ]
+**Prioriteit:** P1
+**Bestanden:** `index.html`, `contact.php`, mogelijk `script.js`
+
+### Probleem
+
+`contact.php` gebruikt na een ongeldige inzending een 303-redirect naar
+`/?contact=invalid`. De bezoeker ziet daarna alleen een algemene melding en
+moet alle velden opnieuw invullen.
+
+### Uitvoering
+
+- Kies vóór de implementatie één server-side methode voor kortstondig
+  teruggeven van naam, bedrijf, e-mail, telefoon en bericht na een
+  validatiefout.
+- Zet formulierinhoud niet in queryparameters, logs, analytics of
+  `localStorage`.
+- Geef per ongeldig verplicht veld een concrete foutmelding die met
+  `aria-describedby` aan dat veld is gekoppeld.
+- Plaats focus na terugkeer op de eerste ongeldige invoer; laat de algemene
+  statusmelding daarnaast kort samenvatten wat de bezoeker moet herstellen.
+- Bewaar nooit de honeypotwaarde en vink privacytoestemming niet automatisch
+  opnieuw aan.
+- Wis tijdelijke server-side invoer direct na eenmaal uitlezen en stel een
+  korte maximale bewaartijd in.
+- Behoud de bestaande servervalidatie, hostcontrole, honeypot en rate limit.
+
+### Acceptatiecriteria
+
+- [ ] Geldige eerder ingevulde waarden blijven na een validatiefout zichtbaar.
+- [ ] Geen formulierinhoud verschijnt in de URL of browseropslag.
+- [ ] Fouten zijn met toetsenbord en schermlezer per veld te begrijpen.
+- [ ] Een succesvolle inzending toont nog steeds de bestaande succesweergave en
+  wist het formulier.
+
+---
+
 ## Definitie van volledig afgerond
 
 Dit verbeterplan is volledig uitgevoerd wanneer:
@@ -635,6 +922,7 @@ Dit verbeterplan is volledig uitgevoerd wanneer:
 - [ ] diensten overzichtelijk en niet onnodig breed worden gepresenteerd;
 - [ ] koopbezwaren via heldere FAQ-antwoorden worden weggenomen;
 - [ ] bestaande waardevolle URL's en SEO-signalen zorgvuldig zijn gemigreerd;
-- [ ] conversies meetbaar zijn zonder onnodige verwerking van persoonsgegevens;
+- [ ] leadkwaliteit volgens de gekozen cookieloze, handmatige methode kan worden
+  beoordeeld; bezoekersanalytics wordt alleen na aparte toestemming toegevoegd;
 - [ ] de site inhoudelijk, technisch, responsive en toegankelijk is gecontroleerd;
 - [ ] livegang en monitoring aantoonbaar succesvol zijn afgerond.

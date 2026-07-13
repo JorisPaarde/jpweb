@@ -1,8 +1,9 @@
 # JPWebcreation static site
 
-Static coded concept for the next JPWebcreation site. It reuses the strongest
-positioning, testimonials, project names, services, and contact details from the
-current WordPress site, but does not depend on WordPress.
+Static JPWebcreation site built with plain HTML, CSS, JavaScript, and a small PHP
+contact handler. It contains the homepage, six project cases, a privacy page, a
+custom 404, sitemap, robots rules, and Apache/LiteSpeed configuration. It does
+not depend on WordPress.
 
 ## Local preview
 
@@ -12,6 +13,23 @@ python3 -m http.server 4173
 
 Then open `http://127.0.0.1:4173`.
 
+This previews the static pages only. `contact.php` and actual mail delivery must
+be tested in a PHP-capable environment, preferably on the test domain.
+
+## Main structure
+
+- `index.html`: homepage and contact form
+- `styles.css`: shared design and responsive rules
+- `script.js`: navigation, reveal effects, and form-result feedback
+- `contact.php`: validation, rate limiting, and mail delivery
+- `projecten/*/index.html`: six project cases
+- `.htaccess`: redirects, caching, 404 handling, and staging noindex header
+- `.github/workflows/deploy.yml`: test and production deployment
+
+The homepage project section is an editorial showcase with four primary case
+rows and two compact secondary project links. Implementation rules for agents
+are documented in `AGENTS.md`.
+
 ## Server target
 
 The staging domain found in cPanel is:
@@ -19,7 +37,8 @@ The staging domain found in cPanel is:
 - `test.jpwebcreation.nl`
 - document root: `/home/jpwebcreation/test.jpwebcreation.nl`
 
-Deploy by uploading the static files in this folder to that document root.
+Production uses `/home/jpwebcreation/public_html`. Do not upload or sync files
+manually during the normal workflow; use GitHub Actions as described below.
 
 ## GitHub Actions deploys
 
@@ -31,7 +50,7 @@ static files to test with `rsync`:
 
 Production deploys are manual. After reviewing test, run the `Deploy site`
 workflow from GitHub Actions with `Run workflow`; that job uses the `production`
-environment.
+environment and deploys the selected `main` commit.
 
 The workflow requires this repository secret:
 
@@ -49,3 +68,11 @@ rm jpweb_deploy_key jpweb_deploy_key.pub
 
 The workflow excludes repository metadata, Markdown files, and `.DS_Store`, then
 uses `--delete` so removed local files are also removed from the server.
+
+## Required checks
+
+Before pushing, verify that CSS braces are balanced, internal paths still exist,
+and every HTML file uses the same current `styles.css?v=` value. After the test
+deploy, inspect the homepage at mobile and desktop widths, open all cases, and
+test the contact form. Before production deploy, complete the open checks in
+`QA-RAPPORT.md` and `SITE-VERBETERPLAN.md`.

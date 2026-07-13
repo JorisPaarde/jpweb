@@ -8,10 +8,35 @@ JS, and assets directly, then preview with a local static server.
 Use:
 
 ```sh
-python3 -m http.server 8080
+python3 -m http.server 4173
 ```
 
-Open `http://127.0.0.1:8080/`. If port 8080 is busy, use another port.
+Open `http://127.0.0.1:4173/`. If port 4173 is busy, use another port.
+
+The Python server is sufficient for layout and link checks, but it does not run
+`contact.php`. Use a PHP-capable local server or the test environment for an
+end-to-end form check. Never claim that mail delivery works based only on the
+Python preview.
+
+## Homepage Project Showcase
+
+The homepage uses an editorial project showcase, not a card grid:
+
+- four primary cases are full-width rows inside `.work-list`;
+- odd rows show the screenshot on the left and even rows on the right;
+- the HTML order always remains screenshot first, copy second; CSS handles the
+  visual alternation;
+- Archipel Bouwadvies and Wildfloweroffice remain compact links under
+  `.work-more`;
+- project labels are plain inline text separated by dots, not pill badges;
+- rows use horizontal dividers and whitespace instead of outer card borders and
+  hover shadows.
+
+Do not turn this section back into a uniform card grid without an explicit
+design decision from Joris. When adding a primary case, copy an existing
+`.work-item`, update its number, image, alt text, result-led copy, labels, and
+case URL, then test both the alternating desktop layout and the single-column
+mobile order.
 
 ## Project Screenshot Carousels
 
@@ -58,43 +83,26 @@ gh auth setup-git
 git push origin main
 ```
 
-## Server Deploy
+## Deploy
 
-README lists the staging target:
+`.github/workflows/deploy.yml` is the canonical deploy route:
 
-- domain: `test.jpwebcreation.nl`
-- document root: `/home/jpwebcreation/test.jpwebcreation.nl`
+- every push to `main` deploys the exact commit to
+  `https://test.jpwebcreation.nl/` with `rsync --delete`;
+- production is never deployed by a normal push;
+- production deploy is a manual `workflow_dispatch` run of `Deploy site` and
+  targets `/home/jpwebcreation/public_html`;
+- the workflow excludes `.git/`, `.github/`, `.DS_Store`, and Markdown files;
+- both jobs require the `JPWEB_DEPLOY_SSH_KEY` repository secret.
 
-There is currently no deploy script in this repo. The document root is not a git
-repository. The expected deploy flow is to keep a checkout in
-`/home/jpwebcreation/repos/jpweb`, pull there, then sync the static files into
-the document root.
+After a push, check the GitHub Actions run before describing test as deployed.
+After a manual production run, test the production homepage, all project routes,
+the form, redirects, sitemap, robots headers, and the custom 404. Do not use the
+manual server sync below as the normal deploy path.
 
-Use this from the server terminal:
+## SSH Access (manual recovery only)
 
-```sh
-mkdir -p /home/jpwebcreation/repos
-if [ -d /home/jpwebcreation/repos/jpweb/.git ]; then
-  cd /home/jpwebcreation/repos/jpweb
-  git fetch origin main
-  git checkout main
-  git pull --ff-only origin main
-else
-  git clone https://github.com/JorisPaarde/jpweb.git /home/jpwebcreation/repos/jpweb
-  cd /home/jpwebcreation/repos/jpweb
-fi
-
-git status
-rsync -av --exclude='.git' --exclude='*.md' /home/jpwebcreation/repos/jpweb/ /home/jpwebcreation/test.jpwebcreation.nl/
-```
-
-Do not run `git status`, `git pull`, or other git commands directly inside
-`/home/jpwebcreation/test.jpwebcreation.nl`; it has no `.git` directory and will
-fail with `fatal: not a git repository`.
-
-## SSH Access
-
-Local SSH alias `jpweb` is configured in `~/.ssh/config` on this machine:
+An SSH alias named `jpweb` may be configured on Joris's Mac:
 
 ```sshconfig
 Host jpweb
@@ -105,11 +113,12 @@ Host jpweb
   ServerAliveInterval 30
 ```
 
-The matching public key has been added to the server's
-`~/.ssh/authorized_keys`. SSH was verified from this machine with:
+Before relying on it, run:
 
 ```sh
 ssh jpweb 'pwd && whoami'
 ```
 
-Use `ssh jpweb 'command here'` for future deploy checks.
+If the alias or key is unavailable in the current environment, stop instead of
+guessing credentials or server paths. SSH is for diagnosis and recovery; normal
+deploys go through GitHub Actions.

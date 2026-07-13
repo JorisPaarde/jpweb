@@ -1,6 +1,9 @@
 # QA-rapport JPWebcreation-site
 
-Controle uitgevoerd op 12 juli 2026 voor branch `agent/site-verbeteringen` en pull request #1.
+Oorspronkelijke brede controle uitgevoerd op 12 juli 2026. Rapport bijgewerkt op
+13 juli 2026 voor `main` en de lokale wijziging van de
+homepage-projectsectie. De statische site staat op dat moment nog niet op
+productie; `https://jpwebcreation.nl/` toont nog de bestaande WordPress-site.
 
 ## Gecontroleerd en geslaagd
 
@@ -15,6 +18,10 @@ Controle uitgevoerd op 12 juli 2026 voor branch `agent/site-verbeteringen` en pu
 - Alle afbeeldingen hebben een `alt`-attribuut.
 - Iedere projectcase heeft precies één zichtbaar resultaatblok.
 - De homepage bevat zes FAQ-items met native `details`- en `summary`-elementen.
+- De vernieuwde homepage bevat vier primaire editorial projectrijen en twee
+  compacte secundaire projectlinks.
+- De oude homepage-selectors `.work-feature`, `.work-grid` en
+  `.work-card` komen niet meer voor in `index.html` of `styles.css`.
 
 ### Interne routes en bestanden
 
@@ -55,21 +62,36 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 ### CSS, JavaScript en assets
 
 - Openende en sluitende CSS-haakjes zijn in balans.
-- Alle HTML-pagina's gebruiken dezelfde actuele CSS- en JavaScript-cacheversies.
+- Alle 9 HTML-pagina's gebruiken na de projectwijziging CSS-cacheversie `v=36`.
 - `script.js` is door de lokale Node-syntaxcontrole gekomen.
+- De JavaScript-cachequery is nog niet sitebreed gelijk: projectpagina's,
+  404/privacy en homepage gebruiken respectievelijk `v=3`, `v=4` en
+  `v=5`. Dit staat als afzonderlijke, nog niet uitgevoerde taak T19 in
+  `SITE-VERBETERPLAN.md`.
 - `prefers-reduced-motion` schakelt de hero- en projectcarrouselanimaties uit.
 - De portretfoto is een geldige WebP van 800 × 800 pixels en 51.204 bytes.
 - `git diff --check` rapporteert geen whitespacefouten.
+- Openende en sluitende CSS-haakjes zijn na de projectwijziging opnieuw geteld:
+  254 paren.
+- Een lokale HTML- en linkaudit controleerde opnieuw 9 pagina's, precies één
+  `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=36` en
+  de verwachte verdeling van 4 primaire plus 2 secundaire projecten.
+- Via een lokale statische server gaven homepage, 404, privacy, alle zes
+  projectroutes, sitemap en robots opnieuw HTTP 200.
 
 ## Nog niet gecontroleerd
 
 De onderstaande punten kunnen niet betrouwbaar in deze werkomgeving worden bevestigd en blijven open:
 
 - echte visuele browsercontrole op 320, 375, 768, 1024 en 1440 pixels;
+- visuele controle van de nieuwe projectrijen: afwisselende desktopvolgorde,
+  screenshotuitsnede, tekstbreedte, tussenruimte, mobiele beeld-tekstvolgorde en
+  de compacte `Ook gebouwd`-links;
 - bediening van het mobiele menu in een echte browser;
 - focusvolgorde en contrastcontrole met browser- en toegankelijkheidstools;
 - browserconsole en netwerkverzoeken tijdens interactie;
-- PHP-syntax met de PHP-versie van de hosting;
+- PHP-syntax met de PHP-versie van de hosting; in de huidige werkomgeving is
+  geen PHP CLI beschikbaar, dus `contact.php` is niet opnieuw gelint;
 - daadwerkelijke bezorging van het contactformulier naar `info@jpwebcreation.nl`;
 - de hostafhankelijke `X-Robots-Tag` op `test.jpwebcreation.nl`;
 - werking van de 301-regels en aangepaste 404 op LiteSpeed/Apache;
@@ -79,7 +101,8 @@ De onderstaande punten kunnen niet betrouwbaar in deze werkomgeving worden beves
 ## Vereiste controles na deployment
 
 1. Open homepage, privacy, 404 en alle cases op test.
-2. Controleer desktop en mobiel op de afgesproken breedtes.
+2. Controleer desktop en mobiel op de afgesproken breedtes, met extra aandacht
+   voor de editorial projectrijen en de twee secundaire projectlinks.
 3. Verstuur een echte testaanvraag en bevestig ontvangst in de inbox.
 4. Controleer foutmeldingen, verplichte velden, honeypot en rate limit.
 5. Controleer met `curl -I` dat test `X-Robots-Tag: noindex, nofollow` geeft.

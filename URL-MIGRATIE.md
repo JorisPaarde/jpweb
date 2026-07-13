@@ -8,6 +8,9 @@ Feitelijke URL-inventaris voor de overgang van de huidige WordPress-site naar de
   - `https://jpwebcreation.nl/page-sitemap.xml`
   - `https://jpwebcreation.nl/post-sitemap.xml`
 - De twee sitemaps bevatten samen 47 pagina-URL's: 3 pagina's en 44 berichten.
+- Op 13 juli 2026 toont `https://jpwebcreation.nl/` nog de bestaande
+  WordPress-site. De statische site uit deze repository wordt automatisch naar
+  test gedeployed; productie blijft een afzonderlijke handmatige deploy.
 - Verkeer, vertoningen, conversies en backlinks zijn nog niet bekend. In dit document worden daar geen aannames over gedaan.
 - Een voorgestelde redirect wordt pas definitief nadat Joris de mapping heeft goedgekeurd.
 - Redirect oude inhoud niet zonder inhoudelijke overeenkomst naar de homepage.
@@ -16,6 +19,8 @@ Feitelijke URL-inventaris voor de overgang van de huidige WordPress-site naar de
 
 - `BEHOUDEN`: pad bestaat ook in de nieuwe site.
 - `301 VOORGESTELD`: inhoudelijk logische bestemming, nog goed te keuren.
+- `301 IN REPO`: redirectregel staat in `.htaccess`, maar moet na de
+  productiedeploy nog op statuscode en bestemming worden getest.
 - `DATA NODIG`: eerst Search Console, analytics en eventuele backlinks beoordelen.
 - `NIEUW`: bestaat alleen in de nieuwe statische site; geen oude URL te migreren.
 
@@ -25,8 +30,8 @@ Feitelijke URL-inventaris voor de overgang van de huidige WordPress-site naar de
 | --- | --- | --- | --- |
 | `/` | BEHOUDEN | `/` | Homepage blijft het hoofdpunt. |
 | `/contact-voor-hulp-met-jouw-website/` | 301 VOORGESTELD | `/#contact` | Nieuwe homepage bevat het contactgedeelte. Goedkeuring nodig. |
-| `/projecten/website-mikes-pianoshow/` | 301 VOORGESTELD | `/projecten/mikes-pianoshow/` | Dezelfde case met een nieuw pad. |
-| `/projecten/website-wildfloweroffice/` | 301 VOORGESTELD | `/projecten/wildfloweroffice/` | Dezelfde case met een nieuw pad. |
+| `/projecten/website-mikes-pianoshow/` | 301 IN REPO | `/projecten/mikes-pianoshow/` | Dezelfde case met een nieuw pad; regel staat in `.htaccess`. |
+| `/projecten/website-wildfloweroffice/` | 301 IN REPO | `/projecten/wildfloweroffice/` | Dezelfde case met een nieuw pad; regel staat in `.htaccess`. |
 | `/projecten/archipel-bouwadvies/` | BEHOUDEN | `/projecten/archipel-bouwadvies/` | Pad blijft gelijk. |
 
 ## Nieuwe cases zonder oude URL in de sitemaps
@@ -126,11 +131,16 @@ Deze pagina's niet verwijderen of samenvoegen zonder eerst lokale zoekvertoninge
 - [ ] Keur iedere `301 VOORGESTELD`-mapping goed.
 - [ ] Kies per `DATA NODIG`-URL: behouden, herschrijven, samenvoegen, 301 of bewust verwijderen.
 
-## Veilige redirects die na goedkeuring kunnen worden geïmplementeerd
+## Redirects die al in de statische site staan
 
 ```apache
 Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
 Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
 ```
 
-De contactredirect wordt pas toegevoegd na goedkeuring van de bestemming. De overige URL's wachten op data en een inhoudelijke beslissing.
+Deze regels zijn nog niet aangemerkt als productiegetest. Controleer na de
+handmatige productiedeploy met `curl -I` dat iedere oude URL exact één `301`
+geeft en rechtstreeks naar de genoemde nieuwe URL verwijst.
+
+De contactredirect wordt pas toegevoegd na goedkeuring van de bestemming. De
+overige URL's wachten op data en een inhoudelijke beslissing.
