@@ -578,6 +578,11 @@ Joris heeft gekozen voorlopig geen bezoekersanalytics te gebruiken. Er is daarom
 - [x] Controleer de headingvolgorde en aanwezigheid van alt-attributen; visuele kwaliteit en schermlezertest blijven open.
 - [x] Controleer dat carrouselanimaties met `prefers-reduced-motion` worden uitgeschakeld.
 - [x] Controleer dat belangrijke inhoud als gewone HTML aanwezig blijft zonder animatie of JavaScript.
+- [x] Gebruik één revealpatroon voor herhaalde probleemitems, processtappen,
+  projectrijen, reviews en diensten; laat koppen, FAQ-bediening en het
+  contactformulier direct zichtbaar.
+- [x] Schakel revealtransities volledig uit bij
+  `prefers-reduced-motion: reduce`.
 - [ ] Controleer de nieuwe editorial projectrijen afzonderlijk op 320, 375, 768,
   1024 en 1440 pixels: beeldvolgorde, uitsnede, regellengte, tussenruimte,
   scheidingslijnen en de twee compacte secundaire projectlinks.
@@ -670,6 +675,9 @@ redactioneel bewijs van hoe JPWebcreation bedrijfsproblemen oplost.
 - [x] Laat screenshots maximaal circa 2,5% vergroten bij hover en verplaats
   alleen de CTA-pijl; voeg geen kaarthover of zware extra schaduw toe.
 - [x] Verhoog de CSS-cacheversie in alle HTML-bestanden.
+- [x] Corrigeer de mobiele projectkop: forceer één kolom met voldoende
+  selectorspecificiteit, verlaag de kopgrootte onder 560 pixels en voeg een
+  gecontroleerd afbreekpunt toe aan `bedrijfsproblemen`.
 - [ ] Voer de specifieke responsive en visuele controles uit die bij T13 staan.
 - [ ] Controleer na testdeployment dat alle zes cases vanuit de homepage openen.
 

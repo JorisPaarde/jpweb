@@ -764,6 +764,10 @@ main section[id] {
   transition-delay: 170ms;
 }
 
+.reveal-card.is-visible:nth-child(5) {
+  transition-delay: 220ms;
+}
+
 .testimonial-band {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, calc(var(--site-max) / 3)));
@@ -1489,7 +1493,7 @@ main section[id] {
     grid-template-columns: 56px minmax(0, 1fr);
   }
 
-  .work-heading,
+  .work-section .work-heading,
   .work-item,
   .work-more {
     grid-template-columns: 1fr;
@@ -1538,6 +1542,11 @@ main section[id] {
 }
 
 @media (max-width: 560px) {
+  .work-heading h2 {
+    font-size: clamp(2rem, 10vw, 2.45rem);
+    line-height: 1.02;
+  }
+
   .hero {
     min-height: 850px;
     padding-top: 82px;
@@ -1621,6 +1630,13 @@ main section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .reveal-card,
+  .reveal-card.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .form-status.is-success {
     animation: none;
   }

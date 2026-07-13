@@ -62,7 +62,7 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 ### CSS, JavaScript en assets
 
 - Openende en sluitende CSS-haakjes zijn in balans.
-- Alle 9 HTML-pagina's gebruiken na de projectwijziging CSS-cacheversie `v=36`.
+- Alle 9 HTML-pagina's gebruiken na de mobiele correctie CSS-cacheversie `v=37`.
 - `script.js` is door de lokale Node-syntaxcontrole gekomen.
 - De JavaScript-cachequery is nog niet sitebreed gelijk: projectpagina's,
   404/privacy en homepage gebruiken respectievelijk `v=3`, `v=4` en
@@ -71,11 +71,18 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 - `prefers-reduced-motion` schakelt de hero- en projectcarrouselanimaties uit.
 - De portretfoto is een geldige WebP van 800 × 800 pixels en 51.204 bytes.
 - `git diff --check` rapporteert geen whitespacefouten.
-- Openende en sluitende CSS-haakjes zijn na de projectwijziging opnieuw geteld:
-  254 paren.
+- Openende en sluitende CSS-haakjes zijn na de mobiele en motioncorrecties
+  opnieuw geteld: 257 paren.
 - Een lokale HTML- en linkaudit controleerde opnieuw 9 pagina's, precies één
-  `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=36` en
+  `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=37` en
   de verwachte verdeling van 4 primaire plus 2 secundaire projecten.
+- De projectkop valt onder 900 pixels aantoonbaar terug naar één kolom met een
+  selector die dezelfde specificiteit heeft als de desktopregel. Op maximaal
+  560 pixels gebruikt de kop een kleinere lettergrootte en het lange woord
+  `bedrijfsproblemen` heeft een gecontroleerd afbreekpunt.
+- Probleemitems, processtappen, primaire projectrijen, reviews en diensten
+  gebruiken hetzelfde revealpatroon. Bij `prefers-reduced-motion: reduce`
+  worden deze items direct zichtbaar zonder transitie.
 - Via een lokale statische server gaven homepage, 404, privacy, alle zes
   projectroutes, sitemap en robots opnieuw HTTP 200.
 

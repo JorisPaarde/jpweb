@@ -62,6 +62,23 @@ HTML files reference `styles.css` with a `?v=` cache-busting query. When
 changing layout/CSS, bump the version in every HTML file so browser previews do
 not show stale CSS.
 
+## Reveal Motion
+
+Use the existing `.reveal-card` class for repeated, non-interactive content
+items where a subtle entrance helps scanning. It currently applies to:
+
+- the three recognizable-problem items;
+- the five process steps;
+- the four primary project rows;
+- the three review blocks;
+- the three service items.
+
+Keep section headings, long-form about copy, FAQ controls, and the contact form
+immediately visible. Do not add a different entrance animation per section.
+New reveal items should use the same opacity plus vertical movement, stay within
+the existing 70 ms stagger, and become immediately visible without animation
+under `prefers-reduced-motion: reduce`.
+
 ## GitHub Push
 
 The remote is:
