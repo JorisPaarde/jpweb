@@ -20,7 +20,7 @@ be tested in a PHP-capable environment, preferably on the test domain.
 
 - `index.html`: homepage and contact form
 - `styles.css`: shared design and responsive rules
-- `script.js`: navigation, reveal effects, carousel controls, and form-result feedback
+- `script.js`: navigation, reveal effects, and form-result feedback
 - `contact.php`: validation, one-time form recovery, rate limiting, and mail delivery
 - `projecten/*/index.html`: six project cases
 - `.htaccess`: redirects, caching, 404 handling, and staging noindex header

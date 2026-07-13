@@ -62,13 +62,10 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 ### CSS, JavaScript en assets
 
 - Openende en sluitende CSS-haakjes zijn in balans.
-- Alle 9 HTML-pagina's gebruiken CSS-cacheversie `v=40` en
-  JavaScript-cacheversie `v=7`.
+- Alle 9 HTML-pagina's gebruiken CSS-cacheversie `v=41` en
+  JavaScript-cacheversie `v=8`.
 - `script.js` is door de lokale Node-syntaxcontrole gekomen.
 - `prefers-reduced-motion` schakelt de hero- en projectcarrouselanimaties uit.
-- Homepage en alle zes projectpagina's hebben dezelfde zichtbare pauzeknop.
-  De gedeelde logica pauzeert daarnaast bij hover en toetsenbordfocus en
-  bewaart een handmatig gekozen pauze tijdens de paginaweergave.
 - Een sitebrede `:focus-visible`-basis voor links, knoppen, `summary` en
   formuliervelden is toegevoegd; donkere secties krijgen een contrasterende
   amberkleurige variant.
@@ -83,8 +80,8 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 - `git diff --check` rapporteert geen whitespacefouten.
 - Openende en sluitende CSS-haakjes zijn opnieuw geteld: 270 paren.
 - Een lokale HTML- en linkaudit controleerde opnieuw 9 pagina's, precies één
-  `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=40` en
-  JavaScript `v=7` en
+  `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=41` en
+  JavaScript `v=8` en
   de verwachte verdeling van 4 primaire plus 2 secundaire projecten.
 - De projectkop valt onder 900 pixels aantoonbaar terug naar één kolom met een
   selector die dezelfde specificiteit heeft als de desktopregel. Op maximaal
@@ -114,8 +111,6 @@ De onderstaande punten kunnen niet betrouwbaar in deze werkomgeving worden beves
 - bediening van het mobiele menu in een echte browser;
 - zichtbaarheid, focusvolgorde en contrast van de nieuwe focusstijl met
   browser- en toegankelijkheidstools;
-- muis-, touch-, Enter- en spatiebediening van de pauzeknop in een echte
-  browser, inclusief het ontbreken van layout shift bij de statuswissel;
 - browserconsole en netwerkverzoeken tijdens interactie;
 - daadwerkelijke bezorging van het contactformulier naar `info@jpwebcreation.nl`;
 - werking van de 301-regels en aangepaste 404 op LiteSpeed/Apache;
@@ -126,8 +121,7 @@ De onderstaande punten kunnen niet betrouwbaar in deze werkomgeving worden beves
 
 1. Controleer desktop en mobiel op de afgesproken breedtes, met extra aandacht
    voor de editorial projectrijen en de twee secundaire projectlinks.
-2. Bedien alle carrousels met muis, touch en toetsenbord en doorloop de site met
-   alleen Tab, Enter en spatie.
+2. Doorloop de site met alleen Tab, Enter en spatie.
 3. Controleer in de browser bij een ongeldige testaanvraag de zichtbare
    veldfouten, focus en niet-aangevinkte toestemming; de serverwaarden en het
    eenmalig wissen zijn al geverifieerd.

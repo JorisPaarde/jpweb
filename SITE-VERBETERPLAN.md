@@ -57,7 +57,6 @@ De site richt zich primair op ondernemers en organisaties die:
 | T13 | P0 | Inhoudelijke, functionele en responsive QA uitvoeren | T02–T12 |
 | T14 | P0 | Livegang en controle na livegang | T10–T13, aparte toestemming |
 | T15 | P1 | Homepage-projecten als editorial showcase presenteren | T06 |
-| T16 | P1 | Automatische carrousels pauzeerbaar maken | — |
 | T17 | P0 | Zichtbare focusstijl voor alle interacties toevoegen | — |
 | T18 | P1 | Laden van hero- en projectafbeeldingen optimaliseren | T15 |
 | T19 | P1 | JavaScript-cacheversie sitebreed gelijkmaken | — |
@@ -692,46 +691,6 @@ redactioneel bewijs van hoe JPWebcreation bedrijfsproblemen oplost.
 
 ---
 
-## T16 — Automatische carrousels pauzeerbaar maken
-
-**Status:** [~] — technisch uitgevoerd; echte browserbediening nog controleren
-**Prioriteit:** P1
-**Bestanden:** `index.html`, alle projectpagina's met een carrousel,
-`styles.css`, `script.js`
-
-### Probleem
-
-De hero op de homepage en de projecthero's draaien continu. De bestaande
-`prefers-reduced-motion`-regel stopt animatie voor bezoekers die die
-voorkeur hebben ingesteld, maar andere bezoekers hebben nog geen zichtbare
-manier om de beweging zelf te pauzeren.
-
-### Uitvoering
-
-- [x] Voeg per automatisch draaiende carrousel één echte `button` toe met een
-  zichtbare tekst of duidelijk icoon plus toegankelijke naam
-  `Animatie pauzeren`.
-- [x] Laat de knop met `aria-pressed` of een even duidelijke status aangeven of
-  de carrousel draait.
-- [x] Voeg één herbruikbare CSS-klasse toe die de relevante
-  `animation-play-state` op `paused` zet; maak geen losse implementatie per
-  project.
-- [x] Pauzeer ook zolang een carrousel of de pauzeknop toetsenbordfocus heeft en
-  zolang een aanwijzer erboven staat. Start alleen automatisch opnieuw wanneer
-  de bezoeker niet zelf op pauze heeft gedrukt.
-- [x] Initialiseer de animatie direct als gepauzeerd wanneer
-  `prefers-reduced-motion: reduce` actief is.
-- [x] Controleer dat de knop zonder JavaScript geen content of links verbergt.
-
-### Acceptatiecriteria
-
-- [ ] De bediening werkt met muis, touch, Enter en spatie.
-- [ ] De gekozen pauzestatus blijft behouden tijdens dezelfde paginaweergave.
-- [ ] Er ontstaat geen layout shift wanneer knoptekst of status verandert.
-- [ ] Homepage en alle zes projectpagina's gebruiken hetzelfde gedrag.
-
----
-
 ## T17 — Zichtbare focusstijl voor alle interacties toevoegen
 
 **Status:** [~] — technisch uitgevoerd; visuele toetsenbordcontrole nog nodig
@@ -820,7 +779,7 @@ vaste bronbestanden zonder `srcset` voor kleinere schermen.
 
 Alle pagina's verwijzen naar hetzelfde `script.js`, maar gebruiken momenteel
 verschillende queryversies (`v=3`, `v=4` en `v=5`). Deze zijn nu gelijkgetrokken
-naar `v=7`, zodat een
+naar `v=8`, zodat een
 bezoeker afhankelijk van de route verschillende gecachte versies van hetzelfde
 bestand gebruiken.
 

@@ -56,13 +56,6 @@ because the app is an important add-on but the website remains the base project.
 When replacing screenshots, capture real live pages, not device mockups. For
 Supper Services, check for a cookie banner and dismiss it before capturing.
 
-Every automatic carousel has one `[data-carousel-toggle]` button and uses the
-shared logic in `script.js`. Keep the pause control on new carousels. Animation
-must pause on hover and keyboard focus, respect a manual pause for the rest of
-the page view, and remain disabled under `prefers-reduced-motion: reduce`. An
-explicit click on `Afspelen` must resume immediately, even while the button still
-has pointer hover or focus; otherwise the control appears broken.
-
 The homepage carousel relies on a preserved 3D context. Never apply `opacity`,
 `filter`, `overflow`, `clip-path`, `mask` or another flattening/grouping effect
 to `.hero-carousel-track`; that exposes mirrored back faces. Apply visual
