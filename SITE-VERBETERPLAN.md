@@ -215,8 +215,9 @@ Zelfclaims vervangen of ondersteunen met geloofwaardig bewijs van klanten.
   zijn review naar de bijbehorende case.
 - [x] Toon Michaels bestaande review ook in de case zelf, direct onder het
   resultaat waarop de review betrekking heeft.
-- [x] Vervang één algemene procesclaim bovenaan de homepage door het
-  controleerbare aantal van zes gepubliceerde praktijkcases.
+- [x] Formuleer de drie punten onder de hero vanuit concrete klantzekerheid:
+  de klant hoeft zelf de oplossing niet te kennen, krijgt vooraf duidelijkheid
+  over scope, planning en kosten en kan ook na livegang op Joris terugvallen.
 
 ### Acceptatiecriteria
 
