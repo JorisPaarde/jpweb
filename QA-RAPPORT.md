@@ -95,6 +95,13 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
   worden deze items direct zichtbaar zonder transitie.
 - Via een lokale statische server gaven homepage, 404, privacy, alle zes
   projectroutes, sitemap en robots opnieuw HTTP 200.
+- GitHub Actions-run `29277423697` voor commit `bd70138` is geslaagd. De nieuwe
+  stap controleerde op test alle tien kritieke routes, de staging-noindexheader,
+  de aangepaste 404 en de PHP-endpoint.
+- Een aanvullende ongeldige POST op test gaf de verwachte 303-redirect. Naam,
+  bedrijf, e-mail, telefoon en bericht kwamen eenmaal terug; vier veldfouten
+  waren aanwezig; privacy en honeypot werden niet bewaard; een tweede uitlezing
+  was leeg.
 
 ## Nog niet gecontroleerd
 
@@ -110,31 +117,24 @@ De onderstaande punten kunnen niet betrouwbaar in deze werkomgeving worden beves
 - muis-, touch-, Enter- en spatiebediening van de pauzeknop in een echte
   browser, inclusief het ontbreken van layout shift bij de statuswissel;
 - browserconsole en netwerkverzoeken tijdens interactie;
-- PHP-syntax en sessiegedrag met de PHP-versie van de hosting; in de huidige
-  werkomgeving is geen PHP CLI beschikbaar. De deployment-rooktest vraagt de
-  endpoint wel op en zal bij een serverfout falen;
-- terugzetten en eenmalig wissen van formulierinvoer na een echte ongeldige
-  POST op de testomgeving;
 - daadwerkelijke bezorging van het contactformulier naar `info@jpwebcreation.nl`;
-- resultaat van de nieuwe automatische rooktest op `test.jpwebcreation.nl`;
 - werking van de 301-regels en aangepaste 404 op LiteSpeed/Apache;
 - productiecontrole na deployment;
 - performance- en layoutmetingen via Lighthouse of gelijkwaardige browsertool.
 
 ## Vereiste controles na deployment
 
-1. Bevestig dat de GitHub Actions-stap `Verify test deployment` slaagt; deze
-   controleert routes, 404, PHP-endpoint en staging-noindex automatisch.
-2. Controleer desktop en mobiel op de afgesproken breedtes, met extra aandacht
+1. Controleer desktop en mobiel op de afgesproken breedtes, met extra aandacht
    voor de editorial projectrijen en de twee secundaire projectlinks.
-3. Bedien alle carrousels met muis, touch en toetsenbord en doorloop de site met
+2. Bedien alle carrousels met muis, touch en toetsenbord en doorloop de site met
    alleen Tab, Enter en spatie.
-4. Verstuur eerst een ongeldige testaanvraag en controleer teruggezette waarden,
-   veldfouten, focus, niet-aangevinkte toestemming en eenmalig wissen.
-5. Verstuur daarna een geldige testaanvraag en bevestig ontvangst in de inbox.
-6. Controleer honeypot en rate limit zonder echte spam of herhaalde mail te
+3. Controleer in de browser bij een ongeldige testaanvraag de zichtbare
+   veldfouten, focus en niet-aangevinkte toestemming; de serverwaarden en het
+   eenmalig wissen zijn al geverifieerd.
+4. Verstuur daarna een geldige testaanvraag en bevestig ontvangst in de inbox.
+5. Controleer honeypot en rate limit zonder echte spam of herhaalde mail te
    veroorzaken.
-7. Controleer de twee oude project-URL's op één 301 naar de nieuwe bestemming.
-8. Voer Lighthouse en een toegankelijkheidscontrole uit.
+6. Controleer de twee oude project-URL's op één 301 naar de nieuwe bestemming.
+7. Voer Lighthouse en een toegankelijkheidscontrole uit.
 
 Dit rapport claimt geen geslaagde productie- of mailcontrole zolang die tests niet daadwerkelijk op de hosting zijn uitgevoerd.

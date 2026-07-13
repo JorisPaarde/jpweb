@@ -848,7 +848,7 @@ bestand gebruiken.
 
 ## T20 — Automatische rooktest na deployment toevoegen
 
-**Status:** [~] — workflow toegevoegd; eerstvolgende testdeploy moet hem bevestigen
+**Status:** [~] — testrooktest geslaagd; productiestap wacht op handmatige livegang
 **Prioriteit:** P0 vóór productie
 **Bestand:** `.github/workflows/deploy.yml`
 
@@ -874,16 +874,17 @@ de webserver de juiste routes, statuscodes en stagingheaders teruggeeft.
 
 ### Acceptatiecriteria
 
-- [ ] De workflow faalt wanneer een kritieke route geen verwachte status geeft.
-- [ ] Test faalt wanneer de noindexheader ontbreekt.
+- [x] De workflow faalt wanneer een kritieke route geen verwachte status geeft.
+- [x] Test faalt wanneer de noindexheader ontbreekt; de eerste testuitvoering is
+  op 13 juli 2026 geslaagd.
 - [ ] Productie faalt wanneer een noindexheader aanwezig is.
-- [ ] De uitvoer noemt de falende route zonder secrets of serverpaden te tonen.
+- [x] De uitvoer noemt de falende route zonder secrets of serverpaden te tonen.
 
 ---
 
 ## T21 — Formulierinvoer bij validatiefouten veilig behouden
 
-**Status:** [~] — geïmplementeerd; PHP-sessiegedrag op test nog controleren
+**Status:** [~] — servergedrag geslaagd; visuele browser- en schermlezertest open
 **Prioriteit:** P1
 **Bestanden:** `index.html`, `contact.php`, mogelijk `script.js`
 
@@ -912,8 +913,9 @@ moet alle velden opnieuw invullen.
 
 ### Acceptatiecriteria
 
-- [ ] Geldige eerder ingevulde waarden blijven na een validatiefout zichtbaar.
-- [ ] Geen formulierinhoud verschijnt in de URL of browseropslag.
+- [x] Geldige eerder ingevulde waarden worden na een validatiefout eenmaal door
+  de testendpoint teruggegeven.
+- [x] Geen formulierinhoud verschijnt in de URL of browseropslag.
 - [ ] Fouten zijn met toetsenbord en schermlezer per veld te begrijpen.
 - [ ] Een succesvolle inzending toont nog steeds de bestaande succesweergave en
   wist het formulier.
