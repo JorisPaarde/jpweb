@@ -1114,20 +1114,90 @@ main section[id] {
   overflow: hidden;
 }
 
+.contact-form.has-success > :not(.form-status) {
+  display: none;
+}
+
 .contact-section .form-status {
   margin: 0;
-  padding: 12px 14px;
+  padding: 14px 16px;
   color: var(--ink);
   background: var(--paper);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 22px 55px rgba(6, 31, 25, 0.18);
   font-size: 1rem;
 }
 
+.contact-section .form-status:focus {
+  outline: 3px solid var(--amber);
+  outline-offset: 4px;
+}
+
 .contact-section .form-status.is-success {
-  background: #d9f4e8;
+  display: grid;
+  min-height: 330px;
+  align-content: center;
+  justify-items: start;
+  gap: 12px;
+  padding: clamp(30px, 5vw, 52px);
+  background:
+    radial-gradient(circle at 100% 0, rgba(232, 178, 76, 0.18), transparent 40%),
+    var(--paper);
+  border-left: 6px solid var(--amber);
+  animation: form-success-in 420ms ease-out both;
+}
+
+.form-status-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  margin-bottom: 8px;
+  color: var(--white);
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(49, 95, 79, 0.22);
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.form-status-kicker {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-section .form-status.is-success strong {
+  max-width: 520px;
+  font-size: clamp(1.65rem, 3vw, 2.35rem);
+  line-height: 1.05;
+}
+
+.contact-section .form-status.is-success > span:last-child {
+  max-width: 520px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
 }
 
 .contact-section .form-status.is-error {
   background: #ffe0dc;
+  border-color: rgba(161, 54, 43, 0.22);
+  box-shadow: none;
+}
+
+@keyframes form-success-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .contact-panel {
@@ -1441,6 +1511,10 @@ main section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .form-status.is-success {
+    animation: none;
+  }
+
   .hero-carousel-track {
     animation: none;
     transform: rotateY(-24deg);
