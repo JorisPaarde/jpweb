@@ -44,6 +44,22 @@ a {
   text-decoration: none;
 }
 
+:where(a, button, summary, input, textarea):focus-visible {
+  outline: 3px solid var(--green-dark);
+  outline-offset: 4px;
+}
+
+.hero :where(a, button):focus-visible,
+.testimonial-band :where(a, button):focus-visible,
+.contact-section :where(a, button):focus-visible {
+  outline-color: var(--amber);
+}
+
+.button.primary:focus-visible,
+.carousel-toggle:focus-visible {
+  outline-color: var(--green-dark);
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -165,7 +181,6 @@ picture {
   height: clamp(299px, 36.4vw, 481px);
   perspective: 1200px;
   transform: translateY(-50%);
-  opacity: 0.86;
 }
 
 .hero-carousel-track {
@@ -173,6 +188,7 @@ picture {
   inset: 0;
   transform-style: preserve-3d;
   animation: hero-carousel-spin 22s linear infinite;
+  opacity: 0.86;
 }
 
 .hero-carousel-panel {
@@ -207,6 +223,51 @@ picture {
   to {
     transform: rotateY(-360deg);
   }
+}
+
+.hero-carousel-track.is-paused,
+.project-screen-track.is-paused {
+  animation-play-state: paused;
+}
+
+.carousel-toggle {
+  position: absolute;
+  z-index: 5;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 13px;
+  color: var(--ink);
+  border: 1px solid rgba(49, 95, 79, 0.28);
+  border-radius: 999px;
+  background: rgba(251, 250, 246, 0.94);
+  box-shadow: 0 10px 28px rgba(21, 57, 47, 0.2);
+  backdrop-filter: blur(10px);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.carousel-toggle:hover {
+  border-color: rgba(49, 95, 79, 0.52);
+  background: var(--white);
+}
+
+.carousel-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.carousel-toggle-icon {
+  display: inline-grid;
+  width: 1em;
+  place-items: center;
+  font-size: 0.9em;
 }
 
 .hero-overlay {
@@ -1199,6 +1260,17 @@ main section[id] {
   resize: vertical;
 }
 
+.contact-form .field-error {
+  color: #ffd98f;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.contact-form :is(input, textarea)[aria-invalid="true"] {
+  border-color: #ffd98f;
+  box-shadow: 0 0 0 2px rgba(255, 217, 143, 0.3);
+}
+
 .contact-form input:focus-visible,
 .contact-form textarea:focus-visible {
   outline: 3px solid var(--amber);
@@ -1221,6 +1293,10 @@ main section[id] {
 .form-consent a {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.contact-form .form-consent-error {
+  grid-column: 2;
 }
 
 .form-honeypot {
@@ -1448,8 +1524,11 @@ main section[id] {
     right: auto;
     width: min(620px, 82vw);
     height: 330px;
-    opacity: 0.76;
     transform: translateX(-50%);
+  }
+
+  .hero-carousel-track {
+    opacity: 0.76;
   }
 
   .hero-carousel-panel {
@@ -1559,8 +1638,11 @@ main section[id] {
     right: auto;
     width: 300px;
     height: 180px;
-    opacity: 0.62;
     transform: translateX(-50%);
+  }
+
+  .hero-carousel-track {
+    opacity: 0.62;
   }
 
   .hero-carousel-panel {

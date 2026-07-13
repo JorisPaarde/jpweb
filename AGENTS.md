@@ -56,11 +56,33 @@ because the app is an important add-on but the website remains the base project.
 When replacing screenshots, capture real live pages, not device mockups. For
 Supper Services, check for a cookie banner and dismiss it before capturing.
 
+Every automatic carousel has one `[data-carousel-toggle]` button and uses the
+shared logic in `script.js`. Keep the pause control on new carousels. Animation
+must pause on hover and keyboard focus, respect a manual pause for the rest of
+the page view, and remain disabled under `prefers-reduced-motion: reduce`.
+
 ## CSS Cache Busting
 
 HTML files reference `styles.css` with a `?v=` cache-busting query. When
 changing layout/CSS, bump the version in every HTML file so browser previews do
 not show stale CSS.
+
+HTML files also reference `script.js` with one shared `?v=` value. When changing
+JavaScript, increase that value in every HTML file without changing relative
+path depth.
+
+## Contact Form Error Recovery
+
+Validation failures are restored through a short-lived PHP session. Keep form
+values out of URLs, analytics, and browser storage. The server-side state must:
+
+- contain only name, company, email, phone, message, and field errors;
+- never contain the honeypot or a restored privacy acceptance;
+- expire after at most ten minutes and be deleted after the first read;
+- be returned only by the same-origin `/contact.php?action=state` endpoint.
+
+Keep each field error connected with `aria-describedby` and focus the first
+invalid field after restoration.
 
 ## Reveal Motion
 
@@ -111,6 +133,9 @@ git push origin main
   targets `/home/jpwebcreation/public_html`;
 - the workflow excludes `.git/`, `.github/`, `.DS_Store`, and Markdown files;
 - both jobs require the `JPWEB_DEPLOY_SSH_KEY` repository secret.
+- both jobs run HTTP smoke checks after `rsync`; keep critical routes, custom
+  404 behavior, the contact-state endpoint, and the environment-specific robots
+  header covered when the route structure changes.
 
 After a push, check the GitHub Actions run before describing test as deployed.
 After a manual production run, test the production homepage, all project routes,

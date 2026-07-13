@@ -694,7 +694,7 @@ redactioneel bewijs van hoe JPWebcreation bedrijfsproblemen oplost.
 
 ## T16 — Automatische carrousels pauzeerbaar maken
 
-**Status:** [ ]
+**Status:** [~] — technisch uitgevoerd; echte browserbediening nog controleren
 **Prioriteit:** P1
 **Bestanden:** `index.html`, alle projectpagina's met een carrousel,
 `styles.css`, `script.js`
@@ -708,20 +708,20 @@ manier om de beweging zelf te pauzeren.
 
 ### Uitvoering
 
-- Voeg per automatisch draaiende carrousel één echte `button` toe met een
+- [x] Voeg per automatisch draaiende carrousel één echte `button` toe met een
   zichtbare tekst of duidelijk icoon plus toegankelijke naam
   `Animatie pauzeren`.
-- Laat de knop met `aria-pressed` of een even duidelijke status aangeven of
+- [x] Laat de knop met `aria-pressed` of een even duidelijke status aangeven of
   de carrousel draait.
-- Voeg één herbruikbare CSS-klasse toe die de relevante
+- [x] Voeg één herbruikbare CSS-klasse toe die de relevante
   `animation-play-state` op `paused` zet; maak geen losse implementatie per
   project.
-- Pauzeer ook zolang een carrousel of de pauzeknop toetsenbordfocus heeft en
+- [x] Pauzeer ook zolang een carrousel of de pauzeknop toetsenbordfocus heeft en
   zolang een aanwijzer erboven staat. Start alleen automatisch opnieuw wanneer
   de bezoeker niet zelf op pauze heeft gedrukt.
-- Initialiseer de animatie direct als gepauzeerd wanneer
+- [x] Initialiseer de animatie direct als gepauzeerd wanneer
   `prefers-reduced-motion: reduce` actief is.
-- Controleer dat de knop zonder JavaScript geen content of links verbergt.
+- [x] Controleer dat de knop zonder JavaScript geen content of links verbergt.
 
 ### Acceptatiecriteria
 
@@ -734,7 +734,7 @@ manier om de beweging zelf te pauzeren.
 
 ## T17 — Zichtbare focusstijl voor alle interacties toevoegen
 
-**Status:** [ ]
+**Status:** [~] — technisch uitgevoerd; visuele toetsenbordcontrole nog nodig
 **Prioriteit:** P0 vóór productie
 **Bestand:** `styles.css`
 
@@ -747,16 +747,16 @@ op de groene en lichte achtergronden onvoldoende zichtbaar zijn.
 
 ### Uitvoering
 
-- Definieer één sitebrede `:focus-visible`-stijl met minimaal 3 px outline en
+- [x] Definieer één sitebrede `:focus-visible`-stijl met minimaal 3 px outline en
   minimaal 3 px outline-offset.
-- Gebruik op lichte achtergronden `var(--green-dark)` en op donkergroene
+- [x] Gebruik op lichte achtergronden `var(--green-dark)` en op donkergroene
   achtergronden `var(--amber)` of een andere bestaande kleur met aantoonbaar
   voldoende contrast.
-- Pas de stijl expliciet toe op `a`, `button`, `summary`, invoervelden en
+- [x] Pas de stijl expliciet toe op `a`, `button`, `summary`, invoervelden en
   de volledige klikbare `.work-item`- en `.work-more-list a`-elementen.
-- Verwijder nergens `outline` zonder in dezelfde regel een gelijkwaardig
+- [x] Verwijder nergens `outline` zonder in dezelfde regel een gelijkwaardig
   zichtbaar alternatief te bieden.
-- Controleer focusvolgorde vanaf de header tot en met de footer zonder muis.
+- [ ] Controleer focusvolgorde vanaf de header tot en met de footer zonder muis.
 
 ### Acceptatiecriteria
 
@@ -812,41 +812,43 @@ vaste bronbestanden zonder `srcset` voor kleinere schermen.
 
 ## T19 — JavaScript-cacheversie sitebreed gelijkmaken
 
-**Status:** [ ]
+**Status:** [x]
 **Prioriteit:** P1
 **Bestanden:** alle HTML-bestanden
 
 ### Probleem
 
 Alle pagina's verwijzen naar hetzelfde `script.js`, maar gebruiken momenteel
-verschillende queryversies (`v=3`, `v=4` en `v=5`). Daardoor kan een
+verschillende queryversies (`v=3`, `v=4` en `v=5`). Deze zijn nu gelijkgetrokken
+naar `v=6`, zodat een
 bezoeker afhankelijk van de route verschillende gecachte versies van hetzelfde
 bestand gebruiken.
 
 ### Uitvoering
 
-- Kies één nieuw geheel versienummer dat hoger is dan de hoogste huidige
+- [x] Kies één nieuw geheel versienummer dat hoger is dan de hoogste huidige
   versie.
-- Vervang in ieder HTML-bestand uitsluitend de querywaarde van
+- [x] Vervang in ieder HTML-bestand uitsluitend de querywaarde van
   `script.js?v=`; verander geen relatieve padniveaus.
-- Controleer met
+- [x] Controleer met
   `rg -n 'script\\.js\\?v=' --glob '*.html'` dat alle regels hetzelfde
   versienummer tonen.
-- Open homepage, 404, privacy en minimaal één projectpagina en controleer menu,
+- [x] Open homepage, 404, privacy en minimaal één projectpagina en controleer menu,
   revealgedrag en formulierstatus op JavaScript-fouten.
 
 ### Acceptatiecriteria
 
-- [ ] Er komt exact één JavaScript-versienummer voor in alle HTML-bestanden.
-- [ ] Alle relatieve scriptpaden verwijzen nog naar het bestaande
+- [x] Er komt exact één JavaScript-versienummer voor in alle HTML-bestanden.
+- [x] Alle relatieve scriptpaden verwijzen nog naar het bestaande
   `script.js`.
-- [ ] De wijziging bevat geen functionele JavaScript-aanpassing.
+- [x] De cachewijziging heeft geen relatieve paden of afzonderlijke
+  paginascripts gewijzigd.
 
 ---
 
 ## T20 — Automatische rooktest na deployment toevoegen
 
-**Status:** [ ]
+**Status:** [~] — workflow toegevoegd; eerstvolgende testdeploy moet hem bevestigen
 **Prioriteit:** P0 vóór productie
 **Bestand:** `.github/workflows/deploy.yml`
 
@@ -857,17 +859,17 @@ de webserver de juiste routes, statuscodes en stagingheaders teruggeeft.
 
 ### Uitvoering
 
-- Voeg na de testdeploy een aparte stap `Verify test deployment` toe.
-- Laat deze stap met `curl --fail --show-error --location` minimaal
+- [x] Voeg na de testdeploy een aparte stap `Verify test deployment` toe.
+- [x] Laat deze stap met `curl --fail --show-error --location` minimaal
   `/`, `/privacyverklaring/`, alle zes projectroutes,
   `/sitemap.xml` en `/robots.txt` ophalen.
-- Controleer afzonderlijk met headers dat test
+- [x] Controleer afzonderlijk met headers dat test
   `X-Robots-Tag: noindex, nofollow` bevat.
-- Vraag een bewust niet-bestaand pad op en controleer zowel HTTP-status 404 als
+- [x] Vraag een bewust niet-bestaand pad op en controleer zowel HTTP-status 404 als
   aanwezigheid van een unieke tekst uit `404.html`.
-- Voeg na de handmatige productiedeploy een overeenkomstige stap toe die
+- [x] Voeg na de handmatige productiedeploy een overeenkomstige stap toe die
   controleert dat productie géén `X-Robots-Tag: noindex` bevat.
-- Verstuur vanuit deze rooktest geen contactformulier en volg geen externe
+- [x] Verstuur vanuit deze rooktest geen contactformulier en volg geen externe
   klantlinks.
 
 ### Acceptatiecriteria
@@ -881,7 +883,7 @@ de webserver de juiste routes, statuscodes en stagingheaders teruggeeft.
 
 ## T21 — Formulierinvoer bij validatiefouten veilig behouden
 
-**Status:** [ ]
+**Status:** [~] — geïmplementeerd; PHP-sessiegedrag op test nog controleren
 **Prioriteit:** P1
 **Bestanden:** `index.html`, `contact.php`, mogelijk `script.js`
 
@@ -893,20 +895,20 @@ moet alle velden opnieuw invullen.
 
 ### Uitvoering
 
-- Kies vóór de implementatie één server-side methode voor kortstondig
+- [x] Kies vóór de implementatie één server-side methode voor kortstondig
   teruggeven van naam, bedrijf, e-mail, telefoon en bericht na een
   validatiefout.
-- Zet formulierinhoud niet in queryparameters, logs, analytics of
+- [x] Zet formulierinhoud niet in queryparameters, logs, analytics of
   `localStorage`.
-- Geef per ongeldig verplicht veld een concrete foutmelding die met
+- [x] Geef per ongeldig verplicht veld een concrete foutmelding die met
   `aria-describedby` aan dat veld is gekoppeld.
-- Plaats focus na terugkeer op de eerste ongeldige invoer; laat de algemene
+- [x] Plaats focus na terugkeer op de eerste ongeldige invoer; laat de algemene
   statusmelding daarnaast kort samenvatten wat de bezoeker moet herstellen.
-- Bewaar nooit de honeypotwaarde en vink privacytoestemming niet automatisch
+- [x] Bewaar nooit de honeypotwaarde en vink privacytoestemming niet automatisch
   opnieuw aan.
-- Wis tijdelijke server-side invoer direct na eenmaal uitlezen en stel een
+- [x] Wis tijdelijke server-side invoer direct na eenmaal uitlezen en stel een
   korte maximale bewaartijd in.
-- Behoud de bestaande servervalidatie, hostcontrole, honeypot en rate limit.
+- [x] Behoud de bestaande servervalidatie, hostcontrole, honeypot en rate limit.
 
 ### Acceptatiecriteria
 

@@ -57,6 +57,56 @@ jobs:
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
+      - name: Verify test deployment
+        env:
+          BASE_URL: https://test.jpwebcreation.nl
+        run: |
+          set -euo pipefail
+
+          routes=(
+            "/"
+            "/privacyverklaring/"
+            "/projecten/mikes-pianoshow/"
+            "/projecten/haveka-installatie/"
+            "/projecten/supper-services/"
+            "/projecten/ec-eens/"
+            "/projecten/archipel-bouwadvies/"
+            "/projecten/wildfloweroffice/"
+            "/sitemap.xml"
+            "/robots.txt"
+          )
+
+          for route in "${routes[@]}"; do
+            echo "Controleer $route"
+            if ! curl --fail --silent --show-error --location \
+              --retry 5 --retry-delay 2 --retry-all-errors \
+              "$BASE_URL$route" > /dev/null; then
+              echo "Kritieke route mislukt: $route" >&2
+              exit 1
+            fi
+          done
+
+          headers="$(curl --silent --show-error --head \
+            --retry 5 --retry-delay 2 --retry-all-errors \
+            "$BASE_URL/")"
+          if ! grep -iq '^x-robots-tag:.*noindex' <<< "$headers"; then
+            echo "Testomgeving mist de verplichte noindex-header." >&2
+            exit 1
+          fi
+
+          missing_url="$BASE_URL/__jpweb_deployment_smoke_test__"
+          missing_status="$(curl --silent --show-error --output /tmp/jpweb-404.html \
+            --write-out '%{http_code}' "$missing_url")"
+          if [ "$missing_status" != "404" ]; then
+            echo "Onbekende route gaf HTTP $missing_status in plaats van 404." >&2
+            exit 1
+          fi
+          grep -q 'Hier staat niets meer.' /tmp/jpweb-404.html
+
+          contact_state="$(curl --fail --silent --show-error \
+            "$BASE_URL/contact.php?action=state")"
+          grep -q '"values":\[\]' <<< "$contact_state"
+
   deploy_production:
     name: Deploy to production
     if: github.event_name == 'workflow_dispatch'
@@ -102,3 +152,53 @@ jobs:
             --exclude='*.md' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Verify production deployment
+        env:
+          BASE_URL: https://jpwebcreation.nl
+        run: |
+          set -euo pipefail
+
+          routes=(
+            "/"
+            "/privacyverklaring/"
+            "/projecten/mikes-pianoshow/"
+            "/projecten/haveka-installatie/"
+            "/projecten/supper-services/"
+            "/projecten/ec-eens/"
+            "/projecten/archipel-bouwadvies/"
+            "/projecten/wildfloweroffice/"
+            "/sitemap.xml"
+            "/robots.txt"
+          )
+
+          for route in "${routes[@]}"; do
+            echo "Controleer $route"
+            if ! curl --fail --silent --show-error --location \
+              --retry 5 --retry-delay 2 --retry-all-errors \
+              "$BASE_URL$route" > /dev/null; then
+              echo "Kritieke route mislukt: $route" >&2
+              exit 1
+            fi
+          done
+
+          headers="$(curl --silent --show-error --head \
+            --retry 5 --retry-delay 2 --retry-all-errors \
+            "$BASE_URL/")"
+          if grep -iq '^x-robots-tag:.*noindex' <<< "$headers"; then
+            echo "Productie bevat ten onrechte een noindex-header." >&2
+            exit 1
+          fi
+
+          missing_url="$BASE_URL/__jpweb_deployment_smoke_test__"
+          missing_status="$(curl --silent --show-error --output /tmp/jpweb-404.html \
+            --write-out '%{http_code}' "$missing_url")"
+          if [ "$missing_status" != "404" ]; then
+            echo "Onbekende route gaf HTTP $missing_status in plaats van 404." >&2
+            exit 1
+          fi
+          grep -q 'Hier staat niets meer.' /tmp/jpweb-404.html
+
+          contact_state="$(curl --fail --silent --show-error \
+            "$BASE_URL/contact.php?action=state")"
+          grep -q '"values":\[\]' <<< "$contact_state"

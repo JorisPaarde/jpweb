@@ -33,7 +33,7 @@
       }
     </script>
     <link rel="preconnect" href="https://jpwebcreation.nl">
-    <link rel="stylesheet" href="styles.css?v=37">
+    <link rel="stylesheet" href="styles.css?v=38">
   </head>
   <body>
     <header class="site-header">
@@ -57,7 +57,7 @@
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-media" aria-hidden="true">
+        <div class="hero-media">
           <div class="hero-carousel">
             <div class="hero-carousel-track">
               <picture class="hero-carousel-panel" style="--i: 0">
@@ -85,6 +85,10 @@
                 <img src="assets/projects/wildfloweroffice-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
               </picture>
             </div>
+            <button class="carousel-toggle" type="button" data-carousel-toggle aria-pressed="false" aria-label="Animatie pauzeren">
+              <span class="carousel-toggle-icon" aria-hidden="true">Ⅱ</span>
+              <span data-carousel-label>Pauzeren</span>
+            </button>
           </div>
         </div>
         <div class="hero-overlay"></div>
@@ -532,37 +536,41 @@
             <div class="form-row">
               <label>
                 Naam
-                <input type="text" name="name" autocomplete="name" maxlength="120" required>
+                <input id="contact-name" type="text" name="name" autocomplete="name" maxlength="120" required>
+                <span id="contact-name-error" class="field-error" hidden></span>
               </label>
               <label>
                 Bedrijf <span>(optioneel)</span>
-                <input type="text" name="company" autocomplete="organization" maxlength="160">
+                <input id="contact-company" type="text" name="company" autocomplete="organization" maxlength="160">
               </label>
             </div>
             <div class="form-row">
               <label>
                 E-mailadres
-                <input type="email" name="email" autocomplete="email" maxlength="254" required>
+                <input id="contact-email" type="email" name="email" autocomplete="email" maxlength="254" required>
+                <span id="contact-email-error" class="field-error" hidden></span>
               </label>
               <label>
                 Telefoonnummer <span>(optioneel)</span>
-                <input type="tel" name="phone" autocomplete="tel" maxlength="40">
+                <input id="contact-phone" type="tel" name="phone" autocomplete="tel" maxlength="40">
               </label>
             </div>
             <label>
               Waar loop je tegenaan?
-              <textarea name="message" rows="6" minlength="10" maxlength="5000" required></textarea>
+              <textarea id="contact-message" name="message" rows="6" minlength="10" maxlength="5000" required></textarea>
+              <span id="contact-message-error" class="field-error" hidden></span>
             </label>
             <label class="form-honeypot" aria-hidden="true">
               Website
               <input type="text" name="website" tabindex="-1" autocomplete="off">
             </label>
             <label class="form-consent">
-              <input type="checkbox" name="privacy" value="accepted" required>
+              <input id="contact-privacy" type="checkbox" name="privacy" value="accepted" required>
               <span>
                 Ik ga ermee akkoord dat mijn gegevens worden gebruikt om op mijn vraag te reageren.
                 Lees de <a href="privacyverklaring/">privacyverklaring</a>.
               </span>
+              <span id="contact-privacy-error" class="field-error form-consent-error" hidden></span>
             </label>
             <button class="button primary" type="submit">Verstuur je vraag</button>
           </form>
@@ -592,6 +600,6 @@
       </nav>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
   </body>
 </html>

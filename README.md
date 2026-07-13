@@ -20,8 +20,8 @@ be tested in a PHP-capable environment, preferably on the test domain.
 
 - `index.html`: homepage and contact form
 - `styles.css`: shared design and responsive rules
-- `script.js`: navigation, reveal effects, and form-result feedback
-- `contact.php`: validation, rate limiting, and mail delivery
+- `script.js`: navigation, reveal effects, carousel controls, and form-result feedback
+- `contact.php`: validation, one-time form recovery, rate limiting, and mail delivery
 - `projecten/*/index.html`: six project cases
 - `.htaccess`: redirects, caching, 404 handling, and staging noindex header
 - `.github/workflows/deploy.yml`: test and production deployment
@@ -52,6 +52,10 @@ Production deploys are manual. After reviewing test, run the `Deploy site`
 workflow from GitHub Actions with `Run workflow`; that job uses the `production`
 environment and deploys the selected `main` commit.
 
+Both deploy jobs finish with an HTTP smoke test. It checks all public routes,
+the custom 404, the contact-state endpoint, and the environment-specific
+`X-Robots-Tag`. A failed check makes the deployment workflow fail.
+
 The workflow requires this repository secret:
 
 - `JPWEB_DEPLOY_SSH_KEY`: private SSH key for the GitHub Actions deploy user
@@ -72,7 +76,7 @@ uses `--delete` so removed local files are also removed from the server.
 ## Required checks
 
 Before pushing, verify that CSS braces are balanced, internal paths still exist,
-and every HTML file uses the same current `styles.css?v=` value. After the test
-deploy, inspect the homepage at mobile and desktop widths, open all cases, and
-test the contact form. Before production deploy, complete the open checks in
-`QA-RAPPORT.md` and `SITE-VERBETERPLAN.md`.
+and every HTML file uses the same current `styles.css?v=` and `script.js?v=`
+value. After the test deploy, inspect the homepage at mobile and desktop widths,
+open all cases, and test the contact form. Before production deploy, complete
+the open checks in `QA-RAPPORT.md` and `SITE-VERBETERPLAN.md`.
