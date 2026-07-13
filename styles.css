@@ -156,13 +156,13 @@ picture {
 }
 
 .hero-carousel {
-  --carousel-radius: clamp(360px, 40vw, 560px);
+  --carousel-radius: clamp(240px, 27vw, 390px);
   position: absolute;
   z-index: 2;
   top: 50%;
-  right: max(clamp(-80px, -2vw, -24px), calc((100vw - var(--site-max)) / 2 - 80px));
-  width: clamp(420px, 48vw, 680px);
-  height: clamp(270px, 34vw, 430px);
+  right: max(clamp(-180px, -8vw, -96px), calc((100vw - var(--site-max)) / 2 - 140px));
+  width: clamp(330px, 34vw, 560px);
+  height: clamp(230px, 28vw, 370px);
   perspective: 1200px;
   transform: translateY(-50%);
   opacity: 0.86;
@@ -179,9 +179,9 @@ picture {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(300px, 30vw, 440px);
+  width: clamp(230px, 23vw, 340px);
   aspect-ratio: 16 / 10;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: #eef1ec;
@@ -191,6 +191,12 @@ picture {
     rotateY(calc(var(--i) * 60deg))
     translateZ(var(--carousel-radius));
   backface-visibility: hidden;
+}
+
+.hero-carousel-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 @keyframes hero-carousel-spin {
@@ -582,6 +588,7 @@ main section[id] {
 
 .work-shot {
   position: relative;
+  aspect-ratio: 36 / 25;
   overflow: hidden;
   border: 1px solid rgba(49, 95, 79, 0.16);
   border-radius: 8px;
@@ -598,11 +605,16 @@ main section[id] {
     linear-gradient(0deg, rgba(7, 63, 64, 0.12), transparent 42%);
 }
 
+.work-shot picture {
+  width: 100%;
+  height: 100%;
+}
+
 .work-shot img {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 36 / 25;
+  height: 100%;
   object-fit: cover;
-  transform: scale(1.015);
   transition: transform 360ms ease;
 }
 
