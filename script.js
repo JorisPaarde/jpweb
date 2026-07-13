@@ -34,13 +34,16 @@ carouselToggles.forEach((button) => {
   }
 
   let manualPaused = false;
+  let manualPlaying = false;
   let pointerInside = false;
   let focusInside = false;
   let userChangedState = false;
 
   const renderCarouselState = () => {
     const reducedMotion = reduceMotionQuery.matches;
-    const paused = reducedMotion || manualPaused || pointerInside || focusInside;
+    const paused = reducedMotion
+      || manualPaused
+      || (!manualPlaying && (pointerInside || focusInside));
 
     track.classList.toggle("is-paused", paused);
     button.disabled = reducedMotion;
@@ -66,7 +69,13 @@ carouselToggles.forEach((button) => {
 
   button.addEventListener("click", () => {
     userChangedState = true;
-    manualPaused = !manualPaused;
+    if (manualPaused) {
+      manualPaused = false;
+      manualPlaying = true;
+    } else {
+      manualPaused = true;
+      manualPlaying = false;
+    }
     renderCarouselState();
   });
 
@@ -77,6 +86,9 @@ carouselToggles.forEach((button) => {
 
   carousel.addEventListener("pointerleave", () => {
     pointerInside = false;
+    if (!focusInside) {
+      manualPlaying = false;
+    }
     renderCarouselState();
   });
 
@@ -88,11 +100,17 @@ carouselToggles.forEach((button) => {
   carousel.addEventListener("focusout", (event) => {
     if (!carousel.contains(event.relatedTarget)) {
       focusInside = false;
+      if (!pointerInside) {
+        manualPlaying = false;
+      }
       renderCarouselState();
     }
   });
 
   const handleMotionPreference = () => {
+    if (reduceMotionQuery.matches) {
+      manualPlaying = false;
+    }
     if (!userChangedState && !reduceMotionQuery.matches) {
       manualPaused = false;
     }

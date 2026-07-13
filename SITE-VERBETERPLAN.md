@@ -820,7 +820,7 @@ vaste bronbestanden zonder `srcset` voor kleinere schermen.
 
 Alle pagina's verwijzen naar hetzelfde `script.js`, maar gebruiken momenteel
 verschillende queryversies (`v=3`, `v=4` en `v=5`). Deze zijn nu gelijkgetrokken
-naar `v=6`, zodat een
+naar `v=7`, zodat een
 bezoeker afhankelijk van de route verschillende gecachte versies van hetzelfde
 bestand gebruiken.
 

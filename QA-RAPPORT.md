@@ -63,7 +63,7 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 
 - Openende en sluitende CSS-haakjes zijn in balans.
 - Alle 9 HTML-pagina's gebruiken CSS-cacheversie `v=39` en
-  JavaScript-cacheversie `v=6`.
+  JavaScript-cacheversie `v=7`.
 - `script.js` is door de lokale Node-syntaxcontrole gekomen.
 - `prefers-reduced-motion` schakelt de hero- en projectcarrouselanimaties uit.
 - Homepage en alle zes projectpagina's hebben dezelfde zichtbare pauzeknop.
@@ -84,7 +84,7 @@ Links die in een nieuw tabblad openen gebruiken `rel="noopener"`.
 - Openende en sluitende CSS-haakjes zijn opnieuw geteld: 270 paren.
 - Een lokale HTML- en linkaudit controleerde opnieuw 9 pagina's, precies één
   `h1` per pagina, alt-attributen, bestaande interne doelen, CSS `v=39` en
-  JavaScript `v=6` en
+  JavaScript `v=7` en
   de verwachte verdeling van 4 primaire plus 2 secundaire projecten.
 - De projectkop valt onder 900 pixels aantoonbaar terug naar één kolom met een
   selector die dezelfde specificiteit heeft als de desktopregel. Op maximaal
