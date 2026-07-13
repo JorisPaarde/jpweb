@@ -156,13 +156,13 @@ picture {
 }
 
 .hero-carousel {
-  --carousel-radius: clamp(240px, 27vw, 390px);
+  --carousel-radius: clamp(312px, 35.1vw, 507px);
   position: absolute;
   z-index: 2;
   top: 50%;
   right: max(clamp(-180px, -8vw, -96px), calc((100vw - var(--site-max)) / 2 - 140px));
-  width: clamp(330px, 34vw, 560px);
-  height: clamp(230px, 28vw, 370px);
+  width: clamp(429px, 44.2vw, 728px);
+  height: clamp(299px, 36.4vw, 481px);
   perspective: 1200px;
   transform: translateY(-50%);
   opacity: 0.86;
@@ -179,7 +179,7 @@ picture {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(230px, 23vw, 340px);
+  width: clamp(299px, 29.9vw, 442px);
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 12px;
