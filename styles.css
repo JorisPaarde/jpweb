@@ -19,6 +19,7 @@
   --type-body-large: clamp(1.03rem, 1.1vw, 1.12rem);
   --type-item-title: clamp(1.12rem, 1.3vw, 1.3rem);
   --site-max: 1600px;
+  --site-gutter: clamp(20px, 6vw, 86px);
 }
 
 * {
@@ -35,12 +36,7 @@ body {
   background: var(--paper);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
-}
-
-body > main,
-body > footer {
-  max-width: var(--site-max);
-  margin-inline: auto;
+  overflow-x: hidden;
 }
 
 a {
@@ -137,8 +133,8 @@ img {
   position: relative;
   min-height: 88svh;
   display: grid;
-  align-items: end;
-  padding-top: clamp(104px, 12vh, 140px);
+  align-items: center;
+  padding: clamp(112px, 12vh, 150px) 0 clamp(76px, 9vh, 118px);
   overflow: hidden;
   color: var(--white);
 }
@@ -159,11 +155,11 @@ img {
   position: absolute;
   z-index: 2;
   top: 50%;
-  right: clamp(-80px, -2vw, -24px);
+  right: max(clamp(-80px, -2vw, -24px), calc((100vw - var(--site-max)) / 2 - 80px));
   width: clamp(420px, 48vw, 680px);
   height: clamp(270px, 34vw, 430px);
   perspective: 1200px;
-  transform: translateY(-44%);
+  transform: translateY(-50%);
   opacity: 0.86;
 }
 
@@ -212,8 +208,8 @@ img {
 .hero-content {
   position: relative;
   z-index: 3;
-  width: min(700px, calc(100% - 40px));
-  margin: 0 clamp(20px, 7vw, 96px) clamp(70px, 10vh, 110px);
+  width: min(var(--site-max), calc(100% - (var(--site-gutter) * 2)));
+  margin: clamp(30px, 6vh, 70px) auto 0;
 }
 
 .eyebrow {
@@ -296,15 +292,20 @@ h3 {
 
 .proof-strip {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--line);
+  grid-template-columns: repeat(3, minmax(0, calc(var(--site-max) / 3)));
+  justify-content: center;
+  background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
 
 .proof-strip > div {
   padding: 24px clamp(20px, 4vw, 56px);
+  border-left: 1px solid var(--line);
   background: var(--paper);
+}
+
+.proof-strip > div:first-child {
+  border-left: 0;
 }
 
 .proof-strip strong,
@@ -325,7 +326,7 @@ h3 {
 }
 
 .section {
-  padding: clamp(72px, 10vw, 130px) clamp(20px, 6vw, 86px);
+  padding: clamp(72px, 10vw, 130px) var(--site-gutter);
 }
 
 main section[id] {
@@ -334,7 +335,8 @@ main section[id] {
 
 .intro-grid {
   display: grid;
-  grid-template-columns: minmax(340px, 0.92fr) minmax(320px, 0.78fr);
+  grid-template-columns: minmax(340px, 860px) minmax(320px, 640px);
+  justify-content: center;
   gap: clamp(30px, 5vw, 74px);
   align-items: center;
   padding-top: clamp(48px, 6vw, 76px);
@@ -365,7 +367,8 @@ main section[id] {
 .pain-points,
 .services {
   display: grid;
-  grid-template-columns: minmax(260px, 0.45fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(260px, 520px) minmax(420px, 900px);
+  justify-content: center;
   gap: clamp(34px, 7vw, 110px);
   align-items: start;
   padding-top: clamp(56px, 7vw, 92px);
@@ -524,7 +527,9 @@ main section[id] {
 
 .work-layout {
   display: grid;
+  max-width: var(--site-max);
   gap: 18px;
+  margin-inline: auto;
 }
 
 .work-grid {
@@ -686,7 +691,8 @@ main section[id] {
 
 .testimonial-band {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, calc(var(--site-max) / 3)));
+  justify-content: center;
   gap: 1px;
   background: rgba(255, 255, 255, 0.18);
   color: var(--white);
@@ -723,7 +729,8 @@ main section[id] {
 
 .about-section {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(280px, 0.72fr);
+  grid-template-columns: minmax(280px, 800px) minmax(280px, 560px);
+  justify-content: center;
   gap: clamp(36px, 8vw, 110px);
   align-items: center;
   background: var(--paper);
@@ -795,9 +802,10 @@ main section[id] {
 
 .contact-section {
   display: grid;
-  grid-template-columns: minmax(280px, 0.95fr) minmax(280px, 0.7fr);
+  grid-template-columns: minmax(280px, 780px) minmax(280px, 560px);
+  justify-content: center;
   gap: clamp(30px, 7vw, 90px);
-  padding: clamp(72px, 10vw, 130px) clamp(20px, 6vw, 86px);
+  padding: clamp(72px, 10vw, 130px) var(--site-gutter);
   color: var(--white);
   background:
     linear-gradient(120deg, rgba(21, 57, 47, 0.94), rgba(49, 95, 79, 0.9)),
@@ -817,11 +825,12 @@ main section[id] {
 .project-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 680px) minmax(320px, 880px);
+  justify-content: center;
   gap: clamp(34px, 7vw, 90px);
   align-items: center;
   overflow: hidden;
-  padding: clamp(120px, 15vw, 180px) clamp(20px, 6vw, 86px) clamp(62px, 8vw, 110px);
+  padding: clamp(120px, 15vw, 180px) var(--site-gutter) clamp(62px, 8vw, 110px);
 }
 
 .project-hero-has-carousel::before {
@@ -962,8 +971,9 @@ main section[id] {
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  max-width: var(--site-max);
   gap: 1px;
-  margin-top: 30px;
+  margin: 30px auto 0;
   background: var(--line);
 }
 
@@ -986,9 +996,10 @@ main section[id] {
 
 .case-section {
   display: grid;
-  grid-template-columns: minmax(260px, 0.7fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(260px, 560px) minmax(280px, 860px);
+  justify-content: center;
   gap: clamp(32px, 7vw, 90px);
-  padding: clamp(62px, 9vw, 110px) clamp(20px, 6vw, 86px);
+  padding: clamp(62px, 9vw, 110px) var(--site-gutter);
   border-top: 1px solid var(--line);
 }
 
@@ -1237,10 +1248,12 @@ main section[id] {
 
 .site-footer {
   display: flex;
+  max-width: var(--site-max);
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 26px clamp(20px, 6vw, 86px);
+  margin-inline: auto;
+  padding: 26px var(--site-gutter);
   color: var(--muted);
   background: var(--paper);
   border-top: 1px solid var(--line);
@@ -1254,7 +1267,9 @@ main section[id] {
 }
 
 .legal-hero {
-  padding: clamp(122px, 15vw, 180px) clamp(20px, 6vw, 86px) clamp(34px, 5vw, 58px);
+  max-width: var(--site-max);
+  margin-inline: auto;
+  padding: clamp(122px, 15vw, 180px) var(--site-gutter) clamp(34px, 5vw, 58px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -1271,7 +1286,8 @@ main section[id] {
 
 .legal-content {
   max-width: 860px;
-  padding: clamp(48px, 7vw, 88px) clamp(20px, 6vw, 86px);
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 88px) var(--site-gutter);
 }
 
 .legal-content section + section {
