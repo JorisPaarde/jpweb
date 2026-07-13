@@ -6,6 +6,36 @@ ErrorDocument 404 /404.html
 Redirect 301 /projecten/website-mikes-pianoshow/ /projecten/mikes-pianoshow/
 Redirect 301 /projecten/website-wildfloweroffice/ /projecten/wildfloweroffice/
 
+<IfModule LiteSpeed>
+  CacheDisable public /
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|mjs|avif|gif|jpe?g|png|svg|webp|ico|woff2?)$">
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(html?)$">
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
+</IfModule>
+
 <IfModule mod_setenvif.c>
   SetEnvIfNoCase Host "^test\.jpwebcreation\.nl(?::[0-9]+)?$" staging_host
 </IfModule>
