@@ -46,31 +46,46 @@ window.addEventListener("scroll", updateHeader, { passive: true });
 if (contactStatus) {
   const contactResult = new URLSearchParams(window.location.search).get("contact");
   const messages = {
-    success: {
-      text: "Bedankt. Je bericht is verzonden.",
-      className: "is-success",
-    },
-    invalid: {
-      text: "Controleer de ingevulde gegevens en probeer het opnieuw.",
-      className: "is-error",
-    },
-    wait: {
-      text: "Wacht even voordat je het formulier opnieuw verstuurt.",
-      className: "is-error",
-    },
-    error: {
-      text: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
-      className: "is-error",
-    },
+    invalid: "Controleer de ingevulde gegevens en probeer het opnieuw.",
+    wait: "Wacht even voordat je het formulier opnieuw verstuurt.",
+    error: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
   };
 
-  if (contactResult && messages[contactResult]) {
-    contactStatus.textContent = messages[contactResult].text;
-    contactStatus.classList.add(messages[contactResult].className);
+  if (contactResult === "success") {
+    const contactForm = contactStatus.closest(".contact-form");
+
+    contactStatus.innerHTML = `
+      <span class="form-status-icon" aria-hidden="true">✓</span>
+      <span class="form-status-kicker">Bericht verzonden</span>
+      <strong>Bedankt, ik heb je bericht ontvangen.</strong>
+      <span>Ik reageer binnen één werkdag. Je hoeft niets meer te doen.</span>
+    `;
+    contactStatus.classList.add("is-success");
+    contactStatus.setAttribute("tabindex", "-1");
+    contactStatus.hidden = false;
+    contactForm?.classList.add("has-success");
+
+    window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      contactStatus.scrollIntoView({
+        block: "center",
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+      contactStatus.focus({ preventScroll: true });
+    });
+  } else if (contactResult && messages[contactResult]) {
+    contactStatus.textContent = messages[contactResult];
+    contactStatus.classList.add("is-error");
     contactStatus.hidden = false;
 
     window.requestAnimationFrame(() => {
-      contactStatus.scrollIntoView({ block: "center", behavior: "auto" });
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      contactStatus.scrollIntoView({
+        block: "center",
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
     });
   }
 }
