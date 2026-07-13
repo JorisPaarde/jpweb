@@ -390,10 +390,6 @@ main section[id] {
   top: 100px;
 }
 
-.process-intro .eyebrow {
-  color: var(--green);
-}
-
 .process-intro h2,
 .pain-points .section-heading h2,
 .services .section-heading h2 {
@@ -488,6 +484,10 @@ main section[id] {
 .work-feature p {
   margin-bottom: 0;
   color: var(--muted);
+}
+
+.process .eyebrow {
+  color: var(--coral);
 }
 
 .work-section {
@@ -734,15 +734,19 @@ main section[id] {
 
 .about-section {
   display: grid;
-  grid-template-columns: minmax(280px, 800px) minmax(280px, 560px);
+  grid-template-columns: minmax(260px, 520px) minmax(420px, 900px);
   justify-content: center;
-  gap: clamp(36px, 8vw, 110px);
+  gap: clamp(34px, 7vw, 110px);
   align-items: center;
   background: var(--paper);
 }
 
 .about-copy {
-  max-width: 760px;
+  max-width: 520px;
+}
+
+.about-copy h2 {
+  font-size: var(--type-section-compact);
 }
 
 .about-copy p:not(.eyebrow) {
