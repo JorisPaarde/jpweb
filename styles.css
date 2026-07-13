@@ -389,6 +389,10 @@ main section[id] {
   top: 100px;
 }
 
+.process-intro .eyebrow {
+  color: var(--green);
+}
+
 .process-intro h2,
 .pain-points .section-heading h2,
 .services .section-heading h2 {
