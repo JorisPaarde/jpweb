@@ -122,14 +122,18 @@
       }
     </script>
     <link rel="preconnect" href="https://jpwebcreation.nl">
-    <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=43">
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="styles.css?v=44">
   </head>
   <body>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="JPWebcreation home">
-        <span class="brand-mark">JP</span>
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-mark-image brand-mark-image-light" src="/assets/logo/logo-mark-diap.svg" alt="" width="38" height="38">
+          <img class="brand-mark-image brand-mark-image-dark" src="/assets/logo/logo-mark.svg" alt="" width="38" height="38">
+        </span>
         <span>JPWebcreation</span>
       </a>
       <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" aria-controls="site-nav">
@@ -554,6 +558,7 @@
         </div>
         <div class="service-grid">
           <article class="reveal-card">
+            <span class="service-icon service-icon-website" aria-hidden="true"></span>
             <h3>Website die duidelijk uitlegt en aanvragen ondersteunt</h3>
             <p>
               Een nieuwe of verbeterde website met een heldere structuur, professionele
@@ -561,6 +566,7 @@
             </p>
           </article>
           <article class="reveal-card">
+            <span class="service-icon service-icon-ai" aria-hidden="true"></span>
             <h3>Praktische AI voor een concreet bedrijfsproces</h3>
             <p>
               Van informatie samenvatten tot medewerkers door een vaste werkwijze begeleiden: ik
@@ -573,6 +579,7 @@
             <a class="service-link" href="ai/">Bekijk praktische AI-mogelijkheden <span aria-hidden="true">→</span></a>
           </article>
           <article class="reveal-card">
+            <span class="service-icon service-icon-beheer" aria-hidden="true"></span>
             <h3>Technisch beheer en doorontwikkeling</h3>
             <p>
               Onderhoud, hosting, foutopsporing en verdere uitbreiding. Zo kan je website of tool

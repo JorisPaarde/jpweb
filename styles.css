@@ -101,12 +101,37 @@ picture {
 }
 
 .brand-mark {
-  display: grid;
+  position: relative;
+  display: block;
+  flex: 0 0 38px;
   width: 38px;
   height: 38px;
-  place-items: center;
-  border: 1px solid currentColor;
-  background: rgba(255, 255, 255, 0.1);
+}
+
+.brand-mark-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 180ms ease;
+}
+
+.brand-mark-image-dark {
+  opacity: 0;
+}
+
+.site-header.is-scrolled .brand-mark-image-light,
+.site-header.is-open .brand-mark-image-light,
+.project-page .site-header .brand-mark-image-light,
+.not-found-page .site-header .brand-mark-image-light {
+  opacity: 0;
+}
+
+.site-header.is-scrolled .brand-mark-image-dark,
+.site-header.is-open .brand-mark-image-dark,
+.project-page .site-header .brand-mark-image-dark,
+.not-found-page .site-header .brand-mark-image-dark {
+  opacity: 1;
 }
 
 .site-nav {
@@ -481,6 +506,36 @@ main section[id] {
 .pain-grid p,
 .service-grid p {
   max-width: 860px;
+}
+
+.service-icon {
+  display: block;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 16px;
+  color: var(--green-dark);
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+}
+
+.service-icon-website {
+  mask-image: url("assets/icons/website.svg");
+  -webkit-mask-image: url("assets/icons/website.svg");
+}
+
+.service-icon-ai {
+  mask-image: url("assets/icons/ai-toepassingen.svg");
+  -webkit-mask-image: url("assets/icons/ai-toepassingen.svg");
+}
+
+.service-icon-beheer {
+  mask-image: url("assets/icons/beheer-onderhoud.svg");
+  -webkit-mask-image: url("assets/icons/beheer-onderhoud.svg");
 }
 
 .process span {
