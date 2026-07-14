@@ -95,7 +95,7 @@ Use the existing `.reveal-card` class for repeated, non-interactive content
 items where a subtle entrance helps scanning. It currently applies to:
 
 - the three recognizable-problem items;
-- the five process steps;
+- the four process principles;
 - the four primary project rows;
 - the three review blocks;
 - the three service items.
