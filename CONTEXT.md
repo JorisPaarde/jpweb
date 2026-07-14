@@ -133,6 +133,12 @@ Joris heeft ervaring met:
 - AI-assisted softwareontwikkeling;
 - een omvangrijk AI-softwareproject.
 
+Voor Jobo de Bouwers verzorgde Joris een AI-workshop/training over toepassingen
+in de bouw- en AEC-sector. Het programma behandelde onder meer Microsoft Copilot
+in Word en Outlook, ChatGPT in de dagelijkse praktijk, administratieve
+processen, calculatie, projectvoorbereiding en communicatie. Daarbij zijn ook
+voorbeelden rond Scansys en Exact AEC gebruikt.
+
 Gebruik dit alleen als bewijs van ervaring. Maak AI niet groter dan de vraag en
 gebruik nooit vertrouwelijke project- of klantinformatie.
 
