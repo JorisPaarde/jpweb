@@ -7,7 +7,7 @@
   --green-dark: #15392f;
   --leaf: #6f8f78;
   --amber: #e7ad52;
-  --coral: #c95f45;
+  --coral: #a84832;
   --white: #ffffff;
   --line: rgba(24, 32, 29, 0.14);
   --shadow: 0 22px 70px rgba(21, 57, 47, 0.18);
@@ -1036,7 +1036,8 @@ main section[id] {
   color: var(--white);
   background:
     linear-gradient(120deg, rgba(21, 57, 47, 0.94), rgba(49, 95, 79, 0.9)),
-    url("https://jpwebcreation.nl/wp-content/uploads/2025/11/hulp-bij-website.webp") center / cover;
+    url("assets/joris-paardekooper.webp") right 12% bottom / min(42vw, 520px) auto no-repeat,
+    linear-gradient(135deg, #15392f, #315f4f);
 }
 
 .project-page {
