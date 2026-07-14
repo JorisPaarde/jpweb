@@ -1863,19 +1863,37 @@ main section[id] {
   }
 
   .hero {
-    min-height: 940px;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "hero-eyebrow"
+      "hero-title"
+      "hero-copy"
+      "hero-carousel"
+      "hero-actions";
     align-items: start;
-    padding-top: 86px;
+    padding: 120px 20px 70px;
+    background:
+      linear-gradient(130deg, #12241f 0%, #315f4f 62%, #b8863c 100%);
+  }
+
+  .hero-media,
+  .hero-content {
+    display: contents;
   }
 
   .hero-carousel {
     --carousel-radius: clamp(250px, 39vw, 360px);
-    top: 340px;
-    left: 50%;
+    position: relative;
+    grid-area: hero-carousel;
+    top: auto;
+    left: auto;
     right: auto;
     width: min(620px, 82vw);
     height: 330px;
-    transform: translateX(-50%);
+    margin: 24px 0;
+    justify-self: center;
+    transform: none;
   }
 
   .hero-carousel-panel {
@@ -1887,13 +1905,35 @@ main section[id] {
   }
 
   .hero-content {
-    width: min(700px, calc(100% - 40px));
-    margin: 0 auto 44px;
-    padding-top: 34px;
+    width: auto;
+    margin: 0;
+    padding: 0;
   }
 
-  .hero-actions {
-    margin-top: 380px;
+  .hero-content > .eyebrow {
+    grid-area: hero-eyebrow;
+  }
+
+  .hero-content > h1 {
+    grid-area: hero-title;
+  }
+
+  .hero-content > p:not(.eyebrow) {
+    grid-area: hero-copy;
+    margin-bottom: 0;
+  }
+
+  .hero-content > .eyebrow,
+  .hero-content > h1,
+  .hero-content > p:not(.eyebrow),
+  .hero-content > .hero-actions {
+    position: relative;
+    z-index: 3;
+  }
+
+  .hero-content > .hero-actions {
+    grid-area: hero-actions;
+    margin-top: 0;
   }
 
   .proof-strip,
@@ -2003,18 +2043,14 @@ main section[id] {
   }
 
   .hero {
-    min-height: 850px;
-    padding-top: 82px;
+    padding: 106px 16px 60px;
   }
 
   .hero-carousel {
     --carousel-radius: 184px;
-    top: 435px;
-    left: 50%;
-    right: auto;
     width: 300px;
     height: 180px;
-    transform: translateX(-50%);
+    margin: 20px 0;
   }
 
   .hero-carousel-panel {
@@ -2033,13 +2069,9 @@ main section[id] {
   }
 
   .hero-content {
-    width: calc(100% - 32px);
-    margin: 0 16px 42px;
-    padding-top: 24px;
-  }
-
-  .hero-actions {
-    margin-top: 215px;
+    width: auto;
+    margin: 0;
+    padding: 0;
   }
 
   .ai-hero-actions,
