@@ -1,5 +1,9 @@
 # Agent Notes
 
+Read `CONTEXT.md` in full before changing positioning, page copy, project
+descriptions, service descriptions, or other user-facing content. Treat it as
+the source of truth for how JPWebcreation works and communicates.
+
 This is a static JPWebcreation site. Keep changes simple: edit the HTML, CSS,
 JS, and assets directly, then preview with a local static server.
 
