@@ -30,7 +30,7 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=46">
+    <link rel="stylesheet" href="../styles.css?v=47">
   </head>
   <body class="project-page opname-page">
     <header class="site-header">
@@ -167,26 +167,63 @@
         </div>
       </section>
 
-      <section class="section ai-references" aria-labelledby="tijdsbesparing-title">
+      <section class="section ai-references opname-savings" aria-labelledby="tijdsbesparing-title">
         <div>
-          <p class="eyebrow">Rekenvoorbeeld met 60 minuten retourreistijd</p>
-          <h2 id="tijdsbesparing-title">Eén rit minder per week is al vier uur per maand</h2>
+          <p class="eyebrow">Reken met je eigen aanvragen</p>
+          <h2 id="tijdsbesparing-title">Hoeveel offerte-uren zitten er nu in de bus?</h2>
         </div>
         <div class="ai-reference-copy">
           <p>
             Een oplossing hoeft niet ieder bezoek te voorkomen om waardevol te zijn. Als de
-            Digitale Opname alleen de ritten eruit filtert die vooral bedoeld zijn om informatie
-            te verzamelen, stapelt een kleine wekelijkse besparing snel op.
+            Digitale Opname bij een deel van de aanvragen een rit voor alleen informatie verzamelen
+            voorkomt, stapelt een kleine besparing snel op.
           </p>
-          <div class="ai-reference-list">
-            <span><strong>1 rit minder per week</strong><small>circa 4 uur per vier weken</small></span>
-            <span><strong>3 ritten minder per week</strong><small>circa 12 uur per vier weken</small></span>
-            <span><strong>5 ritten minder per week</strong><small>circa 20 uur per vier weken</small></span>
+          <div
+            class="opname-calculator"
+            data-opname-calculator
+            data-avoidable-share="0.2"
+            data-travel-minutes="60"
+          >
+            <div class="opname-calculator-head">
+              <label for="opname-aanvragen">Hoeveel airco-aanvragen krijg je per maand?</label>
+              <div class="opname-calculator-count">
+                <output for="opname-aanvragen" data-request-count>20</output>
+                <span>aanvragen</span>
+              </div>
+            </div>
+            <input
+              id="opname-aanvragen"
+              class="opname-calculator-range"
+              type="range"
+              min="1"
+              max="100"
+              step="1"
+              value="20"
+              aria-describedby="opname-calculator-assumption"
+            >
+            <div class="opname-calculator-scale" aria-hidden="true">
+              <span>1</span>
+              <span>100</span>
+            </div>
+            <div class="opname-calculator-result" aria-live="polite">
+              <div>
+                <span>Reistijd per maand</span>
+                <strong><span data-monthly-hours>4</span> uur</strong>
+              </div>
+              <div>
+                <span>Reistijd per jaar</span>
+                <strong><span data-yearly-hours>48</span> uur</strong>
+                <small>circa <span data-yearly-days>6</span> werkdagen van 8 uur</small>
+              </div>
+            </div>
+            <p id="opname-calculator-assumption" class="opname-calculator-assumption">
+              Voorzichtig scenario: bij 1 op de 5 aanvragen vervalt een gegevensrit van 60 minuten
+              retour. Pas het aantal aanvragen aan; de aanname blijft gelijk.
+            </p>
           </div>
           <p>
-            Dit voorbeeld rekent alleen met reistijd. Tijd voor bellen, plannen, de opname zelf en
-            het uitwerken van notities is niet meegerekend. Welke besparing haalbaar is, hangt af
-            van je aanvragen en werkwijze.
+            Bellen, plannen, de opname zelf en het uitwerken van notities zijn niet meegerekend.
+            Welke besparing haalbaar is, hangt af van je aanvragen en werkwijze.
           </p>
         </div>
       </section>
@@ -340,6 +377,6 @@
         <a href="#contact">Contact</a>
       </nav>
     </footer>
-    <script src="../script.js?v=8"></script>
+    <script src="../script.js?v=9"></script>
   </body>
 </html>

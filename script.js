@@ -47,6 +47,41 @@ if ("IntersectionObserver" in window) {
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
 
+document.querySelectorAll("[data-opname-calculator]").forEach((calculator) => {
+  const input = calculator.querySelector('input[type="range"]');
+  const requestCount = calculator.querySelector("[data-request-count]");
+  const monthlyHours = calculator.querySelector("[data-monthly-hours]");
+  const yearlyHours = calculator.querySelector("[data-yearly-hours]");
+  const yearlyDays = calculator.querySelector("[data-yearly-days]");
+
+  if (!(input instanceof HTMLInputElement) || !(requestCount instanceof HTMLOutputElement)) {
+    return;
+  }
+
+  const avoidableShare = Number(calculator.dataset.avoidableShare) || 0.2;
+  const travelMinutes = Number(calculator.dataset.travelMinutes) || 60;
+  const numberFormatter = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 1 });
+
+  const updateCalculator = () => {
+    const requests = Number(input.value);
+    const hoursPerMonth = (requests * avoidableShare * travelMinutes) / 60;
+    const hoursPerYear = hoursPerMonth * 12;
+    const daysPerYear = hoursPerYear / 8;
+    const range = Number(input.max) - Number(input.min);
+    const progress = range > 0 ? ((requests - Number(input.min)) / range) * 100 : 0;
+
+    requestCount.value = numberFormatter.format(requests);
+    input.style.setProperty("--range-progress", `${progress}%`);
+
+    if (monthlyHours) monthlyHours.textContent = numberFormatter.format(hoursPerMonth);
+    if (yearlyHours) yearlyHours.textContent = numberFormatter.format(hoursPerYear);
+    if (yearlyDays) yearlyDays.textContent = numberFormatter.format(daysPerYear);
+  };
+
+  input.addEventListener("input", updateCalculator);
+  updateCalculator();
+});
+
 if (contactStatus) {
   const contactResult = new URLSearchParams(window.location.search).get("contact");
   const contactForm = contactStatus.closest(".contact-form");
