@@ -49,7 +49,7 @@
         <a href="../#werk">Werk</a>
         <a href="../#diensten">Diensten</a>
         <a href="../ai/">AI</a>
-        <a href="../#contact">Contact</a>
+        <a href="#contact">Contact</a>
       </nav>
       <a class="header-phone" href="tel:+31621228884">06&nbsp;21&nbsp;22&nbsp;88&nbsp;84</a>
     </header>
@@ -65,7 +65,7 @@
             op locatie moet kijken.
           </p>
           <div class="hero-actions ai-hero-actions">
-            <a class="button primary" href="../#contact">Bespreek je offerteproces</a>
+            <a class="button primary" href="#contact">Bespreek je offerteproces</a>
             <a class="button ghost" href="#voorbeeld">Bekijk een airco-aanvraag</a>
           </div>
         </div>
@@ -249,15 +249,56 @@
         </div>
       </section>
 
-      <section class="contact-section" aria-labelledby="opname-contact-title">
+      <section id="contact" class="contact-section" aria-labelledby="opname-contact-title">
         <div>
           <p class="eyebrow">Kennismaken</p>
           <h2 id="opname-contact-title">Past dit in jouw offerteproces?</h2>
           <p>Laat zien hoe een airco-aanvraag nu binnenkomt en welke informatie je nodig hebt om te kunnen offreren. Dan bekijken we samen waar een Digitale Opname tijd kan besparen en waar een bezoek nodig blijft.</p>
-          <div class="hero-actions ai-contact-actions">
-            <a class="button primary" href="../#contact">Bespreek je offerteproces</a>
-            <a class="button ghost" href="mailto:info@jpwebcreation.nl">Mail rechtstreeks</a>
-          </div>
+          <p class="contact-promise">Je ontvangt binnen één werkdag een reactie.</p>
+          <form class="contact-form" action="/contact.php" method="post" accept-charset="UTF-8">
+            <input type="hidden" name="return_to" value="/digitale-opname/">
+            <p id="contact-status" class="form-status" role="status" aria-live="polite" hidden></p>
+            <div class="form-row">
+              <label>
+                Naam
+                <input id="contact-name" type="text" name="name" autocomplete="name" maxlength="120" required>
+                <span id="contact-name-error" class="field-error" hidden></span>
+              </label>
+              <label>
+                Bedrijf <span>(optioneel)</span>
+                <input id="contact-company" type="text" name="company" autocomplete="organization" maxlength="160">
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                E-mailadres
+                <input id="contact-email" type="email" name="email" autocomplete="email" maxlength="254" required>
+                <span id="contact-email-error" class="field-error" hidden></span>
+              </label>
+              <label>
+                Telefoonnummer <span>(optioneel)</span>
+                <input id="contact-phone" type="tel" name="phone" autocomplete="tel" maxlength="40">
+              </label>
+            </div>
+            <label>
+              Waar loopt je offerteproces nu op vast?
+              <textarea id="contact-message" name="message" rows="6" minlength="10" maxlength="5000" required></textarea>
+              <span id="contact-message-error" class="field-error" hidden></span>
+            </label>
+            <label class="form-honeypot" aria-hidden="true">
+              Website
+              <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
+            <label class="form-consent">
+              <input id="contact-privacy" type="checkbox" name="privacy" value="accepted" required>
+              <span>
+                Ik ga ermee akkoord dat mijn gegevens worden gebruikt om op mijn vraag te reageren.
+                Lees de <a href="../privacyverklaring/">privacyverklaring</a>.
+              </span>
+              <span id="contact-privacy-error" class="field-error form-consent-error" hidden></span>
+            </label>
+            <button class="button primary" type="submit">Vraag een kennismaking aan</button>
+          </form>
         </div>
         <div class="contact-panel">
           <a href="tel:+31621228884"><span>Telefoon</span><strong>06&nbsp;21&nbsp;22&nbsp;88&nbsp;84</strong></a>
@@ -271,7 +312,7 @@
       <span>© 2026 JPWebcreation</span>
       <nav class="footer-links" aria-label="Footer">
         <a href="../privacyverklaring/">Privacyverklaring</a>
-        <a href="../#contact">Contact</a>
+        <a href="#contact">Contact</a>
       </nav>
     </footer>
     <script src="../script.js?v=8"></script>

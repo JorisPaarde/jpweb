@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 const CONTACT_STATE_TTL = 600;
 
-function redirect_with_status(string $status): void
+function redirect_with_status(string $status, string $returnPath = '/'): void
 {
-    header('Location: /?contact=' . rawurlencode($status), true, 303);
+    header('Location: ' . $returnPath . '?contact=' . rawurlencode($status), true, 303);
     exit;
 }
 
@@ -30,6 +30,14 @@ function input_length(string $value): int
     }
 
     return strlen($value);
+}
+
+function contact_return_path(): string
+{
+    $returnPath = (string) ($_POST['return_to'] ?? '/');
+    $allowedPaths = ['/', '/digitale-opname/'];
+
+    return in_array($returnPath, $allowedPaths, true) ? $returnPath : '/';
 }
 
 function start_form_session(): bool
@@ -117,8 +125,10 @@ if ($requestMethod !== 'POST') {
     exit('Method Not Allowed');
 }
 
+$returnPath = contact_return_path();
+
 if (clean_input('website', 200) !== '') {
-    redirect_with_status('success');
+    redirect_with_status('success', $returnPath);
 }
 
 $name = clean_input('name', 120);
@@ -154,27 +164,31 @@ if ($errors !== []) {
         'phone' => $phone,
         'message' => $message,
     ], $errors);
-    redirect_with_status('invalid');
+    redirect_with_status('invalid', $returnPath);
 }
 
 $clientIp = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateLimitFile = sys_get_temp_dir() . '/jpweb-contact-' . hash('sha256', $clientIp);
 
 if (is_file($rateLimitFile) && (time() - (int) filemtime($rateLimitFile)) < 30) {
-    redirect_with_status('wait');
+    redirect_with_status('wait', $returnPath);
 }
 
 @touch($rateLimitFile);
 
 $safeEmail = str_replace(["\r", "\n"], '', $email);
-$subject = 'Nieuwe aanvraag via jpwebcreation.nl';
+$subject = $returnPath === '/digitale-opname/'
+    ? 'Kennismaking Digitale Opname via jpwebcreation.nl'
+    : 'Nieuwe aanvraag via jpwebcreation.nl';
 
 if (function_exists('mb_encode_mimeheader')) {
     $subject = mb_encode_mimeheader($subject, 'UTF-8');
 }
 
 $body = implode("\n", [
-    'Nieuwe aanvraag via jpwebcreation.nl',
+    $returnPath === '/digitale-opname/'
+        ? 'Kennismaking Digitale Opname via jpwebcreation.nl'
+        : 'Nieuwe aanvraag via jpwebcreation.nl',
     '',
     'Naam: ' . $name,
     'Bedrijf: ' . ($company !== '' ? $company : '-'),
@@ -194,4 +208,4 @@ $headers = implode("\r\n", [
 
 $sent = mail('info@jpwebcreation.nl', $subject, $body, $headers);
 
-redirect_with_status($sent ? 'success' : 'error');
+redirect_with_status($sent ? 'success' : 'error', $returnPath);
