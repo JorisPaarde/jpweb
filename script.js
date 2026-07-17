@@ -58,7 +58,7 @@ document.querySelectorAll("[data-opname-calculator]").forEach((calculator) => {
     return;
   }
 
-  const avoidableShare = Number(calculator.dataset.avoidableShare) || 0.2;
+  const avoidableShare = Number(calculator.dataset.avoidableShare) || 0.9;
   const travelMinutes = Number(calculator.dataset.travelMinutes) || 60;
   const numberFormatter = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 1 });
 
