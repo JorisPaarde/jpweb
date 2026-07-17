@@ -1834,6 +1834,192 @@ main section[id] {
   font-weight: 850;
 }
 
+/* Digitale Opname gebruikt de bestaande opbouw van de AI-landingspagina. */
+.opname-intro {
+  background: var(--mist);
+}
+
+.opname-steps,
+.opname-comparison {
+  border-top: 1px solid var(--line);
+}
+
+.opname-steps {
+  background: linear-gradient(180deg, var(--white), var(--paper));
+}
+
+.opname-benefit-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.opname-benefit-list article {
+  min-height: 190px;
+  padding: clamp(24px, 3vw, 34px);
+  background: var(--paper);
+}
+
+.opname-benefit-list h3 {
+  margin-bottom: 10px;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+}
+
+.opname-benefit-list p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.opname-example {
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.opname-example > .section-heading {
+  display: block;
+  max-width: 920px;
+  margin: 0 auto clamp(36px, 5vw, 60px);
+  text-align: center;
+}
+
+.opname-route-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1260px;
+  gap: clamp(20px, 3vw, 36px);
+  margin: 0 auto;
+}
+
+.opname-route {
+  padding: clamp(26px, 4vw, 42px);
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.opname-route-digital {
+  color: var(--white);
+  border-color: var(--green-dark);
+  background: var(--green-dark);
+}
+
+.opname-route-digital .eyebrow {
+  color: var(--amber);
+}
+
+.opname-route ol {
+  display: grid;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: opname-route;
+  border-top: 1px solid var(--line);
+}
+
+.opname-route-digital ol {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.opname-route li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+  counter-increment: opname-route;
+}
+
+.opname-route-digital li {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.opname-route li::before {
+  content: counter(opname-route);
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.opname-route-digital li::before {
+  color: var(--ink);
+  border-color: var(--amber);
+  background: var(--amber);
+}
+
+.opname-result {
+  max-width: 960px;
+  margin: clamp(26px, 4vw, 46px) auto 0;
+  padding: clamp(24px, 3vw, 36px);
+  border-left: 4px solid var(--amber);
+  background: rgba(231, 173, 82, 0.12);
+}
+
+.opname-result strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.16;
+}
+
+.opname-result p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--type-body-large);
+}
+
+.opname-comparison .ai-offer p + p {
+  margin-top: 8px;
+}
+
+.opname-comparison .ai-offer strong {
+  color: var(--ink);
+}
+
+.opname-sector-note {
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) minmax(320px, 820px);
+  justify-content: center;
+  gap: clamp(28px, 6vw, 90px);
+  padding: clamp(52px, 7vw, 82px) var(--site-gutter);
+  border-block: 1px solid var(--line);
+  background: var(--mist);
+}
+
+.opname-sector-note h2 {
+  margin-bottom: 12px;
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+}
+
+.opname-sector-note p:not(.eyebrow) {
+  max-width: 780px;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: var(--type-body-large);
+}
+
+@media (max-width: 900px) {
+  .opname-benefit-list,
+  .opname-route-grid,
+  .opname-sector-note {
+    grid-template-columns: 1fr;
+  }
+
+  .opname-benefit-list article {
+    min-height: 0;
+  }
+
+  .opname-sector-note {
+    gap: 10px;
+  }
+}
+
 @media (max-width: 900px) {
   .site-header {
     grid-template-columns: auto auto;

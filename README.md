@@ -20,12 +20,13 @@ be tested in a PHP-capable environment, preferably on the test domain.
 
 - `index.html`: homepage and contact form
 - `ai/index.html`: landing page for AI tools, workshops, and AI-assisted development
+- `digitale-opname/index.html`: landing page voor Digitale Opname
 - `styles.css`: shared design and responsive rules
 - `script.js`: navigation, reveal effects, and form-result feedback
 - `contact.php`: validation, one-time form recovery, rate limiting, and mail delivery
 - `projecten/*/index.html`: six project cases
 - `assets/social/jpwebcreation-og.jpg`: shared 1200 x 630 social preview image
-- `sitemap.xml`: the nine canonical, indexable production routes
+- `sitemap.xml`: the ten canonical, indexable production routes
 - `.htaccess`: one-hop legacy redirects, caching, 404 handling, and staging noindex header
 - `.github/scripts/check-redirects.sh`: HTTP check for all documented legacy redirects
 - `.github/workflows/deploy.yml`: test and production deployment

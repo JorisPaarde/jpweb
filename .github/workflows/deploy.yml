@@ -66,6 +66,7 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/digitale-opname/"
             "/privacyverklaring/"
             "/projecten/mikes-pianoshow/"
             "/projecten/haveka-installatie/"
@@ -165,6 +166,7 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/digitale-opname/"
             "/privacyverklaring/"
             "/projecten/mikes-pianoshow/"
             "/projecten/haveka-installatie/"
