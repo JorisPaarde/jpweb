@@ -1,0 +1,26 @@
+.opname-page .opname-hero .ai-process-card {
+  padding: clamp(16px, 2.4vw, 24px);
+}
+
+.opname-page .opname-hero .ai-process-card img {
+  width: 100%;
+  margin: 18px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(6, 24, 19, 0.28);
+}
+
+.opname-page .opname-hero .ai-process-card > p:last-child {
+  font-size: 0.86rem;
+}
+
+@media (max-width: 560px) {
+  .opname-page .opname-hero .ai-process-card {
+    padding: 14px;
+  }
+
+  .opname-page .opname-hero .ai-process-card img {
+    margin: 14px 0;
+    border-radius: 10px;
+  }
+}
