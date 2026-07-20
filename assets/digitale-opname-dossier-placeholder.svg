@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
   <title id="title">Voorbeeld van een dossier uit de Digitale Opname</title>
-  <desc id="desc">Een fictief airco-dossier met voortgang, samenvatting, verzamelde gegevens, aandachtspunt en mogelijke vervolgstap.</desc>
+  <desc id="desc">Een fictief airco-dossier met voortgang, samenvatting, verzamelde gegevens, aandachtspunt en vervolgstap.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f5f4ec"/>
@@ -67,8 +67,7 @@
   <text x="180" y="582" fill="#102d26" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Plaats buitenunit nog gericht beoordelen</text>
 
   <rect x="116" y="652" width="952" height="112" rx="16" fill="#173f34"/>
-  <text x="148" y="690" fill="#e7ad52" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="800" letter-spacing="1.4">MOGELIJKE VERVOLGSTAP</text>
+  <text x="148" y="690" fill="#e7ad52" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="800" letter-spacing="1.4">VERVOLGSTAP</text>
   <text x="148" y="730" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="800">Offerte voorbereiden of gericht opnamebezoek plannen</text>
 
-  <text x="600" y="875" text-anchor="middle" fill="#66746f" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" letter-spacing="1.4">VOORBEELDWEERGAVE · DEFINITIEVE INTERFACE VOLGT</text>
 </svg>
