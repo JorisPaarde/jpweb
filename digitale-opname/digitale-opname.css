@@ -10,6 +10,106 @@
   box-shadow: 0 24px 70px rgba(6, 24, 19, 0.28);
 }
 
+.opname-page .section,
+.opname-page .contact-section {
+  padding-top: clamp(56px, 7vw, 88px);
+  padding-bottom: clamp(56px, 7vw, 88px);
+}
+
+.opname-page .opname-intro,
+.opname-page .opname-benefits,
+.opname-page .opname-savings {
+  grid-template-columns: minmax(0, 1120px);
+  gap: 20px;
+  text-align: center;
+}
+
+.opname-page .opname-intro h2,
+.opname-page .opname-benefits h2,
+.opname-page .opname-savings h2 {
+  max-width: 820px;
+  margin-inline: auto;
+}
+
+.opname-page .opname-intro .ai-reference-copy,
+.opname-page .opname-savings .ai-reference-copy {
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+.opname-page .ai-offers {
+  grid-template-columns: minmax(0, 1200px);
+  gap: clamp(26px, 4vw, 40px);
+}
+
+.opname-page .ai-offers .section-heading {
+  position: static;
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.opname-page .ai-offer-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.opname-page .ai-offer {
+  min-height: 150px;
+  padding: clamp(22px, 3vw, 32px);
+  border: 0;
+  background: var(--paper);
+}
+
+.opname-page .opname-steps .ai-offer-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.opname-page .opname-benefit-list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 12px;
+  text-align: left;
+}
+
+.opname-page .opname-benefit-list article {
+  min-height: 0;
+  padding: clamp(22px, 2.5vw, 30px);
+}
+
+.opname-page .opname-calculator {
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.opname-page .opname-example > .section-heading {
+  margin-bottom: clamp(26px, 4vw, 42px);
+}
+
+.opname-page .opname-sector-note {
+  padding-top: clamp(42px, 5vw, 62px);
+  padding-bottom: clamp(42px, 5vw, 62px);
+}
+
+.opname-page .faq {
+  padding-top: clamp(56px, 7vw, 88px);
+  padding-bottom: clamp(56px, 7vw, 88px);
+}
+
+@media (max-width: 900px) {
+  .opname-page .opname-steps .ai-offer-list,
+  .opname-page .opname-benefit-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .opname-page .opname-steps .ai-offer:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 560px) {
   .opname-page .opname-hero .ai-process-card {
     padding: 14px;
@@ -18,5 +118,19 @@
   .opname-page .opname-hero .ai-process-card img {
     margin: 14px 0;
     border-radius: 10px;
+  }
+
+  .opname-page .ai-offer-list,
+  .opname-page .opname-steps .ai-offer-list,
+  .opname-page .opname-benefit-list {
+    grid-template-columns: 1fr;
+  }
+
+  .opname-page .ai-offer {
+    min-height: 0;
+  }
+
+  .opname-page .opname-steps .ai-offer:last-child {
+    grid-column: auto;
   }
 }
