@@ -3,6 +3,13 @@ Options -Indexes
 
 ErrorDocument 404 /404.html
 
+# Gebruik één hoofdadres voor alle publieke pagina's.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.jpwebcreation\.nl$ [NC]
+  RewriteRule ^ https://jpwebcreation.nl%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
+
 # Oude WordPress-routes gaan rechtstreeks naar hun definitieve bestemming.
 # Houd deze regels op één hop; voeg geen tussenliggende legacy-URL's toe.
 Redirect 301 /contact-voor-hulp-met-jouw-website/ /#contact
