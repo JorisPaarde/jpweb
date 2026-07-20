@@ -85,6 +85,46 @@
   text-align: left;
 }
 
+.opname-page .opname-calculator-rate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  background: var(--mist);
+}
+
+.opname-page .opname-calculator-rate label {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.opname-page .opname-calculator-rate > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.opname-page .opname-calculator-rate input {
+  width: 86px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--white);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.opname-page .opname-calculator-rate input:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
 .opname-page .opname-example > .section-heading {
   margin-bottom: clamp(26px, 4vw, 42px);
 }
@@ -128,6 +168,16 @@
 
   .opname-page .ai-offer {
     min-height: 0;
+  }
+
+  .opname-page .opname-calculator-rate {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .opname-page .opname-calculator-rate > div {
+    justify-content: flex-start;
   }
 
   .opname-page .opname-steps .ai-offer:last-child {

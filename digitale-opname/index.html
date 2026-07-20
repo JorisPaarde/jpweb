@@ -183,6 +183,23 @@
               <span>1</span>
               <span>100</span>
             </div>
+            <div class="opname-calculator-rate">
+              <label for="opname-uurtarief">Wat is een betaald uur waard?</label>
+              <div>
+                <span aria-hidden="true">€</span>
+                <input
+                  id="opname-uurtarief"
+                  type="number"
+                  min="25"
+                  max="250"
+                  step="5"
+                  value="75"
+                  inputmode="decimal"
+                  data-hourly-rate-input
+                >
+                <span>per uur</span>
+              </div>
+            </div>
             <div class="opname-calculator-result" aria-live="polite">
               <div>
                 <span>Tijd terug per maand</span>
@@ -192,6 +209,16 @@
                 <span>Tijd terug per jaar</span>
                 <strong><span data-yearly-hours>360</span> uur</strong>
                 <small><span data-yearly-days>45</span> werkdagen van 8 uur</small>
+              </div>
+              <div>
+                <span>Waarde per maand</span>
+                <strong data-monthly-value>€ 2.250</strong>
+                <small>als dit betaalde uren zijn</small>
+              </div>
+              <div>
+                <span>Waarde per jaar</span>
+                <strong data-yearly-value>€ 27.000</strong>
+                <small>als dit betaalde uren zijn</small>
               </div>
             </div>
             <p id="opname-calculator-assumption" class="opname-calculator-assumption">
@@ -350,5 +377,6 @@
       </nav>
     </footer>
     <script src="../script.js?v=10"></script>
+    <script src="digitale-opname.js?v=1"></script>
   </body>
 </html>
