@@ -159,8 +159,9 @@
           <div
             class="opname-calculator"
             data-opname-calculator
-            data-avoidable-share="0.9"
+            data-avoidable-share="1"
             data-travel-minutes="100"
+            data-hourly-rate="70"
           >
             <div class="opname-calculator-head">
               <label for="opname-aanvragen">Hoeveel airco-aanvragen krijg je per maand?</label>
@@ -183,47 +184,27 @@
               <span>1</span>
               <span>100</span>
             </div>
-            <div class="opname-calculator-rate">
-              <label for="opname-uurtarief">Wat is een betaald uur waard?</label>
-              <div>
-                <span aria-hidden="true">€</span>
-                <input
-                  id="opname-uurtarief"
-                  type="number"
-                  min="25"
-                  max="250"
-                  step="5"
-                  value="75"
-                  inputmode="decimal"
-                  data-hourly-rate-input
-                >
-                <span>per uur</span>
-              </div>
-            </div>
             <div class="opname-calculator-result" aria-live="polite">
               <div>
                 <span>Tijd terug per maand</span>
-                <strong><span data-monthly-hours>30</span> uur</strong>
+                <strong><span data-monthly-hours>33,3</span> uur</strong>
               </div>
               <div>
                 <span>Tijd terug per jaar</span>
-                <strong><span data-yearly-hours>360</span> uur</strong>
-                <small><span data-yearly-days>45</span> werkdagen van 8 uur</small>
+                <strong><span data-yearly-hours>400</span> uur</strong>
+                <small><span data-yearly-days>50</span> werkdagen van 8 uur</small>
               </div>
               <div>
-                <span>Waarde per maand</span>
-                <strong data-monthly-value>€ 2.250</strong>
-                <small>als dit betaalde uren zijn</small>
+                <span>Waarde van die tijd per maand</span>
+                <strong data-monthly-value>€ 2.333</strong>
               </div>
               <div>
-                <span>Waarde per jaar</span>
-                <strong data-yearly-value>€ 27.000</strong>
-                <small>als dit betaalde uren zijn</small>
+                <span>Waarde van die tijd per jaar</span>
+                <strong data-yearly-value>€ 28.000</strong>
               </div>
             </div>
             <p id="opname-calculator-assumption" class="opname-calculator-assumption">
-              Per aanvraag: 60 minuten reizen, 20 minuten bellen en plannen en 20 minuten uitwerken.
-              Bij 9 van de 10 aanvragen neemt de Digitale Opname dit voorwerk over.
+              Gebaseerd op 60 minuten reizen, 20 minuten bellen en plannen, 20 minuten uitwerken en €70 per uur.
             </p>
           </div>
         </div>
