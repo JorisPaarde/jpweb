@@ -999,6 +999,16 @@ main section[id] {
   background: var(--paper);
 }
 
+.about-section.local-seo {
+  grid-template-columns: minmax(0, 720px);
+  justify-content: start;
+  padding-block: clamp(48px, 7vw, 88px);
+}
+
+.about-section.local-seo .about-copy {
+  max-width: 720px;
+}
+
 .about-copy {
   max-width: 520px;
 }
