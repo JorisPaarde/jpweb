@@ -244,3 +244,105 @@
   color: var(--white);
   border-color: rgba(255, 255, 255, 0.55);
 }
+
+
+/* Kern section styling & mobile polish */
+.kern-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kern-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.kern-num {
+  font-weight: 800;
+  color: var(--amber, #E7AD52);
+  font-size: 1rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.kern-text {
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.kern-footer {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 600px) {
+  .opname-hero .ai-process-card {
+    padding: 18px 16px;
+    margin-top: 20px;
+  }
+  
+  .kern-list {
+    gap: 10px;
+  }
+
+  .kern-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* Checkmark Matrix Table */
+.checkmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+}
+
+.checkmark-table th.col-feature {
+  width: 32%;
+  text-align: left;
+}
+
+.checkmark-table th.col-opt {
+  width: 17%;
+  text-align: center;
+}
+
+.checkmark-table th.highlight-col,
+.checkmark-table td.highlight-col {
+  background: rgba(231, 173, 82, 0.15);
+}
+
+.checkmark-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.checkmark-table td.status-yes {
+  color: #1b633a;
+}
+
+.checkmark-table td.status-no {
+  color: #9c2d18;
+}
+
+.checkmark-table td.status-partial {
+  color: #a3650d;
+}
+
+.icon-check {
+  font-weight: bold;
+  color: #1b633a;
+  margin-right: 4px;
+}
+
+.icon-cross {
+  font-weight: bold;
+  color: #9c2d18;
+  margin-right: 4px;
+}
