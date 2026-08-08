@@ -9,9 +9,14 @@
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/digitale-opname/digitale-opname.css">
     <style>
+      .article-hero {
+        background: var(--green-dark);
+        color: var(--white);
+        padding: clamp(120px, 15vh, 160px) 0 clamp(48px, 8vh, 64px);
+      }
       .article-container {
         max-width: 800px;
-        margin: clamp(100px, 12vh, 140px) auto 80px;
+        margin: 0 auto 80px;
         padding: 0 clamp(20px, 4vw, 40px);
       }
       .article-meta {
@@ -24,12 +29,14 @@
       .article-title {
         font-size: clamp(2rem, 4vw, 3.2rem);
         line-height: 1.1;
-        margin-bottom: 24px;
+        margin-bottom: 0;
+        color: var(--white);
       }
       .article-body {
         font-size: 1.1rem;
         line-height: 1.7;
         color: var(--ink);
+        margin-top: 48px;
       }
       .article-body h2 {
         margin-top: 40px;
@@ -66,9 +73,10 @@
     </style>
   </head>
   <body class="blog-article-page">
-    <header class="site-header is-scrolled">
+    <header class="site-header">
       <a class="brand" href="/" aria-label="JPWebcreation home">
         <span class="brand-mark" aria-hidden="true">
+          <img class="brand-mark-image brand-mark-image-light" src="/assets/logo/logo-mark-diap.svg" alt="" width="38" height="38">
           <img class="brand-mark-image brand-mark-image-dark" src="/assets/logo/logo-mark.svg" alt="" width="38" height="38">
         </span>
         <span>JPWebcreation</span>
@@ -91,10 +99,14 @@
       <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
     </header>
 
-    <main class="article-container">
-      <div class="article-meta">Blog &bull; Installatietechniek &bull; 8 augustus 2026</div>
-      <h1 class="article-title">Hoeveel Tijd Kost Een Vooropname Je Installatiebedrijf Echt? (En Hoe Je Een Rit Bespaart)</h1>
+    <section class="article-hero">
+      <div class="article-container" style="margin-bottom: 0;">
+        <div class="article-meta">Blog &bull; Installatietechniek &bull; 8 augustus 2026</div>
+        <h1 class="article-title">Hoeveel Tijd Kost Een Vooropname Je Installatiebedrijf Echt? (En Hoe Je Een Rit Bespaart)</h1>
+      </div>
+    </section>
 
+    <main class="article-container">
       <div class="article-body">
         <p><strong>Als installateur ken je het scenario:</strong> een potentiële klant vraagt een offerte aan voor een airco of warmtepomp. Je wilt een nette, scherpe prijs neerleggen, maar om te weten welke leidinglengte nodig is, waar de buitenunit kan staan en of de meterkast geschikt is, moet er eerst iemand kijken.</p>
 
@@ -109,7 +121,7 @@
         <p>Totale investering: <strong>ruim 1,5 tot 2 uur per offerte</strong>. Vermenigvuldig dat met 10 offertes per week, en je bent bijna de helft van een werkweek kwijt aan <em>kijken</em> in plaats van <em>monteren</em>. En een deel van die aanvragen haakt alsnog af.</p>
 
         <h2>Waarom Tradionele Formulieren Niet Werken</h2>
-        <p>Veel installateurs proberen dit op te lossen met een standaard contactformulier op de website. Maar een statisch formulier met 15 verplichte velden werkt averechts:</p>
+        <p>Veel installateurs proberen dit op toelossen met een standaard contactformulier op de website. Maar een statisch formulier met 15 verplichte velden werkt averechts:</p>
         <ul>
           <li><strong>Klanten haken af</strong> omdat ze de technische vragen niet begrijpen.</li>
           <li><strong>Klanten vullen "weet ik niet" in</strong>, waardoor je alsnog moet bellen.</li>
@@ -145,6 +157,12 @@
         </div>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; 2026 JPWebcreation &bull; Haarlem &bull; KvK 90397320</p>
+      </div>
+    </footer>
 
     <script src="/script.js"></script>
   </body>
