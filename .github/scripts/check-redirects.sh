@@ -8,7 +8,6 @@ redirects=(
   "/contact-voor-hulp-met-jouw-website/|/#contact"
   "/projecten/website-mikes-pianoshow/|/projecten/mikes-pianoshow/"
   "/projecten/website-wildfloweroffice/|/projecten/wildfloweroffice/"
-  "/blog/|/"
   "/general/nieuwe-site-laten-bouwen/|/"
   "/general/snel-website-laten-ontwikkelen/|/"
   "/general/professioneel-webdesign-laten-maken/|/"
