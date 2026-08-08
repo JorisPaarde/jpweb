@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog & Kennisbank | JPWebcreation</title>
+    <meta name="description" content="Inzichten over maatwerk bedrijfssoftware, procesautomatisering, digitale intakes en slimme software-ontwikkeling voor het MKB.">
+    <link rel="canonical" href="https://jpwebcreation.nl/blog/">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+      .blog-container {
+        max-width: 1000px;
+        margin: clamp(100px, 12vh, 140px) auto 80px;
+        padding: 0 clamp(20px, 4vw, 40px);
+      }
+      .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 32px;
+        margin-top: 40px;
+      }
+      .blog-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 28px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+      .blog-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 36px rgba(24, 32, 29, 0.08);
+      }
+      .blog-card-meta {
+        color: var(--amber);
+        font-weight: 800;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .blog-card h2 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+        margin-bottom: 12px;
+      }
+      .blog-card p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+      .blog-card-link {
+        font-weight: 800;
+        color: var(--green-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+    </style>
+  </head>
+  <body class="blog-index-page">
+    <header class="site-header is-scrolled">
+      <a class="brand" href="/" aria-label="JPWebcreation home">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-mark-image brand-mark-image-dark" src="/assets/logo/logo-mark.svg" alt="" width="38" height="38">
+        </span>
+        <span>JPWebcreation</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Hoofdnavigatie">
+        <a href="/#aanpak">Aanpak</a>
+        <a href="/#werk">Werk</a>
+        <a href="/#diensten">Diensten</a>
+        <a href="/ai/">AI</a>
+        <a href="/digitale-opname/">Digitale Opname</a>
+        <a href="/blog/">Blog</a>
+        <a href="https://intake-engine.nl/" rel="noopener">Demo</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+      <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
+    </header>
+
+    <main class="blog-container">
+      <p class="eyebrow" style="color: var(--amber);">Kennisbank & Inzichten</p>
+      <h1>Blog & Praktijkcases</h1>
+      <p style="font-size: 1.15rem; color: var(--muted); max-width: 680px;"> Inzichten over maatwerk bedrijfssoftware, procesautomatisering, digitale intakes en slimme software-ontwikkeling voor het MKB. </p>
+
+      <div class="blog-grid">
+        <article class="blog-card">
+          <div>
+            <div class="blog-card-meta">Installatietechniek &bull; 8 aug 2026</div>
+            <h2><a href="/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html">Hoeveel Tijd Kost Een Vooropname Je Installatiebedrijf Echt?</a></h2>
+            <p>Ontdek hoeveel onnodige uren en ritten vooropnames bij installatiebedrijven kosten, en hoe een digitale intake offertes sneller en foutloos maakt.</p>
+          </div>
+          <a class="blog-card-link" href="/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html">Lees artikel &rarr;</a>
+        </article>
+      </div>
+    </main>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
