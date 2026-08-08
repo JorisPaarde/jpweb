@@ -8,21 +8,26 @@
     <link rel="canonical" href="https://jpwebcreation.nl/blog/">
     <link rel="stylesheet" href="/styles.css">
     <style>
+      .blog-hero {
+        background: var(--green-dark);
+        color: var(--white);
+        padding: clamp(120px, 15vh, 160px) 0 clamp(48px, 8vh, 80px);
+      }
       .blog-container {
         max-width: 1000px;
-        margin: clamp(100px, 12vh, 140px) auto 80px;
+        margin: 0 auto 80px;
         padding: 0 clamp(20px, 4vw, 40px);
       }
       .blog-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 32px;
-        margin-top: 40px;
+        margin-top: 48px;
       }
       .blog-card {
         background: var(--white);
         border: 1px solid var(--line);
-        padding: 28px;
+        padding: 32px;
         border-radius: 8px;
         display: flex;
         flex-direction: column;
@@ -61,9 +66,10 @@
     </style>
   </head>
   <body class="blog-index-page">
-    <header class="site-header is-scrolled">
+    <header class="site-header">
       <a class="brand" href="/" aria-label="JPWebcreation home">
         <span class="brand-mark" aria-hidden="true">
+          <img class="brand-mark-image brand-mark-image-light" src="/assets/logo/logo-mark-diap.svg" alt="" width="38" height="38">
           <img class="brand-mark-image brand-mark-image-dark" src="/assets/logo/logo-mark.svg" alt="" width="38" height="38">
         </span>
         <span>JPWebcreation</span>
@@ -86,11 +92,17 @@
       <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
     </header>
 
-    <main class="blog-container">
-      <p class="eyebrow" style="color: var(--amber);">Kennisbank & Inzichten</p>
-      <h1>Blog & Praktijkcases</h1>
-      <p style="font-size: 1.15rem; color: var(--muted); max-width: 680px;"> Inzichten over maatwerk bedrijfssoftware, procesautomatisering, digitale intakes en slimme software-ontwikkeling voor het MKB. </p>
+    <section class="blog-hero">
+      <div class="blog-container" style="margin-bottom: 0;">
+        <p class="eyebrow" style="color: var(--amber);">Kennisbank & Inzichten</p>
+        <h1 style="color: var(--white);">Blog & Praktijkcases</h1>
+        <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.88); max-width: 680px; margin-bottom: 0;">
+          Inzichten over maatwerk bedrijfssoftware, procesautomatisering, digitale intakes en slimme software-ontwikkeling voor het MKB.
+        </p>
+      </div>
+    </section>
 
+    <main class="blog-container" style="margin-top: 48px;">
       <div class="blog-grid">
         <article class="blog-card">
           <div>
@@ -102,6 +114,12 @@
         </article>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; 2026 JPWebcreation &bull; Haarlem &bull; KvK 90397320</p>
+      </div>
+    </footer>
 
     <script src="/script.js"></script>
   </body>
