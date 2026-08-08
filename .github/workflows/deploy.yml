@@ -66,6 +66,8 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/blog/"
+            "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"
             "/digitale-opname/vergelijken/"
             "/privacyverklaring/"
@@ -167,6 +169,8 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/blog/"
+            "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"
             "/digitale-opname/vergelijken/"
             "/privacyverklaring/"
