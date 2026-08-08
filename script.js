@@ -4,23 +4,31 @@ const nav = document.querySelector(".site-nav");
 const contactStatus = document.querySelector("#contact-status");
 
 function updateHeader() {
+  if (!(header instanceof HTMLElement)) {
+    return;
+  }
+
   header.classList.toggle("is-scrolled", window.scrollY > 18);
 }
 
-toggle.addEventListener("click", () => {
-  const isOpen = toggle.getAttribute("aria-expanded") === "true";
-  toggle.setAttribute("aria-expanded", String(!isOpen));
-  toggle.setAttribute("aria-label", isOpen ? "Menu openen" : "Menu sluiten");
-  header.classList.toggle("is-open", !isOpen);
-});
+if (toggle instanceof HTMLElement && header instanceof HTMLElement) {
+  toggle.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Menu openen" : "Menu sluiten");
+    header.classList.toggle("is-open", !isOpen);
+  });
+}
 
-nav.addEventListener("click", (event) => {
-  if (event.target instanceof HTMLAnchorElement) {
-    toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", "Menu openen");
-    header.classList.remove("is-open");
-  }
-});
+if (nav instanceof HTMLElement && toggle instanceof HTMLElement && header instanceof HTMLElement) {
+  nav.addEventListener("click", (event) => {
+    if (event.target instanceof HTMLAnchorElement) {
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Menu openen");
+      header.classList.remove("is-open");
+    }
+  });
+}
 
 const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -53,14 +61,22 @@ document.querySelectorAll("[data-opname-calculator]").forEach((calculator) => {
   const monthlyHours = calculator.querySelector("[data-monthly-hours]");
   const yearlyHours = calculator.querySelector("[data-yearly-hours]");
   const yearlyDays = calculator.querySelector("[data-yearly-days]");
+  const monthlyValue = calculator.querySelector("[data-monthly-value]");
+  const yearlyValue = calculator.querySelector("[data-yearly-value]");
 
-  if (!(input instanceof HTMLInputElement) || !(requestCount instanceof HTMLOutputElement)) {
+  if (!(input instanceof HTMLInputElement)) {
     return;
   }
 
   const avoidableShare = Number(calculator.dataset.avoidableShare) || 0.9;
   const travelMinutes = Number(calculator.dataset.travelMinutes) || 60;
+  const hourlyRate = Number(calculator.dataset.hourlyRate) || 70;
   const numberFormatter = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 1 });
+  const currencyFormatter = new Intl.NumberFormat("nl-NL", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  });
 
   const updateCalculator = () => {
     const requests = Number(input.value);
@@ -70,12 +86,17 @@ document.querySelectorAll("[data-opname-calculator]").forEach((calculator) => {
     const range = Number(input.max) - Number(input.min);
     const progress = range > 0 ? ((requests - Number(input.min)) / range) * 100 : 0;
 
-    requestCount.value = numberFormatter.format(requests);
+    if (requestCount instanceof HTMLOutputElement) {
+      requestCount.value = numberFormatter.format(requests);
+    }
+
     input.style.setProperty("--range-progress", `${progress}%`);
 
     if (monthlyHours) monthlyHours.textContent = numberFormatter.format(hoursPerMonth);
     if (yearlyHours) yearlyHours.textContent = numberFormatter.format(hoursPerYear);
     if (yearlyDays) yearlyDays.textContent = numberFormatter.format(daysPerYear);
+    if (monthlyValue) monthlyValue.textContent = currencyFormatter.format(hoursPerMonth * hourlyRate);
+    if (yearlyValue) yearlyValue.textContent = currencyFormatter.format(hoursPerYear * hourlyRate);
   };
 
   input.addEventListener("input", updateCalculator);

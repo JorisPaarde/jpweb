@@ -155,16 +155,12 @@
         ]
       }
     </script>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    >
-    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://jpwebcreation.nl">
+    <link rel="icon" href="/favicon.svg?v=20260714" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
+    <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
+    <link rel="stylesheet" href="styles.css?v=49">
   </head>
   <body>
     <header class="site-header">
@@ -186,6 +182,7 @@
         <a href="#diensten">Diensten</a>
         <a href="ai/">AI</a>
         <a href="digitale-opname/">Digitale Opname</a>
+        <a href="digitale-opname/vergelijken/">Vergelijken</a>
         <a href="blog/">Blog</a>
         <a href="https://intake-engine.nl/" target="_blank" rel="noopener">Demo</a>
         <a href="#contact">Contact</a>
@@ -194,72 +191,41 @@
     </header>
 
     <main id="top">
-      <section class="hero" aria-label="Introductie">
-        <div class="hero-media" aria-hidden="true">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-media">
           <div class="hero-carousel">
             <div class="hero-carousel-track">
-              <div class="hero-carousel-panel" style="--i: 0">
-                <img
-                  src="assets/projects/mikes-flat.jpg"
-                  alt="Mike's Pianoshow"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
-              <div class="hero-carousel-panel" style="--i: 1">
-                <img
-                  src="assets/projects/haveka-flat.jpg"
-                  alt="Haveka Installatie"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
-              <div class="hero-carousel-panel" style="--i: 2">
-                <img
-                  src="assets/projects/supper-services-flat.jpg"
-                  alt="Supper Services"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
-              <div class="hero-carousel-panel" style="--i: 3">
-                <img
-                  src="assets/projects/eceens-flat.jpg"
-                  alt="EC EEns"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
-              <div class="hero-carousel-panel" style="--i: 4">
-                <img
-                  src="assets/projects/archipel-flat.jpg"
-                  alt="Archipel Bouwadvies"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
-              <div class="hero-carousel-panel" style="--i: 5">
-                <img
-                  src="assets/projects/wildfloweroffice-flat.jpg"
-                  alt="Wildfloweroffice"
-                  loading="eager"
-                  width="884"
-                  height="552"
-                >
-              </div>
+              <picture class="hero-carousel-panel" style="--i: 0">
+                <source srcset="assets/projects/mikes-flat-480.webp 480w, assets/projects/mikes-flat-720.webp 720w, assets/projects/mikes-flat-1080.webp 1080w, assets/projects/mikes-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/mikes-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager" fetchpriority="high">
+              </picture>
+              <picture class="hero-carousel-panel" style="--i: 1">
+                <source srcset="assets/projects/haveka-flat-480.webp 480w, assets/projects/haveka-flat-720.webp 720w, assets/projects/haveka-flat-1080.webp 1080w, assets/projects/haveka-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/haveka-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
+              </picture>
+              <picture class="hero-carousel-panel" style="--i: 2">
+                <source srcset="assets/projects/supper-services-flat-480.webp 480w, assets/projects/supper-services-flat-720.webp 720w, assets/projects/supper-services-flat-1080.webp 1080w, assets/projects/supper-services-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/supper-services-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
+              </picture>
+              <picture class="hero-carousel-panel" style="--i: 3">
+                <source srcset="assets/projects/eceens-flat-480.webp 480w, assets/projects/eceens-flat-720.webp 720w, assets/projects/eceens-flat-1080.webp 1080w, assets/projects/eceens-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/eceens-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
+              </picture>
+              <picture class="hero-carousel-panel" style="--i: 4">
+                <source srcset="assets/projects/archipel-flat-480.webp 480w, assets/projects/archipel-flat-720.webp 720w, assets/projects/archipel-flat-1080.webp 1080w, assets/projects/archipel-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/archipel-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
+              </picture>
+              <picture class="hero-carousel-panel" style="--i: 5">
+                <source srcset="assets/projects/wildfloweroffice-flat-480.webp 480w, assets/projects/wildfloweroffice-flat-720.webp 720w, assets/projects/wildfloweroffice-flat-1080.webp 1080w, assets/projects/wildfloweroffice-flat.webp 1440w" sizes="(max-width: 560px) 160px, (max-width: 900px) 360px, 440px" type="image/webp">
+                <img src="assets/projects/wildfloweroffice-flat.jpg" alt="" width="1440" height="1000" decoding="async" loading="eager">
+              </picture>
             </div>
           </div>
         </div>
-        <div class="hero-overlay" aria-hidden="true"></div>
-
+        <div class="hero-overlay"></div>
         <div class="hero-content">
           <p class="eyebrow">Websites, online tools en koppelingen · Haarlem</p>
-          <h1>Websites die voor je werken</h1>
+          <h1 id="hero-title">Websites die voor je werken</h1>
           <p>
             Website laten maken of verbeteren in Haarlem en omgeving? Ik kijk eerst hoe je
             bedrijf werkt en waar aanvragen, informatie of terugkerende handelingen vastlopen.
@@ -272,26 +238,32 @@
         </div>
       </section>
 
-      <div class="proof-strip" aria-label="Kerncijfers en bewijslast">
+      <section class="proof-strip" aria-label="Zo werkt JPWebcreation">
         <div>
-          <strong>Analyse en bouw bij één persoon</strong>
-          <span>Wat ik in je bedrijf zie, vertaal ik zelf naar ontwerp en code</span>
+          <div class="proof-copy">
+            <strong>Analyse en bouw bij één persoon</strong>
+            <span>Wat ik in je bedrijf zie, vertaal ik zelf naar ontwerp en code</span>
+          </div>
         </div>
         <div>
-          <strong>Alleen wat nu nodig is</strong>
-          <span>Wat kan wachten, hoeft niet in de eerste versie</span>
+          <div class="proof-copy">
+            <strong>Alleen wat nu nodig is</strong>
+            <span>Wat kan wachten, hoeft niet in de eerste versie</span>
+          </div>
         </div>
         <div>
-          <strong>Na livegang dezelfde ontwikkelaar</strong>
-          <span>Ik ken de gemaakte keuzes wanneer vragen of uitbreidingen ontstaan</span>
+          <div class="proof-copy">
+            <strong>Na livegang dezelfde ontwikkelaar</strong>
+            <span>Ik ken de gemaakte keuzes wanneer vragen of uitbreidingen ontstaan</span>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <section id="haarlem" class="section section-approach">
-        <div class="container">
+      <section class="section about-section local-seo" aria-labelledby="haarlem-title">
+        <div class="about-copy">
           <p class="eyebrow">Haarlem en omgeving</p>
-          <h2>Website laten maken in Haarlem</h2>
-          <p class="lead-text">
+          <h2 id="haarlem-title">Website laten maken in Haarlem</h2>
+          <p>
             Veel ondernemers zoeken een webbouwer in Haarlem die niet alleen een site oplevert,
             maar ook snapt hoe offertes, boekingen of bestellingen in de praktijk lopen. Bij
             JPWebcreation werk je rechtstreeks met mij: analyse, ontwerp en code bij één persoon.
@@ -302,203 +274,534 @@
             Haarlem zit of elders in Nederland: we beginnen bij hoe jullie werken, niet bij een
             vooraf gekozen techniek.
           </p>
-          <div style="margin-top: 24px;">
+          <div class="case-actions">
             <a class="button primary" href="#contact">Bespreek je vraag</a>
           </div>
         </div>
       </section>
 
-      <section id="problemen" class="section section-alt">
-        <div class="container">
+      <section class="section pain-points" aria-label="Herkenbare problemen">
+        <div class="section-heading">
           <p class="eyebrow">Herkenbaar</p>
           <h2>Waar loopt het in de praktijk vast?</h2>
-
-          <div class="grid grid-3">
-            <div class="card">
-              <h3>Aanvragen moeten worden aangevuld</h3>
-              <p>Gegevens komen onvolledig binnen en moeten daarna via losse mails, telefoontjes of spreadsheets worden aangevuld.</p>
-            </div>
-            <div class="card">
-              <h3>Informatie staat op losse plekken</h3>
-              <p>Medewerkers zoeken in mails, spreadsheets of systemen die niet dezelfde informatie uitwisselen.</p>
-            </div>
-            <div class="card">
-              <h3>Bijhouden vraagt om omwegen</h3>
-              <p>Een product, project of artikel aanpassen kost extra stappen omdat de achterkant niet aansluit op hoe je team werkt.</p>
-            </div>
-          </div>
+        </div>
+        <div class="pain-grid">
+          <article class="reveal-card">
+            <h3>Aanvragen moeten worden aangevuld</h3>
+            <p>Gegevens komen onvolledig binnen en moeten daarna via losse mails, telefoontjes of spreadsheets worden aangevuld.</p>
+          </article>
+          <article class="reveal-card">
+            <h3>Informatie staat op losse plekken</h3>
+            <p>Medewerkers zoeken in mails, spreadsheets of systemen die niet dezelfde informatie uitwisselen.</p>
+          </article>
+          <article class="reveal-card">
+            <h3>Bijhouden vraagt om omwegen</h3>
+            <p>Een product, project of artikel aanpassen kost extra stappen omdat de achterkant niet aansluit op hoe je team werkt.</p>
+          </article>
         </div>
       </section>
 
-      <section id="aanpak" class="section">
-        <div class="container">
+      <section id="aanpak" class="section process" aria-labelledby="process-title">
+        <div class="process-intro">
           <p class="eyebrow">Hoe ik naar een vraag kijk</p>
-          <h2>Eerst het werk, dan de oplossing</h2>
-
-          <div class="grid grid-2">
-            <div class="card">
-              <span class="eyebrow" style="color: var(--amber);">01</span>
+          <h2 id="process-title">Eerst het werk, dan de oplossing</h2>
+        </div>
+        <div class="process-steps">
+          <article class="reveal-card">
+            <span>01</span>
+            <div>
               <h3>Eerst wil ik zien hoe het nu gaat</h3>
               <p>Wie doet wat, welke informatie is nodig en waar raakt iets onvolledig of dubbel? Dat wil ik eerst zien.</p>
             </div>
-            <div class="card">
-              <span class="eyebrow" style="color: var(--amber);">02</span>
+          </article>
+          <article class="reveal-card">
+            <span>02</span>
+            <div>
               <h3>Ik begin met wat direct nodig is</h3>
               <p>Wat direct moet werken, komt erin. Wat kan wachten, hoeft nog niet gebouwd te worden.</p>
             </div>
-            <div class="card">
-              <span class="eyebrow" style="color: var(--amber);">03</span>
+          </article>
+          <article class="reveal-card">
+            <span>03</span>
+            <div>
               <h3>Ik ontwerp en bouw zelf</h3>
               <p>De gemaakte keuzes vertaal ik zelf naar structuur, ontwerp en code. Er zit geen overdracht tussen.</p>
             </div>
-            <div class="card">
-              <span class="eyebrow" style="color: var(--amber);">04</span>
+          </article>
+          <article class="reveal-card">
+            <span>04</span>
+            <div>
               <h3>Na de livegang blijf ik betrokken</h3>
               <p>Ik blijf aanspreekbaar voor vragen, beheer en aanpassingen wanneer het werk daarom vraagt.</p>
             </div>
-          </div>
+          </article>
         </div>
       </section>
 
-      <section id="werk" class="section section-alt">
-        <div class="container">
-          <p class="eyebrow">Voorbeelden uit de praktijk</p>
-          <h2>Met welke vraag begon het?</h2>
-          <p class="lead-text" style="margin-bottom: 32px;">
+      <section id="werk" class="section work-section">
+        <div class="section-heading work-heading">
+          <div>
+            <p class="eyebrow">Voorbeelden uit de praktijk</p>
+            <h2>Met welke vraag begon het?</h2>
+          </div>
+          <p class="work-intro">
             Wat er daarna werd gebouwd, verschilt per organisatie omdat het werk ook verschilt.
           </p>
+        </div>
 
-          <div class="grid grid-2">
-            <article class="project-card">
-              <img src="assets/projects/mikes-flat.jpg" alt="Mike's Pianoshow" width="800" height="500">
-              <div class="project-card-body">
-                <span class="eyebrow">01 Van website naar boekingsproces</span>
-                <h3>Mike's Pianoshow</h3>
-                <p>Het bedrijf groeide. Eerst was een duidelijke boekingsroute nodig; later werd planning het knelpunt en kwam er een aparte planningapp.</p>
-                <a class="link-arrow" href="projecten/mikes-pianoshow/">Bekijk case &rarr;</a>
+        <div class="work-list">
+          <a class="work-item reveal-card" href="projecten/mikes-pianoshow/">
+            <div class="work-shot">
+              <picture>
+                <source srcset="assets/projects/mikes-flat-480.webp 480w, assets/projects/mikes-flat-720.webp 720w, assets/projects/mikes-flat-1080.webp 1080w, assets/projects/mikes-flat.webp 1440w" sizes="(max-width: 900px) calc(100vw - 40px), (max-width: 1100px) 50vw, 720px" type="image/webp">
+                <img src="assets/projects/mikes-flat.jpg" alt="Screenshot van website voor Mike's Pianoshow, openingsbeeld met saxofonist" width="1440" height="1000" decoding="async" loading="lazy">
+              </picture>
+            </div>
+            <div class="work-copy">
+              <div class="work-meta">
+                <span class="work-number" aria-hidden="true">01</span>
+                <span class="work-type">Van website naar boekingsproces</span>
               </div>
-            </article>
+              <h3>Mike's Pianoshow</h3>
+              <p>
+                Het bedrijf groeide. Eerst was een duidelijke boekingsroute nodig; later werd
+                planning het knelpunt en kwam er een aparte planningapp.
+              </p>
+              <div class="work-details" aria-label="Projectonderdelen">
+                <span>Website</span>
+                <span>Planningapp</span>
+                <span>Doorontwikkeling</span>
+              </div>
+              <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
 
-            <article class="project-card">
-              <img src="assets/projects/haveka-flat.jpg" alt="Haveka Installatie" width="800" height="500">
-              <div class="project-card-body">
-                <span class="eyebrow">02 Minder heen-en-weer bij offertes</span>
-                <h3>Haveka Installatie</h3>
-                <p>Offerteaanvragen kwamen niet compleet binnen. Een gerichte vraagvolgorde bundelt nu de informatie die Haveka vooraf nodig heeft.</p>
-                <a class="link-arrow" href="projecten/haveka-installatie/">Bekijk case &rarr;</a>
+          <a class="work-item reveal-card" href="projecten/haveka-installatie/">
+            <div class="work-shot">
+              <picture>
+                <source srcset="assets/projects/haveka-flat-480.webp 480w, assets/projects/haveka-flat-720.webp 720w, assets/projects/haveka-flat-1080.webp 1080w, assets/projects/haveka-flat.webp 1440w" sizes="(max-width: 900px) calc(100vw - 40px), (max-width: 1100px) 50vw, 720px" type="image/webp">
+                <img src="assets/projects/haveka-flat.jpg" alt="Screenshot van offertemodule voor Haveka Installatie, groepenkast en laadpaal" width="1440" height="1000" decoding="async" loading="lazy">
+              </picture>
+            </div>
+            <div class="work-copy">
+              <div class="work-meta">
+                <span class="work-number" aria-hidden="true">02</span>
+                <span class="work-type">Minder heen-en-weer bij offertes</span>
               </div>
-            </article>
+              <h3>Haveka Installatie</h3>
+              <p>
+                Offerteaanvragen kwamen niet compleet binnen. Een gerichte vraagvolgorde bundelt
+                nu de informatie die Haveka vooraf nodig heeft.
+              </p>
+              <div class="work-details" aria-label="Projectonderdelen">
+                <span>Offertemodule</span>
+                <span>WooCommerce</span>
+                <span>Procesverbetering</span>
+              </div>
+              <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
 
-            <article class="project-card">
-              <img src="assets/projects/supper-services-flat.jpg" alt="Supper Services" width="800" height="500">
-              <div class="project-card-body">
-                <span class="eyebrow">03 Grip op bestellingen en verwerking</span>
-                <h3>Supper Services</h3>
-                <p>Achter de bestelknop komen betaalmethodes, levermomenten, exports en klantlogica samen.</p>
-                <a class="link-arrow" href="projecten/supper-services/">Bekijk case &rarr;</a>
+          <a class="work-item reveal-card" href="projecten/supper-services/">
+            <div class="work-shot">
+              <picture>
+                <source srcset="assets/projects/supper-services-flat-480.webp 480w, assets/projects/supper-services-flat-720.webp 720w, assets/projects/supper-services-flat-1080.webp 1080w, assets/projects/supper-services-flat.webp 1440w" sizes="(max-width: 900px) calc(100vw - 40px), (max-width: 1100px) 50vw, 720px" type="image/webp">
+                <img src="assets/projects/supper-services-flat.jpg" alt="Screenshot van webshop voor Supper Services, openingsbeeld over voedselverspilling" width="1440" height="1000" decoding="async" loading="lazy">
+              </picture>
+            </div>
+            <div class="work-copy">
+              <div class="work-meta">
+                <span class="work-number" aria-hidden="true">03</span>
+                <span class="work-type">Grip op bestellingen en verwerking</span>
               </div>
-            </article>
+              <h3>Supper Services</h3>
+              <p>
+                Achter de bestelknop komen betaalmethodes, levermomenten, exports en klantlogica
+                samen.
+              </p>
+              <div class="work-details" aria-label="Projectonderdelen">
+                <span>Webshop</span>
+                <span>Koppelingen</span>
+                <span>Maatwerklogica</span>
+              </div>
+              <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
 
-            <article class="project-card">
-              <img src="assets/projects/eceens-flat.jpg" alt="EC EEns" width="800" height="500">
-              <div class="project-card-body">
-                <span class="eyebrow">04 Veel informatie overzichtelijk beheren</span>
-                <h3>EC EEns</h3>
-                <p>Bewoners zoeken verschillende soorten informatie. Beheerders houden projecten, verhalen en artikelen bij binnen een vaste opbouw.</p>
-                <a class="link-arrow" href="projecten/ec-eens/">Bekijk case &rarr;</a>
+          <a class="work-item reveal-card" href="projecten/ec-eens/">
+            <div class="work-shot">
+              <picture>
+                <source srcset="assets/projects/eceens-flat-480.webp 480w, assets/projects/eceens-flat-720.webp 720w, assets/projects/eceens-flat-1080.webp 1080w, assets/projects/eceens-flat.webp 1440w" sizes="(max-width: 900px) calc(100vw - 40px), (max-width: 1100px) 50vw, 720px" type="image/webp">
+                <img src="assets/projects/eceens-flat.jpg" alt="Screenshot van platform voor EC EEns, openingsbeeld over lokale energie" width="1440" height="1000" decoding="async" loading="lazy">
+              </picture>
+            </div>
+            <div class="work-copy">
+              <div class="work-meta">
+                <span class="work-number" aria-hidden="true">04</span>
+                <span class="work-type">Veel informatie overzichtelijk beheren</span>
               </div>
-            </article>
+              <h3>EC EEns</h3>
+              <p>
+                Bewoners zoeken verschillende soorten informatie. Beheerders houden projecten,
+                verhalen en artikelen bij binnen een vaste opbouw.
+              </p>
+              <div class="work-details" aria-label="Projectonderdelen">
+                <span>Contentstructuur</span>
+                <span>Beheer</span>
+                <span>Platform</span>
+              </div>
+              <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
+        </div>
+
+        <div class="work-more">
+          <div>
+            <p class="eyebrow">Ook gebouwd</p>
+            <h3>Meer vragen uit de praktijk</h3>
+          </div>
+          <div class="work-more-list">
+            <a href="projecten/archipel-bouwadvies/">
+              <span>
+                <strong>Archipel Bouwadvies</strong>
+                <small>Verschillende VvE-vragen in één logische route</small>
+              </span>
+              <span aria-hidden="true">→</span>
+            </a>
+            <a href="projecten/wildfloweroffice/">
+              <span>
+                <strong>Wildfloweroffice</strong>
+                <small>Een vaste volgorde voor verhaal en beheer</small>
+              </span>
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
       </section>
 
-      <section id="over-joris" class="section">
-        <div class="container">
-          <div class="grid grid-2 align-center">
-            <div>
-              <p class="eyebrow">Rechtstreeks samenwerken</p>
-              <h2>Ik draag je vraag niet over</h2>
-              <p class="lead-text">
-                Ik ben Joris Paardekooper. Ik breng het werk met je in kaart, maak de technische keuzes en bouw de oplossing zelf.
-              </p>
-              <p>
-                Wat ik tijdens de analyse zie, blijft aanwezig in de uitvoering. Je hoeft de reden achter een keuze niet opnieuw aan een projectmanager of andere ontwikkelaar uit te uitleggen.
-              </p>
-              <p>
-                Na de livegang blijf ik bereikbaar voor vragen, beheer en doorontwikkeling. Ik ken dan zowel de code als de werkwijze waarvoor die is gemaakt.
-              </p>
-              <div style="margin-top: 24px;">
-                <a class="button primary" href="#contact">Vertel waar het knelt</a>
-              </div>
-            </div>
-            <div>
-              <img src="assets/joris-paardekooper.webp" alt="Joris Paardekooper van JPWebcreation" style="border-radius: 8px;" width="600" height="600">
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="digitale-opname" class="section section-alt">
-        <div class="container">
-          <p class="eyebrow">Voor airco-installateurs</p>
-          <h2>Een complete aanvraag vóór je beslist om te rijden</h2>
-          <p class="lead-text">
-            Met de Digitale Opname laat je klanten vooraf gerichte vragen beantwoorden en bruikbare foto’s aanleveren. Je ontvangt de informatie in één dossier en bepaalt daarna of je kunt offreren of nog op locatie moet kijken.
+      <section class="section about-section" aria-labelledby="about-title">
+        <div class="about-copy">
+          <p class="eyebrow">Rechtstreeks samenwerken</p>
+          <h2 id="about-title">Ik draag je vraag niet over</h2>
+          <p>
+            Ik ben Joris Paardekooper. Ik breng het werk met je in kaart, maak de technische keuzes
+            en bouw de oplossing zelf.
           </p>
           <p>
-            Bij 60 minuten retourreistijd is één vermeden gegevensrit per week al circa vier uur reistijd per vier weken.
+            Wat ik tijdens de analyse zie, blijft aanwezig in de uitvoering. Je hoeft de reden
+            achter een keuze niet opnieuw aan een projectmanager of andere ontwikkelaar uit te leggen.
           </p>
-          <div style="margin-top: 24px;">
+          <p>
+            Na de livegang blijf ik bereikbaar voor vragen, beheer en doorontwikkeling. Ik ken dan
+            zowel de code als de werkwijze waarvoor die is gemaakt.
+          </p>
+          <div class="case-actions">
+            <a class="button primary" href="#contact">Vertel waar het knelt</a>
+          </div>
+        </div>
+        <figure class="about-portrait">
+          <img
+            src="assets/joris-paardekooper.webp"
+            width="800"
+            height="800"
+            alt="Joris Paardekooper van JPWebcreation"
+           decoding="async" loading="lazy">
+        </figure>
+      </section>
+
+      <section class="social-proof-section" aria-labelledby="reviews-title">
+        <div class="social-proof-heading">
+          <div>
+            <p class="eyebrow">Ervaringen van klanten</p>
+            <h2 id="reviews-title">Wat opdrachtgevers zeggen over de samenwerking</h2>
+          </div>
+        </div>
+
+        <div class="testimonial-band">
+          <article class="quote quote-detailed quote-featured reveal-card">
+            <div class="quote-meta">
+              <strong>Resultaat &amp; meedenken</strong>
+              <small>Google-review</small>
+            </div>
+            <blockquote>
+              “Joris heeft meerdere websites voor me gemaakt, die allemaal er goed uitzien en leiden
+              tot meer sales. Hij denkt ook zelf na en komt met goede suggesties ipv dat hij alleen
+              maar dom uitvoert.”
+            </blockquote>
+            <footer class="quote-person">
+              <div>
+                <strong>Michael Schuurmans</strong>
+                <span>Mike's Pianoshow</span>
+              </div>
+              <a href="projecten/mikes-pianoshow/">Bekijk de case <span aria-hidden="true">→</span></a>
+            </footer>
+          </article>
+          <article class="quote quote-detailed reveal-card">
+            <div class="quote-meta">
+              <strong>Techniek &amp; uitleg</strong>
+              <small>Google-review</small>
+            </div>
+            <blockquote>
+              “Joris is een hele prettige websitebouwer die snapt wat een klant wil. [...] Technisch
+              is de website helemaal in orde en na een korte persoonlijke en duidelijke instructie
+              van Joris kan ik nu zelf enkele aanpassingen doen.”
+            </blockquote>
+            <footer class="quote-person">
+              <div>
+                <strong>Sytse Bakker</strong>
+                <span>Opdrachtgever</span>
+              </div>
+            </footer>
+          </article>
+          <article class="quote quote-detailed reveal-card">
+            <div class="quote-meta">
+              <strong>Bereikbaarheid</strong>
+              <small>Google-review</small>
+            </div>
+            <blockquote>
+              “Kan Joris van harte aanbevelen, korte lijntjes, uitmuntende bereikbaarheid, kortom een
+              zeer tevreden klant.”
+            </blockquote>
+            <footer class="quote-person">
+              <div>
+                <strong>Eric Salomons</strong>
+                <span>Opdrachtgever</span>
+              </div>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <section id="diensten" class="section services">
+        <div class="section-heading">
+          <p class="eyebrow">Wanneer ik kan helpen</p>
+          <h2>Herken je een van deze situaties?</h2>
+        </div>
+        <div class="service-grid">
+          <article class="reveal-card">
+            <span class="service-icon service-icon-website" aria-hidden="true"></span>
+            <h3>Bezoekers weten niet wat de volgende stap is</h3>
+            <p>
+              Ik onderzoek welke vragen zij hebben en welke informatie nodig is om verder te komen.
+              Daaruit kan een nieuwe of verbeterde website volgen.
+            </p>
+          </article>
+          <article class="reveal-card">
+            <span class="service-icon service-icon-ai" aria-hidden="true"></span>
+            <h3>Werk blijft terugkomen in mails of losse systemen</h3>
+            <p>
+              Ik kijk welke informatie en keuzes bij elkaar horen. De uitkomst kan een koppeling,
+              online tool of kleine AI-toepassing zijn; vaste logica is vaak genoeg.
+            </p>
+            <a class="service-link" href="ai/">Wanneer past AI bij een taak? <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="reveal-card">
+            <span class="service-icon service-icon-beheer" aria-hidden="true"></span>
+            <h3>Wat er staat sluit niet meer aan</h3>
+            <p>
+              Ik zoek uit waarom iets niet goed meer werkt en onderhoud of breid de bestaande
+              website of tool gericht uit.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section ai-references" aria-labelledby="digitale-opname-title">
+        <div>
+          <p class="eyebrow">Voor airco-installateurs</p>
+          <h2 id="digitale-opname-title">Een complete aanvraag vóór je beslist om te rijden</h2>
+        </div>
+        <div class="ai-reference-copy">
+          <p>
+            Met de Digitale Opname laat je klanten vooraf gerichte vragen beantwoorden en
+            bruikbare foto’s aanleveren. Je ontvangt de informatie in één dossier en bepaalt
+            daarna of je kunt offreren of nog op locatie moet kijken.
+          </p>
+          <p>
+            Niet om ieder bezoek te vervangen, wel om bij veel aanvragen eerder te weten wat de
+            volgende stap is.
+          </p>
+          <p>
+            Bij 60 minuten retourreistijd is één vermeden gegevensrit per week al circa vier uur
+            reistijd per vier weken.
+          </p>
+          <div class="ai-reference-list">
+            <span>Gerichte vragen en bruikbare foto’s</span>
+            <span>Alles in één dossier</span>
+            <span>Zelf de volgende stap bepalen</span>
+          </div>
+          <div class="hero-actions">
             <a class="button primary" href="digitale-opname/">Bekijk de Digitale Opname</a>
           </div>
         </div>
       </section>
 
-      <section id="contact" class="section contact-section">
-        <div class="container">
-          <div class="grid grid-2 align-center">
-            <div>
-              <p class="eyebrow">Contact</p>
-              <h2>Waar loop je iedere week opnieuw tegenaan?</h2>
-              <p class="lead-text">
-                Beschrijf één situatie die nu tijd, herstelwerk of uitleg kost. Je hoeft nog niet te weten of daar een website, koppeling of online tool voor nodig is.
-              </p>
-              <p>Je ontvangt binnen één werkdag een reactie.</p>
-              <p>
-                <strong>Joris Paardekooper Overman</strong><br>
-                Bernadottelaan 273, Haarlem<br>
-                <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a> | <a href="tel:+31621228884">06 21 22 88 84</a>
-              </p>
-            </div>
+      <section class="section faq" aria-labelledby="faq-title">
+        <div class="section-heading">
+          <p class="eyebrow">Veelgestelde vragen</p>
+          <h2 id="faq-title">Voordat we beginnen</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Kun je ook een bestaande website verbeteren?</summary>
+            <p>
+              Ja. Soms is doorontwikkeling verstandiger dan opnieuw beginnen. Ik kan helpen met
+              foutopsporing, structuur, formulieren, WooCommerce en uitbreidingen.
+            </p>
+          </details>
+          <details>
+            <summary>Bouw je alleen complexe maatwerkoplossingen?</summary>
+            <p>
+              Nee. Ik kijk eerst of een bestaande website of standaardoplossing kan doen wat nodig
+              is. Maatwerk komt pas in beeld als dat niet goed aansluit.
+            </p>
+          </details>
+          <details>
+            <summary>Werk je alleen met WordPress?</summary>
+            <p>
+              Nee. Ik kies de techniek pas nadat duidelijk is wat er moet werken. Dat kan WordPress
+              zijn, maar voor een online tool kan iets anders beter passen.
+            </p>
+          </details>
+          <details>
+            <summary>Kan ik onderdelen van de website zelf beheren?</summary>
+            <p>
+              Waar dat past, richt ik het zo in dat je pagina's, projecten of andere content zelf
+              kunt bijhouden.
+            </p>
+          </details>
+          <details>
+            <summary>Kun je ook na de livegang betrokken blijven?</summary>
+            <p>
+              Ja. Onderhoud, hosting, foutopsporing en uitbreiding kunnen onderdeel blijven van de
+              samenwerking.
+            </p>
+          </details>
+          <details>
+            <summary>Hoe wordt de prijs bepaald?</summary>
+            <p>
+              Websites starten vanaf €3.500; online tools en maatwerk vanaf €7.500. Voor een
+              afgebakend project ontvang je een vaste offerte. Beheer, ondersteuning en losse
+              werkzaamheden kunnen op uurbasis.
+            </p>
+          </details>
+          <details>
+            <summary>Hoe begint een maatwerktraject?</summary>
+            <p>
+              Na een vrijblijvende kennismaking kan bij een grotere vraag een betaalde discovery
+              nodig zijn om processen, eisen en aanpak af te bakenen. Bij een duidelijke,
+              afgebakende vraag is die extra fase niet nodig.
+            </p>
+          </details>
+          <details>
+            <summary>Wat kost een website laten maken in Haarlem?</summary>
+            <p>
+              Websites starten vanaf €3.500. De vaste prijs hangt af van wat er moet werken; die
+              staat in de offerte. Online tools en maatwerk starten vanaf €7.500.
+            </p>
+          </details>
+          <details>
+            <summary>Werk je als webbouwer alleen in Haarlem?</summary>
+            <p>
+              Mijn basis is Haarlem. Ik werk met opdrachtgevers in heel Nederland, vaak op afstand
+              met korte lijnen. Voor gesprekken in de regio is Haarlem handig bereikbaar.
+            </p>
+          </details>
+          <details>
+            <summary>Bouw je ook WordPress-sites voor ondernemers in Haarlem?</summary>
+            <p>
+              Ja, als WordPress past bij wat er moet werken. Ik kies de techniek pas nadat duidelijk
+              is hoe je werkt. Soms is een andere aanpak beter voor een online tool of koppeling.
+            </p>
+          </details>
+          <details>
+            <summary>Hoe lang duurt een project?</summary>
+            <p>
+              De planning hangt af van de omvang en benodigde afstemming en staat daarom in de
+              offerte.
+            </p>
+          </details>
+        </div>
+      </section>
 
-            <div class="card form-card">
-              <form action="contact.php" method="post">
-                <div class="form-group">
-                  <label for="naam">Naam</label>
-                  <input type="text" id="naam" name="naam" required>
-                </div>
-                <div class="form-group">
-                  <label for="email">E-mailadres</label>
-                  <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                  <label for="bericht">Waar loop je tegenaan?</label>
-                  <textarea id="bericht" name="bericht" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="button primary width-full">Verstuur je vraag</button>
-              </form>
+      <section id="contact" class="contact-section">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2>Waar loop je iedere week opnieuw tegenaan?</h2>
+          <p>
+            Beschrijf één situatie die nu tijd, herstelwerk of uitleg kost. Je hoeft nog niet te
+            weten of daar een website, koppeling of online tool voor nodig is.
+          </p>
+          <p class="contact-promise">Je ontvangt binnen één werkdag een reactie.</p>
+          <form class="contact-form" action="/contact.php" method="post" accept-charset="UTF-8">
+            <p id="contact-status" class="form-status" role="status" aria-live="polite" hidden></p>
+            <div class="form-row">
+              <label>
+                Naam
+                <input id="contact-name" type="text" name="name" autocomplete="name" maxlength="120" required>
+                <span id="contact-name-error" class="field-error" hidden></span>
+              </label>
+              <label>
+                Bedrijf <span>(optioneel)</span>
+                <input id="contact-company" type="text" name="company" autocomplete="organization" maxlength="160">
+              </label>
             </div>
-          </div>
+            <div class="form-row">
+              <label>
+                E-mailadres
+                <input id="contact-email" type="email" name="email" autocomplete="email" maxlength="254" required>
+                <span id="contact-email-error" class="field-error" hidden></span>
+              </label>
+              <label>
+                Telefoonnummer <span>(optioneel)</span>
+                <input id="contact-phone" type="tel" name="phone" autocomplete="tel" maxlength="40">
+              </label>
+            </div>
+            <label>
+              Waar loop je tegenaan?
+              <textarea id="contact-message" name="message" rows="6" minlength="10" maxlength="5000" required></textarea>
+              <span id="contact-message-error" class="field-error" hidden></span>
+            </label>
+            <label class="form-honeypot" aria-hidden="true">
+              Website
+              <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
+            <label class="form-consent">
+              <input id="contact-privacy" type="checkbox" name="privacy" value="accepted" required>
+              <span>
+                Ik ga ermee akkoord dat mijn gegevens worden gebruikt om op mijn vraag te reageren.
+                Lees de <a href="privacyverklaring/">privacyverklaring</a>.
+              </span>
+              <span id="contact-privacy-error" class="field-error form-consent-error" hidden></span>
+            </label>
+            <button class="button primary" type="submit">Verstuur je vraag</button>
+          </form>
+        </div>
+        <div class="contact-panel">
+          <a href="tel:+31621228884">
+            <span>Bel direct</span>
+            <strong>06 21 22 88 84</strong>
+          </a>
+          <a href="mailto:info@jpwebcreation.nl">
+            <span>Mail</span>
+            <strong>info@jpwebcreation.nl</strong>
+          </a>
+          <p>
+            Je neemt rechtstreeks contact met mij op.<br><br>
+            Bernadottelaan 273, Haarlem<br>KvK 90397320 · Btw NL004813310B95
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <p>&copy; 2026 JPWebcreation &bull; Haarlem &bull; KvK 90397320</p>
-      </div>
+      <span>© 2026 JPWebcreation</span>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="privacyverklaring/">Privacyverklaring</a>
+        <a href="#top">Terug naar boven</a>
+      </nav>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=11"></script>
   </body>
 </html>
