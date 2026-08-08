@@ -20,10 +20,6 @@ Redirect 301 /post-sitemap.xml /sitemap.xml
 Redirect 301 /sitemap_index.xml /sitemap.xml
 Redirect 301 /wp-sitemap.xml /sitemap.xml
 
-# De verwijderde stad- en blogcollecties hebben geen één-op-één vervanger.
-RedirectMatch 301 ^/stad(?:/.*)?$ /
-RedirectMatch 301 ^/(?:blog|general|uncategorized)(?:/.*)?$ /
-
 AddType image/webp .webp
 
 <IfModule LiteSpeed>
