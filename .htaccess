@@ -20,6 +20,11 @@ Redirect 301 /post-sitemap.xml /sitemap.xml
 Redirect 301 /sitemap_index.xml /sitemap.xml
 Redirect 301 /wp-sitemap.xml /sitemap.xml
 
+# Oude WordPress-collecties zonder één-op-één vervanger.
+# /blog/ blijft bewust buiten deze regel: dat is nu een echte sectie.
+RedirectMatch 301 ^/stad(?:/.*)?$ /
+RedirectMatch 301 ^/(?:general|uncategorized)(?:/.*)?$ /
+
 AddType image/webp .webp
 
 <IfModule LiteSpeed>

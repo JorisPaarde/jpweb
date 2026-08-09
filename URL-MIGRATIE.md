@@ -33,7 +33,6 @@ verwijst naar een andere legacy-URL.
 | `/contact-voor-hulp-met-jouw-website/` | `/#contact` |
 | `/projecten/website-mikes-pianoshow/` | `/projecten/mikes-pianoshow/` |
 | `/projecten/website-wildfloweroffice/` | `/projecten/wildfloweroffice/` |
-| `/blog/` | `/` |
 | `/general/nieuwe-site-laten-bouwen/` | `/` |
 | `/general/snel-website-laten-ontwikkelen/` | `/` |
 | `/general/professioneel-webdesign-laten-maken/` | `/` |
@@ -96,8 +95,10 @@ Redirect 301 /post-sitemap.xml /sitemap.xml
 Redirect 301 /sitemap_index.xml /sitemap.xml
 Redirect 301 /wp-sitemap.xml /sitemap.xml
 RedirectMatch 301 ^/stad(?:/.*)?$ /
-RedirectMatch 301 ^/(?:blog|general|uncategorized)(?:/.*)?$ /
+RedirectMatch 301 ^/(?:general|uncategorized)(?:/.*)?$ /
 ```
+
+`/blog/` wordt niet meer omgeleid: dat is nu een actieve sectie.
 
 ## Acceptatiecontrole na productiedeploy
 
