@@ -26,12 +26,14 @@ Python preview.
 
 The homepage uses an editorial project showcase, not a card grid:
 
-- four primary cases are full-width rows inside `.work-list`;
+- four primary cases are full-width rows inside `.work-list`, grouped with the relevant service;
 - odd rows show the screenshot on the left and even rows on the right;
 - the HTML order always remains screenshot first, copy second; CSS handles the
   visual alternation;
-- Archipel Bouwadvies and Wildfloweroffice remain compact links under
-  `.work-more`;
+- EC EEns and Mike illustrate websites, Supper illustrates maintenance and
+  ongoing development, and Haveka illustrates tools and integrations;
+- Archipel Bouwadvies and Wildfloweroffice remain compact links under the
+  website service; Digitale Opname and AI are linked from tools;
 - project labels are plain inline text separated by dots, not pill badges;
 - rows use horizontal dividers and whitespace instead of outer card borders and
   hover shadows.

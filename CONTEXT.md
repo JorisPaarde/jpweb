@@ -199,3 +199,27 @@ Controleer voor iedere gewijzigde sectie:
 - SEO: onderscheid actuele Search Console-metingen van historische context en
   redactionele zoekwoordkeuzes. Noem een zoekterm alleen een bestaande kans op
   basis van meetgegevens met een duidelijke periode.
+
+## Opbouw van de site (besluit Joris, 5 september 2026)
+
+De homepage begeleidt de bezoeker van aanbod naar passend voorbeeld en daarna
+naar samenwerking, aanpak, kosten en contact. Projecten staan direct bij de
+dienst die ze illustreren, niet als een los portfolio tussen andere blokken.
+
+- Websites/webshops: EC EEns en Mike's Pianoshow; compacte links naar Archipel en Wildfloweroffice.
+- Bestaande website verbeteren: Supper Services.
+- Tools en koppelingen: Haveka; links naar Digitale Opname en AI.
+
+Elke sectie beantwoordt een nieuwe vraag. Voeg geen losse SEO-, probleem- of
+voordelenblokken toe die eerdere uitleg herhalen. Zoektermen passen in de
+dienstuitleg. Reviews ondersteunen een relevante keuze en staan niet tussen
+contactintroductie en formulier.
+
+Dienstpagina's leggen aanbod en werking uit met het voorbeeld bij de bijbehorende
+uitleg. Cases verwijzen terug naar de relevante dienst. De blog is voor uitleg,
+niet een tweede portfolio. Navigatie en vervolgacties volgen die structuur.
+
+Joris heeft de algemene vanafprijzen van €3.500 en €7.500 opnieuw als niet
+passend gecorrigeerd. Niet als standaardminimum terugzetten. Historische
+klantoffertes zijn geen algemene prijslijst. Beschrijf hoe de offerte wordt
+opgebouwd totdat er nieuwe expliciete algemene tarieven zijn vastgesteld.
