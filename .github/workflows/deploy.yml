@@ -32,6 +32,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
 
+      - name: Validate SEO metadata
+        run: python3 .github/scripts/check-seo.py
+
       - name: Configure SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.JPWEB_DEPLOY_SSH_KEY }}
@@ -134,6 +137,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
+
+      - name: Validate SEO metadata
+        run: python3 .github/scripts/check-seo.py
 
       - name: Configure SSH
         env:

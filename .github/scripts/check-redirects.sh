@@ -5,6 +5,9 @@ set -euo pipefail
 base_url="${1%/}"
 
 redirects=(
+  "/index.html|/"
+  "/ai/index.html|/ai/"
+  "/projecten/haveka-installatie/index.html|/projecten/haveka-installatie/"
   "/contact-voor-hulp-met-jouw-website/|/#contact"
   "/projecten/website-mikes-pianoshow/|/projecten/mikes-pianoshow/"
   "/projecten/website-wildfloweroffice/|/projecten/wildfloweroffice/"
@@ -85,3 +88,16 @@ for mapping in "${redirects[@]}"; do
 done
 
 echo "Alle ${#redirects[@]} legacy-URL's geven exact één 301 naar een live bestemming."
+
+# Controleer publieke hostvarianten alleen na een productie-uitrol.
+if [ "$base_url" = "https://jpwebcreation.nl" ]; then
+  for variant in "http://jpwebcreation.nl" "http://www.jpwebcreation.nl" "https://www.jpwebcreation.nl"; do
+    headers="$(curl --silent --show-error --head --max-time 20 "$variant/projecten/haveka-installatie/")"
+    status="$(awk 'toupper($1) ~ /^HTTP\// { code=$2 } END { print code }' <<< "$headers")"
+    location="$(awk 'tolower($1) == "location:" { print $2 }' <<< "$headers" | tr -d '\r')"
+    if [ "$status" != "301" ] || [ "$location" != "$base_url/projecten/haveka-installatie/" ]; then
+      echo "Publieke variant $variant mist de juiste 301: $status $location" >&2
+      exit 1
+    fi
+  done
+fi

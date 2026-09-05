@@ -6,8 +6,15 @@ ErrorDocument 404 /404.html
 # Gebruik één hoofdadres voor alle publieke pagina's.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Alleen publieke hosts; de testomgeving blijft op zijn eigen domein.
+  RewriteCond %{HTTP_HOST} ^(?:www\.)?jpwebcreation\.nl$ [NC]
+  RewriteCond %{HTTPS} !=on [OR]
   RewriteCond %{HTTP_HOST} ^www\.jpwebcreation\.nl$ [NC]
   RewriteRule ^ https://jpwebcreation.nl%{REQUEST_URI} [R=301,L,NE]
+
+  # Alleen een expliciet aangevraagde index.html, nooit de interne DirectoryIndex.
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html(?:[?\s]) [NC]
+  RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L,NE]
 </IfModule>
 
 # Oude WordPress-routes gaan rechtstreeks naar hun definitieve bestemming.
