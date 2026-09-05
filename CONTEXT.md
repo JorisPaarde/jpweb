@@ -179,3 +179,23 @@ Controleer voor iedere gewijzigde sectie:
 8. Klopt het perspectief overal: `ik` voor Joris en `we` alleen voor Joris plus klant?
 9. Voegt de sectie nieuwe informatie toe in plaats van een eerdere boodschap te herhalen?
 10. Zijn alle feiten en resultaten aantoonbaar vanuit de repository of aangeleverde context?
+
+## Feitelijke claims en redactie (5 september 2026)
+
+- Supper Services betreft beheer en doorontwikkeling van een bestaande
+  WooCommerce-webshop. Beschrijf dit nergens als een migratie van tickets of
+  spreadsheets; ook niet in blogs of social posts.
+- Maak bij Digitale Opname onderscheid tussen aangeleverde gegevens en de
+  technische beoordeling door de installateur. Beloof geen foutloze dossiers,
+  offertes op dezelfde dag of het verdwijnen van alle bezoeken en telefoontjes.
+- Benoem rekenvoorbeelden met hun aannames. Tijdsbesteding is geen gemeten
+  besparing en de geldwaarde van uren is geen extra omzet.
+- Vergelijk alternatieven eerlijk. Een formulier, WhatsApp of bestaande software
+  kan voldoen. Verzin geen prijzen, implementatietijden of ontbrekende functies
+  van andere aanbieders.
+- Onderbouw vertrouwen met werkwijze, echte projectdetails en bestaande
+  klantreacties. Voeg geen garanties, resultaten of klantnamen toe om een
+  marketingprincipe te illustreren.
+- SEO: onderscheid actuele Search Console-metingen van historische context en
+  redactionele zoekwoordkeuzes. Noem een zoekterm alleen een bestaande kans op
+  basis van meetgegevens met een duidelijke periode.
