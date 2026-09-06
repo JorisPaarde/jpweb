@@ -223,3 +223,14 @@ Joris heeft de algemene vanafprijzen van €3.500 en €7.500 opnieuw als niet
 passend gecorrigeerd. Niet als standaardminimum terugzetten. Historische
 klantoffertes zijn geen algemene prijslijst. Beschrijf hoe de offerte wordt
 opgebouwd totdat er nieuwe expliciete algemene tarieven zijn vastgesteld.
+
+## Review bij EC EEns (6 september 2026)
+
+Joris bevestigt dat hij met Claudia aan EC EEns heeft samengewerkt. Haar nieuwe
+Google-review is geplaatst onder de naam C D. Joris noemt haar Claudia in zijn
+openbare reactie. Bron: https://maps.app.goo.gl/pmMPUodQGxB1SxX6A
+
+Op de homepage direct bij EC EEns en op de projectpagina staat een letterlijk
+fragment met een gemarkeerde weglating en een link naar de volledige review.
+Schrijf haar geen specifieke functie toe. Het eerdere citaat van Eric ging over
+Energie Verbonden en is op de EC EEns-pagina vervangen door Claudia's review.

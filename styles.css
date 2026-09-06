@@ -658,12 +658,12 @@ main section[id] {
   border-bottom: 1px solid var(--line);
 }
 
-.work-item:nth-child(even) .work-shot {
+.work-item:nth-of-type(even) .work-shot {
   grid-column: 2;
   grid-row: 1;
 }
 
-.work-item:nth-child(even) .work-copy {
+.work-item:nth-of-type(even) .work-copy {
   grid-column: 1;
   grid-row: 1;
 }
@@ -2334,8 +2334,8 @@ main section[id] {
     gap: 30px;
   }
 
-  .work-item:nth-child(even) .work-shot,
-  .work-item:nth-child(even) .work-copy {
+  .work-item:nth-of-type(even) .work-shot,
+  .work-item:nth-of-type(even) .work-copy {
     grid-column: auto;
     grid-row: auto;
   }
