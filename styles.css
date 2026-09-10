@@ -44,6 +44,17 @@ a {
   text-decoration: none;
 }
 
+/* Keep contextual article links recognizable, including on dark CTA panels. */
+.article-body a:not(.button) {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.article-body a:not(.button):hover {
+  text-decoration-thickness: 2px;
+}
+
 :where(a, button, summary, input, textarea):focus-visible {
   outline: 3px solid var(--green-dark);
   outline-offset: 4px;
