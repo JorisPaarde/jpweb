@@ -45,7 +45,8 @@ a {
 }
 
 /* Keep contextual article links recognizable, including on dark CTA panels. */
-.article-body a:not(.button) {
+.article-body a:not(.button),
+.context-link a {
   text-decoration: underline;
   text-underline-offset: 0.18em;
   text-decoration-thickness: 1px;
@@ -2526,3 +2527,9 @@ main section[id] {
     transform: rotateY(-20deg);
   }
 }
+
+/* Blog topic navigation and linked author information. */
+.blog-topic { margin-top: 48px; }
+.blog-topic > p { max-width: 700px; }
+.article-back { font-size: 0.95rem; }
+.article-meta a { text-decoration: underline; text-underline-offset: 0.18em; }
