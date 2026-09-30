@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://jpwebcreation.nl/</loc>
-    <lastmod>2026-09-10</lastmod>
+    <lastmod>2026-09-30</lastmod>
   </url>
   <url>
     <loc>https://jpwebcreation.nl/ai/</loc>
@@ -71,5 +71,9 @@
   <url>
     <loc>https://jpwebcreation.nl/blog/wordpress-website-verbeteren-of-opnieuw-laten-maken.html</loc>
     <lastmod>2026-09-10</lastmod>
+  </url>
+  <url>
+    <loc>https://jpwebcreation.nl/projecten/synk-by-jeanette/</loc>
+    <lastmod>2026-09-30</lastmod>
   </url>
 </urlset>

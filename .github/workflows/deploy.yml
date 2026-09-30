@@ -80,6 +80,7 @@ jobs:
             "/projecten/ec-eens/"
             "/projecten/archipel-bouwadvies/"
             "/projecten/wildfloweroffice/"
+            "/projecten/synk-by-jeanette/"
             "/sitemap.xml"
             "/robots.txt"
           )
@@ -186,6 +187,7 @@ jobs:
             "/projecten/ec-eens/"
             "/projecten/archipel-bouwadvies/"
             "/projecten/wildfloweroffice/"
+            "/projecten/synk-by-jeanette/"
             "/sitemap.xml"
             "/robots.txt"
           )

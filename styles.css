@@ -239,7 +239,7 @@ picture {
   box-shadow: 0 30px 90px rgba(6, 17, 14, 0.48);
   transform:
     translate(-50%, -50%)
-    rotateY(calc(var(--i) * 60deg))
+    rotateY(calc(var(--i) * var(--carousel-angle, 60deg)))
     translateZ(var(--carousel-radius));
   backface-visibility: hidden;
   opacity: 0.86;
