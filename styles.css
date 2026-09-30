@@ -1879,7 +1879,7 @@ main section[id] {
 
 .bot-card-band {
   display: grid;
-  min-height: 132px;
+  min-height: 88px;
   place-items: center;
   background:
     radial-gradient(circle at 30% 80%, rgba(231, 173, 82, 0.9), transparent 60%),
@@ -1908,12 +1908,8 @@ main section[id] {
 }
 
 .ai-offer .bot-card-by {
-  margin-top: 4px;
+  margin: 4px 0 18px;
   font-size: 0.92rem;
-}
-
-.ai-offer .bot-card-text {
-  margin: 14px 0 20px;
 }
 
 .ai-offer .bot-card-note {
