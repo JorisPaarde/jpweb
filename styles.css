@@ -1866,6 +1866,61 @@ main section[id] {
   margin-top: 22px;
 }
 
+.bot-card {
+  max-width: 460px;
+  margin: 26px 0;
+  overflow: hidden;
+  border: 1px solid rgba(49, 95, 79, 0.15);
+  border-radius: 10px;
+  background: var(--white);
+  box-shadow: 0 28px 70px rgba(21, 57, 47, 0.13);
+  text-align: center;
+}
+
+.bot-card-band {
+  display: grid;
+  min-height: 132px;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 80%, rgba(231, 173, 82, 0.9), transparent 60%),
+    linear-gradient(135deg, #fbecd2, #f4c778);
+}
+
+.bot-card-band span {
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: var(--white);
+  background: var(--green-dark);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.bot-card-body {
+  padding: 24px clamp(18px, 4vw, 32px) 26px;
+}
+
+.ai-offer .bot-card-title {
+  color: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.ai-offer .bot-card-by {
+  margin-top: 4px;
+  font-size: 0.92rem;
+}
+
+.ai-offer .bot-card-text {
+  margin: 14px 0 20px;
+}
+
+.ai-offer .bot-card-note {
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
 .ai-references {
   display: grid;
   grid-template-columns: minmax(260px, 520px) minmax(420px, 900px);
