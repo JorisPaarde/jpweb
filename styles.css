@@ -670,6 +670,12 @@ main section[id] {
   border-bottom: 1px solid var(--line);
 }
 
+@media (min-width: 901px) {
+  .work-item:nth-of-type(even) {
+    grid-template-columns: minmax(300px, 0.76fr) minmax(0, 1.14fr);
+  }
+}
+
 .work-item:nth-of-type(even) .work-shot {
   grid-column: 2;
   grid-row: 1;
@@ -786,6 +792,11 @@ main section[id] {
 
 .work-item:hover .work-link span {
   transform: translateX(5px);
+}
+
+.work-section > .work-list:last-child > .work-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .work-more {
@@ -1351,6 +1362,7 @@ main section[id] {
 }
 
 .case-testimonial blockquote {
+  max-width: 34em;
   margin: 0 0 24px;
   font-size: clamp(1.18rem, 2vw, 1.48rem);
   line-height: 1.38;
@@ -1366,6 +1378,47 @@ main section[id] {
   margin-top: 3px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.88rem;
+}
+
+.case-testimonial-person a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+  text-underline-offset: 0.2em;
+}
+
+.work-list > .case-testimonial,
+.work-list + .case-testimonial {
+  max-width: var(--site-max);
+  margin: clamp(36px, 5vw, 56px) auto;
+}
+
+.contact-section > .contact-panel {
+  align-self: start;
+}
+
+/* Quote inside the contact panel keeps the standard quote styling. */
+.contact-panel .case-testimonial {
+  margin: 0 0 8px;
+}
+
+.contact-panel .case-testimonial-person strong {
+  margin: 0;
+  color: var(--white);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.contact-panel .case-testimonial-person span {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.88rem;
+}
+
+.contact-panel .case-testimonial-person a {
+  display: inline;
+  padding: 0;
+  border: 0;
 }
 
 .case-actions {
