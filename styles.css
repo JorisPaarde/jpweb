@@ -1184,7 +1184,6 @@ main section[id] {
   z-index: 0;
   min-height: clamp(360px, 43vw, 570px);
   margin: 0;
-  overflow: hidden;
   perspective: 1200px;
 }
 
@@ -1376,7 +1375,8 @@ main section[id] {
   margin-top: 28px;
 }
 
-.case-actions .button.ghost {
+.case-actions .button.ghost,
+.ai-bot-actions .button.ghost {
   color: var(--ink);
   border-color: var(--line);
 }
@@ -1797,6 +1797,20 @@ main section[id] {
 .ai-offer p {
   margin: 0;
   color: var(--muted);
+}
+
+.ai-offer p + p {
+  margin-top: 12px;
+}
+
+.ai-offer p a {
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.ai-bot-actions {
+  margin-top: 22px;
 }
 
 .ai-references {
@@ -2344,6 +2358,10 @@ main section[id] {
     width: min(650px, 100%);
   }
 
+  .project-hero-carousel:has(.is-tall) {
+    min-height: 460px;
+  }
+
   .project-screen-panel.is-tall {
     width: clamp(138px, 28vw, 190px);
   }
@@ -2438,6 +2456,11 @@ main section[id] {
     --screen-width: 210px;
     min-height: 260px;
     width: 100%;
+    overflow-x: clip;
+  }
+
+  .project-hero-carousel:has(.is-tall) {
+    min-height: 300px;
   }
 
   .project-screen-panel.is-tall {
