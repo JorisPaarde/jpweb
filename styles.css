@@ -1856,7 +1856,8 @@ main section[id] {
   margin-top: 12px;
 }
 
-.ai-offer p a {
+.ai-offer p a,
+.ai-reference-copy p a {
   color: var(--green-dark);
   text-decoration: underline;
   text-underline-offset: 0.18em;
@@ -1943,6 +1944,20 @@ main section[id] {
   margin-top: 32px;
   border: 1px solid var(--line);
   background: var(--line);
+}
+
+.ai-reference-list.is-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ai-references.is-plain {
+  background: transparent;
+  border-block: 0;
+}
+
+.ai-offers.is-mist {
+  background: var(--mist);
+  border-block: 1px solid var(--line);
 }
 
 .ai-reference-list span {
@@ -2423,6 +2438,10 @@ main section[id] {
 
   .ai-reference-list {
     grid-template-columns: 1fr;
+  }
+
+  .ai-reference-list.is-four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .process-intro,
