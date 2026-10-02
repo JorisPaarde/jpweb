@@ -135,19 +135,25 @@ git push origin main
 
 - every push to `main` deploys the exact commit to
   `https://test.jpwebcreation.nl/` with `rsync --delete`;
-- production is never deployed by a normal push;
-- production deploy is a manual `workflow_dispatch` run of `Deploy site` and
-  targets `/home/jpwebcreation/public_html`;
+- when the test deploy and its smoke checks succeed, the same run deploys that
+  commit to production (`/home/jpwebcreation/public_html`) without approval
+  (decision Joris, 2 October 2026); a failed test check stops production;
+- a merge or push to `main` therefore goes live: show Joris the change
+  (screenshots or a description) before pushing to `main`;
+- `workflow_dispatch` reruns the same test-then-production route, for example
+  to redeploy the current `main`;
+- deploys run one at a time and are never cancelled halfway;
 - the workflow excludes `.git/`, `.github/`, `.DS_Store`, and Markdown files;
 - both jobs require the `JPWEB_DEPLOY_SSH_KEY` repository secret.
 - both jobs run HTTP smoke checks after `rsync`; keep critical routes, custom
   404 behavior, the contact-state endpoint, and the environment-specific robots
   header covered when the route structure changes.
 
-After a push, check the GitHub Actions run before describing test as deployed.
-After a manual production run, test the production homepage, all project routes,
-the form, redirects, sitemap, robots headers, and the custom 404. Do not use the
-manual server sync below as the normal deploy path.
+After a push, check the GitHub Actions run before describing test or
+production as deployed; both jobs must be green. After a production deploy,
+test the production homepage, all project routes, the form, redirects, sitemap,
+robots headers, and the custom 404. Do not use the manual server sync below as
+the normal deploy path.
 
 ## SSH Access (manual recovery only)
 

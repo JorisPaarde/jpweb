@@ -29,4 +29,4 @@ De blog helpt ondernemers een concrete keuze maken over werk dat JPWebcreation u
 
 ## Publiceren en controleren
 
-Volg `../AGENTS.md`: push naar `main` publiceert op test. Productie gaat via de handmatige `Deploy site`-workflow. Controleer de workflow en de werkelijke pagina's, links en metadata voordat je een geslaagde livegang meldt.
+Volg `../AGENTS.md`: push naar `main` publiceert eerst op test en daarna, als de controles slagen, automatisch op productie. Controleer de workflow en de werkelijke pagina's, links en metadata voordat je een geslaagde livegang meldt.

@@ -49,15 +49,18 @@ manually during the normal workflow; use GitHub Actions as described below.
 
 ## GitHub Actions deploys
 
-Pushes to `main` run `.github/workflows/deploy.yml` and deploy the checked out
-static files to test with `rsync`:
+Pushes to `main` run `.github/workflows/deploy.yml`. The checked out static
+files go to test first and, when the test smoke checks pass, to production in
+the same run, both with `rsync`:
 
 - test: `/home/jpwebcreation/test.jpwebcreation.nl`
 - production: `/home/jpwebcreation/public_html`
 
-Production deploys are manual. After reviewing test, run the `Deploy site`
-workflow from GitHub Actions with `Run workflow`; that job uses the `production`
-environment and deploys the selected `main` commit.
+Production follows test automatically, without an approval step. A failed test
+deploy or smoke check stops the run before production. To redeploy the current
+`main`, run the `Deploy site` workflow from GitHub Actions with `Run workflow`;
+that also goes through test first. Deploys run one at a time and are never
+cancelled halfway.
 
 Both deploy jobs finish with an HTTP smoke test. It checks all public routes,
 including `/ai/`, the custom 404, the contact-state endpoint, the
@@ -88,8 +91,8 @@ Before pushing, verify that CSS braces are balanced, internal paths still exist,
 the JSON-LD is valid JSON, and every HTML file uses the same current
 `styles.css?v=` and `script.js?v=` value. After the test deploy, inspect the
 homepage and `/ai/` at mobile and desktop widths, open all cases, and test the
-contact form. Before production deploy, complete the open checks in
-`QA-RAPPORT.md` and `SITE-VERBETERPLAN.md`.
+contact form. Because a push to `main` also reaches production, review changes
+before they are pushed to `main`.
 
 The repository does not submit URLs to Google Search Console. Sitemap
 submission, recrawl requests, and removal requests must be completed through an

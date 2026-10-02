@@ -6,14 +6,15 @@ on:
       - main
   workflow_dispatch:
 
+# Eén deploy tegelijk. Een lopende deploy wordt nooit halverwege afgebroken;
+# een nieuwere push wacht en vervangt alleen een nog niet gestarte run.
 concurrency:
-  group: deploy-site-${{ github.event_name }}
-  cancel-in-progress: true
+  group: deploy-site
+  cancel-in-progress: false
 
 jobs:
   deploy_test:
     name: Deploy to test
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     environment:
@@ -118,14 +119,11 @@ jobs:
             "$BASE_URL/contact.php?action=state")"
           grep -q '"values":\[\]' <<< "$contact_state"
 
+  # Productie volgt automatisch, maar alleen als test en de rooktest daar slagen.
   deploy_production:
     name: Deploy to production
-    if: github.event_name == 'workflow_dispatch'
+    needs: deploy_test
     runs-on: ubuntu-latest
-
-    environment:
-      name: production
-      url: https://jpwebcreation.nl/
 
     permissions:
       contents: read
