@@ -39,7 +39,11 @@ if ($method === 'POST') {
         if ($user === false || $hash === '' || !ai_scan_verify_password($password, $hash)) {
             $error = 'E-mailadres of wachtwoord klopt niet.';
         } else {
-            ai_scan_login_user($config, (int) $user['id']);
+            ai_scan_login_user(
+                $config,
+                (int) $user['id'],
+                (int) ($user['password_version'] ?? 1)
+            );
             $pdo->prepare('UPDATE users SET last_login_at = :t WHERE id = :id')->execute([
                 't' => time(),
                 'id' => $user['id'],
