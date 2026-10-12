@@ -1,0 +1,60 @@
+name: AI scan tests
+
+# Runs on non-main branches only — does not trigger deploy.yml (main-only).
+on:
+  push:
+    branches:
+      - 'cursor/**'
+      - 'b2/**'
+      - 'plan/**'
+    paths:
+      - 'lib/**'
+      - 'api/**'
+      - 'ai-scan.php'
+      - 'account-delete.php'
+      - 'logout.php'
+      - 'login/**'
+      - 'dashboard/**'
+      - 'ai-scan/**'
+      - 'tests/**'
+      - 'data/**'
+      - 'config-examples/**'
+      - 'docs/ai-scan-api.md'
+      - '.github/workflows/ai-scan-tests.yml'
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'api/**'
+      - 'ai-scan.php'
+      - 'account-delete.php'
+      - 'logout.php'
+      - 'login/**'
+      - 'dashboard/**'
+      - 'ai-scan/**'
+      - 'tests/**'
+      - 'data/**'
+      - 'config-examples/**'
+      - 'docs/ai-scan-api.md'
+      - '.github/workflows/ai-scan-tests.yml'
+
+jobs:
+  php-tests:
+    name: PHP AI-scan tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3, mbstring, curl
+          coverage: none
+
+      - name: Run AI-scan tests
+        run: php tests/run.php
+        env:
+          JPWEB_AI_SCAN_ALLOW_INSECURE: '1'
+          JPWEB_AI_SCAN_MAIL_DRY_RUN: '1'
+          JPWEB_AI_SCAN_SKIP_REACHABILITY: '1'

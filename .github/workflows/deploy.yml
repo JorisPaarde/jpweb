@@ -58,6 +58,9 @@ jobs:
             --exclude='.github/' \
             --exclude='.DS_Store' \
             --exclude='*.md' \
+            --exclude='docs/' \
+            --exclude='tests/' \
+            --exclude='config-examples/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
@@ -168,6 +171,9 @@ jobs:
             --exclude='.github/' \
             --exclude='.DS_Store' \
             --exclude='*.md' \
+            --exclude='docs/' \
+            --exclude='tests/' \
+            --exclude='config-examples/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 

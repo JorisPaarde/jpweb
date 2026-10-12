@@ -1,0 +1,31 @@
+# Minimal disposable-email domain denylist for free AI scans.
+# Extend on the server or replace with a fuller weekly list.
+0-mail.com
+10minutemail.com
+10minutemail.net
+20minutemail.com
+guerrillamail.com
+guerrillamail.net
+mailinator.com
+mailinator.net
+maildrop.cc
+meltmail.com
+discard.email
+trashmail.com
+trashmail.net
+tempmail.com
+temp-mail.org
+temp-mail.io
+yopmail.com
+yopmail.fr
+sharklasers.com
+spam4.me
+getnada.com
+nada.email
+emailondeck.com
+throwaway.email
+fakeinbox.com
+tmpmail.org
+tmpmail.net
+moakt.com
+mytemp.email
