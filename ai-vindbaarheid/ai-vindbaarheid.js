@@ -33,6 +33,7 @@
         <p class="geo-score-foot"></p>
       </article>
       <p class="geo-example-note"></p>
+      <p><a class="button primary" href="#scan">Doe de gratis scan</a></p>
     `;
 
     const setText = (selector, value) => {

@@ -32,9 +32,9 @@
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
     <link rel="stylesheet" href="../styles.css?v=61">
-    <link rel="stylesheet" href="ai-vindbaarheid.css?v=3">
+    <link rel="stylesheet" href="ai-vindbaarheid.css?v=4">
   </head>
-  <body class="project-page geo-page" data-stunten-example="off">
+  <body class="project-page ai-page geo-page" data-stunten-example="off">
     <header class="site-header">
       <a class="brand" href="../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -56,33 +56,45 @@
         <a href="../blog/">Blog</a>
         <a href="../#contact">Contact</a>
       </nav>
-      <a class="header-phone" href="tel:+31621228884">06&nbsp;21&nbsp;22&nbsp;88&nbsp;84</a>
+      <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
     </header>
 
     <main>
-      <section class="ai-hero geo-hero" aria-labelledby="geo-title">
+      <section class="ai-hero" aria-labelledby="geo-title">
         <div class="ai-hero-copy">
           <p class="eyebrow">Gratis AI-vindbaarheidsscan</p>
           <h1 id="geo-title">Noemt ChatGPT jouw bedrijf, of je concurrent?</h1>
           <p>
             Steeds meer mensen vragen een AI-assistent om een bedrijf aan te raden, in plaats van zelf te zoeken. Dan krijg je geen tien blauwe links, maar een paar namen. Sta jij daartussen? De meeste ondernemers hebben geen idee. Ik meet het voor je.
           </p>
+          <p>
+            Gratis, één keer per bedrijf. Je hebt alleen je e-mailadres en je website nodig.
+          </p>
           <div class="hero-actions ai-hero-actions">
-            <a class="button primary geo-primary" href="#scan">Doe de gratis scan</a>
+            <a class="button primary" href="#scan">Doe de gratis scan</a>
+            <a class="button ghost" href="#prijzen">Bekijk de prijzen</a>
           </div>
-          <p class="geo-hero-micro">Gratis, één keer per bedrijf. Je hebt alleen je e-mailadres en je website nodig.</p>
         </div>
+        <aside class="ai-process-card" aria-label="Wat de gratis scan laat zien">
+          <p class="eyebrow">Wat je krijgt</p>
+          <ol>
+            <li><span>01</span><strong>Hoe vaak AI je noemt</strong></li>
+            <li><span>02</span><strong>Welke bedrijven in jouw plaats</strong></li>
+            <li><span>03</span><strong>Eén eerste verbeteridee</strong></li>
+          </ol>
+          <p>Geen trend in de gratis scan: daarvoor is één meting te weinig. Die zit in het abonnement.</p>
+        </aside>
       </section>
 
-      <section class="section geo-reframe" aria-labelledby="reframe-title">
+      <section class="section pain-points" aria-labelledby="reframe-title">
         <div class="section-heading">
           <p class="eyebrow">Anders kaderen</p>
           <h2 id="reframe-title">In Google sta je op plek 4. In een AI-antwoord bestaat plek 4 niet.</h2>
-          <p>
+          <p class="process-intro-text">
             Een zoekmachine laat een lijst zien. Een AI-assistent kiest. Wie niet genoemd wordt, verliest geen positie: die doet gewoon niet mee. Daar merk je niets van, want niemand belt om te zeggen dat hij jou níét heeft gevonden.
           </p>
         </div>
-        <div class="geo-pain-grid">
+        <div class="pain-grid">
           <article class="reveal-card">
             <h3>Je ziet het niet.</h3>
             <p>Er is geen teller die laat zien hoe vaak AI je overslaat.</p>
@@ -98,78 +110,123 @@
         </div>
       </section>
 
-      <section id="voorbeeld" class="section geo-example" aria-labelledby="voorbeeld-title" data-stunten-block>
+      <section id="voorbeeld" class="section ai-offers" aria-labelledby="voorbeeld-title" data-stunten-block>
         <div class="section-heading">
           <p class="eyebrow">Voorbeeld</p>
           <h2 id="voorbeeld-title">Zo ziet een meting eruit</h2>
-        </div>
-
-        <div class="geo-example-question" data-stunten-variant="question">
-          <p class="geo-example-question-text">
-            Hoe vaak noemt AI jouw bedrijf? Bij Stunten met Plinten meten we het elke week. Wil je weten waar jij staat?
+          <p>
+            Dit is een voorbeeldkaart met dezelfde structuur als het rapport. Geen klantcijfers zolang daar geen schriftelijke toestemming voor is.
           </p>
-          <a class="button primary geo-primary" href="#scan">Doe de gratis scan</a>
         </div>
-
-        <!-- Live example markup is injected only when data-stunten-example="on" and /assets/data/stunten-voorbeeld.json exists. -->
-        <div class="geo-example-live" data-stunten-variant="live" hidden></div>
+        <div>
+          <div class="geo-example-question" data-stunten-variant="question">
+            <article class="geo-score-card" aria-label="Voorbeeldmeting, geanonimiseerd">
+              <p class="geo-score-example-label">Voorbeeld · geen echte meting</p>
+              <header class="geo-score-card-head">
+                <div>
+                  <strong>Voorbeeldbedrijf</strong>
+                  <span>voorbeeldbedrijf.nl</span>
+                </div>
+                <span class="geo-score-measured">gemeten op [datum]</span>
+              </header>
+              <div class="geo-score-main">
+                <p class="geo-score-pct">—%</p>
+                <p class="geo-score-badge is-example">Voorbeeld</p>
+              </div>
+              <p class="geo-score-band">Waarschijnlijk tussen —% en —%</p>
+              <p class="geo-score-trend">Trend volgt na meer metingen.</p>
+              <p class="geo-score-foot">
+                We stellen vragen die klanten van dit type bedrijf stellen. Bij een echte meting wordt dit wekelijks bijgewerkt.
+              </p>
+            </article>
+            <p class="geo-example-note">
+              Hoe vaak noemt AI jouw bedrijf? Bij Stunten met Plinten meten we het elke week. Wil je weten waar jij staat?
+            </p>
+            <a class="button primary" href="#scan">Doe de gratis scan</a>
+          </div>
+          <div class="geo-example-live" data-stunten-variant="live" hidden></div>
+        </div>
       </section>
 
-      <section class="section geo-benchmark" aria-labelledby="benchmark-title">
-        <div class="section-heading">
+      <section class="section ai-references is-plain" aria-labelledby="benchmark-title">
+        <div>
           <p class="eyebrow">Benchmark</p>
           <h2 id="benchmark-title">Zo vaak noemt AI een lokaal bedrijf</h2>
+        </div>
+        <div class="ai-reference-copy">
           <p>
             Zit jij boven of onder het gemiddelde? Dat weten we pas als genoeg bedrijven gemeten zijn. Jouw scan telt mee (anoniem).
           </p>
         </div>
       </section>
 
-      <section class="section geo-includes" aria-labelledby="includes-title">
+      <section class="section ai-offers is-mist" aria-labelledby="includes-title">
         <div class="section-heading">
           <p class="eyebrow">Gratis scan</p>
           <h2 id="includes-title">Wat de gratis scan laat zien</h2>
+          <p>Ik vertel je ook als het laag is. Een laag getal is geen mislukking. Het is het beginpunt.</p>
         </div>
-        <ul class="geo-checklist">
-          <li class="is-included"><span aria-hidden="true">✓</span> Hoe vaak AI-assistenten je noemen, als percentage van de antwoorden.</li>
-          <li class="is-included"><span aria-hidden="true">✓</span> Welke bedrijven AI in plaats van jou noemt.</li>
-          <li class="is-included"><span aria-hidden="true">✓</span> Eén eerste verbeteridee, gebaseerd op wat er nu op je site staat.</li>
-          <li class="is-excluded"><span aria-hidden="true">○</span> Geen trend: daarvoor is één meting te weinig (die zit in het abonnement).</li>
-        </ul>
-        <p class="geo-honesty">
-          Ik vertel je ook als het laag is. Een laag getal is geen mislukking. Het is het beginpunt.
-        </p>
+        <div class="ai-offer-list">
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number" aria-hidden="true">✓</span>
+            <div>
+              <h3>Hoe vaak AI je noemt</h3>
+              <p>Als percentage van de antwoorden.</p>
+            </div>
+          </article>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number" aria-hidden="true">✓</span>
+            <div>
+              <h3>Welke bedrijven in jouw plaats</h3>
+              <p>Welke namen AI noemt in plaats van jou.</p>
+            </div>
+          </article>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number" aria-hidden="true">✓</span>
+            <div>
+              <h3>Eén eerste verbeteridee</h3>
+              <p>Gebaseerd op wat er nu op je site staat.</p>
+            </div>
+          </article>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number" aria-hidden="true">○</span>
+            <div>
+              <h3>Geen trend</h3>
+              <p>Daarvoor is één meting te weinig. Die zit in het abonnement.</p>
+            </div>
+          </article>
+        </div>
       </section>
 
-      <section class="section geo-steps" aria-labelledby="steps-title">
+      <section class="section ai-offers" aria-labelledby="steps-title">
         <div class="section-heading">
           <p class="eyebrow">Zo werkt het</p>
           <h2 id="steps-title">Vier stappen tot je uitslag</h2>
         </div>
-        <div class="geo-step-list">
-          <article class="reveal-card">
-            <span class="geo-step-number" aria-hidden="true">01</span>
+        <div class="ai-offer-list">
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number">01</span>
             <div>
               <h3>Vul je e-mailadres en website in</h3>
               <p>Alleen die twee gegevens. Geen account van tevoren.</p>
             </div>
           </article>
-          <article class="reveal-card">
-            <span class="geo-step-number" aria-hidden="true">02</span>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number">02</span>
             <div>
               <h3>Bevestig je e-mailadres</h3>
               <p>Je krijgt een eenmalige link die 24 uur geldig is.</p>
             </div>
           </article>
-          <article class="reveal-card">
-            <span class="geo-step-number" aria-hidden="true">03</span>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number">03</span>
             <div>
               <h3>Kies zelf een wachtwoord</h3>
               <p>Via een eenmalige link open je je dashboard. Er komt geen wachtwoord in de mail.</p>
             </div>
           </article>
-          <article class="reveal-card">
-            <span class="geo-step-number" aria-hidden="true">04</span>
+          <article class="ai-offer reveal-card">
+            <span class="ai-offer-number">04</span>
             <div>
               <h3>De scan draait</h3>
               <p>Je krijgt een mail als de uitslag klaar is. Je hoeft geen pagina open te houden.</p>
@@ -178,7 +235,7 @@
         </div>
       </section>
 
-      <section id="prijzen" class="section geo-pricing" aria-labelledby="pricing-title" data-pricing-root>
+      <section id="prijzen" class="section ai-offers" aria-labelledby="pricing-title" data-pricing-root>
         <div class="section-heading">
           <p class="eyebrow">Na de gratis scan</p>
           <h2 id="pricing-title">Eén meting is een foto. Wil je de film?</h2>
@@ -187,97 +244,98 @@
             Eén vraag = zoekopdracht × plaats. Voorbeeld: <span data-pricing-example>8 diensten × 3 plaatsen = 24 vragen</span>.
           </p>
         </div>
-
-        <div class="geo-pricing-layout" data-pricing-interactive hidden>
-          <aside class="geo-pricing-compleet" aria-label="Compleet: meting plus uitvoering">
-            <p class="eyebrow">Compleet · anker</p>
-            <h3>Wil je dat wij het ook uitvoeren?</h3>
-            <p class="geo-pricing-compleet-lead" data-execute-line>
-              Wil je dat wij het uitvoeren? €70 per uur, alleen na jouw akkoord.
-            </p>
-            <fieldset class="geo-pricing-hours">
-              <legend>Uren per maand (na akkoord)</legend>
-              <label><input type="radio" name="compleet-hours" value="3" checked> 3 uur</label>
-              <label><input type="radio" name="compleet-hours" value="6"> 6 uur</label>
-              <label><input type="radio" name="compleet-hours" value="10"> 10 uur</label>
-            </fieldset>
-            <p class="geo-pricing-compleet-price">
-              <span data-price-compleet>€265</span>
-              <small>per maand <span data-vat-note>excl. btw</span></small>
-            </p>
-            <p class="geo-pricing-compleet-note" data-compleet-note>
-              Compleet = toolprijs + vaste uren. Extra uren €70 per uur, alleen na jouw akkoord.
-            </p>
-          </aside>
-
-          <div class="geo-pricing-tool">
-            <label class="geo-pricing-label" for="pricing-questions">
-              Aantal vragen
-              <output id="pricing-questions-value" class="geo-pricing-output" for="pricing-questions" aria-live="polite">100 vragen</output>
-            </label>
-            <input
-              id="pricing-questions"
-              class="geo-pricing-range"
-              type="range"
-              min="0"
-              max="11"
-              step="1"
-              value="3"
-              aria-valuemin="25"
-              aria-valuemax="1000"
-              aria-valuenow="100"
-              aria-valuetext="100 vragen, €65 per maand"
-            >
-
-            <div class="geo-pricing-live" aria-live="polite">
-              <p class="geo-pricing-kicker">Tool · alleen meten · wekelijks · 3 bronnen</p>
-              <p class="geo-pricing-monthly"><span data-price-monthly>€65</span> <small>per maand <span data-vat-note>excl. btw</span></small></p>
-              <p class="geo-pricing-meta">
-                <span data-price-weekly>€15 per week</span>
-                · <span data-price-annual>€650 per jaar (10 maanden)</span>
+        <div>
+          <div class="geo-pricing-layout" data-pricing-interactive hidden>
+            <aside class="geo-pricing-compleet" aria-label="Compleet: meting plus uitvoering">
+              <p class="eyebrow">Compleet · anker</p>
+              <h3>Wil je dat wij het ook uitvoeren?</h3>
+              <p class="geo-pricing-compleet-lead" data-execute-line>
+                Wil je dat wij het uitvoeren? €70 per uur, alleen na jouw akkoord.
               </p>
-              <p class="geo-pricing-actions"><span data-price-actions>6</span> verbeteracties per maand</p>
-              <p class="geo-pricing-contact" data-price-contact hidden></p>
+              <fieldset class="geo-pricing-hours">
+                <legend>Uren per maand (na akkoord)</legend>
+                <label><input type="radio" name="compleet-hours" value="3" checked> 3 uur</label>
+                <label><input type="radio" name="compleet-hours" value="6"> 6 uur</label>
+                <label><input type="radio" name="compleet-hours" value="10"> 10 uur</label>
+              </fieldset>
+              <p class="geo-pricing-compleet-price">
+                <span data-price-compleet>€265</span>
+                <small>per maand <span data-vat-note>excl. btw</span></small>
+              </p>
+              <p class="geo-pricing-compleet-note" data-compleet-note>
+                Compleet = toolprijs + vaste uren. Extra uren €70 per uur, alleen na jouw akkoord.
+              </p>
+            </aside>
+
+            <div class="geo-pricing-tool">
+              <label class="geo-pricing-label" for="pricing-questions">
+                Aantal vragen
+                <output id="pricing-questions-value" class="geo-pricing-output" for="pricing-questions" aria-live="polite">100 vragen</output>
+              </label>
+              <input
+                id="pricing-questions"
+                class="geo-pricing-range"
+                type="range"
+                min="0"
+                max="11"
+                step="1"
+                value="3"
+                aria-valuemin="25"
+                aria-valuemax="1000"
+                aria-valuenow="100"
+                aria-valuetext="100 vragen, €65 per maand"
+              >
+
+              <div class="geo-pricing-live" aria-live="polite">
+                <p class="geo-pricing-kicker">Tool · alleen meten · wekelijks · 3 bronnen</p>
+                <p class="geo-pricing-monthly"><span data-price-monthly>€65</span> <small>per maand <span data-vat-note>excl. btw</span></small></p>
+                <p class="geo-pricing-meta">
+                  <span data-price-weekly>€15 per week</span>
+                  · <span data-price-annual>€650 per jaar (10 maanden)</span>
+                </p>
+                <p class="geo-pricing-actions"><span data-price-actions>6</span> verbeteracties per maand</p>
+                <p class="geo-pricing-contact" data-price-contact hidden></p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="geo-pricing-fallback" data-pricing-fallback>
-          <p>Abonnementsprijzen (excl. btw). De eerste scan is gratis.</p>
-          <div class="geo-pricing-table-wrap">
-            <table class="geo-pricing-table">
-              <thead>
-                <tr>
-                  <th scope="col">Vragen</th>
-                  <th scope="col">Tool / mnd</th>
-                  <th scope="col">Acties / mnd</th>
-                  <th scope="col">Week</th>
-                  <th scope="col">Jaar (10×)</th>
-                  <th scope="col">Compleet 3u</th>
-                  <th scope="col">Compleet 6u</th>
-                  <th scope="col">Compleet 10u</th>
-                </tr>
-              </thead>
-              <tbody data-pricing-table-body>
-                <tr><th scope="row">25</th><td>€19</td><td>3</td><td>€4</td><td>€190</td><td>€219</td><td>€418</td><td>€684</td></tr>
-                <tr><th scope="row">50</th><td>€35</td><td>4</td><td>€8</td><td>€350</td><td>€235</td><td>€434</td><td>€700</td></tr>
-                <tr><th scope="row">75</th><td>€49</td><td>5</td><td>€11</td><td>€490</td><td>€249</td><td>€448</td><td>€714</td></tr>
-                <tr><th scope="row">100</th><td>€65</td><td>6</td><td>€15</td><td>€650</td><td>€265</td><td>€464</td><td>€730</td></tr>
-                <tr><th scope="row">150</th><td>€89</td><td>7</td><td>€21</td><td>€890</td><td>€289</td><td>€488</td><td>€754</td></tr>
-                <tr><th scope="row">200</th><td>€109</td><td>8</td><td>€25</td><td>€1.090</td><td>€309</td><td>€508</td><td>€774</td></tr>
-                <tr><th scope="row">250</th><td>€129</td><td>9</td><td>€30</td><td>€1.290</td><td>€329</td><td>€528</td><td>€794</td></tr>
-                <tr><th scope="row">350</th><td>€179</td><td>10</td><td>€41</td><td>€1.790</td><td>€379</td><td>€578</td><td>€844</td></tr>
-                <tr><th scope="row">500</th><td>€239</td><td>12</td><td>€55</td><td>€2.390</td><td>€439</td><td>€638</td><td>€904</td></tr>
-                <tr><th scope="row">750</th><td>€339</td><td>15</td><td>€78</td><td>€3.390</td><td>€539</td><td>€738</td><td>€1.004</td></tr>
-                <tr><th scope="row">1000</th><td>€429</td><td>20</td><td>€99</td><td>€4.290</td><td>€629</td><td>€828</td><td>€1.094</td></tr>
-                <tr><th scope="row">1000+</th><td colspan="7">+€39 per gestarte 100 vragen · neem contact op / op aanvraag</td></tr>
-              </tbody>
-            </table>
+          <div class="geo-pricing-fallback" data-pricing-fallback>
+            <p>Abonnementsprijzen (excl. btw). De eerste scan is gratis.</p>
+            <div class="geo-pricing-table-wrap">
+              <table class="geo-pricing-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Vragen</th>
+                    <th scope="col">Tool / mnd</th>
+                    <th scope="col">Acties / mnd</th>
+                    <th scope="col">Week</th>
+                    <th scope="col">Jaar (10×)</th>
+                    <th scope="col">Compleet 3u</th>
+                    <th scope="col">Compleet 6u</th>
+                    <th scope="col">Compleet 10u</th>
+                  </tr>
+                </thead>
+                <tbody data-pricing-table-body>
+                  <tr><th scope="row">25</th><td>€19</td><td>3</td><td>€4</td><td>€190</td><td>€219</td><td>€418</td><td>€684</td></tr>
+                  <tr><th scope="row">50</th><td>€35</td><td>4</td><td>€8</td><td>€350</td><td>€235</td><td>€434</td><td>€700</td></tr>
+                  <tr><th scope="row">75</th><td>€49</td><td>5</td><td>€11</td><td>€490</td><td>€249</td><td>€448</td><td>€714</td></tr>
+                  <tr><th scope="row">100</th><td>€65</td><td>6</td><td>€15</td><td>€650</td><td>€265</td><td>€464</td><td>€730</td></tr>
+                  <tr><th scope="row">150</th><td>€89</td><td>7</td><td>€21</td><td>€890</td><td>€289</td><td>€488</td><td>€754</td></tr>
+                  <tr><th scope="row">200</th><td>€109</td><td>8</td><td>€25</td><td>€1.090</td><td>€309</td><td>€508</td><td>€774</td></tr>
+                  <tr><th scope="row">250</th><td>€129</td><td>9</td><td>€30</td><td>€1.290</td><td>€329</td><td>€528</td><td>€794</td></tr>
+                  <tr><th scope="row">350</th><td>€179</td><td>10</td><td>€41</td><td>€1.790</td><td>€379</td><td>€578</td><td>€844</td></tr>
+                  <tr><th scope="row">500</th><td>€239</td><td>12</td><td>€55</td><td>€2.390</td><td>€439</td><td>€638</td><td>€904</td></tr>
+                  <tr><th scope="row">750</th><td>€339</td><td>15</td><td>€78</td><td>€3.390</td><td>€539</td><td>€738</td><td>€1.004</td></tr>
+                  <tr><th scope="row">1000</th><td>€429</td><td>20</td><td>€99</td><td>€4.290</td><td>€629</td><td>€828</td><td>€1.094</td></tr>
+                  <tr><th scope="row">1000+</th><td colspan="7">+€39 per gestarte 100 vragen · neem contact op / op aanvraag</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="scan" class="contact-section geo-scan" aria-labelledby="scan-title">
+      <section id="scan" class="contact-section" aria-labelledby="scan-title">
         <div>
           <p class="eyebrow">Gratis starten</p>
           <h2 id="scan-title">Doe de gratis scan</h2>
@@ -322,19 +380,19 @@
               <span id="scan-privacy-error" class="field-error form-consent-error" hidden></span>
             </label>
 
-            <button class="button primary geo-primary" type="submit">Doe de gratis scan</button>
+            <button class="button primary" type="submit">Doe de gratis scan</button>
 
-            <p class="geo-scan-micro">
+            <p>
               Je ontvangt eerst een mail om je adres te bevestigen. Pas daarna starten we de scan.
             </p>
-            <p class="geo-avg-note">
+            <p>
               Voor de scan verwerk ik je e-mailadres, je website, het tijdstip van je aanvraag en een tijdelijk technisch kenmerk van je verbinding (IP-adres) om misbruik te voorkomen. Je e-mailadres en IP-adres gaan niet naar AI-diensten. Details staan in de
               <a href="../privacyverklaring/#ai-vindbaarheidsscan">privacyverklaring</a>.
             </p>
           </form>
         </div>
         <div class="contact-panel">
-          <a href="tel:+31621228884"><span>Telefoon</span><strong>06&nbsp;21&nbsp;22&nbsp;88&nbsp;84</strong></a>
+          <a href="tel:+31621228884"><span>Telefoon</span><strong>06 21 22 88 84</strong></a>
           <a href="mailto:info@jpwebcreation.nl"><span>Mail</span><strong>info@jpwebcreation.nl</strong></a>
           <p>Vragen over de scan? Mail of bel rechtstreeks.</p>
         </div>
@@ -378,10 +436,10 @@
               <a href="../privacyverklaring/#ai-vindbaarheidsscan">privacyverklaring</a>.
             </p>
           </details>
+          <p class="geo-brand-note">
+            ChatGPT, Perplexity en OpenAI zijn merken van hun respectievelijke eigenaren. Google staat op deze pagina alleen als tekst, zonder logo.
+          </p>
         </div>
-        <p class="geo-brand-note">
-          ChatGPT, Perplexity en OpenAI zijn merken van hun respectievelijke eigenaren. Google staat op deze pagina alleen als tekst, zonder logo.
-        </p>
       </section>
     </main>
 
@@ -394,6 +452,6 @@
       </nav>
     </footer>
     <script src="../script.js?v=13"></script>
-    <script src="ai-vindbaarheid.js?v=2"></script>
+    <script src="ai-vindbaarheid.js?v=3"></script>
   </body>
 </html>
