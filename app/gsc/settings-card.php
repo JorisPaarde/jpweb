@@ -151,7 +151,7 @@ if ($gsc['connected_at'] !== null) {
     <?php endif; ?>
   <?php elseif (!$gsc['configured']): ?>
     <p class="gsc-card__note">
-      Koppelen is nog niet beschikbaar. We richten Google OAuth eerst in; daarna kun je hier verbinden.
+      Koppelen is nog niet beschikbaar. Ik richt Google OAuth eerst in; daarna kun je hier verbinden.
     </p>
   <?php elseif ($gsc['connected']): ?>
     <dl class="gsc-card__status">
@@ -161,7 +161,7 @@ if ($gsc['connected_at'] !== null) {
       <dd><?= htmlspecialchars($propertyLabel, ENT_QUOTES, 'UTF-8') ?></dd>
     </dl>
     <p class="gsc-card__note">
-      We halen klikken, impressies, CTR en positie op uit je web-prestatierapport
+      Ik haal klikken, impressies, CTR en positie op uit je web-prestatierapport
       (Search Analytics) voor vragen die bij je kernvragen passen.
     </p>
     <div class="gsc-card__actions">
@@ -175,7 +175,7 @@ if ($gsc['connected_at'] !== null) {
   <?php else: ?>
     <p class="gsc-card__note">
       Nog niet gekoppeld. Je verbindt je eigen property via Google (alleen lezen).
-      Wij slaan geen wachtwoord op — alleen een versleutelde toegangstoken.
+      Ik sla geen wachtwoord op — alleen een versleutelde toegangstoken.
     </p>
     <div class="gsc-card__actions">
       <form method="post" action="<?= htmlspecialchars($gsc['connect_action'], ENT_QUOTES, 'UTF-8') ?>">

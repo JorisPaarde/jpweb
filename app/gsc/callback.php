@@ -55,7 +55,7 @@ if ($user === false || !ai_scan_can_write($user)) {
 $result = ai_scan_gsc_complete_connect($pdo, $config, $oauthUserId, $code);
 if (empty($result['ok'])) {
     $map = [
-        'no_matching_property' => 'We vonden geen Search Console-property die bij je website past. Controleer of je website in Search Console staat en probeer opnieuw.',
+        'no_matching_property' => 'Ik vond geen Search Console-property die bij je website past. Controleer of je website in Search Console staat en probeer opnieuw.',
         'missing_refresh_token' => 'Google gaf geen langetermijn-toegang. Kies bij het koppelen opnieuw voor toestemming.',
         'not_configured' => 'Google Search Console is nog niet geconfigureerd.',
         'token_exchange_failed' => 'Het ophalen van toegang bij Google is mislukt. Probeer het later opnieuw.',
