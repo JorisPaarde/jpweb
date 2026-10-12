@@ -1,0 +1,359 @@
+/* Promo page only: layout reuses shared styles.css classes.
+   Keep this file to (1) kill blur on this page and (2) style pricing + example cards. */
+
+/* No blur anywhere on this page. */
+.geo-page .site-header,
+.geo-page .site-header.is-scrolled,
+.geo-page .site-header.is-open {
+  background: var(--paper);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.geo-page .ai-process-card {
+  background: rgba(21, 57, 47, 0.72);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.geo-example-question {
+  display: grid;
+  gap: 22px;
+  justify-items: start;
+}
+
+.geo-example-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--type-body-large);
+}
+
+.geo-score-card {
+  width: 100%;
+  max-width: 640px;
+  padding: clamp(24px, 4vw, 36px);
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.geo-score-example-label {
+  margin: 0 0 18px;
+  color: var(--green-dark);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.geo-score-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 28px;
+}
+
+.geo-score-card-head strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.geo-score-card-head span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.geo-score-measured {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.geo-score-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px 20px;
+}
+
+.geo-score-pct {
+  margin: 0;
+  font-size: clamp(3.2rem, 8vw, 4.8rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.geo-score-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  color: var(--white);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.geo-score-badge.is-good {
+  background: #0f7b6c;
+}
+
+.geo-score-badge.is-mid {
+  background: #8a6a1f;
+}
+
+.geo-score-badge.is-weak {
+  background: var(--coral);
+}
+
+.geo-score-badge.is-example {
+  color: var(--ink);
+  background: var(--mist);
+  border: 1px solid var(--line);
+}
+
+.geo-score-band,
+.geo-score-trend,
+.geo-score-foot {
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.geo-score-band {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.geo-brand-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.geo-pricing-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(18px, 3vw, 28px);
+  align-items: start;
+}
+
+.geo-pricing-tool,
+.geo-pricing-compleet {
+  padding: clamp(22px, 3vw, 32px);
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.geo-pricing-label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+  font-weight: 800;
+}
+
+.geo-pricing-output {
+  font-weight: 700;
+  color: var(--green);
+}
+
+.geo-pricing-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.geo-pricing-range:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 4px;
+}
+
+.geo-pricing-range::-webkit-slider-runnable-track {
+  height: 8px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+}
+
+.geo-pricing-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  margin-top: -13px;
+  border: 2px solid var(--green-dark);
+  background: var(--amber);
+}
+
+.geo-pricing-range::-moz-range-track {
+  height: 8px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+}
+
+.geo-pricing-range::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--green-dark);
+  border-radius: 0;
+  background: var(--amber);
+}
+
+.geo-pricing-live {
+  margin-top: 22px;
+}
+
+.geo-pricing-kicker {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.geo-pricing-monthly {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.geo-pricing-monthly small {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.geo-pricing-meta,
+.geo-pricing-actions,
+.geo-pricing-contact,
+.geo-pricing-compleet-lead,
+.geo-pricing-compleet-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+
+.geo-pricing-compleet h3 {
+  margin: 8px 0 0;
+  font-size: var(--type-item-title);
+}
+
+.geo-pricing-hours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.geo-pricing-hours legend {
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.geo-pricing-hours label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 650;
+}
+
+.geo-pricing-compleet-price {
+  margin: 18px 0 0;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.geo-pricing-compleet-price small {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.geo-pricing-fallback {
+  margin-top: 28px;
+}
+
+.faq .faq-list a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.geo-table-wrap,
+.geo-pricing-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.geo-ai-table,
+.geo-pricing-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.geo-pricing-table {
+  min-width: 720px;
+}
+
+.geo-ai-table th,
+.geo-ai-table td,
+.geo-pricing-table th,
+.geo-pricing-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.geo-pricing-table th,
+.geo-pricing-table td {
+  white-space: nowrap;
+}
+
+.geo-ai-table thead th,
+.geo-pricing-table thead th {
+  background: var(--mist);
+  font-weight: 800;
+}
+
+.geo-table-note,
+.geo-pricing-extra {
+  margin: 18px 0 0;
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.geo-table-note a,
+.geo-pricing-extra a {
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.geo-objections p {
+  margin: 0 0 18px;
+}
+
+.geo-objections p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .geo-pricing-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -216,3 +216,219 @@ if (contactStatus) {
     }
   }
 }
+
+const scanStatus = document.querySelector("#scan-status");
+const scanForm = document.querySelector(".geo-scan-form");
+
+if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
+  const scanMessages = {
+    invalid: "Controleer de ingevulde gegevens en probeer het opnieuw.",
+    rate_limit: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over een uur opnieuw.",
+    already_scanned: "Voor deze website of dit e-mailadres is al een gratis scan gedaan. We sturen een inloglink naar het e-mailadres van die scan.",
+    disposable_email: "Gebruik een e-mailadres dat je blijft lezen. Je inloggegevens en uitslag komen daar terecht.",
+    daily_limit: "Vandaag zijn alle gratis scans bezet. Bevestig je adres; je scan start dan automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail.",
+    blocked_website: "We mogen deze website niet lezen. Daardoor kunnen we geen goede vragen maken. Neem contact op als je denkt dat dit niet klopt.",
+    error: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
+  };
+
+  const clearScanErrors = () => {
+    scanForm.querySelectorAll(".field-error").forEach((error) => {
+      if (error instanceof HTMLElement) {
+        error.textContent = "";
+        error.hidden = true;
+      }
+    });
+
+    scanForm.querySelectorAll("[aria-invalid]").forEach((field) => {
+      field.removeAttribute("aria-invalid");
+      field.removeAttribute("aria-describedby");
+    });
+  };
+
+  const applyScanFieldErrors = (errors) => {
+    let firstInvalidField = null;
+
+    Object.entries(errors ?? {}).forEach(([name, message]) => {
+      const field = scanForm.elements.namedItem(name);
+      const error = document.querySelector(`#scan-${name}-error`);
+
+      if (
+        !(field instanceof HTMLInputElement)
+        || !(error instanceof HTMLElement)
+        || typeof message !== "string"
+      ) {
+        return;
+      }
+
+      error.textContent = message;
+      error.hidden = false;
+      field.setAttribute("aria-invalid", "true");
+      field.setAttribute("aria-describedby", error.id);
+      firstInvalidField ??= field;
+    });
+
+    if (firstInvalidField) {
+      window.requestAnimationFrame(() => {
+        firstInvalidField.scrollIntoView({
+          block: "center",
+          behavior: reduceMotionQuery.matches ? "auto" : "smooth",
+        });
+        firstInvalidField.focus({ preventScroll: true });
+      });
+    }
+  };
+
+  const showScanSuccess = (message) => {
+    const emailField = scanForm.elements.namedItem("email");
+    const email = emailField instanceof HTMLInputElement ? emailField.value.trim() : "";
+    const text = typeof message === "string" && message
+      ? message
+      : `Check je mail. We hebben een bevestigingslink gestuurd naar ${email || "je adres"}. Zie je niets? Kijk in je spam of stuur opnieuw.`;
+
+    scanStatus.innerHTML = `
+      <span class="form-status-icon" aria-hidden="true">✓</span>
+      <span class="form-status-kicker">Aanvraag ontvangen</span>
+      <strong>Check je mail.</strong>
+      <span></span>
+    `;
+    const detail = scanStatus.querySelector("span:last-child");
+    if (detail instanceof HTMLElement) {
+      detail.textContent = text.replace(/^Check je mail\.\s*/, "");
+    }
+
+    scanStatus.classList.remove("is-error");
+    scanStatus.classList.add("is-success");
+    scanStatus.setAttribute("tabindex", "-1");
+    scanStatus.hidden = false;
+    scanForm.classList.add("has-success");
+
+    window.requestAnimationFrame(() => {
+      scanStatus.scrollIntoView({
+        block: "center",
+        behavior: reduceMotionQuery.matches ? "auto" : "smooth",
+      });
+      scanStatus.focus({ preventScroll: true });
+    });
+  };
+
+  const showScanError = (message) => {
+    scanStatus.textContent = message;
+    scanStatus.classList.remove("is-success");
+    scanStatus.classList.add("is-error");
+    scanStatus.hidden = false;
+
+    window.requestAnimationFrame(() => {
+      scanStatus.scrollIntoView({
+        block: "center",
+        behavior: reduceMotionQuery.matches ? "auto" : "smooth",
+      });
+    });
+  };
+
+  const restoreScanState = async () => {
+    try {
+      const response = await fetch("/ai-scan.php?action=state", {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const state = await response.json();
+      const values = state?.values ?? {};
+      const errors = state?.errors ?? {};
+
+      Object.entries(values).forEach(([name, value]) => {
+        const field = scanForm.elements.namedItem(name);
+
+        if (
+          field instanceof HTMLInputElement
+          && typeof value === "string"
+          && field.type !== "checkbox"
+        ) {
+          field.value = value;
+        }
+      });
+
+      applyScanFieldErrors(errors);
+    } catch {
+      // Algemene foutmelding blijft zichtbaar.
+    }
+  };
+
+  const scanResult = new URLSearchParams(window.location.search).get("scan");
+
+  if (scanResult === "success") {
+    showScanSuccess();
+  } else if (scanResult && scanMessages[scanResult]) {
+    showScanError(scanMessages[scanResult]);
+
+    if (scanResult === "invalid") {
+      void restoreScanState();
+    }
+  }
+
+  scanForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearScanErrors();
+    scanStatus.hidden = true;
+    scanStatus.classList.remove("is-error", "is-success");
+
+    const submitButton = scanForm.querySelector('button[type="submit"]');
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = true;
+    }
+
+    try {
+      const response = await fetch("/ai-scan.php", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: new FormData(scanForm),
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (payload?.ok) {
+        showScanSuccess(payload.message);
+        return;
+      }
+
+      if (payload?.errors && Object.keys(payload.errors).length > 0) {
+        Object.entries(payload.values ?? {}).forEach(([name, value]) => {
+          const field = scanForm.elements.namedItem(name);
+
+          if (
+            field instanceof HTMLInputElement
+            && typeof value === "string"
+            && field.type !== "checkbox"
+          ) {
+            field.value = value;
+          }
+        });
+
+        showScanError(payload.message || scanMessages.invalid);
+        applyScanFieldErrors(payload.errors);
+        return;
+      }
+
+      const status = payload?.status;
+      showScanError(
+        (status && scanMessages[status])
+          || payload?.message
+          || scanMessages.error
+      );
+    } catch {
+      showScanError(scanMessages.error);
+    } finally {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
