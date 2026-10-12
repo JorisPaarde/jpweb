@@ -64,7 +64,7 @@ jobs:
           umask 077
           php -r '$c=["gsc_client_id"=>getenv("GSC_CLIENT_ID"),"gsc_client_secret"=>getenv("GSC_CLIENT_SECRET"),"gsc_redirect_uri"=>"https://jpwebcreation.nl/app/gsc/callback.php"]; echo "<?php\nreturn ", var_export($c, true), ";\n";' > /tmp/gsc-oauth.php
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            'mkdir -p "$HOME/private" && chmod 700 "$HOME/private" && umask 077 && cat > "$HOME/private/gsc-oauth.php.tmp" && chmod 600 "$HOME/private/gsc-oauth.php.tmp" && mv "$HOME/private/gsc-oauth.php.tmp" "$HOME/private/gsc-oauth.php"' \
+            'mkdir -p "$HOME/private" && chmod 700 "$HOME/private" && umask 077 && cat > "$HOME/private/gsc-oauth.php.tmp" && chmod 600 "$HOME/private/gsc-oauth.php.tmp" && mv "$HOME/private/gsc-oauth.php.tmp" "$HOME/private/gsc-oauth.php" && { [ ! -f "$HOME/private/ai-scan-config.php" ] || chmod 600 "$HOME/private/ai-scan-config.php"; }' \
             < /tmp/gsc-oauth.php
           rm -f /tmp/gsc-oauth.php
 
@@ -194,7 +194,7 @@ jobs:
           umask 077
           php -r '$c=["gsc_client_id"=>getenv("GSC_CLIENT_ID"),"gsc_client_secret"=>getenv("GSC_CLIENT_SECRET"),"gsc_redirect_uri"=>"https://jpwebcreation.nl/app/gsc/callback.php"]; echo "<?php\nreturn ", var_export($c, true), ";\n";' > /tmp/gsc-oauth.php
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            'mkdir -p "$HOME/private" && chmod 700 "$HOME/private" && umask 077 && cat > "$HOME/private/gsc-oauth.php.tmp" && chmod 600 "$HOME/private/gsc-oauth.php.tmp" && mv "$HOME/private/gsc-oauth.php.tmp" "$HOME/private/gsc-oauth.php"' \
+            'mkdir -p "$HOME/private" && chmod 700 "$HOME/private" && umask 077 && cat > "$HOME/private/gsc-oauth.php.tmp" && chmod 600 "$HOME/private/gsc-oauth.php.tmp" && mv "$HOME/private/gsc-oauth.php.tmp" "$HOME/private/gsc-oauth.php" && { [ ! -f "$HOME/private/ai-scan-config.php" ] || chmod 600 "$HOME/private/ai-scan-config.php"; }' \
             < /tmp/gsc-oauth.php
           rm -f /tmp/gsc-oauth.php
 
