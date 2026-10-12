@@ -690,10 +690,10 @@ test('confirm mail throttle per email and global', static function (): void {
     assert_same('rate_limited', $r4['code']);
 });
 
-test('defaults: 20 daily scans and 30 min stale alert', static function (): void {
+test('defaults: 20 daily scans and 45 min stale alert', static function (): void {
     $defaults = ai_scan_default_config(':memory:');
     assert_same(20, $defaults['daily_free_scans']);
-    assert_same(1800, $defaults['stale_job_seconds']);
+    assert_same(2700, $defaults['stale_job_seconds']);
     assert_same(3, $defaults['form_ip_max_per_hour']);
     assert_same(600, $defaults['confirm_mail_per_email_seconds']);
 });

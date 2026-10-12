@@ -11,7 +11,7 @@ declare(strict_types=1);
 function ai_scan_check_stale_jobs(PDO $pdo, array $config, int $now = 0, bool $forceMail = false): array
 {
     $now = $now > 0 ? $now : time();
-    $staleAfter = (int) ($config['stale_job_seconds'] ?? 1800);
+    $staleAfter = (int) ($config['stale_job_seconds'] ?? 2700);
     $cooldown = (int) ($config['stale_alert_cooldown'] ?? 3600);
 
     $cutoff = $now - $staleAfter;
