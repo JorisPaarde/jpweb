@@ -1,7 +1,30 @@
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 Options -Indexes
 
 ErrorDocument 404 /404.html
+
+# Never serve SQLite databases, local config, or private data dumps from the webroot.
+<FilesMatch "(?i)\.(sqlite3?|db|sql)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "(?i)^(ai-scan-config\.php|\.env)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Block accidental exposure of private/ and vendor-style paths if they ever land in webroot.
+RedirectMatch 404 (?i)^/(?:private|vendor|config-examples)(?:/|$)
+RedirectMatch 404 (?i)^/(?:lib|tests|data)/
 
 # Gebruik één hoofdadres voor alle publieke pagina's.
 <IfModule mod_rewrite.c>
