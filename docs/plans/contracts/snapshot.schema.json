@@ -1,0 +1,12 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"geo-snapshot v1","type":"object",
+ "required":["client","date","fetched_at","user_agent","pages"],
+ "properties":{"client":{"type":"string"},"date":{"type":"string","format":"date"},"fetched_at":{"type":"string"},"user_agent":{"type":"string"},
+ "pages":{"type":"array","maxItems":40,"items":{"type":"object","required":["url","http_status","final_url","html_bytes","fetch_ms","in_sitemap","speed"],
+  "properties":{"url":{"type":"string"},"http_status":{"type":"integer"},"final_url":{"type":"string"},"html_bytes":{"type":"integer"},"fetch_ms":{"type":"integer"},
+   "indexable":{"type":"boolean"},"robots_meta":{"type":"string"},"canonical":{"type":["string","null"]},"in_sitemap":{"type":"boolean"},
+   "title":{"type":"string"},"meta_description":{"type":"array","items":{"type":"string"}},"h1":{"type":"array","items":{"type":"string"}},"h2":{"type":"array","items":{"type":"string"}},
+   "body_text":{"type":"string"},"faq":{"type":"array","items":{"type":"object","required":["q","a"]}},
+   "schema_types":{"type":"array","items":{"type":"string"}},"schema_raw":{"type":"array"},
+   "internal_links_in":{"type":"integer"},"internal_links_out":{"type":"array","items":{"type":"string"}},
+   "speed":{"type":"object","properties":{"lcp_ms":{"type":["integer","null"]},"source":{"enum":["pagespeed","none"]}}},
+   "text_hash":{"type":"string"}}}}}}
