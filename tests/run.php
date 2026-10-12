@@ -49,7 +49,7 @@ function assert_same(mixed $expected, mixed $actual, string $msg = ''): void
 function test_config(string $sqlite): array
 {
     return array_replace_recursive(ai_scan_default_config($sqlite), [
-        'runner_token' => 'test-runner-token',
+        'runner_token' => 'test-runner-token-0123456789abcdef0123456789',
         'app_key' => 'test-app-key',
         'base_url' => 'https://jpwebcreation.nl',
         'daily_free_scans' => 20,
@@ -341,6 +341,8 @@ test('submit + confirm + set password + runner flow', static function (): void {
     ]);
     $set = ai_scan_set_password($pdo, $pwToken, 'super-secret-password');
     assert_true($set['ok']);
+    $replay = ai_scan_set_password($pdo, $pwToken, 'other-secret-password');
+    assert_true(!$replay['ok'], 'password token must be single-use');
     $user = $pdo->query('SELECT * FROM users')->fetch();
     assert_true(ai_scan_verify_password('super-secret-password', (string) $user['password_hash']));
 

@@ -34,7 +34,7 @@ function ai_scan_runner_authorize(array $config): void
 {
     $expected = (string) ($config['runner_token'] ?? '');
     $got = ai_scan_runner_token_from_request();
-    if ($expected === '' || $got === '' || !hash_equals($expected, $got)) {
+    if (strlen($expected) < 32 || str_starts_with($expected, 'CHANGE_ME') || $got === '' || !hash_equals($expected, $got)) {
         ai_scan_json_response(['ok' => false, 'error' => 'unauthorized'], 401);
     }
 }

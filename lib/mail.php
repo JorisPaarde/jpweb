@@ -47,6 +47,10 @@ function ai_scan_send_mail(array $config, string $to, string $subject, string $b
         return ['ok' => false, 'error' => 'smtp_not_configured'];
     }
 
+    if (preg_match('/[\r\n<>,;\s]/', $to . $fromEmail) === 1 || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
+        return ['ok' => false, 'error' => 'invalid_recipient'];
+    }
+
     $remote = 'ssl://' . $host . ':' . $port;
     $errno = 0;
     $errstr = '';

@@ -11,7 +11,8 @@ ai_scan_assert_allowed_host($config);
 $method = ai_scan_request_method();
 $error = '';
 $next = (string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/');
-if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')) {
+if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')
+    || str_contains($next, '\\') || preg_match('/[\x00-\x1F\x7F]/', $next) === 1) {
     $next = '/dashboard/';
 }
 

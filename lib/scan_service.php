@@ -510,14 +510,21 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
         return ['ok' => false, 'code' => 'error'];
     }
 
+    // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
+    $consume = $pdo->prepare(
+        'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL
+         WHERE id = :id AND password_token_hash = :h'
+    );
+    $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
+    if ($consume->rowCount() !== 1) {
+        return ['ok' => false, 'code' => 'invalid_token'];
+    }
+
     $hash = ai_scan_hash_password($password);
     $pdo->prepare('UPDATE users SET password_hash = :h WHERE id = :id')->execute([
         'h' => $hash,
         'id' => $userId,
     ]);
-    $pdo->prepare(
-        'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE id = :id'
-    )->execute(['id' => $scan['id']]);
 
     return ['ok' => true, 'code' => 'ok'];
 }
