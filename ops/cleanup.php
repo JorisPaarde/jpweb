@@ -15,12 +15,13 @@ if (PHP_SAPI !== 'cli') {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
 
 require_once rtrim($root, '/') . '/lib/bootstrap.php';
+require_once rtrim($root, '/') . '/lib/questions.php';
 [$config, $pdo] = ai_scan_boot();
 
 $sqlite = (string) ($config['sqlite_path'] ?? '');
@@ -67,6 +68,62 @@ try {
             ], 'admin');
             $summary = 'users=1 tier_set=' . (!empty($r['ok']) ? 1 : 0) . ' paused=' . (int) ($r['paused'] ?? 0) . ' mailed=' . (!empty($r['mailed']) ? 1 : 0);
         }
+    } elseif ($mode === 'set_profile') {
+        // Vult alleen lege bedrijfsvelden en voegt ontbrekende concurrenten toe; verwijdert niets.
+        $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
+        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
+        $sel->execute(['e' => $eh]);
+        $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
+        $data = json_decode((string) base64_decode((string) getenv('OPS_PROFILE_B64'), true), true);
+        if (count($ids) !== 1 || !is_array($data)) {
+            $r = ['ok' => false];
+            $summary = 'users_gevonden=' . count($ids);
+        } else {
+            $uid = (int) $ids[0];
+            ai_scan_ensure_questions_schema($pdo);
+            $now = time();
+            $row = $pdo->prepare('SELECT * FROM account_profile WHERE user_id = :u');
+            $row->execute(['u' => $uid]);
+            $cur = $row->fetch() ?: [];
+            $want = [
+                'company' => (string) ($data['company'] ?? ''),
+                'aliases_json' => json_encode(array_values($data['brand_aliases'] ?? []), JSON_UNESCAPED_UNICODE),
+                'services_json' => json_encode(array_values($data['services'] ?? []), JSON_UNESCAPED_UNICODE),
+                'places_json' => json_encode(array_values($data['locations'] ?? []), JSON_UNESCAPED_UNICODE),
+                'audience' => (string) ($data['audience'] ?? ''),
+            ];
+            $filled = 0;
+            if ($cur === []) {
+                $pdo->prepare('INSERT INTO account_profile(user_id, updated_at) VALUES(:u, :t)')->execute(['u' => $uid, 't' => $now]);
+            }
+            foreach ($want as $col => $val) {
+                $old = (string) ($cur[$col] ?? '');
+                if (($old === '' || $old === '[]' || $old === 'null') && $val !== '' && $val !== '[]') {
+                    $pdo->prepare("UPDATE account_profile SET {$col} = :v, updated_at = :t WHERE user_id = :u")
+                        ->execute(['v' => $val, 't' => $now, 'u' => $uid]);
+                    $filled++;
+                }
+            }
+            $added = 0;
+            $have = $pdo->prepare('SELECT LOWER(name) FROM competitors WHERE user_id = :u');
+            $have->execute(['u' => $uid]);
+            $names = $have->fetchAll(PDO::FETCH_COLUMN);
+            $ins = $pdo->prepare(
+                'INSERT INTO competitors(user_id, name, aliases_json, domains_json, source, status, mentioned_count, created_at, updated_at)
+                 VALUES(:u, :n, :a, :d, :s, \'active\', 0, :c, :c)'
+            );
+            foreach (($data['competitors']['list'] ?? []) as $c) {
+                $n = trim((string) ($c['name'] ?? ''));
+                if ($n === '' || in_array(mb_strtolower($n), $names, true) || count($names) >= 10) {
+                    continue;
+                }
+                $ins->execute(['u' => $uid, 'n' => $n, 'a' => json_encode($c['aliases'] ?? []), 'd' => json_encode($c['domains'] ?? []), 's' => 'scan', 'c' => $now]);
+                $names[] = mb_strtolower($n);
+                $added++;
+            }
+            $r = ['ok' => true];
+            $summary = 'users=1 velden_gevuld=' . $filled . ' concurrenten_toegevoegd=' . $added . ' concurrenten_totaal=' . count($names);
+        }
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
         $summary = 'blocks=' . (int) ($r['blocks'] ?? 0) . ' scans=' . (int) ($r['scans'] ?? 0) . ' users=' . (int) ($r['users'] ?? 0) . ' users_overgeslagen=' . (int) ($r['user_skipped'] ?? 0);
@@ -80,7 +137,7 @@ try {
     $pdo->commit();
 } catch (Throwable $e) {
     $pdo->rollBack();
-    fwrite(STDERR, "ops {$job}: mislukt, teruggedraaid\n");
+    fwrite(STDERR, "ops {$job}: mislukt, teruggedraaid (" . get_class($e) . ": " . $e->getMessage() . ")\n");
     exit(1);
 }
 
