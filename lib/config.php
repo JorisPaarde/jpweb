@@ -47,6 +47,20 @@ function ai_scan_load_config(?string $overridePath = null): array
         $config = array_replace_recursive(ai_scan_default_config(''), $loaded);
     }
 
+    // GSC OAuth client, written by the deploy workflow from GitHub secrets.
+    // Kept separate so the deploy never overwrites the hand-managed main config.
+    $gscPath = $path !== null ? dirname($path) . '/gsc-oauth.php' : $webroot . '/../private/gsc-oauth.php';
+    if (is_readable($gscPath)) {
+        $gsc = require $gscPath;
+        if (is_array($gsc)) {
+            foreach (['gsc_client_id', 'gsc_client_secret', 'gsc_redirect_uri'] as $key) {
+                if (isset($gsc[$key]) && is_string($gsc[$key]) && $gsc[$key] !== '') {
+                    $config[$key] = $gsc[$key];
+                }
+            }
+        }
+    }
+
     if (($config['sqlite_path'] ?? '') === '') {
         $config['sqlite_path'] = dirname(__DIR__) . '/../private/ai-scan.sqlite';
     }
