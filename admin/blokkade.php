@@ -27,6 +27,13 @@ if (ai_scan_request_method() === 'POST') {
         $error = 'Sessie verlopen. Probeer opnieuw.';
     } elseif ($action === 'check') {
         $flash = 'Gevonden blokkades: ' . ai_scan_count_free_scan_blocks($pdo, $email, $website) . '.';
+    } elseif ($action === 'cancel') {
+        $result = ai_scan_admin_cancel_pending($pdo, $email, $website);
+        if (!empty($result['ok'])) {
+            $flash = 'Onbevestigde aanvragen geannuleerd: ' . (int) $result['scans'] . '; IP-blokkades opgeheven: ' . (int) $result['ip_blocks'] . '.';
+        } else {
+            $error = 'Niet gelukt: vul een geldig e-mailadres en/of domein in.';
+        }
     } else {
         $result = ai_scan_admin_lift_free_scan_block($pdo, $email, $website, (string) $admin['email']);
         if (!empty($result['ok'])) {
@@ -59,7 +66,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
   <main class="blk">
     <h1>Gratis-scanblokkade opheffen</h1>
     <p><?= $h((string) $admin['email']) ?> · <a href="/admin/tier.php">Abonnementen</a> · <a href="/dashboard/">Dashboard</a></p>
-    <p>Hiermee kan iemand met dit e-mailadres of domein opnieuw een gratis scan aanvragen.</p>
+    <p>Hiermee kan iemand met dit e-mailadres of domein opnieuw een gratis scan aanvragen. De IP-blokkade van die aanvragen hef ik ook op.</p>
     <?php if ($flash !== ''): ?><p class="blk-flash" role="status"><?= $h($flash) ?></p><?php endif; ?>
     <?php if ($error !== ''): ?><p class="blk-error" role="alert"><?= $h($error) ?></p><?php endif; ?>
     <form method="post" action="/admin/blokkade.php">
@@ -68,6 +75,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
       <label>Website of domein <input type="text" name="website" value="<?= $h($website) ?>"></label>
       <button type="submit" name="do" value="check">Controleren</button>
       <button type="submit" name="do" value="lift">Blokkade opheffen</button>
+      <button type="submit" name="do" value="cancel">Onbevestigde aanvragen annuleren</button>
     </form>
   </main>
 </body>

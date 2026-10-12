@@ -69,3 +69,41 @@ test('one free scan per IP (keyed hash, survives confirm, lifted with email/doma
     $r5 = ai_scan_submit($pdo, $config, ['email' => 'ip5@vijfde.nl', 'website' => 'https://vijfde.nl', 'consent' => '1'], '5.6.7.8', $now + 7300);
     assert_same('check_mail', $r5['code']);
 });
+
+test('admin cancel pending removes only pending scans and their ip block', static function (): void {
+    [, $pdo] = boot_test_db();
+    $eh = ai_scan_email_hash('t@agentmail.to');
+    $dh = ai_scan_domain_hash('intake-engine.nl');
+    $ins = $pdo->prepare("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, ip_block_hash)
+        VALUES(:p, 'x', :e, 'u', 'd', :d, :s, 1, :ip)");
+    $ins->execute(['p' => 'a', 'e' => $eh, 'd' => $dh, 's' => 'onbevestigd', 'ip' => 'ipA']);
+    $ins->execute(['p' => 'b', 'e' => ai_scan_email_hash('o@x.nl'), 'd' => ai_scan_domain_hash('x.nl'), 's' => 'onbevestigd', 'ip' => 'ipB']);
+    $pdo->exec("INSERT INTO free_scan_blocks(ip_hash, created_at) VALUES('ipA', 1), ('ipB', 1)");
+
+    $r = ai_scan_admin_cancel_pending($pdo, 't@agentmail.to', 'intake-engine.nl');
+    assert_same(1, $r['scans']);
+    assert_same(1, $r['ip_blocks']);
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM scans')->fetchColumn());
+    assert_same('ipB', (string) $pdo->query('SELECT ip_hash FROM free_scan_blocks')->fetchColumn());
+    assert_same('empty', ai_scan_admin_cancel_pending($pdo, '', '')['error']);
+});
+
+test('admin lift also removes ip blocks of scans for that email/domain', static function (): void {
+    [, $pdo] = boot_test_db();
+    $eh = ai_scan_email_hash('t@agentmail.to');
+    $pdo->prepare("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, ip_block_hash)
+        VALUES('a', 'x', :e, 'u', 'd', 'dh', 'klaar', 1, 'ipA')")->execute(['e' => $eh]);
+    $pdo->exec("INSERT INTO free_scan_blocks(ip_hash, created_at) VALUES('ipA', 1)");
+    $r = ai_scan_admin_lift_free_scan_block($pdo, 't@agentmail.to', '');
+    assert_same(1, $r['deleted']);
+});
+
+test('ops cleanup script is cli-only and kept out of the webroot', static function (): void {
+    $root = dirname(__DIR__);
+    $src = (string) file_get_contents($root . '/ops/cleanup.php');
+    assert_true(str_contains($src, "PHP_SAPI !== 'cli'"));
+    assert_true(str_contains($src, 'beginTransaction'));
+    assert_true(str_contains($src, '.bak-'));
+    $wf = (string) file_get_contents($root . '/.github/workflows/deploy.yml');
+    assert_true(str_contains($wf, "--exclude='ops/'"));
+});
