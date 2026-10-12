@@ -51,6 +51,55 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
         <?php endif; ?>
       </section>
 
+      <?php
+      $res = is_array($ctx['result'] ?? null) ? $ctx['result'] : [];
+      $named = array_slice(array_values(array_filter((array) ($res['top_named_entities'] ?? []), 'is_array')), 0, 5);
+      $cited = array_slice(array_values(array_filter((array) ($res['top_cited_domains'] ?? []), 'is_array')), 0, 5);
+      $aio = is_array($res['aio'] ?? null) ? $res['aio'] : null;
+      ?>
+      <?php if ($score['mentioned'] === 0 && (int) $score['answers'] > 0): ?>
+        <section class="app-zero" aria-label="Uitleg">
+          <h2>Wat betekent dit?</h2>
+          <p>AI noemde je bedrijf in geen van de <?= (int) $score['answers'] ?> antwoorden. Dat is bij een eerste scan heel gewoon: AI kent je nog niet goed genoeg om je aan te raden. Hieronder zie je wie AI wél noemde en welke sites het las.</p>
+        </section>
+      <?php endif; ?>
+      <?php if ($named !== []): ?>
+        <section aria-label="Wie AI wel noemde">
+          <h2>Wie AI wél noemde</h2>
+          <ul class="app-list">
+            <?php foreach ($named as $n): ?>
+              <li><span><?= app_h((string) ($n['name'] ?? '')) ?></span><span class="app-list__muted"><?= (int) ($n['count'] ?? 0) ?>×</span></li>
+            <?php endforeach; ?>
+          </ul>
+        </section>
+      <?php endif; ?>
+      <?php if ($cited !== []): ?>
+        <section aria-label="Sites die AI gebruikte">
+          <h2>Sites die AI als bron gebruikte</h2>
+          <ul class="app-list">
+            <?php foreach ($cited as $d): ?>
+              <li><span><?= app_h((string) ($d['domain'] ?? '')) ?></span><span class="app-list__muted"><?= (int) ($d['count'] ?? 0) ?>×</span></li>
+            <?php endforeach; ?>
+          </ul>
+        </section>
+      <?php endif; ?>
+      <?php if ($aio !== null && (int) ($aio['calls'] ?? 0) > 0): ?>
+        <p>Google liet bij <?= (int) ($aio['present'] ?? 0) ?> van de <?= (int) $aio['calls'] ?> vragen een AI-overzicht zien.</p>
+      <?php endif; ?>
+      <?php if ($score['mentioned'] === 0 && (int) $score['answers'] > 0): ?>
+        <section aria-label="Volgende stappen">
+          <h2>Wat je nu kunt doen</h2>
+          <ol>
+            <li>Zet op je site in gewone zinnen wat je doet, voor wie en in welke plaats.</li>
+            <li>Kijk welke sites hierboven als bron staan en zorg dat je daar ook vermeld bent.</li>
+            <li>Controleer je <a href="/app/bedrijf.php">bedrijfsgegevens</a> en <a href="/app/concurrenten.php">concurrenten</a>, dan meet ik daarmee.</li>
+          </ol>
+          <?php if ($isFree): ?>
+            <p><a class="btn" href="/app/abonnement.php">Elke week meten en acties krijgen</a></p>
+          <?php endif; ?>
+        </section>
+      <?php endif; ?>
+
       <section aria-label="Trend">
         <h2>Trend</h2>
         <?php if ($isFree || !$hasTrend): ?>
