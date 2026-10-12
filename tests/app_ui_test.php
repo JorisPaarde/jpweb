@@ -181,7 +181,7 @@ function app_ui_seed_accounts(): array
 /**
  * @param array<string, mixed> $config
  */
-function app_ui_login(array $config, int $userId): void
+function app_ui_login(array $config, int $userId, ?int $passwordVersion = 1): void
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         // Avoid session_name/cookie warnings after the test runner has printed output.
@@ -193,6 +193,9 @@ function app_ui_login(array $config, int $userId): void
     }
     $_SESSION['user_id'] = $userId;
     $_SESSION['login_at'] = time();
+    if ($passwordVersion !== null) {
+        $_SESSION['password_version'] = $passwordVersion;
+    }
 }
 
 /**
@@ -284,13 +287,13 @@ test('exact Dutch UI strings present in sources', static function (): void {
         'Alles openklappen',
         'Alles inklappen',
         'Controleer of dit klopt',
-        'Er staan nog geen vragen. Na je scan zie je hier welke vragen we AI-assistenten stelden.',
+        'Er staan nog geen vragen. Na je scan zie je hier welke vragen ik AI-assistenten stelde.',
         'Je trend begint hierna opnieuw',
         'Ja, wijzig de vragen',
         'Annuleren',
         'Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Typ je website om te bevestigen.',
         'AI noemde bij je vragen geen andere bedrijven. Ken je zelf een concurrent? Voeg hem toe.',
-        'Hoe we meten',
+        'Hoe ik meet',
         'Opzeggen',
         'Wijzig',
         'app_locked_line()',
@@ -323,7 +326,7 @@ test('overzicht free: score, one action, locked line, upgrade CTA, nav a11y', st
     assert_true(str_contains($html, 'action-card'), 'action card');
     assert_true(substr_count($html, 'class="action-card"') === 1, 'free sees 1 example action');
     assert_true(str_contains($html, 'href="/app/abonnement.php"'), 'abonnement text link');
-    assert_true(str_contains($html, 'Hoe we meten'), 'details');
+    assert_true(str_contains($html, 'Hoe ik meet'), 'details');
     assert_true(str_contains($html, 'app.css'), 'stylesheet');
 });
 

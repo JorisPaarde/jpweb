@@ -26,7 +26,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
       <p class="app-empty">Er is nog geen scan gekoppeld aan dit account.</p>
     <?php elseif (in_array($score['status'], ['bezig', 'bevestigd', 'onbevestigd'], true)): ?>
       <div class="app-score" aria-live="polite">
-        <p><strong>Je scan loopt.</strong> We lezen je website, stellen vragen aan AI-assistenten en tellen hoe vaak je genoemd wordt. Je krijgt een mail als het klaar is; je hoeft deze pagina niet open te houden.</p>
+        <p><strong>Je scan loopt.</strong> Ik lees je website, stel vragen aan AI-assistenten en tel hoe vaak je genoemd wordt. Je krijgt een mail als het klaar is; je hoeft deze pagina niet open te houden.</p>
       </div>
     <?php elseif ($score['status'] === 'wacht_dag'): ?>
       <div class="app-score" aria-live="polite">
@@ -121,8 +121,8 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
     <?php endif; ?>
 
     <details class="app-details">
-      <summary>Hoe we meten</summary>
-      <p>We stellen vaste en wisselende vragen aan AI-assistenten en tellen hoe vaak jouw bedrijf genoemd wordt. Bij een abonnement herhalen we dat elke week, zodat je trend en acties actueel blijven.</p>
+      <summary>Hoe ik meet</summary>
+      <p>Ik stel vaste en wisselende vragen aan AI-assistenten en tel hoe vaak jouw bedrijf genoemd wordt. Bij een abonnement herhaal ik dat elke week, zodat je trend en acties actueel blijven.</p>
     </details>
     <?php
 });

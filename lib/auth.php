@@ -41,12 +41,38 @@ function ai_scan_current_user_id(array $config): ?int
     return (int) $id;
 }
 
-function ai_scan_login_user(array $config, int $userId): void
+function ai_scan_login_user(array $config, int $userId, ?int $passwordVersion = null): void
 {
     ai_scan_start_session($config);
     session_regenerate_id(true);
     $_SESSION['user_id'] = $userId;
     $_SESSION['login_at'] = time();
+    if ($passwordVersion !== null) {
+        $_SESSION['password_version'] = $passwordVersion;
+    }
+}
+
+/**
+ * Invalidate the session when the stored password_version no longer matches.
+ *
+ * @param array<string, mixed> $user
+ */
+function ai_scan_assert_password_version(array $config, array $user): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return;
+    }
+    $dbVersion = (int) ($user['password_version'] ?? 1);
+    $sessionVersion = $_SESSION['password_version'] ?? null;
+    if ($sessionVersion === null || $sessionVersion === '') {
+        $_SESSION['password_version'] = $dbVersion;
+
+        return;
+    }
+    if ((int) $sessionVersion !== $dbVersion) {
+        ai_scan_logout_user($config);
+        ai_scan_redirect('/login/?next=' . rawurlencode((string) ($_SERVER['REQUEST_URI'] ?? '/dashboard/')), 303);
+    }
 }
 
 function ai_scan_logout_user(array $config): void

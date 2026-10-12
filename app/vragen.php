@@ -95,7 +95,7 @@ app_render_layout($ctx, 'Vragen', static function (array $ctx) use (
     $csrf = (string) $ctx['csrf'];
     ?>
     <h1>Vragen</h1>
-    <p class="app-lead">Dit zijn de vragen die we AI-assistenten stellen over jouw diensten en plaatsen.</p>
+    <p class="app-lead">Dit zijn de vragen die ik AI-assistenten stel over jouw diensten en plaatsen.</p>
     <p><?= (int) $nCore ?> van <?= (int) $tierQ ?></p>
 
     <?php if ($flashLocal !== ''): ?>
@@ -107,7 +107,7 @@ app_render_layout($ctx, 'Vragen', static function (array $ctx) use (
 
     <h2>Vaste vragen (<?= (int) $nCore ?>, versie <?= (int) $q['core_version'] ?>)</h2>
     <?php if ($q['core'] === []): ?>
-      <p class="app-empty">Er staan nog geen vragen. Na je scan zie je hier welke vragen we AI-assistenten stelden.</p>
+      <p class="app-empty">Er staan nog geen vragen. Na je scan zie je hier welke vragen ik AI-assistenten stelde.</p>
     <?php else: ?>
       <ul class="app-list">
         <?php foreach ($q['core'] as $item):
@@ -214,7 +214,7 @@ app_render_layout($ctx, 'Vragen', static function (array $ctx) use (
       <div class="dialog" role="alertdialog" aria-labelledby="versiebreuk-title" aria-describedby="versiebreuk-desc">
         <h2 id="versiebreuk-title">Je trend begint hierna opnieuw</h2>
         <p id="versiebreuk-desc">
-          Als je de vragen wijzigt, kunnen we de nieuwe metingen niet meer eerlijk vergelijken met de oude.
+          Als je de vragen wijzigt, kan ik de nieuwe metingen niet meer eerlijk vergelijken met de oude.
           Je oude cijfers blijven zichtbaar, maar de lijn begint vanaf <?= app_h(app_next_monday_label()) ?> opnieuw.
           De wijziging gaat in bij de meting van maandag <?= app_h(app_next_monday_label()) ?>.
         </p>

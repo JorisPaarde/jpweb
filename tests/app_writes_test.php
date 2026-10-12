@@ -276,6 +276,9 @@ test('email change requires current password, throttled, confirm applies', stati
     [$config, $pdo, $free, $paid] = app_writes_seed();
     $config['account_email_change_seconds'] = 600;
     $config['base_url'] = 'https://jpwebcreation.nl';
+    $mailLog = sys_get_temp_dir() . '/jpweb-email-change-' . (int) $paid['id'] . '.log';
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
 
     $wrong = ai_scan_request_email_change($pdo, $config, $paid, 'nieuw@voorbeeld.nl', 'wrong-pass');
     assert_true(empty($wrong['ok']));
@@ -293,6 +296,12 @@ test('email change requires current password, throttled, confirm applies', stati
     assert_same('paid@voorbeeld.nl', $user['email']);
     assert_same('nieuw@voorbeeld.nl', $user['pending_email']);
     assert_true(!empty($user['pending_email_token_hash']));
+
+    $mailBlob = is_file($mailLog) ? (string) file_get_contents($mailLog) : '';
+    assert_true(str_contains($mailBlob, 'nieuw@voorbeeld.nl'), 'confirm mail to new');
+    assert_true(str_contains($mailBlob, 'paid@voorbeeld.nl'), 'notice to old');
+    assert_true(str_contains($mailBlob, 'Ik heb een verzoek ontvangen'), 'old notice uses ik');
+    assert_true(str_contains($mailBlob, "Groet,\n") || str_contains($mailBlob, 'Groet,'), 'old notice ends Groet');
 
     $throttled = ai_scan_request_email_change($pdo, $config, $paid, 'ander@voorbeeld.nl', 'test-password-12');
     assert_true(empty($throttled['ok']));
@@ -312,6 +321,101 @@ test('email change requires current password, throttled, confirm applies', stati
     $user = $pdo->query('SELECT email, pending_email FROM users WHERE id = ' . (int) $paid['id'])->fetch();
     assert_same('nieuw@voorbeeld.nl', $user['email']);
     assert_true($user['pending_email'] === null || $user['pending_email'] === '');
+    putenv('JPWEB_AI_SCAN_MAIL_LOG');
+});
+
+test('failed current-password checks throttled before verify (password + email)', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $now = time();
+    for ($i = 0; $i < AI_SCAN_PASSWORD_FAIL_MAX; $i++) {
+        $res = ai_scan_change_password($pdo, $config, $paid, 'wrong-password-' . $i, 'nieuw-wachtwoord-123');
+        assert_true(empty($res['ok']));
+        assert_same(AI_SCAN_PASSWORD_CURRENT_WRONG, $res['error'] ?? '');
+    }
+    $blocked = ai_scan_change_password($pdo, $config, $paid, 'test-password-12', 'nieuw-wachtwoord-123');
+    assert_true(empty($blocked['ok']));
+    assert_same(AI_SCAN_PASSWORD_FAIL_THROTTLED, $blocked['error'] ?? '');
+    // Still correct password — verify must not run past throttle.
+    assert_true(ai_scan_verify_password('test-password-12', (string) $paid['password_hash']));
+
+    [$config2, $pdo2, $free2, $paid2] = app_writes_seed();
+    for ($i = 0; $i < AI_SCAN_PASSWORD_FAIL_MAX; $i++) {
+        $res = ai_scan_request_email_change($pdo2, $config2, $paid2, 'x' . $i . '@voorbeeld.nl', 'wrong');
+        assert_true(empty($res['ok']));
+        assert_same(AI_SCAN_PASSWORD_CURRENT_WRONG, $res['error'] ?? '');
+    }
+    $blockedEmail = ai_scan_request_email_change($pdo2, $config2, $paid2, 'ok@voorbeeld.nl', 'test-password-12');
+    assert_true(empty($blockedEmail['ok']));
+    assert_same(AI_SCAN_PASSWORD_FAIL_THROTTLED, $blockedEmail['error'] ?? '');
+    assert_true($now > 0 && $uid > 0);
+});
+
+test('email confirm re-checks uniqueness and maps PDO conflict', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $token = 'email-unique-confirm-token';
+    $pdo->prepare(
+        'UPDATE users SET pending_email = :e, pending_email_token_hash = :h, pending_email_expires_at = :x WHERE id = :id'
+    )->execute([
+        'e' => 'free@voorbeeld.nl',
+        'h' => ai_scan_hash_token($token),
+        'x' => time() + 3600,
+        'id' => (int) $paid['id'],
+    ]);
+    $confirm = ai_scan_confirm_email_change($pdo, $token);
+    assert_true(empty($confirm['ok']));
+    assert_same('Ongeldige of verlopen link.', $confirm['error'] ?? '');
+    $still = $pdo->query('SELECT email FROM users WHERE id = ' . (int) $paid['id'])->fetchColumn();
+    assert_same('paid@voorbeeld.nl', $still);
+});
+
+test('password change bumps password_version and regenerates session', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $config['account_password_change_seconds'] = 0;
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (!headers_sent()) {
+            ai_scan_start_session($config);
+        } else {
+            @session_start();
+        }
+    }
+    $_SESSION['user_id'] = (int) $paid['id'];
+    $_SESSION['password_version'] = (int) ($paid['password_version'] ?? 1);
+    $before = (int) ($paid['password_version'] ?? 1);
+    $ok = ai_scan_change_password($pdo, $config, $paid, 'test-password-12', 'nieuw-wachtwoord-55');
+    assert_true(!empty($ok['ok']), $ok['error'] ?? 'pw failed');
+    $fresh = $pdo->query('SELECT password_version FROM users WHERE id = ' . (int) $paid['id'])->fetch();
+    assert_same($before + 1, (int) ($fresh['password_version'] ?? 0));
+    assert_same($before + 1, (int) ($_SESSION['password_version'] ?? 0));
+});
+
+test('action live budget atomic under double post', static function (): void {
+    [$config, $pdo, $free, $paid, $result] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $limit = (int) ai_scan_effective_tier($paid, ai_scan_load_tiers())['actions'];
+    $month = ai_scan_usage_month();
+    $pdo->prepare(
+        'INSERT INTO usage_counters(user_id, month, actions_used, question_edits)
+         VALUES(:u, :m, :a, 0)
+         ON CONFLICT(user_id, month) DO UPDATE SET actions_used = excluded.actions_used'
+    )->execute(['u' => $uid, 'm' => $month, 'a' => max(0, $limit - 1)]);
+
+    $first = ai_scan_action_set_status($pdo, $paid, $result, 'a1', 'live_gemeld');
+    assert_true(!empty($first['ok']), $first['error'] ?? 'first live');
+    // Second live on another action should fail — budget exhausted atomically.
+    $second = ai_scan_action_set_status($pdo, $paid, $result, 'a2', 'live_gemeld');
+    assert_true(empty($second['ok']));
+    assert_same('Je hebt deze maand geen acties meer over.', $second['error'] ?? '');
+    assert_same($limit, ai_scan_usage_actions_used($pdo, $uid));
+});
+
+test('JPWEB_AI_SCAN_TEST_USER_ID ignored on web SAPI', static function (): void {
+    putenv('JPWEB_AI_SCAN_TEST_USER_ID=999');
+    assert_same(null, app_test_user_id_from_env('apache2handler'));
+    assert_same(null, app_test_user_id_from_env('fpm-fcgi'));
+    assert_same(999, app_test_user_id_from_env('cli'));
+    putenv('JPWEB_AI_SCAN_TEST_USER_ID');
+    assert_same(null, app_test_user_id_from_env('cli'));
 });
 
 test('write UI pages expose forms and CSRF for paid flows', static function (): void {

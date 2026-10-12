@@ -5,7 +5,28 @@ declare(strict_types=1);
 /**
  * Single source for tier limits: assets/data/tiers.json.
  * Never hardcode questions/actions/monthly elsewhere.
+ *
+ * Product rules that are not priced tiers (edit caps, competitor list size,
+ * settings-save day cap) also live here as named constants.
  */
+
+/** Max question add/edit/delete operations per calendar month. */
+const AI_SCAN_QUESTION_EDITS_PER_MONTH = 5;
+
+/** Minimum active core questions an account must keep. */
+const AI_SCAN_QUESTION_MIN_ACTIVE = 5;
+
+/** Max active competitors on the fixed list. */
+const AI_SCAN_COMPETITOR_MAX = 10;
+
+/** Max settings_log writes per calendar day (Europe/Amsterdam). */
+const AI_SCAN_SETTINGS_SAVES_PER_DAY = 20;
+
+/** Failed current-password checks before throttle (password + email change). */
+const AI_SCAN_PASSWORD_FAIL_MAX = 5;
+
+/** Window for failed current-password checks (seconds). */
+const AI_SCAN_PASSWORD_FAIL_WINDOW = 900;
 
 /** @var array<string, mixed>|null */
 $GLOBALS['ai_scan_tiers_cache'] = null;

@@ -7,6 +7,9 @@ declare(strict_types=1);
  * Exit code 0 = all passed.
  */
 
+// Buffer output so session/cookie headers during included app renders do not warn.
+ob_start();
+
 putenv('JPWEB_AI_SCAN_ALLOW_INSECURE=1');
 putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
 putenv('JPWEB_AI_SCAN_SKIP_REACHABILITY=1');

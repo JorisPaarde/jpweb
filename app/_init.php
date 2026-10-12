@@ -10,6 +10,23 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 require_once dirname(__DIR__) . '/lib/questions.php';
 
 /**
+ * CLI/phpdbg-only test harness inject. Never honored on a web SAPI.
+ */
+function app_test_user_id_from_env(?string $sapi = null): ?int
+{
+    $sapi ??= PHP_SAPI;
+    if ($sapi !== 'cli' && $sapi !== 'phpdbg') {
+        return null;
+    }
+    $testUser = getenv('JPWEB_AI_SCAN_TEST_USER_ID');
+    if (!is_string($testUser) || !ctype_digit($testUser)) {
+        return null;
+    }
+
+    return (int) $testUser;
+}
+
+/**
  * @return array{
  *   config: array<string, mixed>,
  *   pdo: PDO,
@@ -45,9 +62,8 @@ function app_boot(string $pageId): array
         // ignore
     }
 
-    // Test harness: inject user id without cookie round-trip (CLI / included renders).
-    $testUser = getenv('JPWEB_AI_SCAN_TEST_USER_ID');
-    if (is_string($testUser) && ctype_digit($testUser)) {
+    $injected = app_test_user_id_from_env();
+    if ($injected !== null) {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             if (!headers_sent()) {
                 ai_scan_start_session($config);
@@ -55,7 +71,7 @@ function app_boot(string $pageId): array
                 @session_start();
             }
         }
-        $userId = (int) $testUser;
+        $userId = $injected;
         $_SESSION['user_id'] = $userId;
     } else {
         $userId = ai_scan_require_user($config);
@@ -67,6 +83,7 @@ function app_boot(string $pageId): array
         ai_scan_logout_user($config);
         ai_scan_redirect('/login/', 303);
     }
+    ai_scan_assert_password_version($config, $user);
 
     $tiers = ai_scan_load_tiers();
     $effective = ai_scan_effective_tier($user, $tiers);

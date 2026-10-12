@@ -14,7 +14,7 @@ $toast = '';
 if (ai_scan_request_method() === 'POST' && $canWrite) {
     $token = (string) ($_POST['csrf'] ?? '');
     if (!ai_scan_verify_csrf($ctx['config'], $token)) {
-        $toast = '';
+        $toast = 'De sessie is verlopen. Probeer het opnieuw.';
     } else {
         $company = ai_scan_clean_input('company', 80);
         $audience = ai_scan_clean_input('audience', 200);
@@ -98,7 +98,7 @@ app_render_layout($ctx, 'Bedrijf', static function (array $ctx) use ($profile, $
         <span class="field__label">Website</span>
         <input value="<?= app_h((string) ($profile['website'] ?? '')) ?>" readonly disabled>
         <?php if (!$isFree): ?>
-          <p class="app-locked">Je website wijzigen doe je via ons, omdat je meting dan opnieuw begint. <a href="/app/abonnement.php">Vraag het aan</a></p>
+          <p class="app-locked">Je website wijzigen doe je via mij, omdat je meting dan opnieuw begint. <a href="/app/abonnement.php">Vraag het aan</a></p>
         <?php endif; ?>
       </div>
 

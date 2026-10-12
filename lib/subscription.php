@@ -74,6 +74,36 @@ function ai_scan_usage_bump_actions(PDO $pdo, int $userId, int $by = 1, ?int $no
 }
 
 /**
+ * Atomically consume one action from the monthly budget when under the limit.
+ * Returns false when the budget is already exhausted (safe under concurrent posts).
+ */
+function ai_scan_usage_try_consume_action(PDO $pdo, int $userId, int $limit, ?int $now = null): bool
+{
+    if ($limit < 1) {
+        return false;
+    }
+    $month = ai_scan_usage_month($now);
+    $pdo->prepare(
+        'INSERT INTO usage_counters(user_id, month, actions_used, question_edits)
+         VALUES(:u, :m, 0, 0)
+         ON CONFLICT(user_id, month) DO NOTHING'
+    )->execute(['u' => $userId, 'm' => $month]);
+
+    $stmt = $pdo->prepare(
+        'UPDATE usage_counters
+         SET actions_used = actions_used + 1
+         WHERE user_id = :u AND month = :m AND actions_used < :limit'
+    );
+    $stmt->execute([
+        'u' => $userId,
+        'm' => $month,
+        'limit' => $limit,
+    ]);
+
+    return $stmt->rowCount() === 1;
+}
+
+/**
  * @param array<string, mixed> $user
  * @return array{ok: bool, mailed: bool, message: string, throttled?: bool, error?: string}
  */

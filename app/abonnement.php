@@ -75,7 +75,7 @@ app_render_layout($ctx, 'Abonnement', static function (array $ctx) use (
         <?php
         $endLabel = app_format_nl_date($periodEnd);
         ?>
-        <p class="pending-line">Je abonnement loopt tot <?= app_h($endLabel) ?>. Daarna blijft je laatste uitslag zichtbaar, maar meten we niet meer.</p>
+        <p class="pending-line">Je abonnement loopt tot <?= app_h($endLabel) ?>. Daarna blijft je laatste uitslag zichtbaar, maar meet ik niet meer.</p>
       <?php endif; ?>
       <?php if (is_array($pending)): ?>
         <p class="pending-line">
@@ -159,9 +159,9 @@ app_render_layout($ctx, 'Abonnement', static function (array $ctx) use (
         <?php
         $endLabel = app_format_nl_date($periodEnd);
         ?>
-        <p class="app-lead">Je abonnement loopt tot <?= app_h($endLabel) ?>. Daarna blijft je laatste uitslag zichtbaar, maar meten we niet meer.</p>
+        <p class="app-lead">Je abonnement loopt tot <?= app_h($endLabel) ?>. Daarna blijft je laatste uitslag zichtbaar, maar meet ik niet meer.</p>
       <?php else: ?>
-        <p class="app-lead">Opzeggen loopt door tot het einde van de periode. Daarna blijft je laatste uitslag zichtbaar, maar meten we niet meer.</p>
+        <p class="app-lead">Opzeggen loopt door tot het einde van de periode. Daarna blijft je laatste uitslag zichtbaar, maar meet ik niet meer.</p>
       <?php endif; ?>
     <?php endif; ?>
 

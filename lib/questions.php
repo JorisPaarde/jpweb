@@ -7,31 +7,59 @@ declare(strict_types=1);
  * Idempotent migration; do not put these in lib/db.php (Brief 02).
  */
 
-/** Max question add/edit/delete operations per calendar month (product rule, not a tier price). */
-const AI_SCAN_QUESTION_EDITS_PER_MONTH = 5;
-
 const AI_SCAN_QUESTION_TOO_SHORT = 'Maak de vraag iets langer (minstens 15 tekens), zoals een klant hem zou typen.';
 const AI_SCAN_QUESTION_DUPLICATE = 'Deze vraag staat er al.';
 const AI_SCAN_QUESTION_OWN_NAME = 'Noem je eigen bedrijfsnaam niet in de vraag; dan zegt het antwoord niets.';
-const AI_SCAN_QUESTION_EDIT_LIMIT_MSG = 'Je hebt deze maand al 5 vragen gewijzigd. Zo blijft je trend bruikbaar. Volgende maand kan het weer, of vraag het ons.';
-const AI_SCAN_QUESTION_MIN_MSG = 'Houd minimaal 5 vaste vragen.';
+const AI_SCAN_QUESTION_EDIT_LIMIT_MSG = 'Je hebt deze maand al ' . AI_SCAN_QUESTION_EDITS_PER_MONTH
+    . ' vragen gewijzigd. Zo blijft je trend bruikbaar. Volgende maand kan het weer, of vraag het mij.';
+const AI_SCAN_QUESTION_MIN_MSG = 'Houd minimaal ' . AI_SCAN_QUESTION_MIN_ACTIVE . ' vaste vragen.';
 
-const AI_SCAN_COMPETITOR_MAX = 10;
 const AI_SCAN_COMPETITOR_DUPLICATE = 'Dit bedrijf staat al op je lijst.';
-const AI_SCAN_COMPETITOR_OWN = 'Dit is je eigen bedrijf; dat tellen we apart.';
+const AI_SCAN_COMPETITOR_OWN = 'Dit is je eigen bedrijf; dat tel ik apart.';
 const AI_SCAN_COMPETITOR_PLACE = 'Dit lijkt een plaats, geen bedrijf.';
 const AI_SCAN_COMPETITOR_DOMAIN = 'Vul alleen de domeinnaam in, bijvoorbeeld voorbeeld.nl.';
-const AI_SCAN_COMPETITOR_LIMIT = 'Je vaste lijst mag maximaal 10 concurrenten hebben.';
+const AI_SCAN_COMPETITOR_LIMIT = 'Je vaste lijst mag maximaal ' . AI_SCAN_COMPETITOR_MAX . ' concurrenten hebben.';
 
 const AI_SCAN_SETTINGS_SAVE_LIMIT_MSG = 'Je hebt vandaag vaak opgeslagen. Probeer het morgen weer.';
 
 const AI_SCAN_PASSWORD_TOO_SHORT = 'Kies een wachtwoord van minimaal 12 tekens.';
 const AI_SCAN_PASSWORD_CURRENT_WRONG = 'Het huidige wachtwoord klopt niet.';
 const AI_SCAN_PASSWORD_THROTTLED = 'Je hebt je wachtwoord net gewijzigd. Probeer het later opnieuw.';
+const AI_SCAN_PASSWORD_FAIL_THROTTLED = 'Te veel pogingen met een verkeerd wachtwoord. Probeer het over een kwartier opnieuw.';
 const AI_SCAN_EMAIL_THROTTLED = 'Je hebt net een e-mailwijziging aangevraagd. Probeer het later opnieuw.';
 const AI_SCAN_EMAIL_INVALID = 'Controleer het nieuwe e-mailadres en probeer het opnieuw.';
 const AI_SCAN_EMAIL_SAME = 'Dat is al je huidige e-mailadres.';
-const AI_SCAN_EMAIL_PENDING_SENT = 'We hebben een bevestigingsmail gestuurd naar het nieuwe adres. Tot die bevestigd is, blijft je oude e-mailadres actief.';
+const AI_SCAN_EMAIL_PENDING_SENT = 'Ik heb een bevestigingsmail gestuurd naar het nieuwe adres. Tot die bevestigd is, blijft je oude e-mailadres actief.';
+
+/**
+ * Stable rate-limit key for per-user account throttles.
+ */
+function ai_scan_account_user_rate_key(int $userId): string
+{
+    return hash('sha256', 'uid:' . $userId);
+}
+
+function ai_scan_password_fail_throttled(PDO $pdo, int $userId, ?int $now = null): bool
+{
+    $now ??= time();
+
+    return ai_scan_rate_count(
+        $pdo,
+        'account_password_fail',
+        ai_scan_account_user_rate_key($userId),
+        $now - AI_SCAN_PASSWORD_FAIL_WINDOW
+    ) >= AI_SCAN_PASSWORD_FAIL_MAX;
+}
+
+function ai_scan_password_fail_record(PDO $pdo, int $userId, ?int $now = null): void
+{
+    ai_scan_rate_hit(
+        $pdo,
+        'account_password_fail',
+        ai_scan_account_user_rate_key($userId),
+        $now ?? time()
+    );
+}
 
 function ai_scan_ensure_questions_schema(PDO $pdo): void
 {
@@ -148,6 +176,7 @@ function ai_scan_ensure_questions_schema(PDO $pdo): void
     ai_scan_ensure_column($pdo, 'users', 'pending_email', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'users', 'pending_email_token_hash', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'users', 'pending_email_expires_at', 'INTEGER NULL');
+    ai_scan_ensure_column($pdo, 'users', 'password_version', 'INTEGER NOT NULL DEFAULT 1');
 }
 
 function ai_scan_count_active_questions(PDO $pdo, int $userId): int
@@ -280,9 +309,11 @@ function ai_scan_question_add(
         $place = mb_substr($place, 0, 80);
     }
 
-    $sort = (int) $pdo->query(
-        'SELECT COALESCE(MAX(sort_order), 0) FROM questions WHERE user_id = ' . $userId
-    )->fetchColumn() + 1;
+    $sortStmt = $pdo->prepare(
+        'SELECT COALESCE(MAX(sort_order), 0) FROM questions WHERE user_id = :u'
+    );
+    $sortStmt->execute(['u' => $userId]);
+    $sort = (int) $sortStmt->fetchColumn() + 1;
 
     $stmt = $pdo->prepare(
         'INSERT INTO questions(user_id, text, place, status, kind, sort_order, draft, created_at, updated_at)
@@ -393,7 +424,7 @@ function ai_scan_question_delete(
         return ['ok' => false, 'error' => 'Vraag niet gevonden.'];
     }
 
-    if (ai_scan_count_active_questions($pdo, $userId) <= 5) {
+    if (ai_scan_count_active_questions($pdo, $userId) <= AI_SCAN_QUESTION_MIN_ACTIVE) {
         return ['ok' => false, 'error' => AI_SCAN_QUESTION_MIN_MSG];
     }
 
@@ -631,7 +662,7 @@ function ai_scan_competitor_add(
     }
 
     $userId = (int) $user['id'];
-    if (ai_scan_settings_saves_today($pdo, $userId, $now) >= 20) {
+    if (ai_scan_settings_saves_today($pdo, $userId, $now) >= AI_SCAN_SETTINGS_SAVES_PER_DAY) {
         return ['ok' => false, 'error' => AI_SCAN_SETTINGS_SAVE_LIMIT_MSG];
     }
 
@@ -721,7 +752,7 @@ function ai_scan_competitor_delete(
     }
 
     $userId = (int) $user['id'];
-    if (ai_scan_settings_saves_today($pdo, $userId, $now) >= 20) {
+    if (ai_scan_settings_saves_today($pdo, $userId, $now) >= AI_SCAN_SETTINGS_SAVES_PER_DAY) {
         return ['ok' => false, 'error' => AI_SCAN_SETTINGS_SAVE_LIMIT_MSG];
     }
 
@@ -964,14 +995,12 @@ function ai_scan_action_set_status(
         } else {
             $log = $line;
         }
-        // Counting a completed action toward the monthly budget.
-        if (ai_scan_actions_remaining($pdo, $user, $tiers) < 1
-            && (string) ($row['status'] ?? '') !== 'live_gemeld'
-        ) {
-            return ['ok' => false, 'error' => 'Je hebt deze maand geen acties meer over.'];
-        }
+        // Atomically count toward the monthly budget when first marking live.
         if ((string) ($row['status'] ?? '') !== 'live_gemeld') {
-            ai_scan_usage_bump_actions($pdo, $userId, 1, $now);
+            $limit = (int) ai_scan_effective_tier($user, $tiers)['actions'];
+            if (!ai_scan_usage_try_consume_action($pdo, $userId, $limit, $now)) {
+                return ['ok' => false, 'error' => 'Je hebt deze maand geen acties meer over.'];
+            }
         }
     } else {
         $line = 'Afgewezen op ' . $label . ' (past niet bij mijn bedrijf)';
@@ -1069,8 +1098,15 @@ function ai_scan_request_email_change(
 ): array {
     $now ??= time();
     $userId = (int) $user['id'];
+
+    if (ai_scan_password_fail_throttled($pdo, $userId, $now)) {
+        return ['ok' => false, 'error' => AI_SCAN_PASSWORD_FAIL_THROTTLED];
+    }
+
     $hash = (string) ($user['password_hash'] ?? '');
     if ($hash === '' || !ai_scan_verify_password($currentPassword, $hash)) {
+        ai_scan_password_fail_record($pdo, $userId, $now);
+
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_CURRENT_WRONG];
     }
 
@@ -1078,14 +1114,15 @@ function ai_scan_request_email_change(
     if ($normalized === '' || !ai_scan_email_syntax_ok($normalized)) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_INVALID];
     }
-    if ($normalized === (string) ($user['email'] ?? '')) {
+    $oldEmail = (string) ($user['email'] ?? '');
+    if ($normalized === $oldEmail) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_SAME];
     }
 
-    $emailHash = (string) ($user['email_hash'] ?? ai_scan_email_hash((string) $user['email']));
+    $userKey = ai_scan_account_user_rate_key($userId);
     $cooldown = (int) ($config['account_email_change_seconds'] ?? 600);
     if ($cooldown > 0
-        && ai_scan_rate_count($pdo, 'account_email_change', $emailHash, $now - $cooldown) >= 1
+        && ai_scan_rate_count($pdo, 'account_email_change', $userKey, $now - $cooldown) >= 1
     ) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_THROTTLED];
     }
@@ -1128,7 +1165,24 @@ function ai_scan_request_email_change(
         ])
     );
 
-    ai_scan_rate_hit($pdo, 'account_email_change', $emailHash, $now);
+    if ($oldEmail !== '') {
+        ai_scan_send_mail(
+            $config,
+            $oldEmail,
+            'Je e-mailadreswijziging',
+            implode("\n", [
+                'Hoi,',
+                '',
+                'Ik heb een verzoek ontvangen om het e-mailadres van je AI-vindbaarheidsaccount te wijzigen.',
+                'Als jij dit was: bevestig via de mail die naar het nieuwe adres is gestuurd.',
+                'Was jij dit niet? Negeer de bevestigingsmail of neem contact op.',
+                '',
+                'Groet,',
+            ])
+        );
+    }
+
+    ai_scan_rate_hit($pdo, 'account_email_change', $userKey, $now);
 
     return ['ok' => true, 'message' => AI_SCAN_EMAIL_PENDING_SENT];
 }
@@ -1158,6 +1212,14 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
         return ['ok' => false, 'error' => 'Geen openstaande wijziging.'];
     }
 
+    $userId = (int) $user['id'];
+    $newHash = ai_scan_email_hash($newEmail);
+    $exists = $pdo->prepare('SELECT 1 FROM users WHERE email_hash = :h AND id != :id LIMIT 1');
+    $exists->execute(['h' => $newHash, 'id' => $userId]);
+    if ($exists->fetch() !== false) {
+        return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
+    }
+
     $consume = $pdo->prepare(
         'UPDATE users SET
             email = :e,
@@ -1167,12 +1229,16 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
             pending_email_expires_at = NULL
          WHERE id = :id AND pending_email_token_hash = :h'
     );
-    $consume->execute([
-        'e' => $newEmail,
-        'eh' => ai_scan_email_hash($newEmail),
-        'id' => (int) $user['id'],
-        'h' => ai_scan_hash_token($token),
-    ]);
+    try {
+        $consume->execute([
+            'e' => $newEmail,
+            'eh' => $newHash,
+            'id' => $userId,
+            'h' => ai_scan_hash_token($token),
+        ]);
+    } catch (PDOException $e) {
+        return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
+    }
     if ($consume->rowCount() !== 1) {
         return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
     }
@@ -1195,28 +1261,44 @@ function ai_scan_change_password(
 ): array {
     $now ??= time();
     $userId = (int) $user['id'];
+
+    if (ai_scan_password_fail_throttled($pdo, $userId, $now)) {
+        return ['ok' => false, 'error' => AI_SCAN_PASSWORD_FAIL_THROTTLED];
+    }
+
     $hash = (string) ($user['password_hash'] ?? '');
     if ($hash === '' || !ai_scan_verify_password($currentPassword, $hash)) {
+        ai_scan_password_fail_record($pdo, $userId, $now);
+
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_CURRENT_WRONG];
     }
     if (mb_strlen($newPassword) < 12) {
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_TOO_SHORT];
     }
 
-    $emailHash = (string) ($user['email_hash'] ?? ai_scan_email_hash((string) ($user['email'] ?? '')));
+    $userKey = ai_scan_account_user_rate_key($userId);
     $cooldown = (int) ($config['account_password_change_seconds'] ?? 300);
-    if ($emailHash !== '' && $cooldown > 0
-        && ai_scan_rate_count($pdo, 'account_password_change', $emailHash, $now - $cooldown) >= 1
+    if ($cooldown > 0
+        && ai_scan_rate_count($pdo, 'account_password_change', $userKey, $now - $cooldown) >= 1
     ) {
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_THROTTLED];
     }
 
-    $pdo->prepare('UPDATE users SET password_hash = :h WHERE id = :id')->execute([
+    $newVersion = (int) ($user['password_version'] ?? 1) + 1;
+    $pdo->prepare(
+        'UPDATE users SET password_hash = :h, password_version = :v WHERE id = :id'
+    )->execute([
         'h' => ai_scan_hash_password($newPassword),
+        'v' => $newVersion,
         'id' => $userId,
     ]);
-    if ($emailHash !== '') {
-        ai_scan_rate_hit($pdo, 'account_password_change', $emailHash, $now);
+    ai_scan_rate_hit($pdo, 'account_password_change', $userKey, $now);
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['password_version'] = $newVersion;
+        $_SESSION['login_at'] = $now;
     }
 
     return ['ok' => true, 'message' => 'Je wachtwoord is gewijzigd.'];

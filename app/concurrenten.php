@@ -91,7 +91,7 @@ app_render_layout($ctx, 'Concurrenten', static function (array $ctx) use (
     $csrf = (string) $ctx['csrf'];
     ?>
     <h1>Concurrenten</h1>
-    <p class="app-lead">Wie AI noemt, en de vaste lijst die we tellen.</p>
+    <p class="app-lead">Wie AI noemt, en de vaste lijst die ik tel.</p>
 
     <?php if ($flashLocal !== ''): ?>
       <div class="app-flash" role="status"><?= app_h($flashLocal) ?></div>
