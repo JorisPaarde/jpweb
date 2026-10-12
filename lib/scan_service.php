@@ -84,7 +84,7 @@ function ai_scan_user_used_free_scan(PDO $pdo, string $emailHash): bool
  * Submit a free-scan request. Returns a contract status code.
  * Rate-limit hits use code `rate_limited` (HTTP 429 at the edge).
  *
- * @return array{code: string, scan_id?: int, retry_after?: int}
+ * @return array{code: string, scan_id?: int, retry_after?: int, rule?: string}
  */
 function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $now = 0): array
 {
@@ -107,30 +107,16 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         || (string) ($input['consent'] ?? '') === 'accepted'
         || (string) ($input['privacy'] ?? '') === 'accepted';
 
-    if (!$consent || !filter_var($emailRaw, FILTER_VALIDATE_EMAIL)) {
-        return ['code' => 'invalid_email'];
+    $validated = ai_scan_validate_signup($config, $emailRaw, $websiteRaw, $consent);
+    if (!$validated['ok']) {
+        return [
+            'code' => 'invalid',
+            'rule' => (string) ($validated['rule'] ?? 'unknown'),
+        ];
     }
 
-    $normalizedEmail = ai_scan_normalize_email($emailRaw);
-    if (!filter_var($normalizedEmail, FILTER_VALIDATE_EMAIL)) {
-        return ['code' => 'invalid_email'];
-    }
-
-    // Disposable denylist (in addition to honeypot + double opt-in).
-    if (ai_scan_is_disposable_email($normalizedEmail)) {
-        return ['code' => 'disposable'];
-    }
-
-    $parsed = ai_scan_parse_website($websiteRaw);
-    if (!$parsed['ok']) {
-        return ['code' => 'site_unreachable'];
-    }
-
-    $skipReachability = getenv('JPWEB_AI_SCAN_SKIP_REACHABILITY') === '1';
-    if (!$skipReachability && !ai_scan_site_reachable((string) $parsed['url'])) {
-        return ['code' => 'site_unreachable'];
-    }
-
+    $normalizedEmail = (string) $validated['email'];
+    $parsed = $validated['website'];
     $emailHash = ai_scan_email_hash($normalizedEmail);
     $domain = (string) $parsed['domain'];
     $domainHash = ai_scan_domain_hash($domain);

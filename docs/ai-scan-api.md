@@ -21,15 +21,23 @@ Codes:
 | Code | Betekenis |
 |------|-----------|
 | `check_mail` | Bevestigingsmail verstuurd (ook bij ingevulde honeypot) |
-| `invalid_email` | Ongeldig e-mailadres of geen toestemming |
-| `site_unreachable` | Website ongeldig of niet bereikbaar |
+| `invalid` | E-mail/website/toestemming afgewezen — **één neutrale melding**, geen onderscheid welke regel faalde (regel alleen in server-log) |
 | `already_scanned` | Dit e-mailadres of domein had al een (gratis) scan; verraadt geen e-mail |
-| `disposable` | Wegwerp-mailadres geweigerd (denylist) |
 | `daily_full` | Aanvraag geaccepteerd, maar het dagplafond is vol (wachtlijst na bevestiging) |
 | `rate_limited` | Te veel pogingen (IP / e-mail / domein / burst / bevestigingsmail-throttle) → **429** |
 | `error` | Generieke fout / verlopen CSRF |
 | `confirmed` | Alleen na bevestigingslink |
 | `deleted` | Account verwijderd (AVG) |
+
+Publieke fouttekst bij `invalid`: *Controleer je e-mailadres en je website en probeer het opnieuw.*
+
+Signup-regels (intern gelogd als `rule=`):
+
+1. Strikte e-mailsyntax (`filter_var` + regex: geen rare tekens, geen `..`, TLD ≥ 2 letters)
+2. MX/DNS op het e-maildomein (`checkdnsrr` MX, anders A/AAAA)
+3. Geblokkeerde e-mail-TLD’s (`email_blocked_tlds`, default `ru su by in cn tk top xyz buzz`)
+4. Wegwerp-maildomeinen (bestand + `disposable_email_domains`)
+5. Website-DNS moet resolven; toegestane website-TLD’s (`website_allowed_tlds`, default `nl be eu com`)
 
 Hulptijnen:
 
@@ -74,7 +82,7 @@ Regels (defaults; alles via config overschrijfbaar):
 - rate limit per e-mail en per domein (`form_email_max_per_hour`, `form_domain_max_per_hour`)
 - korte burst: herhaalde requests binnen `form_burst_seconds` → **429**
 - bevestigingsmail: max **1 per e-mail per 10 min** + globaal uurplafond (`confirm_mail_*`)
-- wegwerp-adressen geweigerd (denylist in `data/disposable-email-domains/`)
+- strikte e-mail- + websitevalidatie (publiek altijd `invalid`; regels in server-log)
 - eerste scan gratis; daarna alleen abonnement (`already_scanned`)
 - kostenplafond €0,60/scan is runner-side (B3)
 
@@ -138,7 +146,7 @@ Zie `config-examples/ai-scan-config.php`. Lookup:
 2. `../private/ai-scan-config.php` (relatief t.o.v. webroot)
 3. `/home/jpwebcreation/private/ai-scan-config.php`
 
-Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `allowed_hosts`.
+Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `email_blocked_tlds`, `website_allowed_tlds`, `disposable_email_domains`, `website_require_http`, `allowed_hosts`.
 
 ## Mailtoon
 

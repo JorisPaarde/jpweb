@@ -10,6 +10,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/http.php';
 require_once __DIR__ . '/normalize.php';
+require_once __DIR__ . '/validation.php';
 require_once __DIR__ . '/tokens.php';
 require_once __DIR__ . '/mail.php';
 require_once __DIR__ . '/rate_limit.php';

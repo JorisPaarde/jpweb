@@ -78,12 +78,35 @@ function boot_test_db(): array
     }
     $sqlite = $dir . '/test-' . bin2hex(random_bytes(4)) . '.sqlite';
     $mailLog = $dir . '/mail-' . bin2hex(random_bytes(4)) . '.log';
+    $validationLog = $dir . '/validation-' . bin2hex(random_bytes(4)) . '.log';
     putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+    putenv('JPWEB_AI_SCAN_VALIDATION_LOG=' . $validationLog);
+
+    // Default: pretend all DNS lookups succeed (tests mock failures explicitly).
+    ai_scan_set_dns_checker(static fn (string $host, string $type): bool => true);
+
     $config = test_config($sqlite);
     $pdo = ai_scan_db($config);
     ai_scan_migrate($pdo);
 
-    return [$config, $pdo, $sqlite, $mailLog];
+    return [$config, $pdo, $sqlite, $mailLog, $validationLog];
+}
+
+function last_validation_rule(string $logFile): ?string
+{
+    if (!is_file($logFile)) {
+        return null;
+    }
+    $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+    if ($lines === []) {
+        return null;
+    }
+    $last = (string) end($lines);
+    if (!preg_match('/"rule"\s*:\s*"([^"]+)"/', $last, $m)) {
+        return null;
+    }
+
+    return $m[1];
 }
 
 test('normalize gmail dots and plus', static function (): void {
@@ -112,6 +135,147 @@ test('disposable detection', static function (): void {
     assert_true(!ai_scan_is_disposable_email('joris@jpwebcreation.nl'));
 });
 
+test('email syntax: filter_var + strict regex', static function (): void {
+    assert_true(ai_scan_email_syntax_ok('owner@example.com'));
+    assert_true(ai_scan_email_syntax_ok('a.b+tag@firma.nl'));
+    assert_true(!ai_scan_email_syntax_ok('not-an-email'));
+    assert_true(!ai_scan_email_syntax_ok('a..b@example.com'), 'consecutive dots');
+    assert_true(!ai_scan_email_syntax_ok('owner@example.c'), 'TLD too short');
+    assert_true(!ai_scan_email_syntax_ok('owner@exa_mple.com'), 'odd domain char');
+    assert_true(!ai_scan_email_syntax_ok("owner@example.com\n"), 'control char');
+});
+
+test('signup rule email_syntax → public invalid + log', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'bad..address@example.com',
+        'website' => 'https://example.com',
+        'consent' => '1',
+    ], '1.2.3.4');
+    assert_same('invalid', $r['code']);
+    assert_same('email_syntax', $r['rule']);
+    assert_same('email_syntax', last_validation_rule($vlog));
+});
+
+test('signup rule email_mx (mocked DNS miss)', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    ai_scan_set_dns_checker(static function (string $host, string $type): bool {
+        if ($host === 'nodns-example.com') {
+            return false;
+        }
+
+        return true;
+    });
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'user@nodns-example.com',
+        'website' => 'https://example.com',
+        'consent' => '1',
+    ], '1.2.3.5');
+    assert_same('invalid', $r['code']);
+    assert_same('email_mx', $r['rule']);
+    assert_same('email_mx', last_validation_rule($vlog));
+});
+
+test('signup rule email_tld_blocked', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'user@shop.ru',
+        'website' => 'https://example.com',
+        'consent' => '1',
+    ], '1.2.3.6');
+    assert_same('invalid', $r['code']);
+    assert_same('email_tld_blocked', $r['rule']);
+    assert_same('email_tld_blocked', last_validation_rule($vlog));
+});
+
+test('signup rule email_disposable', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'x@yopmail.com',
+        'website' => 'https://example.com',
+        'consent' => '1',
+    ], '1.2.3.7');
+    assert_same('invalid', $r['code']);
+    assert_same('email_disposable', $r['rule']);
+    assert_same('email_disposable', last_validation_rule($vlog));
+});
+
+test('signup rule email_disposable from config list', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    $config['disposable_email_domains'] = ['temp-custom.test'];
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'a@temp-custom.test',
+        'website' => 'https://example.com',
+        'consent' => '1',
+    ], '1.2.3.8');
+    assert_same('invalid', $r['code']);
+    assert_same('email_disposable', $r['rule']);
+});
+
+test('signup rule website_dns (mocked)', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    ai_scan_set_dns_checker(static function (string $host, string $type): bool {
+        if ($host === 'ghost-site.nl' || $host === 'ghost-site.nl') {
+            return false;
+        }
+        // Email MX/A for example.com still ok.
+        return !str_ends_with($host, 'ghost-site.nl');
+    });
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'ok@example.com',
+        'website' => 'https://ghost-site.nl',
+        'consent' => '1',
+    ], '1.2.3.9');
+    assert_same('invalid', $r['code']);
+    assert_same('website_dns', $r['rule']);
+    assert_same('website_dns', last_validation_rule($vlog));
+});
+
+test('signup rule website_tld allowlist', static function (): void {
+    [$config, $pdo, , , $vlog] = boot_test_db();
+    @unlink($vlog);
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'ok@example.com',
+        'website' => 'https://example.org',
+        'consent' => '1',
+    ], '1.2.3.10');
+    assert_same('invalid', $r['code']);
+    assert_same('website_tld', $r['rule']);
+    assert_same('website_tld', last_validation_rule($vlog));
+});
+
+test('signup MX fallback to A when MX missing', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    ai_scan_set_dns_checker(static function (string $host, string $type): bool {
+        if ($host === 'only-a.nl' && $type === 'MX') {
+            return false;
+        }
+        if ($host === 'only-a.nl' && ($type === 'A' || $type === 'AAAA')) {
+            return $type === 'A';
+        }
+
+        return true;
+    });
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'user@only-a.nl',
+        'website' => 'https://only-a.nl',
+        'consent' => '1',
+    ], '1.2.4.1');
+    assert_same('check_mail', $r['code']);
+});
+
+test('public invalid message is neutral', static function (): void {
+    assert_true(!str_contains(AI_SCAN_INVALID_PUBLIC_MESSAGE, 'MX'));
+    assert_true(!str_contains(strtolower(AI_SCAN_INVALID_PUBLIC_MESSAGE), 'disposable'));
+    assert_true(!str_contains(strtolower(AI_SCAN_INVALID_PUBLIC_MESSAGE), 'tld'));
+});
+
 test('submit honeypot returns check_mail', static function (): void {
     [$config, $pdo] = boot_test_db();
     $r = ai_scan_submit($pdo, $config, [
@@ -125,24 +289,15 @@ test('submit honeypot returns check_mail', static function (): void {
     assert_same(0, $count);
 });
 
-test('submit invalid email', static function (): void {
+test('submit invalid email is public invalid', static function (): void {
     [$config, $pdo] = boot_test_db();
     $r = ai_scan_submit($pdo, $config, [
         'email' => 'not-an-email',
         'website' => 'https://example.com',
         'consent' => '1',
     ], '1.2.3.4');
-    assert_same('invalid_email', $r['code']);
-});
-
-test('submit disposable', static function (): void {
-    [$config, $pdo] = boot_test_db();
-    $r = ai_scan_submit($pdo, $config, [
-        'email' => 'x@yopmail.com',
-        'website' => 'https://example.com',
-        'consent' => '1',
-    ], '1.2.3.4');
-    assert_same('disposable', $r['code']);
+    assert_same('invalid', $r['code']);
+    assert_same('email_syntax', $r['rule']);
 });
 
 test('submit + confirm + set password + runner flow', static function (): void {

@@ -68,19 +68,14 @@ if (!ai_scan_verify_csrf($config, $csrf)) {
 
 $result = ai_scan_submit($pdo, $config, $input, ai_scan_client_ip());
 
-if (in_array($result['code'], ['invalid_email', 'site_unreachable', 'disposable'], true)) {
-    $errors = [];
-    if ($result['code'] === 'invalid_email') {
-        $errors['email'] = 'Vul een geldig e-mailadres in en geef toestemming.';
-    } elseif ($result['code'] === 'disposable') {
-        $errors['email'] = 'Gebruik een vast e-mailadres, geen wegwerpadres.';
-    } else {
-        $errors['website'] = 'Ik kon deze website niet bereiken. Controleer het adres.';
-    }
+if ($result['code'] === 'invalid') {
+    // One neat, neutral message — never reveal which rule failed.
     ai_scan_store_form_state($config, [
         'email' => $input['email'],
         'website' => $input['website'],
-    ], $errors);
+    ], [
+        'form' => AI_SCAN_INVALID_PUBLIC_MESSAGE,
+    ]);
 }
 
 $extra = [];

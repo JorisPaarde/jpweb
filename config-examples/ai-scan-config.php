@@ -58,4 +58,10 @@ return [
     // Confirmation mail: max 1 per email per 10 minutes + global hourly cap.
     'confirm_mail_per_email_seconds' => 600,
     'confirm_mail_global_max_per_hour' => 40,
+
+    // Signup validation (failures always return public code `invalid`).
+    'email_blocked_tlds' => ['ru', 'su', 'by', 'in', 'cn', 'tk', 'top', 'xyz', 'buzz'],
+    'website_allowed_tlds' => ['nl', 'be', 'eu', 'com'],
+    'disposable_email_domains' => [],
+    'website_require_http' => false,
 ];
