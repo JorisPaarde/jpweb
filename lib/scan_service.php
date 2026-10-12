@@ -696,3 +696,73 @@ function ai_scan_latest_for_user(PDO $pdo, int $userId): ?array
 
     return $row === false ? null : $row;
 }
+
+/**
+ * Beheer: hef een gratis-scanblokkade op voor een e-mailadres en/of domein.
+ * Verwijdert de free_scan_blocks-rijen met de bijbehorende hash; logt alleen hashes.
+ *
+ * @return array{ok: bool, deleted?: int, error?: string}
+ */
+function ai_scan_admin_lift_free_scan_block(PDO $pdo, string $emailRaw, string $websiteRaw, string $adminEmail = ''): array
+{
+    $emailRaw = trim($emailRaw);
+    $websiteRaw = trim($websiteRaw);
+    $emailHash = null;
+    $domainHash = null;
+
+    if ($emailRaw !== '') {
+        if (filter_var($emailRaw, FILTER_VALIDATE_EMAIL) === false) {
+            return ['ok' => false, 'error' => 'email'];
+        }
+        $emailHash = ai_scan_email_hash(ai_scan_normalize_email($emailRaw));
+    }
+    if ($websiteRaw !== '') {
+        $parsed = ai_scan_parse_website($websiteRaw);
+        if (empty($parsed['ok'])) {
+            return ['ok' => false, 'error' => 'domain'];
+        }
+        $domainHash = ai_scan_domain_hash((string) $parsed['domain']);
+    }
+    if ($emailHash === null && $domainHash === null) {
+        return ['ok' => false, 'error' => 'empty'];
+    }
+
+    $deleted = 0;
+    if ($emailHash !== null) {
+        $stmt = $pdo->prepare('DELETE FROM free_scan_blocks WHERE email_hash = :h');
+        $stmt->execute(['h' => $emailHash]);
+        $deleted += $stmt->rowCount();
+    }
+    if ($domainHash !== null) {
+        $stmt = $pdo->prepare('DELETE FROM free_scan_blocks WHERE domain_hash = :h');
+        $stmt->execute(['h' => $domainHash]);
+        $deleted += $stmt->rowCount();
+    }
+
+    error_log(sprintf(
+        'ai_scan admin_lift_block by=%s email_hash=%s domain_hash=%s deleted=%d',
+        $adminEmail !== '' ? hash('sha256', 'email:' . strtolower($adminEmail)) : 'unknown',
+        $emailHash !== null ? substr($emailHash, 0, 12) : '-',
+        $domainHash !== null ? substr($domainHash, 0, 12) : '-',
+        $deleted
+    ));
+
+    return ['ok' => true, 'deleted' => $deleted];
+}
+
+/**
+ * Telt blokkades voor e-mail en/of domein (voor controle in beheer).
+ */
+function ai_scan_count_free_scan_blocks(PDO $pdo, string $emailRaw, string $websiteRaw): int
+{
+    $emailHash = trim($emailRaw) !== '' ? ai_scan_email_hash(ai_scan_normalize_email(trim($emailRaw))) : '';
+    $domainHash = '';
+    if (trim($websiteRaw) !== '') {
+        $parsed = ai_scan_parse_website($websiteRaw);
+        $domainHash = !empty($parsed['ok']) ? ai_scan_domain_hash((string) $parsed['domain']) : '';
+    }
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM free_scan_blocks WHERE (:e <> \'\' AND email_hash = :e2) OR (:d <> \'\' AND domain_hash = :d2)');
+    $stmt->execute(['e' => $emailHash, 'e2' => $emailHash, 'd' => $domainHash, 'd2' => $domainHash]);
+
+    return (int) $stmt->fetchColumn();
+}
