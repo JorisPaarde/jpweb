@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Subscription requests + admin tier changes. No payment flow.
  */
 
-const AI_SCAN_TIER_REQUEST_MESSAGE = 'Aanvraag ontvangen, we passen je abonnement aan.';
+const AI_SCAN_TIER_REQUEST_MESSAGE = 'Aanvraag ontvangen, ik pas je abonnement aan.';
 const AI_SCAN_FREE_WRITE_MESSAGE = 'Zit in het abonnement: elke week een nieuwe meting.';
 
 /**
@@ -71,6 +71,36 @@ function ai_scan_usage_bump_actions(PDO $pdo, int $userId, int $by = 1, ?int $no
            actions_used = actions_used + excluded.actions_used'
     );
     $stmt->execute(['u' => $userId, 'm' => $month, 'a' => max(0, $by)]);
+}
+
+/**
+ * Atomically consume one action from the monthly budget when under the limit.
+ * Returns false when the budget is already exhausted (safe under concurrent posts).
+ */
+function ai_scan_usage_try_consume_action(PDO $pdo, int $userId, int $limit, ?int $now = null): bool
+{
+    if ($limit < 1) {
+        return false;
+    }
+    $month = ai_scan_usage_month($now);
+    $pdo->prepare(
+        'INSERT INTO usage_counters(user_id, month, actions_used, question_edits)
+         VALUES(:u, :m, 0, 0)
+         ON CONFLICT(user_id, month) DO NOTHING'
+    )->execute(['u' => $userId, 'm' => $month]);
+
+    $stmt = $pdo->prepare(
+        'UPDATE usage_counters
+         SET actions_used = actions_used + 1
+         WHERE user_id = :u AND month = :m AND actions_used < :limit'
+    );
+    $stmt->execute([
+        'u' => $userId,
+        'm' => $month,
+        'limit' => $limit,
+    ]);
+
+    return $stmt->rowCount() === 1;
 }
 
 /**
@@ -458,7 +488,7 @@ function ai_scan_user_is_admin(array $config, array $user): bool
  */
 function ai_scan_require_admin_user(PDO $pdo, array $config): array
 {
-    $userId = ai_scan_require_user($config);
+    $userId = ai_scan_require_user($config, $pdo);
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
     $stmt->execute(['id' => $userId]);
     $user = $stmt->fetch();

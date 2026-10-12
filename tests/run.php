@@ -7,6 +7,9 @@ declare(strict_types=1);
  * Exit code 0 = all passed.
  */
 
+// Buffer output so session/cookie headers during included app renders do not warn.
+ob_start();
+
 putenv('JPWEB_AI_SCAN_ALLOW_INSECURE=1');
 putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
 putenv('JPWEB_AI_SCAN_SKIP_REACHABILITY=1');
@@ -767,6 +770,8 @@ test('password_hash used, never plaintext column', static function (): void {
 });
 
 require __DIR__ . '/tiers_test.php';
+require __DIR__ . '/app_ui_test.php';
+require __DIR__ . '/app_writes_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
