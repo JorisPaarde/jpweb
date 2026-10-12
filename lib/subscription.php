@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Subscription requests + admin tier changes. No payment flow.
  */
 
-const AI_SCAN_TIER_REQUEST_MESSAGE = 'Aanvraag ontvangen, we passen je abonnement aan.';
+const AI_SCAN_TIER_REQUEST_MESSAGE = 'Aanvraag ontvangen, ik pas je abonnement aan.';
 const AI_SCAN_FREE_WRITE_MESSAGE = 'Zit in het abonnement: elke week een nieuwe meting.';
 
 /**

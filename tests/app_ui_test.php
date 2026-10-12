@@ -304,7 +304,7 @@ test('exact Dutch UI strings present in sources', static function (): void {
     }
     // Locked + flash copy come from Brief 01 constants (exact Dutch).
     assert_same(
-        'Aanvraag ontvangen, we passen je abonnement aan.',
+        'Aanvraag ontvangen, ik pas je abonnement aan.',
         AI_SCAN_TIER_REQUEST_MESSAGE
     );
     assert_same(
@@ -386,7 +386,7 @@ test('flash message from session shown on abonnement', static function (): void 
         'GET',
         AI_SCAN_TIER_REQUEST_MESSAGE
     );
-    assert_true(str_contains($html, 'Aanvraag ontvangen, we passen je abonnement aan.'), 'flash visible');
+    assert_true(str_contains($html, 'Aanvraag ontvangen, ik pas je abonnement aan.'), 'flash visible');
 });
 
 test('pending request line after subscription_events request', static function (): void {
