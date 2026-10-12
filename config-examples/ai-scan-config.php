@@ -63,6 +63,17 @@ return [
     'ready_mail_per_email_seconds' => 60,
     'ready_mail_global_max_per_hour' => 40,
 
+    // Tier-request mails (info@ + customer confirmation).
+    'tier_request_mail_per_email_seconds' => 600,
+    'tier_request_mail_global_max_per_hour' => 40,
+
+    // Admin tier-change customer mail.
+    'tier_change_mail_per_email_seconds' => 60,
+    'tier_change_mail_global_max_per_hour' => 40,
+
+    // Beheerder e-mailadressen voor admin/tier.php.
+    'admin_emails' => ['info@jpwebcreation.nl'],
+
     // Signup validation (failures always return public code `invalid`).
     'email_blocked_tlds' => ['ru', 'su', 'by', 'in', 'cn', 'tk', 'top', 'xyz', 'buzz'],
     'website_allowed_tlds' => ['nl', 'be', 'eu', 'com'],

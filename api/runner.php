@@ -83,6 +83,55 @@ if ($action === 'health') {
     ]);
 }
 
+// GET ?action=limits&user_id=… | &scan_id=…  or legacy ?limits=<scan_or_user_id>
+$limitsParam = (string) ($_GET['limits'] ?? '');
+if ($action === 'limits' || $limitsParam !== '') {
+    if ($method !== 'GET' && $method !== 'POST') {
+        ai_scan_json_response(['ok' => false, 'error' => 'method'], 405);
+    }
+
+    $userId = (int) ($body['user_id'] ?? $_GET['user_id'] ?? 0);
+    $scanId = (int) ($body['scan_id'] ?? $_GET['scan_id'] ?? 0);
+    if ($limitsParam !== '' && ctype_digit($limitsParam)) {
+        $asId = (int) $limitsParam;
+        // Prefer scan lookup; fall back to user id.
+        $scanProbe = $pdo->prepare('SELECT user_id FROM scans WHERE id = :id LIMIT 1');
+        $scanProbe->execute(['id' => $asId]);
+        $scanRow = $scanProbe->fetch();
+        if ($scanRow !== false) {
+            $scanId = $asId;
+            if ($userId < 1 && $scanRow['user_id'] !== null) {
+                $userId = (int) $scanRow['user_id'];
+            }
+        } elseif ($userId < 1) {
+            $userId = $asId;
+        }
+    }
+
+    if ($userId < 1 && $scanId > 0) {
+        $scanProbe = $pdo->prepare('SELECT user_id FROM scans WHERE id = :id LIMIT 1');
+        $scanProbe->execute(['id' => $scanId]);
+        $scanRow = $scanProbe->fetch();
+        if ($scanRow !== false && $scanRow['user_id'] !== null) {
+            $userId = (int) $scanRow['user_id'];
+        }
+    }
+
+    if ($userId < 1) {
+        ai_scan_json_response(['ok' => false, 'error' => 'missing_user'], 400);
+    }
+
+    $userStmt = $pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+    $userStmt->execute(['id' => $userId]);
+    $user = $userStmt->fetch();
+    if ($user === false) {
+        ai_scan_json_response(['ok' => false, 'error' => 'user_not_found'], 404);
+    }
+
+    $limits = ai_scan_limits_for_user($pdo, $user);
+    ai_scan_json_response(['ok' => true] + $limits);
+}
+
 if ($action === 'next') {
     if ($method !== 'GET' && $method !== 'POST') {
         ai_scan_json_response(['ok' => false, 'error' => 'method'], 405);

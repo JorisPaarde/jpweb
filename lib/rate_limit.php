@@ -178,6 +178,62 @@ function ai_scan_ready_mail_rate_record(PDO $pdo, string $emailHash, int $now): 
     ai_scan_rate_hit($pdo, 'ready_mail_global', ai_scan_rate_global_key(), $now);
 }
 
+/**
+ * Tier-request mail throttle (info@ + customer confirmation): per-email + global.
+ */
+function ai_scan_tier_request_mail_rate_limited(PDO $pdo, array $config, string $emailHash, int $now): bool
+{
+    $perEmailSeconds = (int) ($config['tier_request_mail_per_email_seconds'] ?? 600);
+    if ($perEmailSeconds > 0
+        && ai_scan_rate_count($pdo, 'tier_request_mail_email', $emailHash, $now - $perEmailSeconds) >= 1
+    ) {
+        return true;
+    }
+
+    $globalMax = (int) ($config['tier_request_mail_global_max_per_hour'] ?? 40);
+    if ($globalMax > 0
+        && ai_scan_rate_count($pdo, 'tier_request_mail_global', ai_scan_rate_global_key(), $now - 3600) >= $globalMax
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function ai_scan_tier_request_mail_rate_record(PDO $pdo, string $emailHash, int $now): void
+{
+    ai_scan_rate_hit($pdo, 'tier_request_mail_email', $emailHash, $now);
+    ai_scan_rate_hit($pdo, 'tier_request_mail_global', ai_scan_rate_global_key(), $now);
+}
+
+/**
+ * Admin tier-change customer mail throttle: per-email + global.
+ */
+function ai_scan_tier_change_mail_rate_limited(PDO $pdo, array $config, string $emailHash, int $now): bool
+{
+    $perEmailSeconds = (int) ($config['tier_change_mail_per_email_seconds'] ?? 60);
+    if ($perEmailSeconds > 0
+        && ai_scan_rate_count($pdo, 'tier_change_mail_email', $emailHash, $now - $perEmailSeconds) >= 1
+    ) {
+        return true;
+    }
+
+    $globalMax = (int) ($config['tier_change_mail_global_max_per_hour'] ?? 40);
+    if ($globalMax > 0
+        && ai_scan_rate_count($pdo, 'tier_change_mail_global', ai_scan_rate_global_key(), $now - 3600) >= $globalMax
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function ai_scan_tier_change_mail_rate_record(PDO $pdo, string $emailHash, int $now): void
+{
+    ai_scan_rate_hit($pdo, 'tier_change_mail_email', $emailHash, $now);
+    ai_scan_rate_hit($pdo, 'tier_change_mail_global', ai_scan_rate_global_key(), $now);
+}
+
 /** @deprecated Use ai_scan_form_ip_rate_limited */
 function ai_scan_form_rate_limited(PDO $pdo, array $config, string $ip, int $now): bool
 {

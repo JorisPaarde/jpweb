@@ -223,3 +223,102 @@ function ai_scan_mail_stale_alert(array $config, int $staleCount, array $sampleI
 
     return ai_scan_send_mail($config, $to, $subject, $body);
 }
+
+/**
+ * Internal mail to info@: account request (upgrade/downgrade/cancel/account).
+ */
+function ai_scan_mail_tier_request_admin(
+    array $config,
+    string $to,
+    string $accountName,
+    string $email,
+    string $fromTier,
+    string $requestedTier,
+    string $kind
+): array {
+    $subject = 'Abonnementsaanvraag: ' . $accountName;
+    $body = implode("\n", [
+        'Hoi,',
+        '',
+        'Nieuwe abonnementsaanvraag.',
+        '',
+        'Account: ' . $accountName . ' (' . $email . ')',
+        'Huidige tier: ' . $fromTier,
+        'Gevraagde tier: ' . $requestedTier,
+        'Soort: ' . $kind,
+        '',
+        'Groet,',
+    ]);
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
+
+/**
+ * Customer confirmation after a tier request. First person "ik", ends with "Groet,".
+ *
+ * @param array<string, mixed> $tiers
+ */
+function ai_scan_mail_tier_request_customer(
+    array $config,
+    string $to,
+    string $greetingName,
+    string $requestedTier,
+    string $kind,
+    array $tiers
+): array {
+    $label = $kind === 'cancel'
+        ? 'opzeggen'
+        : ai_scan_tier_label($requestedTier, $tiers);
+    $subject = 'Ik heb je abonnementsaanvraag ontvangen';
+    $body = implode("\n", [
+        'Hoi ' . $greetingName . ',',
+        '',
+        'Ik heb je aanvraag ontvangen voor ' . $label . '.',
+        'Ik pas het aan en laat het je weten.',
+        '',
+        'Groet,',
+    ]);
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
+
+/**
+ * Customer mail when the admin changes the tier. First person "ik", ends with "Groet,".
+ *
+ * @param array{id: string, questions: int, actions: int, monthly: int, read_only: bool, weekly_measurement: bool} $effective
+ * @param array<string, mixed> $tiers
+ */
+function ai_scan_mail_tier_changed_customer(
+    array $config,
+    string $to,
+    string $greetingName,
+    array $effective,
+    array $tiers
+): array {
+    $label = ai_scan_tier_label((string) $effective['id'], $tiers, (int) ($effective['questions'] ?? 0));
+    $questions = (int) $effective['questions'];
+    $actions = (int) $effective['actions'];
+    $subject = 'Je abonnement is aangepast';
+
+    if (!empty($effective['read_only']) || (string) $effective['id'] === 'free') {
+        $body = implode("\n", [
+            'Hoi ' . $greetingName . ',',
+            '',
+            'Ik heb je abonnement aangepast naar ' . $label . '.',
+            'Je laatste uitslag blijft zichtbaar. Nieuwe metingen staan in het abonnement.',
+            '',
+            'Groet,',
+        ]);
+    } else {
+        $body = implode("\n", [
+            'Hoi ' . $greetingName . ',',
+            '',
+            'Ik heb je abonnement aangepast naar ' . $label . '.',
+            'Je kunt nu tot ' . $questions . ' vragen per meting en ' . $actions . ' verbeteracties per maand gebruiken.',
+            '',
+            'Groet,',
+        ]);
+    }
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
