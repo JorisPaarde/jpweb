@@ -38,14 +38,24 @@ return [
         'alert_to' => 'info@jpwebcreation.nl',
     ],
 
-    // Limits (overridable).
-    'daily_free_scans' => 10,
+    // Limits (all overridable).
+    'daily_free_scans' => 20,
     'confirm_token_ttl' => 86400,
     'password_token_ttl' => 86400,
-    'stale_job_seconds' => 7200,
+    'stale_job_seconds' => 1800,
     'stale_alert_cooldown' => 3600,
     'login_max_attempts' => 5,
     'login_window_seconds' => 900,
-    'form_ip_max_per_hour' => 5,
+
+    // Form: IP / email / domain + short burst → HTTP 429.
+    'form_ip_max_per_hour' => 3,
     'form_ip_max_per_day' => 20,
+    'form_email_max_per_hour' => 3,
+    'form_domain_max_per_hour' => 3,
+    'form_burst_seconds' => 60,
+    'form_burst_max' => 1,
+
+    // Confirmation mail: max 1 per email per 10 minutes + global hourly cap.
+    'confirm_mail_per_email_seconds' => 600,
+    'confirm_mail_global_max_per_hour' => 40,
 ];

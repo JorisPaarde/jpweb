@@ -14,6 +14,8 @@
 
 Antwoord: altijd **303** naar `/ai-scan/?s=<code>` (of JSON `{ok, code}` als `Accept: application/json` / `format=json`).
 
+Bij `rate_limited`: **HTTP 429** + `Retry-After`, en `Location: /ai-scan/?s=rate_limited` (JSON: `{ok:false, code:"rate_limited", retry_after}`).
+
 Codes:
 
 | Code | Betekenis |
@@ -22,9 +24,9 @@ Codes:
 | `invalid_email` | Ongeldig e-mailadres of geen toestemming |
 | `site_unreachable` | Website ongeldig of niet bereikbaar |
 | `already_scanned` | Dit e-mailadres of domein had al een (gratis) scan; verraadt geen e-mail |
-| `disposable` | Wegwerp-mailadres geweigerd |
+| `disposable` | Wegwerp-mailadres geweigerd (denylist) |
 | `daily_full` | Aanvraag geaccepteerd, maar het dagplafond is vol (wachtlijst na bevestiging) |
-| `rate_limited` | Te veel pogingen vanaf dit IP |
+| `rate_limited` | Te veel pogingen (IP / e-mail / domein / burst / bevestigingsmail-throttle) → **429** |
 | `error` | Generieke fout / verlopen CSRF |
 | `confirmed` | Alleen na bevestigingslink |
 | `deleted` | Account verwijderd (AVG) |
@@ -64,11 +66,15 @@ Queue-record (conceptueel):
 }
 ```
 
-Regels:
+Regels (defaults; alles via config overschrijfbaar):
 
 - 1 gratis scan per e-mail **én** per domein
-- dagplafond **10** bevestigde gratis scans (config: `daily_free_scans`); overflow → `wacht_dag`
-- rate limit per IP: 5/uur, 20/dag op het formulier
+- dagplafond **20** bevestigde gratis scans (`daily_free_scans`); overflow → `wacht_dag`
+- rate limit per IP: **3/uur** (`form_ip_max_per_hour`), plus dagplafond
+- rate limit per e-mail en per domein (`form_email_max_per_hour`, `form_domain_max_per_hour`)
+- korte burst: herhaalde requests binnen `form_burst_seconds` → **429**
+- bevestigingsmail: max **1 per e-mail per 10 min** + globaal uurplafond (`confirm_mail_*`)
+- wegwerp-adressen geweigerd (denylist in `data/disposable-email-domains/`)
 - eerste scan gratis; daarna alleen abonnement (`already_scanned`)
 - kostenplafond €0,60/scan is runner-side (B3)
 
@@ -114,7 +120,7 @@ Status `mislukt`. Geen "scan klaar"-mail vanuit B2.
 
 ### `GET|POST /api/runner.php?action=health`
 
-Queue-tellingen + stale-job check (alert naar `info@` als jobs >2 u wachten; max. 1 alert/uur).
+Queue-tellingen + stale-job check (alert naar `info@` als jobs >30 min wachten; max. 1 alert/uur).
 
 ```json
 { "ok": true, "counts": { "bevestigd": 1, "bezig": 0, "…": 0 }, "stale": { "checked": true, "alerted": false, "stale": 0 } }
@@ -122,7 +128,7 @@ Queue-tellingen + stale-job check (alert naar `info@` als jobs >2 u wachten; max
 
 ## Stale-job alert
 
-Als een job in `bevestigd` of `wacht_dag` langer dan **2 uur** (`stale_job_seconds`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Gecheckt bij publieke requests en bij de runner API. Cooldown: **1 uur** (`stale_alert_cooldown`).
+Als een job in `bevestigd` of `wacht_dag` langer dan **30 minuten** (`stale_job_seconds`, default `1800`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Gecheckt bij publieke requests en bij de runner API. Cooldown: **1 uur** (`stale_alert_cooldown`).
 
 ## Config (buiten webroot)
 
@@ -132,7 +138,7 @@ Zie `config-examples/ai-scan-config.php`. Lookup:
 2. `../private/ai-scan-config.php` (relatief t.o.v. webroot)
 3. `/home/jpwebcreation/private/ai-scan-config.php`
 
-Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `allowed_hosts`.
+Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `allowed_hosts`.
 
 ## Mailtoon
 

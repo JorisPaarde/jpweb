@@ -71,10 +71,33 @@ function ai_scan_redirect_code(string $code, string $path = '/ai-scan/'): void
     ai_scan_redirect($path . $sep . 's=' . rawurlencode($code), 303);
 }
 
-function ai_scan_respond_code(string $code, bool $asJson = false): void
+/**
+ * @param array<string, mixed> $extra
+ */
+function ai_scan_respond_code(string $code, bool $asJson = false, array $extra = []): void
 {
+    if ($code === 'rate_limited') {
+        $retryAfter = (int) ($extra['retry_after'] ?? 60);
+        header('Retry-After: ' . max(1, $retryAfter));
+        if ($asJson) {
+            ai_scan_json_response([
+                'ok' => false,
+                'code' => 'rate_limited',
+                'retry_after' => $retryAfter,
+            ], 429);
+        }
+
+        // Keep the promo status page, but signal 429 to clients/proxies.
+        http_response_code(429);
+        header('Location: /ai-scan/?s=' . rawurlencode('rate_limited'), true, 429);
+        exit;
+    }
+
     if ($asJson) {
-        ai_scan_json_response(['ok' => in_array($code, ['check_mail', 'confirmed'], true), 'code' => $code]);
+        ai_scan_json_response([
+            'ok' => in_array($code, ['check_mail', 'confirmed'], true),
+            'code' => $code,
+        ]);
     }
 
     ai_scan_redirect_code($code);

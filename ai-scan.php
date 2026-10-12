@@ -83,4 +83,9 @@ if (in_array($result['code'], ['invalid_email', 'site_unreachable', 'disposable'
     ], $errors);
 }
 
-ai_scan_respond_code($result['code'], $asJson);
+$extra = [];
+if ($result['code'] === 'rate_limited') {
+    $extra['retry_after'] = (int) ($result['retry_after'] ?? ai_scan_rate_limit_retry_after($config));
+}
+
+ai_scan_respond_code($result['code'], $asJson, $extra);

@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * Alert info@ when jobs wait >2h. At most one alert per hour.
- * Called from public requests and the runner API.
+ * Alert info@ when jobs wait longer than the configured threshold (default 30 min).
+ * At most one alert per hour. Called from public requests and the runner API.
  *
  * @return array{checked: bool, alerted: bool, stale: int}
  */
 function ai_scan_check_stale_jobs(PDO $pdo, array $config, int $now = 0, bool $forceMail = false): array
 {
     $now = $now > 0 ? $now : time();
-    $staleAfter = (int) ($config['stale_job_seconds'] ?? 7200);
+    $staleAfter = (int) ($config['stale_job_seconds'] ?? 1800);
     $cooldown = (int) ($config['stale_alert_cooldown'] ?? 3600);
 
     $cutoff = $now - $staleAfter;

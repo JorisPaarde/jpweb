@@ -52,7 +52,11 @@ function test_config(string $sqlite): array
         'runner_token' => 'test-runner-token',
         'app_key' => 'test-app-key',
         'base_url' => 'https://jpwebcreation.nl',
-        'daily_free_scans' => 10,
+        'daily_free_scans' => 20,
+        'form_burst_seconds' => 0,
+        'form_burst_max' => 10,
+        'confirm_mail_per_email_seconds' => 0,
+        'confirm_mail_global_max_per_hour' => 1000,
         'smtp' => [
             'host' => 's1155.nl',
             'port' => 465,
@@ -272,26 +276,122 @@ test('daily limit sets wacht_dag on confirm', static function (): void {
     assert_same('wacht_dag', $status);
 });
 
-test('form rate limit', static function (): void {
+test('form IP rate limit (max 3/hour default path)', static function (): void {
     [$config, $pdo] = boot_test_db();
-    $config['form_ip_max_per_hour'] = 2;
-    $config['form_ip_max_per_day'] = 2;
+    $config['form_ip_max_per_hour'] = 3;
+    $config['form_ip_max_per_day'] = 20;
+    $config['form_burst_seconds'] = 0;
     $ip = '9.9.9.9';
     $now = time();
-    for ($i = 0; $i < 2; $i++) {
+    for ($i = 0; $i < 3; $i++) {
         $r = ai_scan_submit($pdo, $config, [
             'email' => "u{$i}@zzz{$i}.nl",
             'website' => "https://zzz{$i}.nl",
             'consent' => '1',
-        ], $ip, $now);
+        ], $ip, $now + $i);
         assert_same('check_mail', $r['code']);
     }
     $r = ai_scan_submit($pdo, $config, [
         'email' => 'u3@zzz3.nl',
         'website' => 'https://zzz3.nl',
         'consent' => '1',
-    ], $ip, $now);
+    ], $ip, $now + 3);
     assert_same('rate_limited', $r['code']);
+    assert_true(isset($r['retry_after']));
+});
+
+test('form burst blocks repeated requests quickly', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 60;
+    $config['form_burst_max'] = 1;
+    $config['form_ip_max_per_hour'] = 10;
+    $now = time();
+    $r1 = ai_scan_submit($pdo, $config, [
+        'email' => 'burst1@a.nl',
+        'website' => 'https://a-burst.nl',
+        'consent' => '1',
+    ], '5.5.5.5', $now);
+    assert_same('check_mail', $r1['code']);
+    $r2 = ai_scan_submit($pdo, $config, [
+        'email' => 'burst2@b.nl',
+        'website' => 'https://b-burst.nl',
+        'consent' => '1',
+    ], '5.5.5.5', $now + 5);
+    assert_same('rate_limited', $r2['code']);
+});
+
+test('form email/domain rate limit', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $config['form_email_max_per_hour'] = 1;
+    $config['form_domain_max_per_hour'] = 1;
+    $config['confirm_mail_per_email_seconds'] = 0;
+    $now = time();
+
+    // First request for email creates onbevestigd; second same email hits already_scanned
+    // before email rate if we don't clear. Use rate record path: force by recording then submit new domain.
+    $r1 = ai_scan_submit($pdo, $config, [
+        'email' => 'lim@firma.nl',
+        'website' => 'https://firma-lim.nl',
+        'consent' => '1',
+    ], '4.4.4.1', $now);
+    assert_same('check_mail', $r1['code']);
+
+    // Different email, same domain → domain hourly limit after first success recorded.
+    $r2 = ai_scan_submit($pdo, $config, [
+        'email' => 'other@elders.nl',
+        'website' => 'https://www.firma-lim.nl',
+        'consent' => '1',
+    ], '4.4.4.2', $now + 1);
+    assert_same('rate_limited', $r2['code']);
+});
+
+test('confirm mail throttle per email and global', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $config['confirm_mail_per_email_seconds'] = 600;
+    $config['confirm_mail_global_max_per_hour'] = 2;
+    $now = time();
+
+    $r1 = ai_scan_submit($pdo, $config, [
+        'email' => 'mail1@t1.nl',
+        'website' => 'https://t1.nl',
+        'consent' => '1',
+    ], '3.3.3.1', $now);
+    assert_same('check_mail', $r1['code']);
+
+    // Same email within 10 minutes → blocked (even if no scan row yet for a new attempt:
+    // existing scan would be already_scanned; simulate by deleting the row but keeping mail rate).
+    $pdo->exec('DELETE FROM scans');
+    $r2 = ai_scan_submit($pdo, $config, [
+        'email' => 'mail1@t1.nl',
+        'website' => 'https://t1.nl',
+        'consent' => '1',
+    ], '3.3.3.1', $now + 30);
+    assert_same('rate_limited', $r2['code']);
+
+    $r3 = ai_scan_submit($pdo, $config, [
+        'email' => 'mail2@t2.nl',
+        'website' => 'https://t2.nl',
+        'consent' => '1',
+    ], '3.3.3.2', $now + 31);
+    assert_same('check_mail', $r3['code']);
+
+    // Global cap 2 already used (mail1 + mail2).
+    $r4 = ai_scan_submit($pdo, $config, [
+        'email' => 'mail3@t3.nl',
+        'website' => 'https://t3.nl',
+        'consent' => '1',
+    ], '3.3.3.3', $now + 32);
+    assert_same('rate_limited', $r4['code']);
+});
+
+test('defaults: 20 daily scans and 30 min stale alert', static function (): void {
+    $defaults = ai_scan_default_config(':memory:');
+    assert_same(20, $defaults['daily_free_scans']);
+    assert_same(1800, $defaults['stale_job_seconds']);
+    assert_same(3, $defaults['form_ip_max_per_hour']);
+    assert_same(600, $defaults['confirm_mail_per_email_seconds']);
 });
 
 test('GDPR delete keeps hashes, clears PII', static function (): void {

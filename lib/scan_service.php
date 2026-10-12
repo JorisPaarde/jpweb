@@ -82,12 +82,14 @@ function ai_scan_user_used_free_scan(PDO $pdo, string $emailHash): bool
 
 /**
  * Submit a free-scan request. Returns a contract status code.
+ * Rate-limit hits use code `rate_limited` (HTTP 429 at the edge).
  *
- * @return array{code: string, scan_id?: int}
+ * @return array{code: string, scan_id?: int, retry_after?: int}
  */
 function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $now = 0): array
 {
     $now = $now > 0 ? $now : time();
+    $retryAfter = ai_scan_rate_limit_retry_after($config);
 
     // Honeypot: always look like success.
     $honeypot = trim((string) ($input['hp_field'] ?? $input['bedrijfsfax'] ?? ''));
@@ -95,8 +97,8 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'check_mail'];
     }
 
-    if (ai_scan_form_rate_limited($pdo, $config, $ip, $now)) {
-        return ['code' => 'rate_limited'];
+    if (ai_scan_form_ip_rate_limited($pdo, $config, $ip, $now)) {
+        return ['code' => 'rate_limited', 'retry_after' => $retryAfter];
     }
 
     $emailRaw = trim((string) ($input['email'] ?? ''));
@@ -114,6 +116,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'invalid_email'];
     }
 
+    // Disposable denylist (in addition to honeypot + double opt-in).
     if (ai_scan_is_disposable_email($normalizedEmail)) {
         return ['code' => 'disposable'];
     }
@@ -132,6 +135,15 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     $domain = (string) $parsed['domain'];
     $domainHash = ai_scan_domain_hash($domain);
 
+    if (ai_scan_form_target_rate_limited($pdo, $config, $emailHash, $domainHash, $now)) {
+        return ['code' => 'rate_limited', 'retry_after' => $retryAfter];
+    }
+
+    // Prevent using the form to spam confirm mails.
+    if (ai_scan_confirm_mail_rate_limited($pdo, $config, $emailHash, $now)) {
+        return ['code' => 'rate_limited', 'retry_after' => (int) ($config['confirm_mail_per_email_seconds'] ?? 600)];
+    }
+
     // First scan free; afterwards subscription only → already_scanned (no email leak).
     if (
         ai_scan_has_block($pdo, $emailHash, $domainHash)
@@ -141,7 +153,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'already_scanned'];
     }
 
-    $dailyLimit = (int) ($config['daily_free_scans'] ?? 10);
+    $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
     $dailyFull = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit;
 
     $confirmToken = ai_scan_random_token(32);
@@ -193,7 +205,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'error'];
     }
 
-    ai_scan_form_rate_record($pdo, $ip, $now);
+    ai_scan_form_rate_record($pdo, $ip, $emailHash, $domainHash, $now);
 
     $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
     $confirmUrl = $base . '/ai-scan.php?confirm=' . rawurlencode($confirmToken);
@@ -202,6 +214,8 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         // Keep the row so a resend path can exist later; surface generic error.
         return ['code' => 'error', 'scan_id' => $scanId];
     }
+
+    ai_scan_confirm_mail_rate_record($pdo, $emailHash, $now);
 
     return [
         'code' => $dailyFull ? 'daily_full' : 'check_mail',
@@ -239,7 +253,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
         return ['code' => 'error'];
     }
 
-    $dailyLimit = (int) ($config['daily_free_scans'] ?? 10);
+    $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
     $dailyFull = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit;
     $status = $dailyFull ? 'wacht_dag' : 'bevestigd';
 
@@ -336,7 +350,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
 function ai_scan_promote_waitlist(PDO $pdo, array $config, int $now = 0): int
 {
     $now = $now > 0 ? $now : time();
-    $dailyLimit = (int) ($config['daily_free_scans'] ?? 10);
+    $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
     $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
     if ($slots <= 0) {
         return 0;
