@@ -7,6 +7,38 @@ require_once __DIR__ . '/layout.php';
 require_once __DIR__ . '/_action_card.php';
 
 $ctx = app_boot('acties');
+$flashLocal = '';
+$errorLocal = '';
+
+if (ai_scan_request_method() === 'POST') {
+    $token = (string) ($_POST['csrf'] ?? '');
+    $action = ai_scan_clean_input('action', 40);
+    $publicId = ai_scan_clean_input('public_id', 80);
+    if (!ai_scan_verify_csrf($ctx['config'], $token)) {
+        $errorLocal = 'De sessie is verlopen. Probeer het opnieuw.';
+    } else {
+        $status = $action === 'live' ? 'live_gemeld' : ($action === 'reject' ? 'afgewezen' : '');
+        if ($status === '') {
+            $errorLocal = 'Onbekende actie.';
+        } else {
+            $res = ai_scan_action_set_status(
+                $ctx['pdo'],
+                $ctx['user'],
+                $ctx['result'],
+                $publicId,
+                $status,
+                $ctx['tiers']
+            );
+            if (!empty($res['ok'])) {
+                $flashLocal = (string) ($res['message'] ?? 'Opgeslagen.');
+                $ctx['actions_used'] = ai_scan_usage_actions_used($ctx['pdo'], (int) $ctx['user']['id']);
+            } else {
+                $errorLocal = (string) ($res['error'] ?? 'Er ging iets mis.');
+            }
+        }
+    }
+}
+
 $all = app_load_actions($ctx['pdo'], (int) $ctx['user']['id'], $ctx['result']);
 $isFree = !empty($ctx['is_free']);
 $visible = app_actions_for_tier($all, $isFree);
@@ -19,15 +51,32 @@ foreach ($visible as $a) {
         $current[] = $a;
     }
 }
-// Free: only example in "deze week"; locked note for the rest.
 $hiddenCount = $isFree ? max(0, count($all) - count($visible)) : 0;
 $used = (int) $ctx['actions_used'];
 $limit = (int) $ctx['actions_limit'];
+$csrf = (string) $ctx['csrf'];
 
-app_render_layout($ctx, 'Acties', static function (array $ctx) use ($current, $archive, $isFree, $hiddenCount, $used, $limit): void {
+app_render_layout($ctx, 'Acties', static function (array $ctx) use (
+    $current,
+    $archive,
+    $isFree,
+    $hiddenCount,
+    $used,
+    $limit,
+    $csrf,
+    $flashLocal,
+    $errorLocal
+): void {
     ?>
     <h1>Acties</h1>
     <p class="app-lead"><?= (int) $used ?> van <?= (int) $limit ?> deze maand</p>
+
+    <?php if ($flashLocal !== ''): ?>
+      <div class="app-flash" role="status"><?= app_h($flashLocal) ?></div>
+    <?php endif; ?>
+    <?php if ($errorLocal !== ''): ?>
+      <p class="field__error" role="alert"><?= app_h($errorLocal) ?></p>
+    <?php endif; ?>
 
     <div class="action-toolbar">
       <button type="button" class="text-btn" data-actions-toolbar data-mode="expand">Alles openklappen</button>
@@ -37,8 +86,8 @@ app_render_layout($ctx, 'Acties', static function (array $ctx) use ($current, $a
     <?php if ($current === []): ?>
       <p class="app-empty">Er staan deze week nog geen acties klaar.</p>
     <?php else: ?>
-      <?php foreach ($current as $i => $action):
-          app_render_action_card($action, $isFree, false);
+      <?php foreach ($current as $action):
+          app_render_action_card($action, $isFree, false, $csrf);
       endforeach; ?>
     <?php endif; ?>
     <?php if ($hiddenCount > 0): ?>
@@ -52,7 +101,7 @@ app_render_layout($ctx, 'Acties', static function (array $ctx) use ($current, $a
       <?php
       $show = array_slice($archive, 0, 10);
       foreach ($show as $action):
-          app_render_action_card($action, $isFree, false);
+          app_render_action_card($action, $isFree, false, $csrf);
       endforeach;
       if (count($archive) > 10):
           ?>

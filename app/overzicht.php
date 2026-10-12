@@ -96,8 +96,8 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
         <?php if ($actions === []): ?>
           <p class="app-empty">Er staan deze week nog geen acties klaar.</p>
         <?php else: ?>
-          <?php foreach ($actions as $i => $action):
-              app_render_action_card($action, $isFree, false);
+          <?php foreach ($actions as $action):
+              app_render_action_card($action, $isFree, false, (string) $ctx['csrf']);
           endforeach; ?>
         <?php endif; ?>
         <p><a href="/app/acties.php">Alle acties</a></p>

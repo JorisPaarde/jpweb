@@ -22,7 +22,7 @@ function app_render_layout(array $ctx, string $title, callable $body): void
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title><?= app_h($title) ?> · <?= app_h($company !== '' ? $company : 'AI-vindbaarheid') ?></title>
-  <link rel="stylesheet" href="/app/assets/app.css?v=1">
+  <link rel="stylesheet" href="/app/assets/app.css?v=2">
 </head>
 <body class="app-body" data-page="<?= app_h($pageId) ?>">
   <a class="app-skip" href="#inhoud">Naar inhoud</a>
@@ -46,7 +46,7 @@ function app_render_layout(array $ctx, string $title, callable $body): void
       <?php $body($ctx); ?>
     </main>
   </div>
-  <script src="/app/assets/app.js?v=1" defer></script>
+  <script src="/app/assets/app.js?v=2" defer></script>
   <script>window.APP_CSRF = <?= json_encode($csrf, JSON_UNESCAPED_UNICODE) ?>;</script>
 </body>
 </html>

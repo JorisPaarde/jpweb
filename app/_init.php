@@ -342,49 +342,14 @@ function app_actions_for_tier(array $actions, bool $isFree): array
 function app_load_actions(PDO $pdo, int $userId, array $result): array
 {
     ai_scan_ensure_questions_schema($pdo);
+    ai_scan_ensure_actions_persisted($pdo, $userId, $result);
     $stmt = $pdo->prepare(
         'SELECT * FROM actions WHERE user_id = :u ORDER BY archived ASC, sort_order ASC, id ASC'
     );
     $stmt->execute(['u' => $userId]);
     $rows = $stmt->fetchAll();
-    if (is_array($rows) && $rows !== []) {
-        return $rows;
-    }
 
-    $fromResult = $result['actions'] ?? null;
-    if (!is_array($fromResult) || $fromResult === []) {
-        return [];
-    }
-
-    $out = [];
-    $i = 0;
-    foreach ($fromResult as $item) {
-        if (!is_array($item)) {
-            continue;
-        }
-        $i++;
-        $out[] = [
-            'id' => $i,
-            'public_id' => (string) ($item['id'] ?? ('a' . $i)),
-            'type' => (string) ($item['type'] ?? 'verbeteren'),
-            'status' => (string) ($item['status'] ?? 'voorgesteld'),
-            'title' => (string) ($item['title'] ?? 'Actie'),
-            'page_path' => (string) ($item['page_path'] ?? ($item['page'] ?? '/')),
-            'why_text' => (string) ($item['why'] ?? ($item['why_text'] ?? '')),
-            'page_text' => (string) ($item['page_text'] ?? ''),
-            'evidence_text' => (string) ($item['evidence'] ?? ($item['evidence_text'] ?? '')),
-            'now_text' => (string) ($item['now'] ?? ($item['now_text'] ?? '')),
-            'becomes_text' => (string) ($item['becomes'] ?? ($item['becomes_text'] ?? '')),
-            'placeholders_json' => json_encode($item['placeholders'] ?? [], JSON_UNESCAPED_UNICODE),
-            'log_text' => (string) ($item['log'] ?? ($item['log_text'] ?? '')),
-            'effect_text' => (string) ($item['effect'] ?? ($item['effect_text'] ?? '')),
-            'week_key' => (string) ($item['week'] ?? 'deze'),
-            'archived' => !empty($item['archived']) ? 1 : 0,
-            'sort_order' => $i,
-        ];
-    }
-
-    return $out;
+    return is_array($rows) ? $rows : [];
 }
 
 /**
@@ -394,11 +359,15 @@ function app_load_actions(PDO $pdo, int $userId, array $result): array
  */
 function app_load_questions_view(PDO $pdo, int $userId, array $result, array $profile): array
 {
+    ai_scan_ensure_questions_from_result($pdo, $userId, $result, $profile);
     $rows = ai_scan_list_questions($pdo, $userId);
     $core = [];
     $rotating = [];
     if ($rows !== []) {
         foreach ($rows as $row) {
+            if ((string) ($row['status'] ?? 'active') === 'deleted') {
+                continue;
+            }
             $kind = (string) ($row['kind'] ?? 'core');
             if ($kind === 'rotating') {
                 $rotating[] = $row;
@@ -486,6 +455,7 @@ function app_load_questions_view(PDO $pdo, int $userId, array $result, array $pr
 function app_load_competitors_view(PDO $pdo, int $userId, array $result, bool $isFree): array
 {
     ai_scan_ensure_questions_schema($pdo);
+    ai_scan_ensure_competitors_from_result($pdo, $userId, $result);
     $stmt = $pdo->prepare('SELECT * FROM competitors WHERE user_id = :u ORDER BY id ASC');
     $stmt->execute(['u' => $userId]);
     $rows = $stmt->fetchAll();

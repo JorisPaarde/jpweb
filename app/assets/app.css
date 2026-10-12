@@ -474,6 +474,11 @@ summary:focus-visible {
   color: #0a4d91;
 }
 
+.action-card__status--afgewezen {
+  background: #fbeaea;
+  color: var(--app-danger);
+}
+
 .action-card__title {
   font-size: 1rem;
   font-weight: 600;

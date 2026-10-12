@@ -7,8 +7,12 @@ declare(strict_types=1);
  *
  * @param array<string, mixed> $action
  */
-function app_render_action_card(array $action, bool $readOnly = false, bool $defaultOpen = false): void
-{
+function app_render_action_card(
+    array $action,
+    bool $readOnly = false,
+    bool $defaultOpen = false,
+    string $csrf = ''
+): void {
     $id = (string) ($action['public_id'] ?? $action['id'] ?? 'x');
     $domId = 'actie-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $id);
     $type = strtolower((string) ($action['type'] ?? 'verbeteren'));
@@ -19,10 +23,15 @@ function app_render_action_card(array $action, bool $readOnly = false, bool $def
     };
     $status = (string) ($action['status'] ?? 'voorgesteld');
     $statusLabel = match (strtolower($status)) {
-        'live' => 'Live',
+        'live', 'live_gemeld' => 'Live gemeld',
         'afgewezen', 'past_niet' => 'Past niet',
         'bezig' => 'Bezig',
         default => 'Voorgesteld',
+    };
+    $statusClass = match (strtolower($status)) {
+        'live', 'live_gemeld' => 'live',
+        'afgewezen', 'past_niet' => 'afgewezen',
+        default => 'voorgesteld',
     };
     $title = (string) ($action['title'] ?? '');
     $pagePath = (string) ($action['page_path'] ?? '');
@@ -44,6 +53,7 @@ function app_render_action_card(array $action, bool $readOnly = false, bool $def
     $log = (string) ($action['log_text'] ?? '');
     $effect = (string) ($action['effect_text'] ?? '');
     $bodyId = $domId . '-body';
+    $canAct = !$readOnly && !in_array(strtolower($status), ['live', 'live_gemeld', 'afgewezen'], true);
     ?>
     <article class="action-card" id="<?= app_h($domId) ?>" data-action-id="<?= app_h($id) ?>">
       <button
@@ -55,7 +65,7 @@ function app_render_action_card(array $action, bool $readOnly = false, bool $def
       >
         <span class="action-card__row1">
           <span class="action-card__type"><?= app_h($typeLabel) ?></span>
-          <span class="action-card__status action-card__status--<?= app_h(strtolower($status)) ?>"><?= app_h($statusLabel) ?></span>
+          <span class="action-card__status action-card__status--<?= app_h($statusClass) ?>"><?= app_h($statusLabel) ?></span>
         </span>
         <span class="action-card__title"><?= app_h($title) ?></span>
         <span class="action-card__meta">
@@ -104,7 +114,7 @@ function app_render_action_card(array $action, bool $readOnly = false, bool $def
                 ?>
               <label class="field">
                 <span class="field__label"><?= app_h($label) ?></span>
-                <input type="text" name="placeholder[<?= app_h($id) ?>][<?= app_h($label) ?>]" maxlength="120" <?= $readOnly ? 'disabled' : '' ?>>
+                <input type="text" name="placeholder[<?= app_h($id) ?>][<?= app_h($label) ?>]" maxlength="120">
               </label>
             <?php endforeach; ?>
           </section>
@@ -125,11 +135,23 @@ function app_render_action_card(array $action, bool $readOnly = false, bool $def
         <?php elseif ($readOnly): ?>
           <p class="app-locked"><?= app_h(app_locked_line()) ?></p>
         <?php endif; ?>
-        <?php if (!$readOnly): ?>
+        <?php if ($canAct && $csrf !== ''): ?>
           <div class="action-card__actions">
-            <button type="button" class="btn btn--ghost" disabled>Staat live</button>
-            <button type="button" class="btn btn--ghost" disabled>Past niet bij mijn bedrijf</button>
+            <form method="post" action="/app/acties.php" style="display:inline">
+              <input type="hidden" name="csrf" value="<?= app_h($csrf) ?>">
+              <input type="hidden" name="action" value="live">
+              <input type="hidden" name="public_id" value="<?= app_h($id) ?>">
+              <button type="submit" class="btn btn--ghost">Staat live</button>
+            </form>
+            <form method="post" action="/app/acties.php" style="display:inline" onsubmit="return confirm('Past deze actie niet bij je bedrijf?');">
+              <input type="hidden" name="csrf" value="<?= app_h($csrf) ?>">
+              <input type="hidden" name="action" value="reject">
+              <input type="hidden" name="public_id" value="<?= app_h($id) ?>">
+              <button type="submit" class="btn btn--ghost">Past niet bij mijn bedrijf</button>
+            </form>
           </div>
+        <?php elseif ($readOnly): ?>
+          <p class="app-locked"><?= app_h(app_locked_line()) ?></p>
         <?php endif; ?>
       </div>
     </article>

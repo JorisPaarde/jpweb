@@ -166,6 +166,30 @@
         var id = trigger.getAttribute('data-open-dialog');
         var dialog = id ? document.getElementById(id) : null;
         if (!dialog) return;
+
+        var qAction = trigger.getAttribute('data-q-action');
+        if (qAction) {
+          var actionInput = document.getElementById('q-action');
+          var idInput = document.getElementById('q-id');
+          var textInput = document.getElementById('q-text');
+          var placeInput = document.getElementById('q-place');
+          var fields = document.getElementById('q-fields');
+          var confirmBtn = document.getElementById('q-confirm');
+          if (actionInput) actionInput.value = qAction;
+          if (idInput) idInput.value = trigger.getAttribute('data-q-id') || '';
+          if (textInput) {
+            textInput.value = trigger.getAttribute('data-q-text') || '';
+            textInput.required = qAction !== 'delete';
+          }
+          if (placeInput) placeInput.value = trigger.getAttribute('data-q-place') || '';
+          if (fields) fields.hidden = qAction === 'delete';
+          if (confirmBtn) {
+            confirmBtn.textContent = qAction === 'delete'
+              ? 'Ja, verwijder de vraag'
+              : 'Ja, wijzig de vragen';
+          }
+        }
+
         dialog.hidden = false;
         var cancel = dialog.querySelector('[data-dialog-cancel]');
         if (cancel) cancel.focus();
