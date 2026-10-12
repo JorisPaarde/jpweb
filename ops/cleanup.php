@@ -60,11 +60,23 @@ try {
         $r = ai_scan_admin_cancel_pending($pdo, $email, $website);
         $summary = 'scans=' . (int) ($r['scans'] ?? 0) . ' ip_blocks=' . (int) ($r['ip_blocks'] ?? 0);
     } elseif ($mode === 'set_tier') {
-        $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
-        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
-        $sel->execute(['e' => $eh]);
-        $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
-        if (count($ids) !== 1) {
+        $rawEmail = strtolower(trim((string) getenv('OPS_EMAIL')));
+        $eh = ai_scan_email_hash(ai_scan_normalize_email($rawEmail));
+        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e OR lower(email) = :raw');
+        $sel->execute(['e' => $eh, 'raw' => $rawEmail]);
+        $byEmail = array_map('intval', $sel->fetchAll(PDO::FETCH_COLUMN));
+        $byDomain = [];
+        $site = (string) getenv('OPS_WEBSITE');
+        if ($site !== '') {
+            $parsed = ai_scan_parse_website($site);
+            $d = $pdo->prepare('SELECT DISTINCT user_id FROM scans WHERE domain_hash = :d AND user_id IS NOT NULL');
+            $d->execute(['d' => ai_scan_domain_hash((string) $parsed['domain'])]);
+            $byDomain = array_map('intval', $d->fetchAll(PDO::FETCH_COLUMN));
+        }
+        echo "ops {$job}: users_via_email=" . count($byEmail) . ' users_via_domein=' . count($byDomain)
+            . ' overlap=' . count(array_intersect($byEmail, $byDomain)) . "\n";
+        $ids = $byEmail !== [] ? $byEmail : $byDomain;
+        if (count($ids) !== 1 || ($byEmail !== [] && $byDomain !== [] && array_intersect($byEmail, $byDomain) === [])) {
             $r = ['ok' => false];
             $summary = 'users_gevonden=' . count($ids);
         } else {
