@@ -56,7 +56,9 @@ try {
             $r = ['ok' => false];
             $summary = 'users_gevonden=' . count($ids);
         } else {
-            $r = ai_scan_admin_set_tier($pdo, $config, (int) $ids[0], [
+            echo "ops {$job}: set_tier start\n";
+            // Geen klantmail vanuit de deploy (de SMTP-verbinding vanuit CLI brak het proces af).
+            $r = ai_scan_admin_set_tier($pdo, array_replace($config, ['smtp' => []]), (int) $ids[0], [
                 'tier_id' => (string) getenv('OPS_TIER'),
                 'subscription_status' => 'active',
                 'custom_questions' => null,
