@@ -1,4 +1,90 @@
 (() => {
+  // Stunten live example: only when flag is on AND /assets/data/stunten-voorbeeld.json exists.
+  // That file is absent by default (no real scores in source until permission).
+  const page = document.querySelector(".geo-page");
+  const question = document.querySelector('[data-stunten-variant="question"]');
+  const live = document.querySelector('[data-stunten-variant="live"]');
+
+  const renderStuntenExample = (data) => {
+    if (!(live instanceof HTMLElement) || !(question instanceof HTMLElement)) {
+      return;
+    }
+
+    const pct = typeof data.pct === "number" ? `${data.pct}%` : String(data.pct ?? "");
+    const badgeClass = data.badge_class === "is-mid" || data.badge_class === "is-weak"
+      ? data.badge_class
+      : "is-good";
+
+    live.innerHTML = `
+      <article class="geo-score-card" aria-label="Voorbeeldmeting">
+        <header class="geo-score-card-head">
+          <div>
+            <strong></strong>
+            <span></span>
+          </div>
+          <span class="geo-score-measured"></span>
+        </header>
+        <div class="geo-score-main">
+          <p class="geo-score-pct"></p>
+          <p class="geo-score-badge ${badgeClass}"></p>
+        </div>
+        <p class="geo-score-band"></p>
+        <p class="geo-score-trend"></p>
+        <p class="geo-score-foot"></p>
+      </article>
+      <p class="geo-example-note"></p>
+    `;
+
+    const setText = (selector, value) => {
+      const node = live.querySelector(selector);
+      if (node instanceof HTMLElement && typeof value === "string") {
+        node.textContent = value;
+      }
+    };
+
+    setText(".geo-score-card-head strong", data.name ?? "");
+    setText(".geo-score-card-head span", data.domain ?? "");
+    setText(".geo-score-measured", data.measured_label ?? "");
+    setText(".geo-score-pct", pct);
+    setText(".geo-score-badge", data.badge ?? "");
+    setText(".geo-score-band", data.band ?? "");
+    setText(".geo-score-trend", data.trend ?? "");
+    setText(".geo-score-foot", data.foot ?? "");
+    setText(".geo-example-note", data.note ?? "");
+
+    question.hidden = true;
+    live.hidden = false;
+  };
+
+  if (
+    page instanceof HTMLElement
+    && page.dataset.stuntenExample === "on"
+    && live instanceof HTMLElement
+  ) {
+    fetch("/assets/data/stunten-voorbeeld.json", { credentials: "same-origin" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("stunten voorbeeld absent");
+        }
+
+        return response.json();
+      })
+      .then(renderStuntenExample)
+      .catch(() => {
+        // Flag on but no data file: keep the question variant.
+        live.hidden = true;
+        live.replaceChildren();
+        if (question instanceof HTMLElement) {
+          question.hidden = false;
+        }
+      });
+  } else if (live instanceof HTMLElement) {
+    live.hidden = true;
+    live.replaceChildren();
+  }
+})();
+
+(() => {
   const root = document.querySelector("[data-pricing-root]");
   if (!(root instanceof HTMLElement)) {
     return;
@@ -48,30 +134,14 @@
       return;
     }
 
-    let monthly = tier.monthly;
-    let questionsLabel = `${tier.questions} vragen`;
-    let contactText = "";
+    const requestLabel = config.above_max?.request_label ?? "op aanvraag";
 
-    if (isAbove) {
-      const per100 = config.above_max?.per_started_100 ?? 89;
-      // Far end: show calculated first step beyond 1000 + contact.
-      const startedHundreds = 1;
-      monthly = tier.monthly + per100 * startedHundreds;
-      questionsLabel = "1000+ vragen";
-      contactText = `${formatEuro(monthly)} per maand (indicatie) · ${config.above_max?.contact_label ?? "Neem contact op"} / ${config.above_max?.request_label ?? "op aanvraag"}`;
-    }
-
+    const questionsLabel = isAbove ? "1000+ vragen" : `${tier.questions} vragen`;
     const hours = selectedHours();
-    const compleet = isAbove
-      ? null
-      : tier.compleet?.[hours];
-    const weekly = isAbove
-      ? Math.round((monthly * 12) / 52)
-      : tier.weekly;
-    const annual = isAbove ? monthly * 10 : tier.annual;
+    const compleet = isAbove ? null : tier.compleet?.[hours];
     const valueText = isAbove
-      ? `${questionsLabel}, ${contactText}`
-      : `${tier.questions} vragen, ${formatEuro(monthly)} per maand`;
+      ? `${questionsLabel}, ${requestLabel}`
+      : `${tier.questions} vragen, ${formatEuro(tier.monthly)} per maand`;
 
     range.setAttribute("aria-valuenow", String(isAbove ? 1000 : tier.questions));
     range.setAttribute("aria-valuetext", valueText);
@@ -81,15 +151,17 @@
     }
 
     if (monthlyEl instanceof HTMLElement) {
-      monthlyEl.textContent = isAbove ? (config.above_max?.request_label ?? "op aanvraag") : formatEuro(monthly);
+      monthlyEl.textContent = isAbove ? requestLabel : formatEuro(tier.monthly);
     }
 
     if (weeklyEl instanceof HTMLElement) {
-      weeklyEl.textContent = isAbove ? "—" : `${formatEuro(weekly)} per week`;
+      weeklyEl.textContent = isAbove ? "—" : `${formatEuro(tier.weekly)} per week`;
     }
 
     if (annualEl instanceof HTMLElement) {
-      annualEl.textContent = isAbove ? "—" : `${formatEuro(annual)} per jaar (10 maanden)`;
+      annualEl.textContent = isAbove
+        ? "—"
+        : `${formatEuro(tier.annual)} per jaar (10 maanden)`;
     }
 
     if (actionsEl instanceof HTMLElement) {
@@ -97,9 +169,9 @@
     }
 
     if (contactEl instanceof HTMLElement) {
-      if (contactText) {
+      if (isAbove) {
         contactEl.hidden = false;
-        contactEl.textContent = contactText;
+        contactEl.textContent = requestLabel;
       } else {
         contactEl.hidden = true;
         contactEl.textContent = "";
@@ -109,7 +181,7 @@
     if (compleetEl instanceof HTMLElement) {
       compleetEl.textContent = typeof compleet === "number"
         ? formatEuro(compleet)
-        : (config.above_max?.contact_label ?? "Neem contact op");
+        : requestLabel;
     }
   };
 
@@ -137,7 +209,6 @@
 
     if (range instanceof HTMLInputElement) {
       range.max = String((config.tiers?.length ?? 11));
-      // Default to 100 vragen (index of questions === 100).
       const defaultIndex = (config.tiers ?? []).findIndex((tier) => tier.questions === 100);
       range.value = String(defaultIndex >= 0 ? defaultIndex : 3);
       range.addEventListener("input", () => update(config));
@@ -168,7 +239,6 @@
     })
     .then(wire)
     .catch(() => {
-      // Keep the static table visible when the config cannot be loaded.
       if (interactive instanceof HTMLElement) {
         interactive.hidden = true;
       }

@@ -217,26 +217,6 @@ if (contactStatus) {
   }
 }
 
-// Stunten met Plinten example: feature flag default OFF until written permission.
-(() => {
-  const page = document.querySelector(".geo-page");
-  if (!(page instanceof HTMLElement)) {
-    return;
-  }
-
-  const enabled = page.dataset.stuntenExample === "on";
-  const question = document.querySelector('[data-stunten-variant="question"]');
-  const live = document.querySelector('[data-stunten-variant="live"]');
-
-  if (question instanceof HTMLElement) {
-    question.hidden = enabled;
-  }
-
-  if (live instanceof HTMLElement) {
-    live.hidden = !enabled;
-  }
-})();
-
 const scanStatus = document.querySelector("#scan-status");
 const scanForm = document.querySelector(".geo-scan-form");
 
