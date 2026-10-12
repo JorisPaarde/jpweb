@@ -46,7 +46,7 @@ function app_render_layout(array $ctx, string $title, callable $body): void
       <?php $body($ctx); ?>
     </main>
   </div>
-  <script src="/app/assets/app.js?v=3" defer></script>
+  <script src="/app/assets/app.js?v=4" defer></script>
   <script>window.APP_CSRF = <?= json_encode($csrf, JSON_UNESCAPED_UNICODE) ?>;</script>
 </body>
 </html>
