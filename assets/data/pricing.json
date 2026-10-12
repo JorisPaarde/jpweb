@@ -1,0 +1,158 @@
+{
+  "currency": "EUR",
+  "vat_note": "excl. btw",
+  "hourly_rate": 70,
+  "extra_hours_note": "Extra uren €70 per uur, alleen na jouw akkoord.",
+  "execute_line": "Wil je dat wij het uitvoeren? €70 per uur, alleen na jouw akkoord.",
+  "example": {
+    "services": 8,
+    "places": 3,
+    "label": "8 diensten × 3 plaatsen = 24 vragen"
+  },
+  "compleet_hours": [
+    3,
+    6,
+    10
+  ],
+  "compleet_note": "Compleet = toolprijs + vaste uren waarin wij het werk doen.",
+  "above_max": {
+    "from_questions": 1000,
+    "per_started_100": 39,
+    "contact_label": "Neem contact op",
+    "request_label": "op aanvraag"
+  },
+  "tiers": [
+    {
+      "questions": 25,
+      "monthly": 19,
+      "actions": 3,
+      "weekly": 4,
+      "annual": 190,
+      "compleet": {
+        "3": 219,
+        "6": 418,
+        "10": 684
+      }
+    },
+    {
+      "questions": 50,
+      "monthly": 35,
+      "actions": 4,
+      "weekly": 8,
+      "annual": 350,
+      "compleet": {
+        "3": 235,
+        "6": 434,
+        "10": 700
+      }
+    },
+    {
+      "questions": 75,
+      "monthly": 49,
+      "actions": 5,
+      "weekly": 11,
+      "annual": 490,
+      "compleet": {
+        "3": 249,
+        "6": 448,
+        "10": 714
+      }
+    },
+    {
+      "questions": 100,
+      "monthly": 65,
+      "actions": 6,
+      "weekly": 15,
+      "annual": 650,
+      "compleet": {
+        "3": 265,
+        "6": 464,
+        "10": 730
+      }
+    },
+    {
+      "questions": 150,
+      "monthly": 89,
+      "actions": 7,
+      "weekly": 21,
+      "annual": 890,
+      "compleet": {
+        "3": 289,
+        "6": 488,
+        "10": 754
+      }
+    },
+    {
+      "questions": 200,
+      "monthly": 109,
+      "actions": 8,
+      "weekly": 25,
+      "annual": 1090,
+      "compleet": {
+        "3": 309,
+        "6": 508,
+        "10": 774
+      }
+    },
+    {
+      "questions": 250,
+      "monthly": 129,
+      "actions": 9,
+      "weekly": 30,
+      "annual": 1290,
+      "compleet": {
+        "3": 329,
+        "6": 528,
+        "10": 794
+      }
+    },
+    {
+      "questions": 350,
+      "monthly": 179,
+      "actions": 10,
+      "weekly": 41,
+      "annual": 1790,
+      "compleet": {
+        "3": 379,
+        "6": 578,
+        "10": 844
+      }
+    },
+    {
+      "questions": 500,
+      "monthly": 239,
+      "actions": 12,
+      "weekly": 55,
+      "annual": 2390,
+      "compleet": {
+        "3": 439,
+        "6": 638,
+        "10": 904
+      }
+    },
+    {
+      "questions": 750,
+      "monthly": 339,
+      "actions": 15,
+      "weekly": 78,
+      "annual": 3390,
+      "compleet": {
+        "3": 539,
+        "6": 738,
+        "10": 1004
+      }
+    },
+    {
+      "questions": 1000,
+      "monthly": 429,
+      "actions": 20,
+      "weekly": 99,
+      "annual": 4290,
+      "compleet": {
+        "3": 629,
+        "6": 828,
+        "10": 1094
+      }
+    }
+  ]
+}

@@ -32,7 +32,7 @@
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
     <link rel="stylesheet" href="../styles.css?v=61">
-    <link rel="stylesheet" href="ai-vindbaarheid.css?v=1">
+    <link rel="stylesheet" href="ai-vindbaarheid.css?v=3">
   </head>
   <body class="project-page geo-page" data-stunten-example="off">
     <header class="site-header">
@@ -199,6 +199,105 @@
         </div>
       </section>
 
+      <section id="prijzen" class="section geo-pricing" aria-labelledby="pricing-title" data-pricing-root>
+        <div class="section-heading">
+          <p class="eyebrow">Na de gratis scan</p>
+          <h2 id="pricing-title">Eén meting is een foto. Wil je de film?</h2>
+          <p>
+            De eerste scan is gratis. Daarna alleen een abonnement (maandelijks opzegbaar). Kies hoeveel vragen je wilt meten.
+            Eén vraag = zoekopdracht × plaats. Voorbeeld: <span data-pricing-example>8 diensten × 3 plaatsen = 24 vragen</span>.
+          </p>
+        </div>
+
+        <div class="geo-pricing-layout" data-pricing-interactive hidden>
+          <aside class="geo-pricing-compleet" aria-label="Compleet: meting plus uitvoering">
+            <p class="eyebrow">Compleet · anker</p>
+            <h3>Wil je dat wij het ook uitvoeren?</h3>
+            <p class="geo-pricing-compleet-lead" data-execute-line>
+              Wil je dat wij het uitvoeren? €70 per uur, alleen na jouw akkoord.
+            </p>
+            <fieldset class="geo-pricing-hours">
+              <legend>Uren per maand (na akkoord)</legend>
+              <label><input type="radio" name="compleet-hours" value="3" checked> 3 uur</label>
+              <label><input type="radio" name="compleet-hours" value="6"> 6 uur</label>
+              <label><input type="radio" name="compleet-hours" value="10"> 10 uur</label>
+            </fieldset>
+            <p class="geo-pricing-compleet-price">
+              <span data-price-compleet>€265</span>
+              <small>per maand <span data-vat-note>excl. btw</span></small>
+            </p>
+            <p class="geo-pricing-compleet-note" data-compleet-note>
+              Compleet = toolprijs + vaste uren. Extra uren €70 per uur, alleen na jouw akkoord.
+            </p>
+          </aside>
+
+          <div class="geo-pricing-tool">
+            <label class="geo-pricing-label" for="pricing-questions">
+              Aantal vragen
+              <output id="pricing-questions-value" class="geo-pricing-output" for="pricing-questions" aria-live="polite">100 vragen</output>
+            </label>
+            <input
+              id="pricing-questions"
+              class="geo-pricing-range"
+              type="range"
+              min="0"
+              max="11"
+              step="1"
+              value="3"
+              aria-valuemin="25"
+              aria-valuemax="1000"
+              aria-valuenow="100"
+              aria-valuetext="100 vragen, €65 per maand"
+            >
+
+            <div class="geo-pricing-live" aria-live="polite">
+              <p class="geo-pricing-kicker">Tool · alleen meten · wekelijks · 3 bronnen</p>
+              <p class="geo-pricing-monthly"><span data-price-monthly>€65</span> <small>per maand <span data-vat-note>excl. btw</span></small></p>
+              <p class="geo-pricing-meta">
+                <span data-price-weekly>€15 per week</span>
+                · <span data-price-annual>€650 per jaar (10 maanden)</span>
+              </p>
+              <p class="geo-pricing-actions"><span data-price-actions>6</span> verbeteracties per maand</p>
+              <p class="geo-pricing-contact" data-price-contact hidden></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="geo-pricing-fallback" data-pricing-fallback>
+          <p>Abonnementsprijzen (excl. btw). De eerste scan is gratis.</p>
+          <div class="geo-pricing-table-wrap">
+            <table class="geo-pricing-table">
+              <thead>
+                <tr>
+                  <th scope="col">Vragen</th>
+                  <th scope="col">Tool / mnd</th>
+                  <th scope="col">Acties / mnd</th>
+                  <th scope="col">Week</th>
+                  <th scope="col">Jaar (10×)</th>
+                  <th scope="col">Compleet 3u</th>
+                  <th scope="col">Compleet 6u</th>
+                  <th scope="col">Compleet 10u</th>
+                </tr>
+              </thead>
+              <tbody data-pricing-table-body>
+                <tr><th scope="row">25</th><td>€19</td><td>3</td><td>€4</td><td>€190</td><td>€219</td><td>€418</td><td>€684</td></tr>
+                <tr><th scope="row">50</th><td>€35</td><td>4</td><td>€8</td><td>€350</td><td>€235</td><td>€434</td><td>€700</td></tr>
+                <tr><th scope="row">75</th><td>€49</td><td>5</td><td>€11</td><td>€490</td><td>€249</td><td>€448</td><td>€714</td></tr>
+                <tr><th scope="row">100</th><td>€65</td><td>6</td><td>€15</td><td>€650</td><td>€265</td><td>€464</td><td>€730</td></tr>
+                <tr><th scope="row">150</th><td>€89</td><td>7</td><td>€21</td><td>€890</td><td>€289</td><td>€488</td><td>€754</td></tr>
+                <tr><th scope="row">200</th><td>€109</td><td>8</td><td>€25</td><td>€1.090</td><td>€309</td><td>€508</td><td>€774</td></tr>
+                <tr><th scope="row">250</th><td>€129</td><td>9</td><td>€30</td><td>€1.290</td><td>€329</td><td>€528</td><td>€794</td></tr>
+                <tr><th scope="row">350</th><td>€179</td><td>10</td><td>€41</td><td>€1.790</td><td>€379</td><td>€578</td><td>€844</td></tr>
+                <tr><th scope="row">500</th><td>€239</td><td>12</td><td>€55</td><td>€2.390</td><td>€439</td><td>€638</td><td>€904</td></tr>
+                <tr><th scope="row">750</th><td>€339</td><td>15</td><td>€78</td><td>€3.390</td><td>€539</td><td>€738</td><td>€1.004</td></tr>
+                <tr><th scope="row">1000</th><td>€429</td><td>20</td><td>€99</td><td>€4.290</td><td>€629</td><td>€828</td><td>€1.094</td></tr>
+                <tr><th scope="row">1000+</th><td colspan="7">+€39 per gestarte 100 vragen · neem contact op / op aanvraag</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="scan" class="contact-section geo-scan" aria-labelledby="scan-title">
         <div>
           <p class="eyebrow">Gratis starten</p>
@@ -289,7 +388,8 @@
           <details>
             <summary>Wat kost het daarna?</summary>
             <p>
-              De eerste scan is gratis. Daarna kun je alleen kiezen voor een wekelijks abonnement voor [bedrag] per maand, maandelijks opzegbaar. Er is geen aparte betaalde eenmalige scan.
+              De eerste scan is gratis. Daarna kun je alleen kiezen voor een wekelijks abonnement, vanaf €19 per maand (excl. btw), maandelijks opzegbaar. Er is geen aparte betaalde eenmalige scan. Zie
+              <a href="#prijzen">de prijzen</a>.
             </p>
           </details>
           <details>
@@ -315,5 +415,6 @@
       </nav>
     </footer>
     <script src="../script.js?v=12"></script>
+    <script src="ai-vindbaarheid.js?v=1"></script>
   </body>
 </html>
