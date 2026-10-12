@@ -224,10 +224,12 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
   const scanMessages = {
     invalid: "Controleer de ingevulde gegevens en probeer het opnieuw.",
     rate_limit: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over een uur opnieuw.",
-    already_scanned: "Voor deze website of dit e-mailadres is al een gratis scan gedaan. We sturen een inloglink naar het e-mailadres van die scan.",
+    already_scanned: "Voor deze website of dit e-mailadres is al een gratis scan gedaan. Ik stuur een inloglink naar het e-mailadres van die scan.",
     disposable_email: "Gebruik een e-mailadres dat je blijft lezen. Je inloggegevens en uitslag komen daar terecht.",
     daily_limit: "Vandaag zijn alle gratis scans bezet. Bevestig je adres; je scan start dan automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail.",
-    blocked_website: "We mogen deze website niet lezen. Daardoor kunnen we geen goede vragen maken. Neem contact op als je denkt dat dit niet klopt.",
+    blocked_website: "Ik mag deze website niet lezen. Daardoor kan ik geen goede vragen maken. Neem contact op als je denkt dat dit niet klopt.",
+    rate_limited: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over tien minuten opnieuw.",
+    daily_full: "Vandaag zijn alle gratis scans bezet. Ik heb je een mail gestuurd: bevestig je adres, dan start je scan automatisch op de eerstvolgende dag met ruimte.",
     error: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
   };
 
@@ -370,6 +372,28 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
     }
   }
 
+  const fetchScanCsrf = async () => {
+    try {
+      const response = await fetch("/ai-scan.php?action=csrf", {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) {
+        return "";
+      }
+      const data = await response.json();
+      return typeof data?.csrf === "string" ? data.csrf : "";
+    } catch {
+      return "";
+    }
+  };
+
+  const buildScanFormData = async () => {
+    const data = new FormData(scanForm);
+    data.set("csrf", await fetchScanCsrf());
+    return data;
+  };
+
   scanForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearScanErrors();
@@ -389,7 +413,7 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
           Accept: "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
-        body: new FormData(scanForm),
+        body: await buildScanFormData(),
       });
 
       const payload = await response.json().catch(() => null);
@@ -417,7 +441,7 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
         return;
       }
 
-      const status = payload?.status;
+      const status = payload?.code ?? payload?.status;
       showScanError(
         (status && scanMessages[status])
           || payload?.message
