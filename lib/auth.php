@@ -41,12 +41,38 @@ function ai_scan_current_user_id(array $config): ?int
     return (int) $id;
 }
 
-function ai_scan_login_user(array $config, int $userId): void
+function ai_scan_login_user(array $config, int $userId, ?int $passwordVersion = null): void
 {
     ai_scan_start_session($config);
     session_regenerate_id(true);
     $_SESSION['user_id'] = $userId;
     $_SESSION['login_at'] = time();
+    if ($passwordVersion !== null) {
+        $_SESSION['password_version'] = $passwordVersion;
+    }
+}
+
+/**
+ * True when the session carries a password_version that matches the DB.
+ * Missing session version is stale (force re-login); never adopt the DB value.
+ */
+function ai_scan_session_password_version_ok(PDO $pdo, int $userId): bool
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return false;
+    }
+    $sessionVersion = $_SESSION['password_version'] ?? null;
+    if ($sessionVersion === null || $sessionVersion === '') {
+        return false;
+    }
+    $stmt = $pdo->prepare('SELECT password_version FROM users WHERE id = :id LIMIT 1');
+    $stmt->execute(['id' => $userId]);
+    $row = $stmt->fetch();
+    if ($row === false) {
+        return false;
+    }
+
+    return (int) $sessionVersion === (int) ($row['password_version'] ?? 1);
 }
 
 function ai_scan_logout_user(array $config): void
@@ -70,10 +96,17 @@ function ai_scan_logout_user(array $config): void
     session_destroy();
 }
 
-function ai_scan_require_user(array $config): int
+/**
+ * Require a logged-in user whose session password_version still matches the DB.
+ * Rejects stale sessions (missing or outdated version) everywhere this is called.
+ */
+function ai_scan_require_user(array $config, PDO $pdo): int
 {
     $id = ai_scan_current_user_id($config);
-    if ($id === null) {
+    if ($id === null || !ai_scan_session_password_version_ok($pdo, $id)) {
+        if ($id !== null) {
+            ai_scan_logout_user($config);
+        }
         ai_scan_redirect('/login/?next=' . rawurlencode((string) ($_SERVER['REQUEST_URI'] ?? '/dashboard/')), 303);
     }
 

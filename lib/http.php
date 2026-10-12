@@ -61,6 +61,13 @@ function ai_scan_json_response(array $payload, int $status = 200): void
 
 function ai_scan_redirect(string $location, int $status = 303): void
 {
+    // Test harness only: catch redirects under CLI/phpdbg (never on a web SAPI).
+    if (
+        getenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT') === '1'
+        && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')
+    ) {
+        throw new RuntimeException('REDIRECT ' . $location, $status);
+    }
     header('Location: ' . $location, true, $status);
     exit;
 }
