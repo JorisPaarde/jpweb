@@ -74,8 +74,9 @@ if (ai_scan_request_method() === 'POST') {
 }
 
 $view = app_load_competitors_view($ctx['pdo'], (int) $ctx['user']['id'], $ctx['result'], !empty($ctx['is_free']));
-$canWrite = !empty($ctx['can_write']);
 $isFree = !empty($ctx['is_free']);
+// Concurrentenlijst mag iedereen aanpassen (ook gratis); voorstellen blijven abonnement.
+$canWrite = !empty($ctx['can_write']) || $isFree;
 $version = (int) ($ctx['profile']['competitors_version'] ?? 1);
 $listCount = count($view['list']);
 
@@ -156,7 +157,7 @@ app_render_layout($ctx, 'Concurrenten', static function (array $ctx) use (
       </ul>
     <?php endif; ?>
     <?php if ($isFree): ?>
-      <p class="app-locked"><?= app_h(app_locked_line()) ?></p>
+      <p class="app-locked">Deze concurrenten heb ik bij je gratis scan zelf gevonden. Klopt er een niet, haal hem weg. Mis je er een, voeg hem toe.</p>
     <?php endif; ?>
 
     <?php if ($canWrite && $listCount < 10): ?>

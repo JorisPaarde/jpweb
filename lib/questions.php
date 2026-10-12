@@ -657,7 +657,7 @@ function ai_scan_competitor_add(
 ): array {
     $now ??= time();
     $tiers ??= ai_scan_load_tiers();
-    if (!ai_scan_can_write($user, $tiers)) {
+    if (!ai_scan_can_edit_setup($user)) {
         return ['ok' => false, 'error' => AI_SCAN_FREE_WRITE_MESSAGE];
     }
 
@@ -747,7 +747,7 @@ function ai_scan_competitor_delete(
 ): array {
     $now ??= time();
     $tiers ??= ai_scan_load_tiers();
-    if (!ai_scan_can_write($user, $tiers)) {
+    if (!ai_scan_can_edit_setup($user)) {
         return ['ok' => false, 'error' => AI_SCAN_FREE_WRITE_MESSAGE];
     }
 

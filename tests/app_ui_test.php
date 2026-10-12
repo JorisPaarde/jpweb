@@ -436,3 +436,18 @@ test('no hardcoded tier amounts in app PHP', static function (): void {
         assert_true(!preg_match('/\b(questions|actions|monthly)\s*[=:]\s*(25|50|75|100|3|4|5|6)\b/', $src), basename($file));
     }
 });
+
+test('bedrijf: free accounts can edit, prefilled from scan profile', static function (): void {
+    [, $pdo] = boot_test_db();
+    $result = ['company' => 'Voorbeeld BV', 'services' => ['plinten', 'vloeren'], 'locations' => ['Haarlem'],
+        'brand_aliases' => ['Voorbeeld'], 'audience' => 'huiseigenaren'];
+    $p = app_load_profile($pdo, 999, ['domain' => 'voorbeeld.nl'], $result);
+    assert_same('Voorbeeld BV', $p['company']);
+    assert_same(['plinten', 'vloeren'], $p['services']);
+    assert_same(['Haarlem'], $p['places']);
+    assert_same('huiseigenaren', $p['audience']);
+    assert_same('voorbeeld.nl', $p['website']);
+    $src = (string) file_get_contents(dirname(__DIR__) . '/app/bedrijf.php');
+    assert_true(str_contains($src, "|| \$isFree;"), 'free accounts must be able to save bedrijf');
+    assert_true(!str_contains($src, 'Wijzigen kan niet'));
+});

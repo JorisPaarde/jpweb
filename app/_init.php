@@ -559,7 +559,7 @@ function app_load_competitors_view(PDO $pdo, int $userId, array $result, bool $i
     }
 
     if ($isFree) {
-        $list = array_slice($list, 0, 3);
+        // Lijst blijft volledig: gratis accounts mogen concurrenten aanvullen en weghalen.
         $mentionedOut = array_slice($mentionedOut, 0, 3);
     }
 
