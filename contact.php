@@ -202,7 +202,7 @@ $body = implode("\n", [
 $headers = implode("\r\n", [
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
-    'From: JPWebcreation website <info@jpwebcreation.nl>',
+    'From: JP Web Creation website <info@jpwebcreation.nl>',
     'Reply-To: ' . $safeEmail,
 ]);
 

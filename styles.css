@@ -2643,3 +2643,12 @@ main section[id] {
 .blog-topic > p { max-width: 700px; }
 .article-back { font-size: 0.95rem; }
 .article-meta a { text-decoration: underline; text-underline-offset: 0.18em; }
+
+.legal-content .legal-part {
+  margin-top: 2.5rem;
+}
+
+.legal-content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
