@@ -1,0 +1,8 @@
+# Local / server-side secrets and databases (never in git)
+/private/
+*.sqlite
+*.sqlite3
+/.ai-scan-config.php
+/ai-scan-config.php
+.env
+.DS_Store
