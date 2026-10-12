@@ -354,6 +354,8 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
         'code' => 'confirmed',
         'user_id' => $userId,
         'scan_id' => (int) $scan['id'],
+        // Zelfde eenmalige, verlopende token als in de welkomstmail: direct door naar wachtwoord kiezen.
+        'password_token' => $passwordToken,
     ];
 }
 
@@ -649,8 +651,10 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     if ($upd->rowCount() !== 1) {
         return ['ok' => false, 'code' => 'no_account'];
     }
+    $mailStmt = $pdo->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
+    $mailStmt->execute(['id' => $userId]);
 
-    return ['ok' => true, 'code' => 'ok'];
+    return ['ok' => true, 'code' => 'ok', 'email' => (string) ($mailStmt->fetchColumn() ?: '')];
 }
 
 /**

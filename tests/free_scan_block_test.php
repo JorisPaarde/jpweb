@@ -148,3 +148,15 @@ test('set password on deleted account reports no_account, never success', static
     assert_true(!$r['ok']);
     assert_same('no_account', $r['code']);
 });
+
+test('flow: confirm redirects to password page, password page redirects to login with prefill', static function (): void {
+    $root = dirname(__DIR__);
+    $scan = (string) file_get_contents($root . '/ai-scan.php');
+    assert_true(str_contains($scan, "/ai-scan/wachtwoord/?t="));
+    $pw = (string) file_get_contents($root . '/ai-scan/wachtwoord/index.php');
+    assert_true(str_contains($pw, "ai_scan_redirect('/login/', 303)"));
+    assert_true(str_contains($pw, 'ai_scan_login_prefill'));
+    $login = (string) file_get_contents($root . '/login/index.php');
+    assert_true(str_contains($login, 'Je wachtwoord is ingesteld, log nu in. Je scan start binnen een half uur.'));
+    assert_true(str_contains($login, "unset(\$_SESSION['ai_scan_login_prefill'])"));
+});

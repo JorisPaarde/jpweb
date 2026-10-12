@@ -334,6 +334,7 @@ test('submit + confirm + set password + runner flow', static function (): void {
 
     $c = ai_scan_confirm($pdo, $config, $token);
     assert_same('confirmed', $c['code']);
+    assert_true(strlen((string) ($c['password_token'] ?? '')) >= 32, 'confirm returns one-time password token for direct redirect');
 
     $scan = $pdo->query('SELECT * FROM scans')->fetch();
     assert_same('bevestigd', $scan['status']);
@@ -351,6 +352,7 @@ test('submit + confirm + set password + runner flow', static function (): void {
     ]);
     $set = ai_scan_set_password($pdo, $pwToken, 'super-secret-password');
     assert_true($set['ok']);
+    assert_same('owner@example.com', $set['email']);
     $replay = ai_scan_set_password($pdo, $pwToken, 'other-secret-password');
     assert_true(!$replay['ok'], 'password token must be single-use');
     $user = $pdo->query('SELECT * FROM users')->fetch();
