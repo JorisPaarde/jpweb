@@ -213,11 +213,12 @@ jobs:
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
-      - name: Server probe (read-only, runner-analyse)
+      - name: One-time cleanup (scan E2E test data, 12 okt 19:44)
         run: |
+          set -euo pipefail
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            'for b in python3 python3.11 python3.9 /usr/bin/python3 /usr/local/bin/python3; do command -v "$b" >/dev/null 2>&1 && echo "probe $b: $("$b" --version 2>&1)"; done; command -v crontab >/dev/null && echo "probe crontab: aanwezig, regels=$(crontab -l 2>/dev/null | grep -vc "^#")" || echo "probe crontab: afwezig"; /usr/local/bin/php -v | head -1 | sed "s/^/probe /"' || true
-          echo "probe gh-runner runner.php zonder token: $(curl -s -o /dev/null -w '%{http_code}' https://jpwebcreation.nl/api/runner.php?action=health)"
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='e2e-purge-20261012c' OPS_MODE='purge_test' OPS_EMAIL='jorispaarde@gmail.com' OPS_WEBSITE='intake-engine.nl' OPS_USER_CREATED_FROM='1791827000' OPS_USER_CREATED_TO='1791828000' /usr/local/bin/php" \
+            < ops/cleanup.php
 
       - name: Verify production deployment
         env:
