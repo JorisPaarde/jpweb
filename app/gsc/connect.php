@@ -47,7 +47,7 @@ if (!ai_scan_can_write($user)) {
 
 if (!ai_scan_gsc_configured($config)) {
     ai_scan_start_session($config);
-    $_SESSION['ai_scan_flash'] = 'Google Search Console is nog niet geconfigureerd. Neem contact met ons op.';
+    $_SESSION['ai_scan_flash'] = 'Google Search Console is nog niet geconfigureerd. Neem contact met me op.';
     ai_scan_redirect($next, 303);
 }
 
