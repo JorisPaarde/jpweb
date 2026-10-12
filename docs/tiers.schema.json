@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jpwebcreation.nl/docs/tiers.schema.json",
+  "title": "GEO tiers (single source: prijsslider + app-limieten)",
+  "type": "object",
+  "required": ["version","currency","hourly_rate","bundle_discount","annual_months_charged","snap_rule","compleet_hours","above_max","free","tiers"],
+  "properties": {
+    "version": {"const": 1},
+    "currency": {"const": "EUR"},
+    "vat_note": {"type": "string"},
+    "hourly_rate": {"type": "integer", "minimum": 1},
+    "bundle_discount": {"type": "number", "minimum": 0, "maximum": 1},
+    "annual_months_charged": {"type": "integer"},
+    "snap_rule": {"const": "ceil_to_next_tier"},
+    "compleet_hours": {"type": "array", "items": {"type": "integer"}},
+    "above_max": {"type": "object", "required": ["from_questions","per_started_100","actions"],
+      "properties": {"from_questions": {"type": "integer"}, "per_started_100": {"type": "integer"}, "actions": {"type": "integer"}}},
+    "free": {"type": "object", "required": ["id","scans","questions","actions","read_only"],
+      "properties": {"id": {"const": "free"}, "scans": {"const": 1}, "questions": {"type": "integer"},
+        "actions": {"type": "integer"}, "read_only": {"const": true}, "weekly_measurement": {"const": false}}},
+    "tiers": {"type": "array", "minItems": 1, "items": {"type": "object",
+      "required": ["id","questions","monthly","actions","weekly","annual","compleet"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^q[0-9]+$"},
+        "questions": {"type": "integer", "minimum": 1},
+        "monthly": {"type": "integer", "minimum": 1},
+        "actions": {"type": "integer", "minimum": 1},
+        "weekly": {"type": "integer"},
+        "annual": {"type": "integer"},
+        "compleet": {"type": "object", "additionalProperties": {"type": "integer"}}
+      }}}
+  }
+}
