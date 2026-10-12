@@ -115,6 +115,42 @@ function ai_scan_migrate(PDO $pdo): void
             created_at INTEGER NOT NULL
         )'
     );
+
+    // Per-account subscription columns (tier is never global).
+    ai_scan_ensure_column($pdo, 'users', 'tier_id', "TEXT NOT NULL DEFAULT 'free'");
+    ai_scan_ensure_column($pdo, 'users', 'custom_questions', 'INTEGER NULL');
+    ai_scan_ensure_column($pdo, 'users', 'subscription_status', "TEXT NOT NULL DEFAULT 'none'");
+    ai_scan_ensure_column($pdo, 'users', 'billing_period', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'users', 'period_start', 'INTEGER NULL');
+    ai_scan_ensure_column($pdo, 'users', 'period_end', 'INTEGER NULL');
+    ai_scan_ensure_column($pdo, 'users', 'pending_tier_id', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'users', 'tier_changed_at', 'INTEGER NULL');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS subscription_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            ts INTEGER NOT NULL,
+            event TEXT NOT NULL,
+            from_tier TEXT,
+            to_tier TEXT,
+            by_role TEXT NOT NULL,
+            note TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_subscription_events_user ON subscription_events(user_id, ts)');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS usage_counters (
+            user_id INTEGER NOT NULL,
+            month TEXT NOT NULL,
+            actions_used INTEGER NOT NULL DEFAULT 0,
+            question_edits INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (user_id, month),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
 }
 
 function ai_scan_ensure_column(PDO $pdo, string $table, string $column, string $sqlType): void

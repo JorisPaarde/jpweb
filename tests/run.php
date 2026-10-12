@@ -59,6 +59,11 @@ function test_config(string $sqlite): array
         'confirm_mail_global_max_per_hour' => 1000,
         'ready_mail_per_email_seconds' => 0,
         'ready_mail_global_max_per_hour' => 1000,
+        'tier_request_mail_per_email_seconds' => 0,
+        'tier_request_mail_global_max_per_hour' => 1000,
+        'tier_change_mail_per_email_seconds' => 0,
+        'tier_change_mail_global_max_per_hour' => 1000,
+        'admin_emails' => ['info@jpwebcreation.nl'],
         'smtp' => [
             'host' => 's1155.nl',
             'port' => 465,
@@ -760,6 +765,8 @@ test('password_hash used, never plaintext column', static function (): void {
     assert_true(in_array('password_hash', $names, true));
     assert_true(!in_array('password', $names, true));
 });
+
+require __DIR__ . '/tiers_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
