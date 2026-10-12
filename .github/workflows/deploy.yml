@@ -70,6 +70,7 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/ai-vindbaarheid/"
             "/blog/"
             "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"
@@ -119,6 +120,10 @@ jobs:
           contact_state="$(curl --fail --silent --show-error \
             "$BASE_URL/contact.php?action=state")"
           grep -q '"values":\[\]' <<< "$contact_state"
+
+          ai_scan_state="$(curl --fail --silent --show-error \
+            "$BASE_URL/ai-scan.php?action=state")"
+          grep -q '"values":\[\]' <<< "$ai_scan_state"
 
   # Productie volgt automatisch, maar alleen als test en de rooktest daar slagen.
   deploy_production:
@@ -175,6 +180,7 @@ jobs:
           routes=(
             "/"
             "/ai/"
+            "/ai-vindbaarheid/"
             "/blog/"
             "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"
@@ -224,3 +230,7 @@ jobs:
           contact_state="$(curl --fail --silent --show-error \
             "$BASE_URL/contact.php?action=state")"
           grep -q '"values":\[\]' <<< "$contact_state"
+
+          ai_scan_state="$(curl --fail --silent --show-error \
+            "$BASE_URL/ai-scan.php?action=state")"
+          grep -q '"values":\[\]' <<< "$ai_scan_state"
