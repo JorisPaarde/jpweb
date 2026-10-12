@@ -1,0 +1,2 @@
+# Runner API is PHP-only; deny directory listings.
+Options -Indexes
