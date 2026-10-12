@@ -20,6 +20,36 @@ test('pricing.json is gone (drift 4)', static function (): void {
     );
 });
 
+test('tiers.json text fields have no wij/we', static function (): void {
+    $root = dirname(__DIR__);
+    $tiersPath = $root . '/assets/data/tiers.json';
+    assert_true(is_file($tiersPath), 'tiers.json missing');
+    $data = json_decode((string) file_get_contents($tiersPath), true, 512, JSON_THROW_ON_ERROR);
+
+    $hits = [];
+    $walk = static function (mixed $node, string $path) use (&$walk, &$hits): void {
+        if (is_array($node)) {
+            foreach ($node as $key => $value) {
+                $walk($value, $path === '' ? (string) $key : $path . '.' . $key);
+            }
+            return;
+        }
+        if (!is_string($node)) {
+            return;
+        }
+        $lower = mb_strtolower($node, 'UTF-8');
+        // Space-bounded tokens only (syntax), so keys like weekly are irrelevant.
+        if (str_contains($lower, ' wij ')) {
+            $hits[] = $path . ' contains " wij "';
+        }
+        if (str_contains($lower, ' we ')) {
+            $hits[] = $path . ' contains " we "';
+        }
+    };
+    $walk($data, '');
+    assert_same([], $hits, 'tiers.json text must not use wij/we');
+});
+
 test('promo JS fetches tiers.json and has no hardcoded tier amounts (drift 3)', static function (): void {
     $root = dirname(__DIR__);
     $jsPath = $root . '/ai-vindbaarheid/ai-vindbaarheid.js';
