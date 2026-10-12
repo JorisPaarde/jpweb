@@ -20,8 +20,14 @@ return [
     // Shared secret for the authenticated runner API (Authorization: Bearer …).
     'runner_token' => 'CHANGE_ME_LONG_RANDOM_RUNNER_TOKEN',
 
-    // Session / CSRF signing material.
+    // Session / CSRF signing material (also used to encrypt GSC refresh tokens).
     'app_key' => 'CHANGE_ME_LONG_RANDOM_APP_KEY',
+
+    // Google Search Console OAuth (read-only). Create in Google Cloud Console.
+    // Redirect URI must match exactly; never take it from the request.
+    'gsc_client_id' => 'CHANGE_ME_GSC_CLIENT_ID',
+    'gsc_client_secret' => 'CHANGE_ME_GSC_CLIENT_SECRET',
+    'gsc_redirect_uri' => 'https://jpwebcreation.nl/app/gsc/callback.php',
 
     // Public site origin used in mail links (no trailing slash).
     'base_url' => 'https://jpwebcreation.nl',
