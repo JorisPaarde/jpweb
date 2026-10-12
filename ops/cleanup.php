@@ -15,7 +15,7 @@ if (PHP_SAPI !== 'cli') {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -47,6 +47,9 @@ try {
     if ($mode === 'cancel_pending') {
         $r = ai_scan_admin_cancel_pending($pdo, $email, $website);
         $summary = 'scans=' . (int) ($r['scans'] ?? 0) . ' ip_blocks=' . (int) ($r['ip_blocks'] ?? 0);
+    } elseif ($mode === 'purge_test') {
+        $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
+        $summary = 'blocks=' . (int) ($r['blocks'] ?? 0) . ' scans=' . (int) ($r['scans'] ?? 0) . ' users=' . (int) ($r['users'] ?? 0) . ' users_overgeslagen=' . (int) ($r['user_skipped'] ?? 0);
     } else {
         $r = ai_scan_admin_lift_free_scan_block($pdo, $email, $website, 'deploy');
         $summary = 'blocks=' . (int) ($r['deleted'] ?? 0);
@@ -76,4 +79,6 @@ if (!is_dir($markerDir)) {
     mkdir($markerDir, 0700, true);
 }
 file_put_contents($marker, gmdate('c') . "\n");
-echo "ops {$job}: {$summary}; resterend blocks={$left} scans={$pending}\n";
+$u = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email_hash = :e');
+$u->execute(['e' => trim($email) !== '' ? ai_scan_email_hash(ai_scan_normalize_email(trim($email))) : '']);
+echo "ops {$job}: {$summary}; resterend blocks={$left} scans={$pending} users=" . (int) $u->fetchColumn() . "\n";
