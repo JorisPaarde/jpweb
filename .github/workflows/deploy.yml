@@ -236,6 +236,13 @@ jobs:
             "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='tier-q50-jorispaarde-20261012b' OPS_MODE='set_tier' OPS_EMAIL='jorispaarde@gmail.com' OPS_TIER='q50' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
             < ops/cleanup.php || echo "ops tier-q50: exit $? (zie hierboven)"
 
+      - name: One-time bedrijfsprofiel + concurrenten (jorispaarde, 12 okt 20:49)
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='profiel-jorispaarde-20261012' OPS_REQUEUE='1' OPS_MODE='set_profile' OPS_EMAIL='jorispaarde@gmail.com' OPS_PROFILE_B64='eyJjb21wYW55IjogIkpQIFdlYiBDcmVhdGlvbiIsICJicmFuZF9hbGlhc2VzIjogWyJKUCBXZWIgQ3JlYXRpb24iLCAiSlBXZWJDcmVhdGlvbiIsICJKUCBXZWIgQ3JlYXRpb24gSGFhcmxlbSIsICJKb3JpcyB2YW4gSlAgV2ViIENyZWF0aW9uIl0sICJzZXJ2aWNlcyI6IFsiV29yZFByZXNzLXdlYnNpdGVzIGVuIHdlYnNob3BzIChXb29Db21tZXJjZSkiLCAiQmVzdGFhbmRlIHdlYnNpdGVzIHZlcmJldGVyZW4iLCAiT25saW5lIHRvb2xzLCBwbGFubmluZ2FwcHMgZW4ga29wcGVsaW5nZW4iLCAiQUkgZW4gQUktYWdlbnRzIHZvb3IgYmVkcmlqdmVuIiwgIkFJLXZpbmRiYWFyaGVpZHNzY2FuIiwgIkRpZ2l0YWxlIE9wbmFtZSAoSW50YWtlIEVuZ2luZSkgdm9vciBhaXJjby1pbnN0YWxsYXRldXJzIl0sICJsb2NhdGlvbnMiOiBbIkhhYXJsZW0iXSwgImF1ZGllbmNlIjogIk1rYi1iZWRyaWp2ZW4sIHp6cCdlcnMgZW4gb3JnYW5pc2F0aWVzIGluIEhhYXJsZW0gZW4gb21nZXZpbmcgZGllIGVlbiB3ZWJzaXRlLCB3ZWJzaG9wIG9mIG9ubGluZSB0b29sIG5vZGlnIGhlYmJlbiIsICJicmFuY2hlIjogIndlYmRlc2lnbiwgd2Vib250d2lra2VsaW5nIGVuIG1hYXR3ZXJrIHNvZnR3YXJlIiwgInJlZ2lvbiI6ICJIYWFybGVtIGVuIG9tZ2V2aW5nLCBOb29yZC1Ib2xsYW5kIiwgImNvbXBldGl0b3JzIjogeyJsaXN0IjogW3sibmFtZSI6ICJXZWJkZXNpZ24gSGFhcmxlbSIsICJhbGlhc2VzIjogW10sICJkb21haW5zIjogW10sICJzb3VyY2UiOiAic2NhbiJ9LCB7Im5hbWUiOiAiU2l0ZWJ1aWxkZXJzIEhhYXJsZW0iLCAiYWxpYXNlcyI6IFtdLCAiZG9tYWlucyI6IFtdLCAic291cmNlIjogInNjYW4ifSwgeyJuYW1lIjogIk1lZGlhbWFhdHdlcmsiLCAiYWxpYXNlcyI6IFtdLCAiZG9tYWlucyI6IFtdLCAic291cmNlIjogInNjYW4ifSwgeyJuYW1lIjogIldlYmJ1cmVhdSBIYWFybGVtIiwgImFsaWFzZXMiOiBbXSwgImRvbWFpbnMiOiBbXSwgInNvdXJjZSI6ICJzY2FuIn0sIHsibmFtZSI6ICJIYWFybGVtIFdlYmRlc2lnbiBTdHVkaW8iLCAiYWxpYXNlcyI6IFtdLCAiZG9tYWlucyI6IFtdLCAic291cmNlIjogInNjYW4ifV19fQ==' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops profiel: exit $? (zie hierboven)"
+
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl
