@@ -42,6 +42,26 @@ function ai_scan_ip_hash(string $ip): string
 }
 
 /**
+ * Privacyvriendelijke hash voor de gratis-scanblokkade per IP.
+ * HMAC met app_key (niet terug te rekenen zonder de sleutel); IPv6 op /64-prefix.
+ * Lege string bij onbekend IP (dan geen IP-blokkade).
+ */
+function ai_scan_ip_block_hash(array $config, string $ip): string
+{
+    $ip = trim($ip);
+    $bin = $ip !== '' ? @inet_pton($ip) : false;
+    if ($bin === false) {
+        return '';
+    }
+    if (strlen($bin) === 16) {
+        $bin = substr($bin, 0, 8) . str_repeat("\0", 8);
+    }
+    $key = (string) ($config['app_key'] ?? '');
+
+    return hash_hmac('sha256', 'ipblock:' . bin2hex($bin), $key !== '' ? $key : 'ai-scan');
+}
+
+/**
  * Extract host from a user-supplied website value and normalize.
  *
  * @return array{ok: bool, url?: string, host?: string, domain?: string, error?: string}

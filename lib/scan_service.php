@@ -44,6 +44,25 @@ function ai_scan_has_block(PDO $pdo, string $emailHash, string $domainHash): boo
     return $stmt->fetch() !== false;
 }
 
+/**
+ * Eén gratis scan per IP: blokkade of lopende/afgeronde scan vanaf hetzelfde IP.
+ */
+function ai_scan_ip_used_free_scan(PDO $pdo, string $ipBlockHash): bool
+{
+    if ($ipBlockHash === '') {
+        return false;
+    }
+    $stmt = $pdo->prepare('SELECT 1 FROM free_scan_blocks WHERE ip_hash = :h LIMIT 1');
+    $stmt->execute(['h' => $ipBlockHash]);
+    if ($stmt->fetch() !== false) {
+        return true;
+    }
+    $stmt = $pdo->prepare("SELECT 1 FROM scans WHERE ip_block_hash = :h AND status = 'onbevestigd' LIMIT 1");
+    $stmt->execute(['h' => $ipBlockHash]);
+
+    return $stmt->fetch() !== false;
+}
+
 function ai_scan_has_existing_scan(PDO $pdo, string $emailHash, string $domainHash): bool
 {
     $stmt = $pdo->prepare(
@@ -130,9 +149,13 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'rate_limited', 'retry_after' => (int) ($config['confirm_mail_per_email_seconds'] ?? 600)];
     }
 
-    // First scan free; afterwards subscription only → already_scanned (no email leak).
+    // Config free_scan_one_per_ip (default aan) — alleen tests zetten dit uit.
+    $ipBlockHash = ($config['free_scan_one_per_ip'] ?? true) ? ai_scan_ip_block_hash($config, $ip) : '';
+
+    // First scan free (één per e-mail, domein en IP); daarna alleen abonnement → already_scanned.
     if (
-        ai_scan_has_block($pdo, $emailHash, $domainHash)
+        ai_scan_ip_used_free_scan($pdo, $ipBlockHash)
+        || ai_scan_has_block($pdo, $emailHash, $domainHash)
         || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
         || ai_scan_user_used_free_scan($pdo, $emailHash)
     ) {
@@ -153,6 +176,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         if (
             ai_scan_has_block($pdo, $emailHash, $domainHash)
             || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
+            || ai_scan_ip_used_free_scan($pdo, $ipBlockHash)
         ) {
             $pdo->rollBack();
 
@@ -162,10 +186,10 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         $stmt = $pdo->prepare(
             'INSERT INTO scans (
                 public_id, user_id, email, email_hash, website_url, domain, domain_hash,
-                status, confirm_token_hash, confirm_expires_at, created_at, ip_hash
+                status, confirm_token_hash, confirm_expires_at, created_at, ip_hash, ip_block_hash
             ) VALUES (
                 :public_id, NULL, :email, :email_hash, :website_url, :domain, :domain_hash,
-                :status, :confirm_token_hash, :confirm_expires_at, :created_at, :ip_hash
+                :status, :confirm_token_hash, :confirm_expires_at, :created_at, :ip_hash, :ip_block_hash
             )'
         );
         $stmt->execute([
@@ -180,6 +204,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
             'confirm_expires_at' => $now + $ttl,
             'created_at' => $now,
             'ip_hash' => ai_scan_ip_hash($ip),
+            'ip_block_hash' => $ipBlockHash !== '' ? $ipBlockHash : null,
         ]);
         $scanId = (int) $pdo->lastInsertId();
         $pdo->commit();
@@ -269,15 +294,17 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
             $pdo->prepare('UPDATE users SET free_scan_used = 1 WHERE id = :id')->execute(['id' => $userId]);
         }
 
-        // Block future free scans for this email/domain.
+        // Block future free scans for this email/domain/IP (zelfde rij: opheffen per e-mail/domein haalt ook het IP weg).
         $pdo->prepare(
-            'INSERT INTO free_scan_blocks(email_hash, domain_hash, created_at)
-             VALUES(:email_hash, :domain_hash, :created_at)'
+            'INSERT INTO free_scan_blocks(email_hash, domain_hash, ip_hash, created_at)
+             VALUES(:email_hash, :domain_hash, :ip_hash, :created_at)'
         )->execute([
             'email_hash' => $scan['email_hash'],
             'domain_hash' => $scan['domain_hash'],
+            'ip_hash' => ($scan['ip_block_hash'] ?? '') !== '' ? $scan['ip_block_hash'] : null,
             'created_at' => $now,
         ]);
+        $pdo->prepare('UPDATE scans SET ip_block_hash = NULL WHERE id = :id')->execute(['id' => $scan['id']]);
 
         $upd = $pdo->prepare(
             'UPDATE scans SET

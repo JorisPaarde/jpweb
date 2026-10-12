@@ -89,6 +89,10 @@ function ai_scan_migrate(PDO $pdo): void
     );
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_blocks_email ON free_scan_blocks(email_hash)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_blocks_domain ON free_scan_blocks(domain_hash)');
+    // Eén gratis scan per IP: gesleutelde hash (HMAC met app_key), nooit het IP zelf.
+    ai_scan_ensure_column($pdo, 'free_scan_blocks', 'ip_hash', 'TEXT NULL');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_blocks_ip ON free_scan_blocks(ip_hash)');
+    ai_scan_ensure_column($pdo, 'scans', 'ip_block_hash', 'TEXT NULL');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS rate_events (
