@@ -15,7 +15,7 @@ if (PHP_SAPI !== 'cli') {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -47,6 +47,24 @@ try {
     if ($mode === 'cancel_pending') {
         $r = ai_scan_admin_cancel_pending($pdo, $email, $website);
         $summary = 'scans=' . (int) ($r['scans'] ?? 0) . ' ip_blocks=' . (int) ($r['ip_blocks'] ?? 0);
+    } elseif ($mode === 'set_tier') {
+        $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
+        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
+        $sel->execute(['e' => $eh]);
+        $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
+        if (count($ids) !== 1) {
+            $r = ['ok' => false];
+            $summary = 'users_gevonden=' . count($ids);
+        } else {
+            $r = ai_scan_admin_set_tier($pdo, $config, (int) $ids[0], [
+                'tier_id' => (string) getenv('OPS_TIER'),
+                'subscription_status' => 'active',
+                'custom_questions' => null,
+                'billing_period' => null,
+                'period_end' => null,
+            ], 'admin');
+            $summary = 'users=1 tier_set=' . (!empty($r['ok']) ? 1 : 0) . ' paused=' . (int) ($r['paused'] ?? 0) . ' mailed=' . (!empty($r['mailed']) ? 1 : 0);
+        }
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
         $summary = 'blocks=' . (int) ($r['blocks'] ?? 0) . ' scans=' . (int) ($r['scans'] ?? 0) . ' users=' . (int) ($r['users'] ?? 0) . ' users_overgeslagen=' . (int) ($r['user_skipped'] ?? 0);

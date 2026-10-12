@@ -213,6 +213,29 @@ jobs:
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
+      - name: Write runner dispatch config
+        env:
+          DISPATCH_TOKEN: ${{ secrets.JPWEB_FREESCAN_DISPATCH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$DISPATCH_TOKEN" ]; then
+            echo "JPWEB_FREESCAN_DISPATCH_TOKEN ontbreekt; scan start via het 30-minutenschema."
+            exit 0
+          fi
+          umask 077
+          php -r '$c=["runner_dispatch_token"=>getenv("DISPATCH_TOKEN")]; echo "<?php\nreturn ", var_export($c, true), ";\n";' > /tmp/freescan-dispatch.php
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            'mkdir -p "$HOME/private" && chmod 700 "$HOME/private" && umask 077 && cat > "$HOME/private/freescan-dispatch.php.tmp" && chmod 600 "$HOME/private/freescan-dispatch.php.tmp" && mv "$HOME/private/freescan-dispatch.php.tmp" "$HOME/private/freescan-dispatch.php"' \
+            < /tmp/freescan-dispatch.php
+          rm -f /tmp/freescan-dispatch.php
+
+      - name: One-time tier q50 (jorispaarde, 12 okt 20:38)
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='tier-q50-jorispaarde-20261012' OPS_MODE='set_tier' OPS_EMAIL='jorispaarde@gmail.com' OPS_TIER='q50' /usr/local/bin/php" \
+            < ops/cleanup.php
+
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl

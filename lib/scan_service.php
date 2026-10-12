@@ -349,6 +349,9 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
     $passwordUrl = $base . '/ai-scan/wachtwoord/?t=' . rawurlencode($passwordToken);
     $dashboardUrl = $base . '/dashboard/';
     ai_scan_mail_welcome($config, (string) $scan['email'], (string) $scan['domain'], $passwordUrl, $dashboardUrl);
+    if ($status === 'bevestigd') {
+        ai_scan_trigger_runner($config);
+    }
 
     return [
         'code' => 'confirmed',
@@ -933,4 +936,46 @@ function ai_scan_ops_purge_test_data(PDO $pdo, string $emailRaw, string $website
     }
 
     return ['ok' => true, 'blocks' => (int) $lift['deleted'], 'scans' => $scans, 'users' => $users, 'user_skipped' => $skipped];
+}
+
+/**
+ * Start de scanrunner direct via GitHub workflow_dispatch (kort, niet-blokkerend genoeg: 3 s timeout).
+ * Mislukt dit, dan logt het alleen; het schema elke 30 minuten blijft de terugval.
+ */
+function ai_scan_trigger_runner(array $config): bool
+{
+    $token = (string) ($config['runner_dispatch_token'] ?? '');
+    if ($token === '' || !function_exists('curl_init')) {
+        return false;
+    }
+    $url = 'https://api.github.com/repos/JorisPaarde/jpwebcreation-scripts/actions/workflows/freescan.yml/dispatches';
+    $ch = curl_init($url);
+    if ($ch === false) {
+        return false;
+    }
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => '{"ref":"main"}',
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/vnd.github+json',
+            'Authorization: Bearer ' . $token,
+            'X-GitHub-Api-Version: 2022-11-28',
+            'User-Agent: jpweb-ai-scan',
+            'Content-Type: application/json',
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 2,
+        CURLOPT_TIMEOUT => 3,
+    ]);
+    curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+    if ($code !== 204) {
+        error_log('ai_scan runner_dispatch_failed http=' . $code . ($err !== '' ? ' err=' . substr($err, 0, 120) : ''));
+
+        return false;
+    }
+
+    return true;
 }
