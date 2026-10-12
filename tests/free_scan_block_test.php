@@ -136,3 +136,15 @@ test('ai-scan status page exists for redirect codes', static function (): void {
     assert_true(str_contains($src, 'wachtrij'));
     assert_true(!str_contains(strtolower($src), ' we '));
 });
+
+test('set password on deleted account reports no_account, never success', static function (): void {
+    [, $pdo] = boot_test_db();
+    $pdo->exec("INSERT INTO users(email, email_hash, created_at, free_scan_used) VALUES('a@b.nl', 'eh', 1, 1)");
+    $uid = (int) $pdo->lastInsertId();
+    $pdo->prepare("INSERT INTO scans(public_id, user_id, email, email_hash, website_url, domain, domain_hash, status, created_at, password_token_hash, password_token_expires_at)
+        VALUES('p', :u, 'a@b.nl', 'eh', 'u', 'd', 'dh', 'bevestigd', 1, :h, :e)")->execute(['u' => $uid, 'h' => ai_scan_hash_token('tok-1'), 'e' => time() + 3600]);
+    $pdo->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => $uid]);
+    $r = ai_scan_set_password($pdo, 'tok-1', 'een-lang-wachtwoord');
+    assert_true(!$r['ok']);
+    assert_same('no_account', $r['code']);
+});

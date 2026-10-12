@@ -623,8 +623,11 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     }
 
     $userId = (int) ($scan['user_id'] ?? 0);
-    if ($userId < 1) {
-        return ['ok' => false, 'code' => 'error'];
+    $exists = $pdo->prepare('SELECT 1 FROM users WHERE id = :id LIMIT 1');
+    $exists->execute(['id' => $userId]);
+    if ($userId < 1 || $exists->fetch() === false) {
+        // Account bestaat niet (meer): nooit "wachtwoord ingesteld" tonen.
+        return ['ok' => false, 'code' => 'no_account'];
     }
 
     // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
@@ -638,10 +641,14 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     }
 
     $hash = ai_scan_hash_password($password);
-    $pdo->prepare('UPDATE users SET password_hash = :h WHERE id = :id')->execute([
+    $upd = $pdo->prepare('UPDATE users SET password_hash = :h WHERE id = :id');
+    $upd->execute([
         'h' => $hash,
         'id' => $userId,
     ]);
+    if ($upd->rowCount() !== 1) {
+        return ['ok' => false, 'code' => 'no_account'];
+    }
 
     return ['ok' => true, 'code' => 'ok'];
 }

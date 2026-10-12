@@ -213,11 +213,11 @@ jobs:
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
-      - name: One-time cleanup (scan E2E test data, 12 okt 19:44)
+      - name: One-time cleanup (scan E2E test data, 12 okt 19:53)
         run: |
           set -euo pipefail
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='e2e-purge-20261012c' OPS_MODE='purge_test' OPS_EMAIL='jorispaarde@gmail.com' OPS_WEBSITE='intake-engine.nl' OPS_USER_CREATED_FROM='1791827000' OPS_USER_CREATED_TO='1791828000' /usr/local/bin/php" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='e2e-purge-20261012d' OPS_MODE='purge_test' OPS_EMAIL='jpweb-scan-test@agentmail.to' OPS_WEBSITE='intake-engine.nl' OPS_USER_CREATED_FROM='1791827400' OPS_USER_CREATED_TO='1791828600' /usr/local/bin/php" \
             < ops/cleanup.php
 
       - name: Verify production deployment
