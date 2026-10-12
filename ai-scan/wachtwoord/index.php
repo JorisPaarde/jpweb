@@ -32,7 +32,12 @@ if (ai_scan_request_method() === 'POST') {
                 default => 'Deze link is ongeldig of al gebruikt.',
             };
         } else {
-            $done = true;
+            ai_scan_start_session($config);
+            $_SESSION['ai_scan_login_prefill'] = [
+                'email' => (string) ($result['email'] ?? ''),
+                'at' => time(),
+            ];
+            ai_scan_redirect('/login/', 303);
         }
     }
 }

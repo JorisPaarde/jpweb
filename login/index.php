@@ -10,6 +10,15 @@ ai_scan_assert_allowed_host($config);
 
 $method = ai_scan_request_method();
 $error = '';
+$prefillEmail = '';
+$notice = '';
+ai_scan_start_session($config);
+$prefill = $_SESSION['ai_scan_login_prefill'] ?? null;
+unset($_SESSION['ai_scan_login_prefill']);
+if (is_array($prefill) && (int) ($prefill['at'] ?? 0) > time() - 600) {
+    $prefillEmail = (string) ($prefill['email'] ?? '');
+    $notice = 'Je wachtwoord is ingesteld, log nu in. Je scan start binnen een half uur.';
+}
 $next = (string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/');
 if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')
     || str_contains($next, '\\') || preg_match('/[\x00-\x1F\x7F]/', $next) === 1) {
@@ -73,6 +82,7 @@ $csrf = ai_scan_csrf_token($config);
       border-radius: 0.4rem; font: inherit; background: #fff;
     }
     .ai-auth .error { color: #a84832; margin: 0.75rem 0; }
+    .ai-auth .notice { background: #eef6f1; color: #22473a; padding: 0.75rem 1rem; border-radius: 0.4rem; margin: 0.75rem 0; }
     .ai-auth button {
       margin-top: 1.25rem; width: 100%; min-height: 48px;
       background: var(--green, #315f4f); color: #fff; border: 0;
@@ -84,6 +94,9 @@ $csrf = ai_scan_csrf_token($config);
   <main class="ai-auth">
     <h1>Inloggen</h1>
     <p>Bekijk je AI-scan in je dashboard.</p>
+    <?php if ($notice !== ''): ?>
+      <p class="notice" role="status"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></p>
+    <?php endif; ?>
     <?php if ($error !== ''): ?>
       <p class="error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
     <?php endif; ?>
@@ -91,7 +104,7 @@ $csrf = ai_scan_csrf_token($config);
       <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
       <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES, 'UTF-8') ?>">
       <label for="email">E-mailadres</label>
-      <input id="email" name="email" type="email" autocomplete="email" required>
+      <input id="email" name="email" type="email" autocomplete="email" required value="<?= htmlspecialchars($prefillEmail, ENT_QUOTES, 'UTF-8') ?>"<?= $prefillEmail !== '' ? '' : ' autofocus' ?>>
       <label for="password">Wachtwoord</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required>
       <button type="submit">Inloggen</button>

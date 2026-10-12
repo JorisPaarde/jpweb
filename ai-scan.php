@@ -33,6 +33,9 @@ if ($method === 'GET' && (string) ($_GET['action'] ?? '') === 'state') {
 
 if ($method === 'GET' && isset($_GET['confirm'])) {
     $result = ai_scan_confirm($pdo, $config, (string) $_GET['confirm']);
+    if (!$asJson && $result['code'] === 'confirmed' && (string) ($result['password_token'] ?? '') !== '') {
+        ai_scan_redirect('/ai-scan/wachtwoord/?t=' . rawurlencode((string) $result['password_token']), 303);
+    }
     ai_scan_respond_code($result['code'], $asJson);
 }
 
