@@ -389,7 +389,55 @@ test('password change bumps password_version and regenerates session', static fu
     assert_same($before + 1, (int) ($_SESSION['password_version'] ?? 0));
 });
 
-test('action live budget atomic under double post', static function (): void {
+test('session without password_version is stale; outdated version cannot delete account', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    app_ui_login($config, $uid, 1);
+    assert_true(ai_scan_session_password_version_ok($pdo, $uid));
+
+    unset($_SESSION['password_version']);
+    assert_true(!ai_scan_session_password_version_ok($pdo, $uid), 'missing version is stale');
+
+    $_SESSION['password_version'] = 1;
+    $pdo->prepare('UPDATE users SET password_version = 2 WHERE id = :id')->execute(['id' => $uid]);
+    assert_true(!ai_scan_session_password_version_ok($pdo, $uid), 'outdated version is stale');
+
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1');
+    $redirected = false;
+    try {
+        ai_scan_require_user($config, $pdo);
+        assert_true(false, 'require_user must redirect stale session');
+    } catch (RuntimeException $e) {
+        $redirected = str_starts_with($e->getMessage(), 'REDIRECT');
+        assert_true($redirected, $e->getMessage());
+    }
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT');
+
+    // Account must still exist — delete never ran past the require_user gate.
+    $still = $pdo->query('SELECT id FROM users WHERE id = ' . $uid)->fetch();
+    assert_true($still !== false, 'account must not be deleted');
+
+    // Full account-delete.php path with stale session.
+    app_ui_login($config, $uid, 1); // session version 1, DB still 2
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1');
+    $cfgPath = sys_get_temp_dir() . '/jpweb-delete-stale-config.php';
+    file_put_contents($cfgPath, '<?php return ' . var_export($config, true) . ";\n");
+    putenv('JPWEB_AI_SCAN_CONFIG=' . $cfgPath);
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_POST['csrf'] = ai_scan_csrf_token($config);
+    try {
+        require dirname(__DIR__) . '/account-delete.php';
+        assert_true(false, 'account-delete must redirect');
+    } catch (RuntimeException $e) {
+        assert_true(str_starts_with($e->getMessage(), 'REDIRECT'), $e->getMessage());
+    }
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT');
+    putenv('JPWEB_AI_SCAN_CONFIG');
+    $still2 = $pdo->query('SELECT id FROM users WHERE id = ' . $uid)->fetch();
+    assert_true($still2 !== false, 'account-delete must not delete on stale session');
+});
+
+test('action live double post: conditional update consumes budget once', static function (): void {
     [$config, $pdo, $free, $paid, $result] = app_writes_seed();
     $uid = (int) $paid['id'];
     $limit = (int) ai_scan_effective_tier($paid, ai_scan_load_tiers())['actions'];
@@ -398,15 +446,32 @@ test('action live budget atomic under double post', static function (): void {
         'INSERT INTO usage_counters(user_id, month, actions_used, question_edits)
          VALUES(:u, :m, :a, 0)
          ON CONFLICT(user_id, month) DO UPDATE SET actions_used = excluded.actions_used'
-    )->execute(['u' => $uid, 'm' => $month, 'a' => max(0, $limit - 1)]);
+    )->execute(['u' => $uid, 'm' => $month, 'a' => 0]);
 
     $first = ai_scan_action_set_status($pdo, $paid, $result, 'a1', 'live_gemeld');
     assert_true(!empty($first['ok']), $first['error'] ?? 'first live');
-    // Second live on another action should fail — budget exhausted atomically.
-    $second = ai_scan_action_set_status($pdo, $paid, $result, 'a2', 'live_gemeld');
-    assert_true(empty($second['ok']));
-    assert_same('Je hebt deze maand geen acties meer over.', $second['error'] ?? '');
+    $used = ai_scan_usage_actions_used($pdo, $uid);
+    assert_same(1, $used);
+
+    // Same action again: status update matches 0 rows → no second consume.
+    $again = ai_scan_action_set_status($pdo, $paid, $result, 'a1', 'live_gemeld');
+    assert_true(!empty($again['ok']), $again['error'] ?? 'idempotent live');
+    assert_same(1, ai_scan_usage_actions_used($pdo, $uid));
+
+    // Budget edge: only one slot left across two different actions.
+    $pdo->prepare(
+        'UPDATE usage_counters SET actions_used = :a WHERE user_id = :u AND month = :m'
+    )->execute(['a' => max(0, $limit - 1), 'u' => $uid, 'm' => $month]);
+    $ok = ai_scan_action_set_status($pdo, $paid, $result, 'a2', 'live_gemeld');
+    assert_true(!empty($ok['ok']), $ok['error'] ?? 'second action live');
+    $fail = ai_scan_action_set_status($pdo, $paid, $result, 'a3', 'live_gemeld');
+    assert_true(empty($fail['ok']));
+    assert_same('Je hebt deze maand geen acties meer over.', $fail['error'] ?? '');
     assert_same($limit, ai_scan_usage_actions_used($pdo, $uid));
+    $a3 = $pdo->query(
+        "SELECT status FROM actions WHERE user_id = {$uid} AND public_id = 'a3'"
+    )->fetchColumn();
+    assert_true($a3 !== 'live_gemeld', 'failed live must roll back status');
 });
 
 test('JPWEB_AI_SCAN_TEST_USER_ID ignored on web SAPI', static function (): void {

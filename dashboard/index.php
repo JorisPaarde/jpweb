@@ -19,7 +19,7 @@ try {
     // ignore
 }
 
-$userId = ai_scan_require_user($config);
+$userId = ai_scan_require_user($config, $pdo);
 $scan = ai_scan_latest_for_user($pdo, $userId);
 $wantsJson = ai_scan_wants_json() || (string) ($_GET['format'] ?? '') === 'json';
 

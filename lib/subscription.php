@@ -488,7 +488,7 @@ function ai_scan_user_is_admin(array $config, array $user): bool
  */
 function ai_scan_require_admin_user(PDO $pdo, array $config): array
 {
-    $userId = ai_scan_require_user($config);
+    $userId = ai_scan_require_user($config, $pdo);
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
     $stmt->execute(['id' => $userId]);
     $user = $stmt->fetch();

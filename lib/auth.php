@@ -53,26 +53,26 @@ function ai_scan_login_user(array $config, int $userId, ?int $passwordVersion = 
 }
 
 /**
- * Invalidate the session when the stored password_version no longer matches.
- *
- * @param array<string, mixed> $user
+ * True when the session carries a password_version that matches the DB.
+ * Missing session version is stale (force re-login); never adopt the DB value.
  */
-function ai_scan_assert_password_version(array $config, array $user): void
+function ai_scan_session_password_version_ok(PDO $pdo, int $userId): bool
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
-        return;
+        return false;
     }
-    $dbVersion = (int) ($user['password_version'] ?? 1);
     $sessionVersion = $_SESSION['password_version'] ?? null;
     if ($sessionVersion === null || $sessionVersion === '') {
-        $_SESSION['password_version'] = $dbVersion;
+        return false;
+    }
+    $stmt = $pdo->prepare('SELECT password_version FROM users WHERE id = :id LIMIT 1');
+    $stmt->execute(['id' => $userId]);
+    $row = $stmt->fetch();
+    if ($row === false) {
+        return false;
+    }
 
-        return;
-    }
-    if ((int) $sessionVersion !== $dbVersion) {
-        ai_scan_logout_user($config);
-        ai_scan_redirect('/login/?next=' . rawurlencode((string) ($_SERVER['REQUEST_URI'] ?? '/dashboard/')), 303);
-    }
+    return (int) $sessionVersion === (int) ($row['password_version'] ?? 1);
 }
 
 function ai_scan_logout_user(array $config): void
@@ -96,10 +96,17 @@ function ai_scan_logout_user(array $config): void
     session_destroy();
 }
 
-function ai_scan_require_user(array $config): int
+/**
+ * Require a logged-in user whose session password_version still matches the DB.
+ * Rejects stale sessions (missing or outdated version) everywhere this is called.
+ */
+function ai_scan_require_user(array $config, PDO $pdo): int
 {
     $id = ai_scan_current_user_id($config);
-    if ($id === null) {
+    if ($id === null || !ai_scan_session_password_version_ok($pdo, $id)) {
+        if ($id !== null) {
+            ai_scan_logout_user($config);
+        }
         ai_scan_redirect('/login/?next=' . rawurlencode((string) ($_SERVER['REQUEST_URI'] ?? '/dashboard/')), 303);
     }
 

@@ -61,6 +61,9 @@ function ai_scan_json_response(array $payload, int $status = 200): void
 
 function ai_scan_redirect(string $location, int $status = 303): void
 {
+    if (getenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT') === '1') {
+        throw new RuntimeException('REDIRECT ' . $location, $status);
+    }
     header('Location: ' . $location, true, $status);
     exit;
 }

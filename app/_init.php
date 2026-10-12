@@ -71,11 +71,9 @@ function app_boot(string $pageId): array
                 @session_start();
             }
         }
-        $userId = $injected;
-        $_SESSION['user_id'] = $userId;
-    } else {
-        $userId = ai_scan_require_user($config);
+        $_SESSION['user_id'] = $injected;
     }
+    $userId = ai_scan_require_user($config, $pdo);
     $userStmt = $pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
     $userStmt->execute(['id' => $userId]);
     $user = $userStmt->fetch();
@@ -83,7 +81,6 @@ function app_boot(string $pageId): array
         ai_scan_logout_user($config);
         ai_scan_redirect('/login/', 303);
     }
-    ai_scan_assert_password_version($config, $user);
 
     $tiers = ai_scan_load_tiers();
     $effective = ai_scan_effective_tier($user, $tiers);

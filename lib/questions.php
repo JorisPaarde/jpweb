@@ -990,23 +990,61 @@ function ai_scan_action_set_status(
     $label = (new DateTimeImmutable('@' . $now))->setTimezone($tz)->format('Y-m-d');
     if ($status === 'live_gemeld') {
         $line = 'Live gemeld op ' . $label;
-        if ($log !== '') {
-            $log .= ' · ' . $line;
-        } else {
-            $log = $line;
-        }
-        // Atomically count toward the monthly budget when first marking live.
-        if ((string) ($row['status'] ?? '') !== 'live_gemeld') {
-            $limit = (int) ai_scan_effective_tier($user, $tiers)['actions'];
+        $newLog = $log !== '' ? ($log . ' · ' . $line) : $line;
+        $limit = (int) ai_scan_effective_tier($user, $tiers)['actions'];
+
+        // BEGIN IMMEDIATE via exec so SQLite locks before the conditional UPDATE;
+        // pair with exec COMMIT/ROLLBACK (PDO::commit is unaware of exec BEGIN).
+        $pdo->exec('BEGIN IMMEDIATE');
+        $liveTxOpen = true;
+        try {
+            $upd = $pdo->prepare(
+                'UPDATE actions SET status = :s, log_text = :l, updated_at = :u
+                 WHERE id = :id AND user_id = :uid AND status != \'live_gemeld\''
+            );
+            $upd->execute([
+                's' => $status,
+                'l' => $newLog,
+                'u' => $now,
+                'id' => (int) $row['id'],
+                'uid' => $userId,
+            ]);
+            if ($upd->rowCount() !== 1) {
+                $pdo->exec('COMMIT');
+                $liveTxOpen = false;
+
+                return [
+                    'ok' => true,
+                    'message' => 'Actie gemarkeerd als live gezet.',
+                ];
+            }
             if (!ai_scan_usage_try_consume_action($pdo, $userId, $limit, $now)) {
+                $pdo->exec('ROLLBACK');
+                $liveTxOpen = false;
+
                 return ['ok' => false, 'error' => 'Je hebt deze maand geen acties meer over.'];
             }
+            $pdo->exec('COMMIT');
+            $liveTxOpen = false;
+        } catch (Throwable $e) {
+            if ($liveTxOpen) {
+                try {
+                    $pdo->exec('ROLLBACK');
+                } catch (Throwable $ignored) {
+                    // ignore
+                }
+            }
+            throw $e;
         }
-    } else {
-        $line = 'Afgewezen op ' . $label . ' (past niet bij mijn bedrijf)';
-        $log = $log !== '' ? ($log . ' · ' . $line) : $line;
+
+        return [
+            'ok' => true,
+            'message' => 'Actie gemarkeerd als live gezet.',
+        ];
     }
 
+    $line = 'Afgewezen op ' . $label . ' (past niet bij mijn bedrijf)';
+    $log = $log !== '' ? ($log . ' · ' . $line) : $line;
     $pdo->prepare(
         'UPDATE actions SET status = :s, log_text = :l, updated_at = :u WHERE id = :id AND user_id = :uid'
     )->execute([
@@ -1019,7 +1057,7 @@ function ai_scan_action_set_status(
 
     return [
         'ok' => true,
-        'message' => $status === 'live_gemeld' ? 'Actie gemarkeerd als live gezet.' : 'Actie afgewezen.',
+        'message' => 'Actie afgewezen.',
     ];
 }
 
