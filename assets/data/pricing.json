@@ -2,8 +2,8 @@
   "currency": "EUR",
   "vat_note": "excl. btw",
   "hourly_rate": 70,
-  "extra_hours_note": "Extra uren €70 per uur, alleen na jouw akkoord.",
-  "execute_line": "Wil je dat wij het uitvoeren? €70 per uur, alleen na jouw akkoord.",
+  "extra_hours_note": "Losse uitvoering kost €70 per uur. Alles excl. btw.",
+  "execute_line": "Voeg 3, 6 of 10 uur per maand toe, met 5% korting op de uren. Ook maandelijks opzegbaar. Losse uitvoering kost €70 per uur. Alles excl. btw.",
   "example": {
     "services": 8,
     "places": 3,
@@ -14,7 +14,7 @@
     6,
     10
   ],
-  "compleet_note": "Compleet = toolprijs + vaste uren waarin wij het werk doen.",
+  "compleet_note": "Bijvoorbeeld 25 vragen + 3 uur = €219 per maand.",
   "above_max": {
     "from_questions": 1000,
     "per_started_100": 39,

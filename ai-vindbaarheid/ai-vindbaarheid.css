@@ -283,6 +283,12 @@
   margin-top: 28px;
 }
 
+.faq .faq-list a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.geo-table-wrap,
 .geo-pricing-table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -291,29 +297,59 @@
   background: var(--white);
 }
 
+.geo-ai-table,
 .geo-pricing-table {
   width: 100%;
-  min-width: 720px;
+  min-width: 520px;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
+}
+
+.geo-pricing-table {
+  min-width: 720px;
+}
+
+.geo-ai-table th,
+.geo-ai-table td,
+.geo-pricing-table th,
+.geo-pricing-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
 }
 
 .geo-pricing-table th,
 .geo-pricing-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  text-align: left;
   white-space: nowrap;
 }
 
+.geo-ai-table thead th,
 .geo-pricing-table thead th {
   background: var(--mist);
   font-weight: 800;
 }
 
-.faq .faq-list a {
+.geo-table-note,
+.geo-pricing-extra {
+  margin: 18px 0 0;
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.geo-table-note a,
+.geo-pricing-extra a {
+  color: var(--green-dark);
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 0.18em;
+}
+
+.geo-objections p {
+  margin: 0 0 18px;
+}
+
+.geo-objections p:last-child {
+  margin-bottom: 0;
 }
 
 @media (max-width: 900px) {
