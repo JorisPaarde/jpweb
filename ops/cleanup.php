@@ -121,8 +121,20 @@ try {
                 $names[] = mb_strtolower($n);
                 $added++;
             }
+            // Laatste afgeronde scan opnieuw in de wachtrij (vragen ontbraken in het resultaat); geen mail opnieuw.
+            $requeued = 0;
+            if ((string) getenv('OPS_REQUEUE') === '1') {
+                $last = $pdo->prepare("SELECT id FROM scans WHERE user_id = :u AND status = 'klaar' ORDER BY id DESC LIMIT 1");
+                $last->execute(['u' => $uid]);
+                $sid = $last->fetchColumn();
+                if ($sid !== false) {
+                    $q = $pdo->prepare("UPDATE scans SET status = 'bevestigd', queued_at = :t WHERE id = :id AND status = 'klaar'");
+                    $q->execute(['t' => $now, 'id' => (int) $sid]);
+                    $requeued = $q->rowCount();
+                }
+            }
             $r = ['ok' => true];
-            $summary = 'users=1 velden_gevuld=' . $filled . ' concurrenten_toegevoegd=' . $added . ' concurrenten_totaal=' . count($names);
+            $summary = 'requeued=' . $requeued . ' users=1 velden_gevuld=' . $filled . ' concurrenten_toegevoegd=' . $added . ' concurrenten_totaal=' . count($names);
         }
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
