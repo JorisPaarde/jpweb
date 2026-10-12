@@ -107,3 +107,32 @@ test('ops cleanup script is cli-only and kept out of the webroot', static functi
     $wf = (string) file_get_contents($root . '/.github/workflows/deploy.yml');
     assert_true(str_contains($wf, "--exclude='ops/'"));
 });
+
+test('ops purge test data removes blocks, scans and only the user created in window', static function (): void {
+    [, $pdo] = boot_test_db();
+    $eh = ai_scan_email_hash('jorispaarde@gmail.com');
+    $dh = ai_scan_domain_hash('intake-engine.nl');
+    $pdo->prepare("INSERT INTO users(email, email_hash, created_at, free_scan_used) VALUES('j', :e, 150, 1)")->execute(['e' => $eh]);
+    $pdo->prepare("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, ip_block_hash)
+        VALUES('a', 'j', :e, 'u', 'd', :d, 'mislukt', 150, 'ipA')")->execute(['e' => $eh, 'd' => $dh]);
+    $pdo->prepare("INSERT INTO free_scan_blocks(email_hash, domain_hash, ip_hash, created_at) VALUES(:e, :d, 'ipA', 150)")->execute(['e' => $eh, 'd' => $dh]);
+    $pdo->exec("INSERT INTO free_scan_blocks(ip_hash, created_at) VALUES('ipZ', 1)");
+
+    $r = ai_scan_ops_purge_test_data($pdo, 'jorispaarde@gmail.com', 'intake-engine.nl', 100, 200);
+    assert_true($r['ok']);
+    assert_same(1, $r['scans']);
+    assert_same(1, $r['users']);
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM free_scan_blocks')->fetchColumn());
+
+    $pdo->prepare("INSERT INTO users(email, email_hash, created_at, free_scan_used) VALUES('j', :e, 50, 1)")->execute(['e' => $eh]);
+    $r = ai_scan_ops_purge_test_data($pdo, 'jorispaarde@gmail.com', 'intake-engine.nl', 100, 200);
+    assert_same(0, $r['users']);
+    assert_same(1, $r['user_skipped']);
+});
+
+test('ai-scan status page exists for redirect codes', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/ai-scan/index.php');
+    assert_true(str_contains($src, "'confirmed'"));
+    assert_true(str_contains($src, 'wachtrij'));
+    assert_true(!str_contains(strtolower($src), ' we '));
+});

@@ -883,3 +883,43 @@ function ai_scan_admin_cancel_pending(PDO $pdo, string $emailRaw, string $websit
 
     return ['ok' => true, 'scans' => $scans, 'ip_blocks' => $ipBlocks];
 }
+
+/**
+ * Eenmalige opschoning van testdata (deploy-ops): blokkades (e-mail/domein/IP), scans
+ * voor dit e-mailadres/domein, en de gebruiker alleen als die binnen het tijdvenster is aangemaakt.
+ *
+ * @return array{ok: bool, blocks?: int, scans?: int, users?: int, user_skipped?: int, error?: string}
+ */
+function ai_scan_ops_purge_test_data(PDO $pdo, string $emailRaw, string $websiteRaw, int $createdFrom, int $createdTo): array
+{
+    if (trim($emailRaw) === '' || trim($websiteRaw) === '' || $createdFrom <= 0 || $createdTo <= $createdFrom) {
+        return ['ok' => false, 'error' => 'input'];
+    }
+    $lift = ai_scan_admin_lift_free_scan_block($pdo, $emailRaw, $websiteRaw, 'deploy');
+    if (empty($lift['ok'])) {
+        return ['ok' => false, 'error' => (string) ($lift['error'] ?? 'lift')];
+    }
+    $emailHash = ai_scan_email_hash(ai_scan_normalize_email(trim($emailRaw)));
+    $parsed = ai_scan_parse_website($websiteRaw);
+    $domainHash = ai_scan_domain_hash((string) $parsed['domain']);
+
+    $stmt = $pdo->prepare('DELETE FROM scans WHERE domain_hash = :d OR (email_hash = :e AND created_at BETWEEN :f AND :t)');
+    $stmt->execute(['e' => $emailHash, 'd' => $domainHash, 'f' => $createdFrom, 't' => $createdTo]);
+    $scans = $stmt->rowCount();
+
+    $users = 0;
+    $skipped = 0;
+    $sel = $pdo->prepare('SELECT id, created_at FROM users WHERE email_hash = :e');
+    $sel->execute(['e' => $emailHash]);
+    foreach ($sel->fetchAll() as $u) {
+        $created = (int) $u['created_at'];
+        if ($created >= $createdFrom && $created <= $createdTo) {
+            $pdo->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => (int) $u['id']]);
+            $users++;
+        } else {
+            $skipped++;
+        }
+    }
+
+    return ['ok' => true, 'blocks' => (int) $lift['deleted'], 'scans' => $scans, 'users' => $users, 'user_skipped' => $skipped];
+}
