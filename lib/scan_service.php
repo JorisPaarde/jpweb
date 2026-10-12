@@ -411,7 +411,7 @@ function ai_scan_claim_job(PDO $pdo, int $scanId, int $now = 0): ?array
     return $row === false ? null : $row;
 }
 
-function ai_scan_complete_job(PDO $pdo, int $scanId, string $html, string $json, int $now = 0): bool
+function ai_scan_complete_job(PDO $pdo, array $config, int $scanId, string $html, string $json, int $now = 0): bool
 {
     $now = $now > 0 ? $now : time();
     // Basic JSON sanity.
@@ -436,7 +436,96 @@ function ai_scan_complete_job(PDO $pdo, int $scanId, string $html, string $json,
         'id' => $scanId,
     ]);
 
-    return $upd->rowCount() === 1;
+    if ($upd->rowCount() !== 1) {
+        return false;
+    }
+
+    ai_scan_send_ready_mail_once($pdo, $config, $scanId, $now);
+
+    return true;
+}
+
+/**
+ * Send the Dutch "scan klaar" mail at most once per scan, with mail throttle.
+ *
+ * @return array{ok: bool, sent: bool, reason?: string}
+ */
+function ai_scan_send_ready_mail_once(PDO $pdo, array $config, int $scanId, int $now = 0): array
+{
+    $now = $now > 0 ? $now : time();
+
+    $stmt = $pdo->prepare("SELECT * FROM scans WHERE id = :id AND status = 'klaar' LIMIT 1");
+    $stmt->execute(['id' => $scanId]);
+    $scan = $stmt->fetch();
+    if ($scan === false) {
+        return ['ok' => false, 'sent' => false, 'reason' => 'not_found'];
+    }
+
+    if ($scan['ready_mail_sent_at'] !== null) {
+        return ['ok' => true, 'sent' => false, 'reason' => 'already_sent'];
+    }
+
+    $email = trim((string) $scan['email']);
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return ['ok' => false, 'sent' => false, 'reason' => 'no_email'];
+    }
+
+    $emailHash = (string) $scan['email_hash'];
+    if (ai_scan_ready_mail_rate_limited($pdo, $config, $emailHash, $now)) {
+        return ['ok' => true, 'sent' => false, 'reason' => 'throttled'];
+    }
+
+    // Atomic claim: only one sender wins.
+    $claim = $pdo->prepare(
+        "UPDATE scans SET ready_mail_sent_at = :sent_at
+         WHERE id = :id AND status = 'klaar' AND ready_mail_sent_at IS NULL"
+    );
+    $claim->execute(['sent_at' => $now, 'id' => $scanId]);
+    if ($claim->rowCount() !== 1) {
+        return ['ok' => true, 'sent' => false, 'reason' => 'already_sent'];
+    }
+
+    $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
+    $dashboardUrl = $base . '/login/?next=' . rawurlencode('/dashboard/');
+    $domain = (string) ($scan['domain'] !== '' ? $scan['domain'] : $scan['website_url']);
+    $mail = ai_scan_mail_scan_ready($config, $email, $domain, $dashboardUrl);
+
+    if (!$mail['ok']) {
+        $pdo->prepare(
+            'UPDATE scans SET ready_mail_sent_at = NULL WHERE id = :id AND ready_mail_sent_at = :sent_at'
+        )->execute(['id' => $scanId, 'sent_at' => $now]);
+
+        return ['ok' => false, 'sent' => false, 'reason' => 'mail_failed'];
+    }
+
+    ai_scan_ready_mail_rate_record($pdo, $emailHash, $now);
+
+    return ['ok' => true, 'sent' => true];
+}
+
+/**
+ * Retry klaar-mails that were skipped due to throttle (best-effort).
+ */
+function ai_scan_flush_ready_mails(PDO $pdo, array $config, int $limit = 10, int $now = 0): int
+{
+    $now = $now > 0 ? $now : time();
+    $stmt = $pdo->prepare(
+        "SELECT id FROM scans
+         WHERE status = 'klaar' AND ready_mail_sent_at IS NULL AND email != ''
+         ORDER BY completed_at ASC, id ASC
+         LIMIT :lim"
+    );
+    $stmt->bindValue('lim', max(1, $limit), PDO::PARAM_INT);
+    $stmt->execute();
+    $sent = 0;
+    foreach ($stmt->fetchAll() as $row) {
+        $result = ai_scan_send_ready_mail_once($pdo, $config, (int) $row['id'], $now);
+        if (!empty($result['sent'])) {
+            $sent++;
+        }
+    }
+
+    return $sent;
 }
 
 function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0): bool

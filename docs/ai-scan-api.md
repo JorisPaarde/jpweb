@@ -120,11 +120,11 @@ Claimt de job → status `bezig`. **409** als niet claimbaar.
 
 Slaat HTML + JSON op, status `klaar`. `json` mag object of JSON-string zijn. **409** als de job niet `bezig` is.
 
-De runner (B3) mailt daarna zelf "scan klaar" (ik-vorm, eindigt op `Groet,`).
+B2 stuurt daarna de **"scan klaar"-mail** (Nederlands, `Hoi,`, ik-vorm, korte tekst, link naar dashboard via login, eindigt op `Groet,`). Maximaal **één keer per scan** (`ready_mail_sent_at`); daarnaast throttling via `ready_mail_per_email_seconds` en `ready_mail_global_max_per_hour`. Bij throttle probeert `action=health` later opnieuw.
 
 ### `POST /api/runner.php` body `{"action":"fail","id":12,"message":"…"}`
 
-Status `mislukt`. Geen "scan klaar"-mail vanuit B2.
+Status `mislukt`. Geen "scan klaar"-mail.
 
 ### `GET|POST /api/runner.php?action=health`
 
@@ -146,7 +146,7 @@ Zie `config-examples/ai-scan-config.php`. Lookup:
 2. `../private/ai-scan-config.php` (relatief t.o.v. webroot)
 3. `/home/jpwebcreation/private/ai-scan-config.php`
 
-Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `email_blocked_tlds`, `website_allowed_tlds`, `disposable_email_domains`, `website_require_http`, `allowed_hosts`.
+Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `ready_mail_per_email_seconds`, `ready_mail_global_max_per_hour`, `email_blocked_tlds`, `website_allowed_tlds`, `disposable_email_domains`, `website_require_http`, `allowed_hosts`.
 
 ## Mailtoon
 

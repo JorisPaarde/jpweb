@@ -150,6 +150,34 @@ function ai_scan_confirm_mail_rate_record(PDO $pdo, string $emailHash, int $now)
     ai_scan_rate_hit($pdo, 'confirm_mail_global', ai_scan_rate_global_key(), $now);
 }
 
+/**
+ * Scan-klaar mail throttle: per-email cooldown + global hourly cap.
+ */
+function ai_scan_ready_mail_rate_limited(PDO $pdo, array $config, string $emailHash, int $now): bool
+{
+    $perEmailSeconds = (int) ($config['ready_mail_per_email_seconds'] ?? 60);
+    if ($perEmailSeconds > 0
+        && ai_scan_rate_count($pdo, 'ready_mail_email', $emailHash, $now - $perEmailSeconds) >= 1
+    ) {
+        return true;
+    }
+
+    $globalMax = (int) ($config['ready_mail_global_max_per_hour'] ?? 40);
+    if ($globalMax > 0
+        && ai_scan_rate_count($pdo, 'ready_mail_global', ai_scan_rate_global_key(), $now - 3600) >= $globalMax
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function ai_scan_ready_mail_rate_record(PDO $pdo, string $emailHash, int $now): void
+{
+    ai_scan_rate_hit($pdo, 'ready_mail_email', $emailHash, $now);
+    ai_scan_rate_hit($pdo, 'ready_mail_global', ai_scan_rate_global_key(), $now);
+}
+
 /** @deprecated Use ai_scan_form_ip_rate_limited */
 function ai_scan_form_rate_limited(PDO $pdo, array $config, string $ip, int $now): bool
 {

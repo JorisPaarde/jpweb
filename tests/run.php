@@ -57,6 +57,8 @@ function test_config(string $sqlite): array
         'form_burst_max' => 10,
         'confirm_mail_per_email_seconds' => 0,
         'confirm_mail_global_max_per_hour' => 1000,
+        'ready_mail_per_email_seconds' => 0,
+        'ready_mail_global_max_per_hour' => 1000,
         'smtp' => [
             'host' => 's1155.nl',
             'port' => 465,
@@ -356,17 +358,153 @@ test('submit + confirm + set password + runner flow', static function (): void {
 
     $html = '<section><h2>Uitslag</h2><p>3 van 50</p></section>';
     $json = json_encode(['mentioned' => 3, 'answers' => 50], JSON_THROW_ON_ERROR);
-    assert_true(ai_scan_complete_job($pdo, (int) $job['id'], $html, $json));
+    assert_true(ai_scan_complete_job($pdo, $config, (int) $job['id'], $html, $json));
 
     $done = $pdo->query('SELECT * FROM scans')->fetch();
     assert_same('klaar', $done['status']);
     assert_same($html, $done['result_html']);
+    assert_true($done['ready_mail_sent_at'] !== null);
 
     assert_true(is_file($mailLog));
     $mail = file_get_contents($mailLog);
     assert_true(str_contains((string) $mail, 'Bevestig je e-mailadres'));
     assert_true(str_contains((string) $mail, 'Je account voor de AI-scan'));
+    assert_true(str_contains((string) $mail, 'Je AI-scan voor'));
+    assert_true(str_contains((string) $mail, 'is klaar'));
+    assert_true(str_contains((string) $mail, '/login/?next='));
+    assert_true(str_contains((string) $mail, 'Hoi,'));
+    assert_true(str_contains((string) $mail, 'Groet,'));
     assert_true(!str_contains((string) $mail, 'super-secret-password'));
+});
+
+test('scan klaar mail only once per scan', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    $pdo->prepare(
+        'INSERT INTO scans (public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, confirmed_at, queued_at, claimed_at, completed_at, result_html, result_json)
+         VALUES (:p, :e, :eh, :w, :d, :dh, :s, :c, :conf, :q, :cl, :done, :html, :json)'
+    )->execute([
+        'p' => ai_scan_public_id(),
+        'e' => 'ready@once.nl',
+        'eh' => ai_scan_email_hash('ready@once.nl'),
+        'w' => 'https://once.nl/',
+        'd' => 'once.nl',
+        'dh' => ai_scan_domain_hash('once.nl'),
+        's' => 'klaar',
+        'c' => $now,
+        'conf' => $now,
+        'q' => $now,
+        'cl' => $now,
+        'done' => $now,
+        'html' => '<p>ok</p>',
+        'json' => '{}',
+    ]);
+    $id = (int) $pdo->lastInsertId();
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+
+    $first = ai_scan_send_ready_mail_once($pdo, $config, $id, $now);
+    assert_true($first['sent']);
+    $second = ai_scan_send_ready_mail_once($pdo, $config, $id, $now + 1);
+    assert_true(!$second['sent']);
+    assert_same('already_sent', $second['reason']);
+
+    $mail = (string) file_get_contents($mailLog);
+    assert_same(1, substr_count($mail, 'Je AI-scan voor'));
+});
+
+test('scan klaar mail throttled then flushed', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $config['ready_mail_per_email_seconds'] = 600;
+    $config['ready_mail_global_max_per_hour'] = 1;
+    $now = time();
+
+    $insert = $pdo->prepare(
+        'INSERT INTO scans (public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, confirmed_at, queued_at, claimed_at, completed_at, result_html, result_json)
+         VALUES (:p, :e, :eh, :w, :d, :dh, :s, :c, :conf, :q, :cl, :done, :html, :json)'
+    );
+    $insert->execute([
+        'p' => ai_scan_public_id(),
+        'e' => 'a@throttle1.nl',
+        'eh' => ai_scan_email_hash('a@throttle1.nl'),
+        'w' => 'https://throttle1.nl/',
+        'd' => 'throttle1.nl',
+        'dh' => ai_scan_domain_hash('throttle1.nl'),
+        's' => 'klaar',
+        'c' => $now,
+        'conf' => $now,
+        'q' => $now,
+        'cl' => $now,
+        'done' => $now,
+        'html' => '<p>1</p>',
+        'json' => '{}',
+    ]);
+    $id1 = (int) $pdo->lastInsertId();
+    $insert->execute([
+        'p' => ai_scan_public_id(),
+        'e' => 'b@throttle2.nl',
+        'eh' => ai_scan_email_hash('b@throttle2.nl'),
+        'w' => 'https://throttle2.nl/',
+        'd' => 'throttle2.nl',
+        'dh' => ai_scan_domain_hash('throttle2.nl'),
+        's' => 'klaar',
+        'c' => $now,
+        'conf' => $now,
+        'q' => $now,
+        'cl' => $now,
+        'done' => $now,
+        'html' => '<p>2</p>',
+        'json' => '{}',
+    ]);
+    $id2 = (int) $pdo->lastInsertId();
+
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+
+    $r1 = ai_scan_send_ready_mail_once($pdo, $config, $id1, $now);
+    assert_true($r1['sent']);
+    $r2 = ai_scan_send_ready_mail_once($pdo, $config, $id2, $now);
+    assert_true(!$r2['sent']);
+    assert_same('throttled', $r2['reason']);
+    $pending = $pdo->query('SELECT ready_mail_sent_at FROM scans WHERE id = ' . $id2)->fetchColumn();
+    assert_true($pending === null);
+
+    // Later hour: flush sends the queued klaar-mail.
+    $flushed = ai_scan_flush_ready_mails($pdo, $config, 10, $now + 3700);
+    assert_same(1, $flushed);
+    $sentAt = $pdo->query('SELECT ready_mail_sent_at FROM scans WHERE id = ' . $id2)->fetchColumn();
+    assert_true($sentAt !== null);
+});
+
+test('complete job sends klaar mail with dashboard login link', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    $pdo->prepare(
+        'INSERT INTO scans (public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, confirmed_at, queued_at, claimed_at)
+         VALUES (:p, :e, :eh, :w, :d, :dh, :s, :c, :conf, :q, :cl)'
+    )->execute([
+        'p' => ai_scan_public_id(),
+        'e' => 'done@site.nl',
+        'eh' => ai_scan_email_hash('done@site.nl'),
+        'w' => 'https://site.nl/',
+        'd' => 'site.nl',
+        'dh' => ai_scan_domain_hash('site.nl'),
+        's' => 'bezig',
+        'c' => $now,
+        'conf' => $now,
+        'q' => $now,
+        'cl' => $now,
+    ]);
+    $id = (int) $pdo->lastInsertId();
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+
+    assert_true(ai_scan_complete_job($pdo, $config, $id, '<p>x</p>', '{"ok":true}', $now));
+    $mail = (string) file_get_contents($mailLog);
+    assert_true(str_contains($mail, 'Hoi,'));
+    assert_true(str_contains($mail, 'Ik ') || str_contains($mail, 'ik ') || str_contains($mail, 'je dashboard'));
+    assert_true(str_contains($mail, 'Groet,'));
+    assert_true(str_contains($mail, '/login/?next=%2Fdashboard%2F') || str_contains($mail, '/login/?next=/dashboard/'));
 });
 
 test('already_scanned per email and domain', static function (): void {

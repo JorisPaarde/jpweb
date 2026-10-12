@@ -189,6 +189,23 @@ function ai_scan_mail_welcome(array $config, string $to, string $website, string
     return ai_scan_send_mail($config, $to, $subject, $body);
 }
 
+function ai_scan_mail_scan_ready(array $config, string $to, string $website, string $dashboardUrl): array
+{
+    $subject = 'Je AI-scan voor ' . $website . ' is klaar';
+    $body = implode("\n", [
+        'Hoi,',
+        '',
+        'De scan voor ' . $website . ' is klaar.',
+        '',
+        'Bekijk de uitslag in je dashboard (inloggen met dit e-mailadres):',
+        $dashboardUrl,
+        '',
+        'Groet,',
+    ]);
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
+
 function ai_scan_mail_stale_alert(array $config, int $staleCount, array $sampleIds): array
 {
     $to = (string) (($config['smtp']['alert_to'] ?? '') ?: ($config['smtp']['from_email'] ?? 'info@jpwebcreation.nl'));

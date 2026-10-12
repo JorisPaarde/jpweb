@@ -10,9 +10,9 @@ declare(strict_types=1);
  * Endpoints (JSON):
  *   GET  ?action=next          → next queued job (status bevestigd) or null
  *   POST action=claim          body: {id} → claim job (bezig)
- *   POST action=complete       body: {id, html, json} → store result (klaar)
+ *   POST action=complete       body: {id, html, json} → store result (klaar) + scan-klaar mail (once)
  *   POST action=fail           body: {id, message} → mark mislukt
- *   GET|POST action=health     → stale-job check + queue counts
+ *   GET|POST action=health     → stale-job check + queue counts + flush ready mails
  */
 
 require_once dirname(__DIR__) . '/lib/bootstrap.php';
@@ -61,6 +61,7 @@ if ($action === '' && $method === 'GET') {
 
 try {
     ai_scan_check_stale_jobs($pdo, $config);
+    ai_scan_flush_ready_mails($pdo, $config);
 } catch (Throwable $e) {
     // continue
 }
@@ -73,7 +74,13 @@ if ($action === 'health') {
         $counts[$status] = (int) ($stmt->fetch()['c'] ?? 0);
     }
     $stale = ai_scan_check_stale_jobs($pdo, $config);
-    ai_scan_json_response(['ok' => true, 'counts' => $counts, 'stale' => $stale]);
+    $readyFlushed = ai_scan_flush_ready_mails($pdo, $config);
+    ai_scan_json_response([
+        'ok' => true,
+        'counts' => $counts,
+        'stale' => $stale,
+        'ready_mail_flushed' => $readyFlushed,
+    ]);
 }
 
 if ($action === 'next') {
@@ -113,7 +120,7 @@ if ($action === 'complete') {
     if ($id < 1 || $html === '' || $json === '') {
         ai_scan_json_response(['ok' => false, 'error' => 'missing_fields'], 400);
     }
-    if (!ai_scan_complete_job($pdo, $id, $html, $json)) {
+    if (!ai_scan_complete_job($pdo, $config, $id, $html, $json)) {
         ai_scan_json_response(['ok' => false, 'error' => 'not_completable'], 409);
     }
     ai_scan_json_response(['ok' => true]);

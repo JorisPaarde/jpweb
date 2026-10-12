@@ -98,6 +98,9 @@ function ai_scan_default_config(string $sqlitePath): array
         // Confirmation mail anti-spam.
         'confirm_mail_per_email_seconds' => 600,
         'confirm_mail_global_max_per_hour' => 40,
+        // Scan-klaar mail (once per scan + throttle).
+        'ready_mail_per_email_seconds' => 60,
+        'ready_mail_global_max_per_hour' => 40,
         // Signup validation (public failure is always code `invalid`).
         'email_blocked_tlds' => ['ru', 'su', 'by', 'in', 'cn', 'tk', 'top', 'xyz', 'buzz'],
         'website_allowed_tlds' => ['nl', 'be', 'eu', 'com'],

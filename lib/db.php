@@ -65,15 +65,19 @@ function ai_scan_migrate(PDO $pdo): void
             error_message TEXT,
             ip_hash TEXT,
             marketing_opt_in INTEGER NOT NULL DEFAULT 0,
+            ready_mail_sent_at INTEGER,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
         )'
     );
+
+    ai_scan_ensure_column($pdo, 'scans', 'ready_mail_sent_at', 'INTEGER');
 
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_status ON scans(status)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_email_hash ON scans(email_hash)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_domain_hash ON scans(domain_hash)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_confirm_token ON scans(confirm_token_hash)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_password_token ON scans(password_token_hash)');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_ready_mail ON scans(status, ready_mail_sent_at)');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS free_scan_blocks (
@@ -111,6 +115,22 @@ function ai_scan_migrate(PDO $pdo): void
             created_at INTEGER NOT NULL
         )'
     );
+}
+
+function ai_scan_ensure_column(PDO $pdo, string $table, string $column, string $sqlType): void
+{
+    if (!preg_match('/^[a-z_]+$/', $table) || !preg_match('/^[a-z_]+$/', $column)) {
+        throw new InvalidArgumentException('Invalid table/column name.');
+    }
+
+    $cols = $pdo->query('PRAGMA table_info(' . $table . ')')->fetchAll();
+    foreach ($cols as $col) {
+        if (($col['name'] ?? '') === $column) {
+            return;
+        }
+    }
+
+    $pdo->exec('ALTER TABLE ' . $table . ' ADD COLUMN ' . $column . ' ' . $sqlType);
 }
 
 function ai_scan_meta_get(PDO $pdo, string $key, ?string $default = null): ?string
