@@ -34,7 +34,7 @@ Tier is **per account** (kolommen op `users`), nooit globaal. Migratie via besta
 | `pending_tier_id` | TEXT NULL | NULL | geplande downgrade, gaat in op `period_end` |
 | `tier_changed_at` | INTEGER NULL | NULL | laatste wijziging |
 
-Historie in nieuwe tabel `subscription_events(id, user_id → users ON DELETE CASCADE, ts, event, from_tier, to_tier, by_role, note)`, `event` ∈ `start|upgrade|downgrade_scheduled|downgrade_applied|cancel|resume|end|admin_set`.
+Historie in nieuwe tabel `subscription_events(id, user_id → users ON DELETE CASCADE, ts, event, from_tier, to_tier, by_role, note)`, `event` ∈ `request|admin_set` (`note` = gevraagde tier/soort aanvraag).
 Verbruik in `usage_counters(user_id, month 'YYYY-MM', actions_used, question_edits, PRIMARY KEY(user_id, month))`.
 
 ### Effectieve tier (één functie: `ai_scan_effective_tier(array $user, array $tiers): array`)
@@ -43,11 +43,13 @@ Verbruik in `usage_counters(user_id, month 'YYYY-MM', actions_used, question_edi
 - Resultaat: `{id, questions, actions, monthly, read_only, weekly_measurement}`.
 
 ### Up/downgrade
-- **Upgrade:** direct. `tier_id` = nieuw, limieten direct hoger; acties deze maand = nieuw limiet − al gebruikt (min 0).
-- **Downgrade:** gepland: `pending_tier_id` gezet, gaat in op `period_end`. Dan: vragen boven het nieuwe max worden **niet verwijderd** maar `paused` (eigenaar kiest welke; anders de laatst toegevoegde). Gebruikte acties tellen door.
-- **Opzeggen:** `canceling` tot `period_end`, dan `ended` → effectief free (laatste uitslag blijft zichtbaar, alleen-lezen, geen meting).
-- **past_due:** limieten blijven 14 dagen, daarna `ended`.
-- Betaling/Mollie: buiten scope v1; status wordt gezet door beheerder (`admin_set`) of later door een webhook. Geen betaalcode in deze ronde.
+Er is **geen betaalflow in de app** (Joris). Facturatie gebeurt later via Rompslomp, buiten de app.
+- **Aanvragen (account, upgrade, downgrade, opzeggen):** een knop/formulier in de app (CSRF) stuurt een mail naar `info@jpwebcreation.nl` via de bestaande SMTP + throttle uit PR #20, met: accountnaam (bedrijf + e-mail), huidige tier (`tier_id`), gevraagde tier. Event `request` in `subscription_events`. Er verandert nog **niets** aan de limieten.
+- Daarna ziet de gebruiker exact: `Aanvraag ontvangen, we passen je abonnement aan.` Een openstaande aanvraag staat als regel op Abonnement; een tweede aanvraag binnen de throttle geeft dezelfde melding (geen nieuwe mail).
+- **Beheerder** zet de tier handmatig op een eenvoudige adminpagina (`admin/tier.php`, alleen beheerder, CSRF): user kiezen → `tier_id` (+ `custom_questions`), `subscription_status`, optioneel `period_end`. Event `admin_set`. Limieten wijzigen direct bij opslaan.
+- **Downgrade:** de beheerder kiest het moment (direct of later handmatig). Vragen boven het nieuwe max worden **niet verwijderd** maar `paused` (laatst toegevoegde eerst). Gebruikte acties tellen door.
+- **Opzeggen:** beheerder zet `ended` (of `canceling` tot `period_end`) → effectief free: laatste uitslag zichtbaar, alleen-lezen, geen meting.
+- `past_due` en `pending_tier_id` worden in v1 niet automatisch gebruikt (kolommen blijven voor later).
 
 ### Afdwingen
 - Server-side alleen (PHP), nooit alleen in de UI. Vragen toevoegen boven `questions` → `Je abonnement heeft ruimte voor {n} vragen. Kies een groter abonnement of haal een vraag weg.`
