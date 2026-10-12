@@ -233,8 +233,8 @@ jobs:
         run: |
           set -euo pipefail
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='tier-q50-jorispaarde-20261012' OPS_MODE='set_tier' OPS_EMAIL='jorispaarde@gmail.com' OPS_TIER='q50' /usr/local/bin/php" \
-            < ops/cleanup.php
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='tier-q50-jorispaarde-20261012' OPS_MODE='set_tier' OPS_EMAIL='jorispaarde@gmail.com' OPS_TIER='q50' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops tier-q50: exit $? (zie hierboven)"
 
       - name: Verify production deployment
         env:
