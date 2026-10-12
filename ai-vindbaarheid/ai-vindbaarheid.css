@@ -357,3 +357,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Brede tabellen scrollen binnen hun kader; de pagina zelf blijft viewport-breed. */
+.ai-offers > *,
+.geo-table-wrap,
+.geo-pricing-table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
