@@ -756,6 +756,11 @@ function ai_scan_admin_lift_free_scan_block(PDO $pdo, string $emailRaw, string $
     }
 
     $deleted = 0;
+    foreach (ai_scan_ip_block_hashes_for($pdo, $emailHash, $domainHash, false) as $ipHash) {
+        $stmt = $pdo->prepare('DELETE FROM free_scan_blocks WHERE ip_hash = :h');
+        $stmt->execute(['h' => $ipHash]);
+        $deleted += $stmt->rowCount();
+    }
     if ($emailHash !== null) {
         $stmt = $pdo->prepare('DELETE FROM free_scan_blocks WHERE email_hash = :h');
         $stmt->execute(['h' => $emailHash]);
@@ -805,4 +810,76 @@ function ai_scan_mail_error_cause(string $error): string
     $error = preg_replace('/[A-Za-z0-9+\/=]{24,}/', '<redacted>', $error) ?? '';
 
     return substr(trim($error), 0, 200);
+}
+
+/**
+ * ip_block_hash-waarden van scans met deze e-mail- en/of domeinhash.
+ *
+ * @return list<string>
+ */
+function ai_scan_ip_block_hashes_for(PDO $pdo, ?string $emailHash, ?string $domainHash, bool $pendingOnly): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT DISTINCT ip_block_hash FROM scans
+         WHERE ((:e <> \'\' AND email_hash = :e2) OR (:d <> \'\' AND domain_hash = :d2))'
+        . ($pendingOnly ? " AND status = 'onbevestigd'" : '')
+    );
+    $e = $emailHash ?? '';
+    $d = $domainHash ?? '';
+    $stmt->execute(['e' => $e, 'e2' => $e, 'd' => $d, 'd2' => $d]);
+    $out = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $h) {
+        if (is_string($h) && $h !== '') {
+            $out[] = $h;
+        }
+    }
+
+    return $out;
+}
+
+/**
+ * Beheer: annuleer onbevestigde aanvragen voor een e-mailadres en/of domein
+ * en hef de IP-blokkade van die aanvragen op. Logt alleen aantallen.
+ *
+ * @return array{ok: bool, scans?: int, ip_blocks?: int, error?: string}
+ */
+function ai_scan_admin_cancel_pending(PDO $pdo, string $emailRaw, string $websiteRaw): array
+{
+    $emailHash = null;
+    $domainHash = null;
+    if (trim($emailRaw) !== '') {
+        if (filter_var(trim($emailRaw), FILTER_VALIDATE_EMAIL) === false) {
+            return ['ok' => false, 'error' => 'email'];
+        }
+        $emailHash = ai_scan_email_hash(ai_scan_normalize_email(trim($emailRaw)));
+    }
+    if (trim($websiteRaw) !== '') {
+        $parsed = ai_scan_parse_website($websiteRaw);
+        if (empty($parsed['ok'])) {
+            return ['ok' => false, 'error' => 'domain'];
+        }
+        $domainHash = ai_scan_domain_hash((string) $parsed['domain']);
+    }
+    if ($emailHash === null && $domainHash === null) {
+        return ['ok' => false, 'error' => 'empty'];
+    }
+
+    $ipBlocks = 0;
+    foreach (ai_scan_ip_block_hashes_for($pdo, $emailHash, $domainHash, true) as $ipHash) {
+        $stmt = $pdo->prepare('DELETE FROM free_scan_blocks WHERE ip_hash = :h');
+        $stmt->execute(['h' => $ipHash]);
+        $ipBlocks += $stmt->rowCount();
+    }
+    $e = $emailHash ?? '';
+    $d = $domainHash ?? '';
+    $stmt = $pdo->prepare(
+        "DELETE FROM scans WHERE status = 'onbevestigd'
+           AND ((:e <> '' AND email_hash = :e2) OR (:d <> '' AND domain_hash = :d2))"
+    );
+    $stmt->execute(['e' => $e, 'e2' => $e, 'd' => $d, 'd2' => $d]);
+    $scans = $stmt->rowCount();
+
+    error_log(sprintf('ai_scan admin_cancel_pending scans=%d ip_blocks=%d', $scans, $ipBlocks));
+
+    return ['ok' => true, 'scans' => $scans, 'ip_blocks' => $ipBlocks];
 }
