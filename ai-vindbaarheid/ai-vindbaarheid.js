@@ -228,6 +228,86 @@
     }
 
     update(config);
+    renderPicks(config);
+  };
+
+  // Pakketkeuze in #advies-of-uitvoering: knoppen uit tiers.json die de schuif/uren instellen.
+  const renderPicks = (config) => {
+    const advies = document.querySelector("[data-pick-advies]");
+    const compleet = document.querySelector("[data-pick-compleet]");
+    const tiers = config.tiers ?? [];
+    if (!(range instanceof HTMLInputElement) || !tiers.length) {
+      return;
+    }
+    const goToPrices = () => {
+      update(config);
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    const makeButton = (title, lines, onPick) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "geo-pick-card";
+      const strong = document.createElement("strong");
+      strong.textContent = title;
+      button.append(strong);
+      lines.forEach((line) => {
+        const span = document.createElement("span");
+        span.textContent = line;
+        button.append(span);
+      });
+      const cta = document.createElement("span");
+      cta.className = "geo-pick-cta";
+      cta.textContent = "Kies dit →";
+      button.append(cta);
+      button.addEventListener("click", onPick);
+      return button;
+    };
+
+    if (advies instanceof HTMLElement) {
+      advies.replaceChildren();
+      tiers.forEach((tier, index) => {
+        advies.append(makeButton(
+          `${tier.questions} vragen`,
+          [`${formatEuro(tier.monthly)} per maand`, `${tier.actions} verbeteracties per maand`],
+          () => {
+            range.value = String(index);
+            goToPrices();
+          },
+        ));
+      });
+      advies.hidden = false;
+    }
+
+    const hoursList = config.compleet_hours ?? [];
+    const discount = Math.round((config.bundle_discount ?? 0) * 100);
+    const first = tiers[0];
+    if (compleet instanceof HTMLElement && first) {
+      compleet.replaceChildren();
+      hoursList.forEach((hours) => {
+        const price = first.compleet?.[String(hours)];
+        if (typeof price !== "number") {
+          return;
+        }
+        compleet.append(makeButton(
+          `${hours} uur per maand`,
+          [`vanaf ${formatEuro(price)} per maand`, `met ${first.questions} vragen, ${discount}% korting op de uren`],
+          () => {
+            const input = root.querySelector(`input[name="compleet-hours"][value="${hours}"]`);
+            if (input instanceof HTMLInputElement) {
+              input.checked = true;
+            }
+            goToPrices();
+          },
+        ));
+      });
+      compleet.hidden = false;
+    }
+
+    document.querySelectorAll("[data-pick-fallback]").forEach((node) => {
+      if (node instanceof HTMLElement) {
+        node.hidden = true;
+      }
+    });
   };
 
   fetch("/assets/data/tiers.json", { credentials: "same-origin" })
