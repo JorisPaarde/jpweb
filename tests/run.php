@@ -767,6 +767,7 @@ test('password_hash used, never plaintext column', static function (): void {
 });
 
 require __DIR__ . '/tiers_test.php';
+require __DIR__ . '/tiers_drift_test.php';
 require __DIR__ . '/app_ui_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;

@@ -230,16 +230,17 @@
     update(config);
   };
 
-  fetch("/assets/data/pricing.json", { credentials: "same-origin" })
+  fetch("/assets/data/tiers.json", { credentials: "same-origin" })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("pricing.json missing");
+        throw new Error("tiers.json missing");
       }
 
       return response.json();
     })
     .then(wire)
     .catch(() => {
+      // No fallback amounts in JS: show the static table from index.html.
       if (interactive instanceof HTMLElement) {
         interactive.hidden = true;
       }
