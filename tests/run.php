@@ -774,6 +774,7 @@ require __DIR__ . '/tiers_drift_test.php';
 require __DIR__ . '/app_ui_test.php';
 require __DIR__ . '/app_writes_test.php';
 require __DIR__ . '/gsc_test.php';
+require __DIR__ . '/free_scan_block_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
