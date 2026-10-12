@@ -795,3 +795,10 @@ details.app-details summary {
     scroll-behavior: auto !important;
   }
 }
+
+.app-live__sources { list-style: none; padding: 0; margin: 0.75rem 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.95rem; }
+.app-live__answers { margin: 0.5rem 0 0.75rem 1.1rem; font-size: 0.92rem; }
+.app-live__answers li { margin: 0.25rem 0; }
+.app-live__answers .is-yes { color: #22663f; }
+.app-live__answers .is-no { color: #7a5a1e; }
+.app-live__note { font-size: 0.9rem; opacity: 0.85; }

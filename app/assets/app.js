@@ -203,7 +203,64 @@
     });
   }
 
+  var LIVE_STEPS = {
+    site: 'Ik bekijk nu je site…',
+    profiel: 'Ik maak nu je bedrijfsprofiel…',
+    vragen: 'Ik stel nu de vragen op die klanten aan AI stellen…',
+    meten: 'Ik stel de vragen nu aan de AI-assistenten…',
+    rapport: 'Ik zet de uitslag nu voor je klaar…'
+  };
+
+  function initLiveProgress() {
+    var box = document.querySelector('[data-live-progress]');
+    if (!box) return;
+    var stepEl = box.querySelector('[data-live-step]');
+    var srcEl = box.querySelector('[data-live-sources]');
+    var ansEl = box.querySelector('[data-live-answers]');
+    var stopped = false;
+
+    function text(tag, value, cls) {
+      var el = document.createElement(tag);
+      if (cls) el.className = cls;
+      el.textContent = value;
+      return el;
+    }
+
+    function render(p) {
+      var step = LIVE_STEPS[p.step] || LIVE_STEPS.site;
+      if (p.step === 'meten' && p.active_source) step = 'Ik vraag nu ' + p.active_source + '…';
+      stepEl.textContent = step;
+      srcEl.replaceChildren();
+      (p.sources || []).forEach(function (s) {
+        srcEl.appendChild(text('li', s.label + ' ' + s.done + '/' + s.total + (s.done ? ' · ' + s.mentioned + '× genoemd' : '')));
+      });
+      srcEl.hidden = !(p.sources || []).length;
+      ansEl.replaceChildren();
+      (p.answers || []).slice(-10).reverse().forEach(function (a) {
+        var li = text('li', a.source + ': ' + a.vraag + ' ');
+        li.appendChild(text('strong', a.mentioned ? 'genoemd' : 'niet genoemd', a.mentioned ? 'is-yes' : 'is-no'));
+        ansEl.appendChild(li);
+      });
+      ansEl.hidden = !(p.answers || []).length;
+    }
+
+    function poll() {
+      if (stopped || document.hidden) { setTimeout(poll, 4000); return; }
+      fetch('/app/progress.php', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || !d.ok) return;
+          if (d.status === 'klaar' || d.status === 'mislukt') { stopped = true; window.location.reload(); return; }
+          if (d.progress) render(d.progress);
+        })
+        .catch(function () {})
+        .finally(function () { if (!stopped) setTimeout(poll, 4000); });
+    }
+    poll();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    initLiveProgress();
     initActionCards();
     initClamp();
     initDialogs();
