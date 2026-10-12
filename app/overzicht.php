@@ -25,8 +25,11 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
     <?php if ($score['status'] === 'none'): ?>
       <p class="app-empty">Er is nog geen scan gekoppeld aan dit account.</p>
     <?php elseif (in_array($score['status'], ['bezig', 'bevestigd', 'onbevestigd'], true)): ?>
-      <div class="app-score" aria-live="polite">
-        <p><strong>Je scan loopt.</strong> Ik lees je website, stel vragen aan AI-assistenten en tel hoe vaak je genoemd wordt. Je krijgt een mail als het klaar is; je hoeft deze pagina niet open te houden.</p>
+      <div class="app-score app-live" aria-live="polite" data-live-progress>
+        <p><strong>Je scan loopt.</strong> <span data-live-step>Ik maak je scan klaar…</span></p>
+        <ul class="app-live__sources" data-live-sources hidden></ul>
+        <ol class="app-live__answers" data-live-answers hidden></ol>
+        <p class="app-live__note">Je krijgt een mail als het klaar is; je hoeft deze pagina niet open te houden.</p>
       </div>
     <?php elseif ($score['status'] === 'wacht_dag'): ?>
       <div class="app-score" aria-live="polite">

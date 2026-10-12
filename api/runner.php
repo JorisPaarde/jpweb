@@ -175,6 +175,22 @@ if ($action === 'complete') {
     ai_scan_json_response(['ok' => true]);
 }
 
+if ($action === 'progress') {
+    if ($method !== 'POST') {
+        ai_scan_json_response(['ok' => false, 'error' => 'method'], 405);
+    }
+    $id = (int) ($body['id'] ?? 0);
+    $progress = $body['progress'] ?? null;
+    if ($id < 1 || !is_array($progress)) {
+        ai_scan_json_response(['ok' => false, 'error' => 'missing_fields'], 400);
+    }
+    $stored = ai_scan_store_progress($pdo, $id, $progress);
+    if ($stored !== 'ok') {
+        ai_scan_json_response(['ok' => false, 'error' => $stored], $stored === 'too_large' ? 413 : 409);
+    }
+    ai_scan_json_response(['ok' => true]);
+}
+
 if ($action === 'fail') {
     if ($method !== 'POST') {
         ai_scan_json_response(['ok' => false, 'error' => 'method'], 405);

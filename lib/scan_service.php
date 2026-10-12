@@ -979,3 +979,69 @@ function ai_scan_trigger_runner(array $config): bool
 
     return true;
 }
+
+/**
+ * Live voortgang van een lopende scan (runner action=progress). Alleen voor status 'bezig'.
+ *
+ * @param array<string, mixed> $progress
+ */
+function ai_scan_store_progress(PDO $pdo, int $id, array $progress, int $now = 0): string
+{
+    $now = $now > 0 ? $now : time();
+    $json = json_encode($progress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (!is_string($json)) {
+        return 'bad_json';
+    }
+    if (strlen($json) > 65536) {
+        return 'too_large';
+    }
+    $stmt = $pdo->prepare("UPDATE scans SET progress_json = :p, progress_at = :t WHERE id = :id AND status = 'bezig'");
+    $stmt->execute(['p' => $json, 't' => $now, 'id' => $id]);
+
+    return $stmt->rowCount() === 1 ? 'ok' : 'not_running';
+}
+
+/**
+ * Publieke (eigen gebruiker) weergave van de voortgang: alleen veilige velden.
+ *
+ * @return array{status: string, progress: array<string, mixed>|null}
+ */
+function ai_scan_progress_view(?array $scan): array
+{
+    if ($scan === null) {
+        return ['status' => 'none', 'progress' => null];
+    }
+    $status = (string) ($scan['status'] ?? '');
+    $raw = (string) ($scan['progress_json'] ?? '');
+    $p = $raw !== '' ? json_decode($raw, true) : null;
+    if (!is_array($p) || $status !== 'bezig') {
+        return ['status' => $status, 'progress' => null];
+    }
+    $out = [
+        'step' => (string) ($p['step'] ?? ''),
+        'active_source' => (string) ($p['active_source'] ?? ''),
+        'sources' => [],
+        'answers' => [],
+    ];
+    foreach ((array) ($p['sources'] ?? []) as $label => $src) {
+        if (is_array($src)) {
+            $out['sources'][] = [
+                'label' => substr((string) $label, 0, 40),
+                'done' => (int) ($src['done'] ?? 0),
+                'total' => (int) ($src['total'] ?? 0),
+                'mentioned' => (int) ($src['mentioned'] ?? 0),
+            ];
+        }
+    }
+    foreach (array_slice((array) ($p['answers'] ?? []), -60) as $a) {
+        if (is_array($a)) {
+            $out['answers'][] = [
+                'source' => substr((string) ($a['source'] ?? ''), 0, 40),
+                'vraag' => substr((string) ($a['vraag'] ?? ''), 0, 200),
+                'mentioned' => !empty($a['mentioned']),
+            ];
+        }
+    }
+
+    return ['status' => $status, 'progress' => $out];
+}
