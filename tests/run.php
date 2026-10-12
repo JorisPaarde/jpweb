@@ -584,6 +584,7 @@ test('form IP rate limit (max 3/hour default path)', static function (): void {
     $config['form_ip_max_per_hour'] = 3;
     $config['form_ip_max_per_day'] = 20;
     $config['form_burst_seconds'] = 0;
+    $config['free_scan_one_per_ip'] = false; // test alleen de rate limit
     $ip = '9.9.9.9';
     $now = time();
     for ($i = 0; $i < 3; $i++) {

@@ -34,3 +34,38 @@ test('admin block page requires admin, csrf and logs', static function (): void 
     assert_true(str_contains($src, 'ai_scan_verify_csrf'));
     assert_true(str_contains($src, 'noindex'));
 });
+
+test('one free scan per IP (keyed hash, survives confirm, lifted with email/domain)', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $now = time();
+    $r1 = ai_scan_submit($pdo, $config, ['email' => 'ip1@firma.nl', 'website' => 'https://firma.nl', 'consent' => '1'], '5.6.7.8', $now);
+    assert_same('check_mail', $r1['code']);
+    // pending scan from same IP blocks a different email/domain
+    $r2 = ai_scan_submit($pdo, $config, ['email' => 'ip2@ander.nl', 'website' => 'https://ander.nl', 'consent' => '1'], '5.6.7.8', $now);
+    assert_same('already_scanned', $r2['code']);
+
+    $pdo->prepare('UPDATE scans SET confirm_token_hash = :h WHERE email = :e')
+        ->execute(['h' => ai_scan_hash_token('tip'), 'e' => 'ip1@firma.nl']);
+    assert_same('confirmed', ai_scan_confirm($pdo, $config, 'tip', $now)['code']);
+    $hash = ai_scan_ip_block_hash($config, '5.6.7.8');
+    assert_true(strlen($hash) === 64 && $hash !== hash('sha256', '5.6.7.8') && $hash !== ai_scan_ip_hash('5.6.7.8'));
+    assert_same(1, (int) $pdo->query("SELECT COUNT(*) FROM free_scan_blocks WHERE ip_hash = '" . $hash . "'")->fetchColumn());
+    assert_same(0, (int) $pdo->query('SELECT COUNT(*) FROM scans WHERE ip_block_hash IS NOT NULL')->fetchColumn());
+
+    $r3 = ai_scan_submit($pdo, $config, ['email' => 'ip3@derde.nl', 'website' => 'https://derde.nl', 'consent' => '1'], '5.6.7.8', $now + 7200);
+    assert_same('already_scanned', $r3['code']);
+    // other IP still fine
+    $r4 = ai_scan_submit($pdo, $config, ['email' => 'ip4@vierde.nl', 'website' => 'https://vierde.nl', 'consent' => '1'], '5.6.7.9', $now + 7200);
+    assert_same('check_mail', $r4['code']);
+
+    // IPv6: same /64 counts as one
+    assert_same(ai_scan_ip_block_hash($config, '2001:db8:1:2::1'), ai_scan_ip_block_hash($config, '2001:db8:1:2:ffff::9'));
+    assert_same('', ai_scan_ip_block_hash($config, ''));
+
+    // admin lift by email removes the IP block too (same row)
+    ai_scan_admin_lift_free_scan_block($pdo, 'ip1@firma.nl', 'firma.nl');
+    $pdo->exec("DELETE FROM scans WHERE email = 'ip1@firma.nl'");
+    $r5 = ai_scan_submit($pdo, $config, ['email' => 'ip5@vijfde.nl', 'website' => 'https://vijfde.nl', 'consent' => '1'], '5.6.7.8', $now + 7300);
+    assert_same('check_mail', $r5['code']);
+});
