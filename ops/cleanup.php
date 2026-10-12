@@ -98,6 +98,16 @@ try {
         $sel->execute(['e' => $eh]);
         $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
         $data = json_decode((string) base64_decode((string) getenv('OPS_PROFILE_B64'), true), true);
+        $byEmail = count($ids);
+        if ($byEmail === 0 && $website !== '') {
+            // Account op e-mail niet gevonden: zoek via de scan van dit domein (precies één gebruiker).
+            $pw = ai_scan_parse_website($website);
+            $dh = !empty($pw['ok']) ? ai_scan_domain_hash((string) $pw['domain']) : '';
+            $sd = $pdo->prepare('SELECT DISTINCT user_id FROM scans WHERE domain_hash = :d AND user_id IS NOT NULL');
+            $sd->execute(['d' => $dh]);
+            $ids = $sd->fetchAll(PDO::FETCH_COLUMN);
+        }
+        echo "ops {$job}: users_op_email={$byEmail} users_gevonden=" . count($ids) . ' json=' . (is_array($data) ? 'ok' : 'fout') . "\n";
         if (count($ids) !== 1 || !is_array($data)) {
             $r = ['ok' => false];
             $summary = 'users_gevonden=' . count($ids);
