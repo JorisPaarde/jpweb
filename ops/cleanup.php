@@ -12,6 +12,17 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 
+register_shutdown_function(static function (): void {
+    $e = error_get_last();
+    if (is_array($e) && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        echo 'ops fatal: ' . substr((string) $e['message'], 0, 300) . ' @' . basename((string) $e['file']) . ':' . (int) $e['line'] . "\n";
+    }
+});
+set_exception_handler(static function (Throwable $e): void {
+    echo 'ops exception: ' . get_class($e) . ': ' . substr($e->getMessage(), 0, 300) . ' @' . basename($e->getFile()) . ':' . $e->getLine() . "\n";
+    exit(1);
+});
+
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
@@ -80,7 +91,7 @@ try {
     $pdo->commit();
 } catch (Throwable $e) {
     $pdo->rollBack();
-    fwrite(STDERR, "ops {$job}: mislukt, teruggedraaid\n");
+    echo "ops {$job}: mislukt, teruggedraaid (" . get_class($e) . ': ' . substr($e->getMessage(), 0, 200) . ")\n";
     exit(1);
 }
 
