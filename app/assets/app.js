@@ -266,3 +266,15 @@
     initDialogs();
   });
 })();
+
+// Tekstvakken met data-autogrow groeien mee met de inhoud.
+(function () {
+  var grow = function (el) {
+    el.style.height = 'auto';
+    el.style.height = Math.max(el.scrollHeight + 2, 144) + 'px';
+  };
+  document.querySelectorAll('textarea[data-autogrow]').forEach(function (el) {
+    grow(el);
+    el.addEventListener('input', function () { grow(el); });
+  });
+})();

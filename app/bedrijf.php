@@ -23,7 +23,7 @@ if (ai_scan_request_method() === 'POST' && $canWrite) {
         $servicesRaw = ai_scan_clean_input('services', 1200);
         $placesRaw = ai_scan_clean_input('places', 800);
         $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesRaw))));
-        $services = array_values(array_filter(array_map('trim', explode(',', $servicesRaw))));
+        $services = array_values(array_filter(array_map('trim', explode(str_contains($servicesRaw, "\n") ? "\n" : ',', $servicesRaw))));
         $places = array_values(array_filter(array_map('trim', explode(',', $placesRaw))));
         $aliases = array_slice($aliases, 0, 10);
         $services = array_slice($services, 0, 15);
@@ -112,7 +112,8 @@ app_render_layout($ctx, 'Bedrijf', static function (array $ctx) use ($profile, $
 
       <label class="field">
         <span class="field__label">Diensten</span>
-        <input name="services" value="<?= app_h(implode(', ', $profile['services'] ?? [])) ?>" <?= $readOnlyAttr ?>>
+        <textarea name="services" rows="6" style="resize:vertical;min-height:9rem;width:100%" data-autogrow <?= $readOnlyAttr ?>><?= app_h(implode("\n", $profile['services'] ?? [])) ?></textarea>
+        <span class="field__hint">Eén dienst per regel.</span>
       </label>
 
       <label class="field">
