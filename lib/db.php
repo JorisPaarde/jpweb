@@ -93,6 +93,8 @@ function ai_scan_migrate(PDO $pdo): void
     ai_scan_ensure_column($pdo, 'free_scan_blocks', 'ip_hash', 'TEXT NULL');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_blocks_ip ON free_scan_blocks(ip_hash)');
     ai_scan_ensure_column($pdo, 'scans', 'ip_block_hash', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'scans', 'progress_json', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'scans', 'progress_at', 'INTEGER NULL');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS rate_events (

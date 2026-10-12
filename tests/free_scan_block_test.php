@@ -167,3 +167,23 @@ test('runner dispatch is a no-op without token and wired into confirm', static f
     assert_true(str_contains($src, 'ai_scan_trigger_runner($config);'));
     assert_true(str_contains($src, 'CURLOPT_TIMEOUT => 3'));
 });
+
+test('live progress: stored only while running, view exposes safe fields', static function (): void {
+    [, $pdo] = boot_test_db();
+    $pdo->exec("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at) VALUES('p', 'e', 'eh', 'u', 'd', 'dh', 'bevestigd', 1)");
+    $id = (int) $pdo->lastInsertId();
+    $state = ['step' => 'meten', 'active_source' => 'ChatGPT', 'sources' => ['ChatGPT' => ['done' => 2, 'total' => 10, 'mentioned' => 1]],
+        'answers' => [['source' => 'ChatGPT', 'vraag' => 'Wie?', 'mentioned' => true, 'snippet' => 'x']]];
+    assert_same('not_running', ai_scan_store_progress($pdo, $id, $state));
+    $pdo->exec("UPDATE scans SET status = 'bezig' WHERE id = " . $id);
+    assert_same('ok', ai_scan_store_progress($pdo, $id, $state));
+    assert_same('too_large', ai_scan_store_progress($pdo, $id, ['x' => str_repeat('a', 70000)]));
+    $scan = $pdo->query('SELECT * FROM scans WHERE id = ' . $id)->fetch();
+    $v = ai_scan_progress_view($scan);
+    assert_same('bezig', $v['status']);
+    assert_same('meten', $v['progress']['step']);
+    assert_same(2, $v['progress']['sources'][0]['done']);
+    assert_true(!isset($v['progress']['answers'][0]['snippet']));
+    $runner = (string) file_get_contents(dirname(__DIR__) . '/api/runner.php');
+    assert_true(str_contains($runner, "\$action === 'progress'"));
+});
