@@ -26,9 +26,11 @@ if (ai_scan_request_method() === 'POST') {
     } else {
         $result = ai_scan_set_password($pdo, $token, $password);
         if (!$result['ok']) {
-            $error = $result['code'] === 'expired'
-                ? 'Deze link is verlopen (24 uur geldig).'
-                : 'Deze link is ongeldig of al gebruikt.';
+            $error = match ($result['code']) {
+                'expired' => 'Deze link is verlopen (24 uur geldig).',
+                'no_account' => 'Bij deze link hoort geen account meer. Vraag de scan opnieuw aan of mail info@jpwebcreation.nl.',
+                default => 'Deze link is ongeldig of al gebruikt.',
+            };
         } else {
             $done = true;
         }
