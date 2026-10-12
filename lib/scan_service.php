@@ -222,6 +222,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     $confirmUrl = $base . '/ai-scan.php?confirm=' . rawurlencode($confirmToken);
     $mail = ai_scan_mail_confirm($config, $normalizedEmail, $domain, $confirmUrl);
     if (!$mail['ok']) {
+        error_log('ai_scan confirm_mail_failed scan_id=' . (int) $scanId . ' cause=' . ai_scan_mail_error_cause((string) ($mail['error'] ?? 'unknown')));
         // Keep the row so a resend path can exist later; surface generic error.
         return ['code' => 'error', 'scan_id' => $scanId];
     }
@@ -792,4 +793,16 @@ function ai_scan_count_free_scan_blocks(PDO $pdo, string $emailRaw, string $webs
     $stmt->execute(['e' => $emailHash, 'e2' => $emailHash, 'd' => $domainHash, 'd2' => $domainHash]);
 
     return (int) $stmt->fetchColumn();
+}
+
+/**
+ * Mail-foutoorzaak voor error_log: één regel, ingekort, zonder adressen of base64.
+ */
+function ai_scan_mail_error_cause(string $error): string
+{
+    $error = str_replace(["\r", "\n"], ' ', $error);
+    $error = preg_replace('/[^\s@<>]+@[^\s@<>]+/', '<addr>', $error) ?? '';
+    $error = preg_replace('/[A-Za-z0-9+\/=]{24,}/', '<redacted>', $error) ?? '';
+
+    return substr(trim($error), 0, 200);
 }
