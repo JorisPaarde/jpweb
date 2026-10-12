@@ -98,7 +98,7 @@ function ai_scan_default_config(string $sqlitePath): array
         'daily_free_scans' => 20,
         'confirm_token_ttl' => 86400,
         'password_token_ttl' => 86400,
-        'stale_job_seconds' => 1800,
+        'stale_job_seconds' => 2700,
         'stale_alert_cooldown' => 3600,
         'login_max_attempts' => 5,
         'login_window_seconds' => 900,

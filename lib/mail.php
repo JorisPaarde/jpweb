@@ -209,7 +209,7 @@ function ai_scan_mail_scan_ready(array $config, string $to, string $website, str
 function ai_scan_mail_stale_alert(array $config, int $staleCount, array $sampleIds): array
 {
     $to = (string) (($config['smtp']['alert_to'] ?? '') ?: ($config['smtp']['from_email'] ?? 'info@jpwebcreation.nl'));
-    $minutes = max(1, (int) round(((int) ($config['stale_job_seconds'] ?? 1800)) / 60));
+    $minutes = max(1, (int) round(((int) ($config['stale_job_seconds'] ?? 2700)) / 60));
     $subject = 'AI-scan: job wacht langer dan ' . $minutes . ' minuten';
     $ids = $sampleIds === [] ? '-' : implode(', ', $sampleIds);
     $body = implode("\n", [

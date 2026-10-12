@@ -12,7 +12,7 @@ ai_scan_security_headers();
 
 $code = (string) ($_GET['s'] ?? '');
 $pages = [
-    'confirmed' => ['Je e-mailadres is bevestigd', 'Je scan staat in de wachtrij. Zodra de uitslag klaar is, krijg je een mail van mij. Je krijgt ook een mail met een link om een wachtwoord te kiezen; daarmee log je straks in.', true],
+    'confirmed' => ['Je e-mailadres is bevestigd', 'Je scan staat in de wachtrij en start binnen een half uur. Zodra de uitslag klaar is, krijg je een mail van mij. Je krijgt ook een mail met een link om een wachtwoord te kiezen; daarmee log je straks in.', true],
     'check_mail' => ['Kijk in je mail', 'Ik heb je een mail gestuurd. Klik op de link om je e-mailadres te bevestigen; daarna start de scan.', false],
     'daily_full' => ['Je scan staat ingepland', 'Vandaag zijn alle gratis scans bezet. Je scan start automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail van mij zodra de uitslag klaar is.', true],
     'already_scanned' => ['Al een gratis scan gedaan', 'Voor deze website of dit e-mailadres is al een gratis scan gedaan. Log in met het e-mailadres van die scan.', true],
