@@ -17,7 +17,7 @@ $prefill = $_SESSION['ai_scan_login_prefill'] ?? null;
 unset($_SESSION['ai_scan_login_prefill']);
 if (is_array($prefill) && (int) ($prefill['at'] ?? 0) > time() - 600) {
     $prefillEmail = (string) ($prefill['email'] ?? '');
-    $notice = 'Je wachtwoord is ingesteld, log nu in. Je scan start binnen een half uur.';
+    $notice = 'Je wachtwoord is ingesteld, log nu in. Je scan is gestart, binnen ~15 minuten klaar.';
 }
 $next = (string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/');
 if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')

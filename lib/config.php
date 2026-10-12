@@ -47,6 +47,15 @@ function ai_scan_load_config(?string $overridePath = null): array
         $config = array_replace_recursive(ai_scan_default_config(''), $loaded);
     }
 
+    // GitHub workflow_dispatch-token voor de scanrunner, door de deploy geschreven uit een repo-secret.
+    $dispatchPath = $path !== null ? dirname($path) . '/freescan-dispatch.php' : $webroot . '/../private/freescan-dispatch.php';
+    if (is_readable($dispatchPath)) {
+        $dispatch = require $dispatchPath;
+        if (is_array($dispatch) && isset($dispatch['runner_dispatch_token']) && is_string($dispatch['runner_dispatch_token'])) {
+            $config['runner_dispatch_token'] = $dispatch['runner_dispatch_token'];
+        }
+    }
+
     // GSC OAuth client, written by the deploy workflow from GitHub secrets.
     // Kept separate so the deploy never overwrites the hand-managed main config.
     $gscPath = $path !== null ? dirname($path) . '/gsc-oauth.php' : $webroot . '/../private/gsc-oauth.php';
