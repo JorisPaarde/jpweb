@@ -22,6 +22,17 @@ function ai_scan_can_write(array $user, ?array $tiers = null): bool
 }
 
 /**
+ * Bedrijfsgegevens en concurrenten mag elk account aanvullen, ook gratis
+ * (voorgevuld uit de scan). Meet-instellingen blijven voor het abonnement.
+ *
+ * @param array<string, mixed> $user
+ */
+function ai_scan_can_edit_setup(array $user): bool
+{
+    return (int) ($user['id'] ?? 0) > 0;
+}
+
+/**
  * Actions remaining this calendar month (Europe/Amsterdam).
  *
  * @param array<string, mixed> $user

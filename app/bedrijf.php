@@ -7,8 +7,9 @@ require_once __DIR__ . '/layout.php';
 
 $ctx = app_boot('bedrijf');
 $profile = $ctx['profile'];
-$canWrite = !empty($ctx['can_write']);
 $isFree = !empty($ctx['is_free']);
+// Bedrijfsgegevens mag iedereen aanvullen, ook met een gratis account (voorgevuld uit de scan).
+$canWrite = !empty($ctx['can_write']) || $isFree;
 $toast = '';
 
 if (ai_scan_request_method() === 'POST' && $canWrite) {
@@ -65,7 +66,9 @@ if (ai_scan_request_method() === 'POST' && $canWrite) {
             'week' => 'volgende meting',
             'versions' => null,
         ]);
-        $toast = 'Opgeslagen. Gaat in bij de meting van maandag ' . app_next_monday_label() . '.';
+        $toast = $isFree
+            ? 'Opgeslagen. Ik gebruik dit bij je volgende meting.'
+            : 'Opgeslagen. Gaat in bij de meting van maandag ' . app_next_monday_label() . '.';
         $ctx['profile'] = app_load_profile($pdo, $userId, $ctx['scan'], $ctx['result']);
         $profile = $ctx['profile'];
         if ($company !== '') {
@@ -83,7 +86,7 @@ app_render_layout($ctx, 'Bedrijf', static function (array $ctx) use ($profile, $
       <div class="app-flash" role="status"><?= app_h($toast) ?></div>
     <?php endif; ?>
     <?php if ($isFree): ?>
-      <p class="app-locked">Bedrijfsgegevens zijn in te zien. Wijzigen kan niet, want er komt geen nieuwe meting. <?= app_h(app_locked_line()) ?></p>
+      <p class="app-locked">Deze gegevens heb ik uit je website gehaald bij de gratis scan. Klopt iets niet of mist er iets? Pas het aan en sla op.</p>
     <?php endif; ?>
 
     <form method="post" action="/app/bedrijf.php" novalidate>

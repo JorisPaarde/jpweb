@@ -177,9 +177,11 @@ test('competitor add/delete free refusal and paid validation', static function (
     [$config, $pdo, $free, $paid, $result, $profile] = app_writes_seed();
     $freeProfile = app_load_profile($pdo, (int) $free['id'], null, $result);
 
-    $freeRes = ai_scan_competitor_add($pdo, $free, $freeProfile, $result, 'Nieuwe Concurrent BV');
-    assert_true(empty($freeRes['ok']));
-    assert_same(AI_SCAN_FREE_WRITE_MESSAGE, $freeRes['error'] ?? '');
+    // Gratis accounts mogen hun concurrentenlijst aanvullen (voorgevuld uit de scan).
+    $freeRes = ai_scan_competitor_add($pdo, $free, $freeProfile, $result, 'Gratis Concurrent BV');
+    assert_true(!empty($freeRes['ok']), $freeRes['error'] ?? 'free add failed');
+    $freeDel = ai_scan_competitor_delete($pdo, $free, $result, (int) ($freeRes['id'] ?? 0));
+    assert_true(!empty($freeDel['ok']), $freeDel['error'] ?? 'free delete failed');
 
     $own = ai_scan_competitor_add($pdo, $paid, $profile, $result, 'Voorbeeld Plinten');
     assert_true(empty($own['ok']));
