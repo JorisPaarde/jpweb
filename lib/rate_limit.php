@@ -45,6 +45,23 @@ function ai_scan_rate_global_key(): string
 }
 
 /**
+ * Pogingen vanaf dit IP: geslaagde aanvragen plus ongeldige pogingen.
+ */
+function ai_scan_form_ip_attempts(PDO $pdo, string $keyHash, int $since): int
+{
+    return ai_scan_rate_count($pdo, 'form_ip', $keyHash, $since)
+        + ai_scan_rate_count($pdo, 'form_ip_invalid', $keyHash, $since);
+}
+
+/**
+ * Een ongeldige poging telt mee voor het uur- en daglimiet per IP, niet voor de burst.
+ */
+function ai_scan_form_invalid_record(PDO $pdo, string $ip, int $now): void
+{
+    ai_scan_rate_hit($pdo, 'form_ip_invalid', ai_scan_ip_hash($ip), $now);
+}
+
+/**
  * Form IP limits: burst (short window) + max/hour (+ optional day).
  */
 function ai_scan_form_ip_rate_limited(PDO $pdo, array $config, string $ip, int $now): bool
@@ -59,12 +76,12 @@ function ai_scan_form_ip_rate_limited(PDO $pdo, array $config, string $ip, int $
     }
 
     $perHour = (int) ($config['form_ip_max_per_hour'] ?? 3);
-    if ($perHour > 0 && ai_scan_rate_count($pdo, 'form_ip', $key, $now - 3600) >= $perHour) {
+    if ($perHour > 0 && ai_scan_form_ip_attempts($pdo, $key, $now - 3600) >= $perHour) {
         return true;
     }
 
     $perDay = (int) ($config['form_ip_max_per_day'] ?? 20);
-    if ($perDay > 0 && ai_scan_rate_count($pdo, 'form_ip', $key, $now - 86400) >= $perDay) {
+    if ($perDay > 0 && ai_scan_form_ip_attempts($pdo, $key, $now - 86400) >= $perDay) {
         return true;
     }
 

@@ -157,7 +157,8 @@ test('flow: confirm redirects to password page, password page redirects to login
     assert_true(str_contains($pw, "ai_scan_redirect('/login/', 303)"));
     assert_true(str_contains($pw, 'ai_scan_login_prefill'));
     $login = (string) file_get_contents($root . '/login/index.php');
-    assert_true(str_contains($login, 'Je wachtwoord is ingesteld, log nu in. Je scan is gestart, binnen ~15 minuten klaar.'));
+    assert_true(str_contains($login, 'Je wachtwoord is ingesteld, log nu in.'));
+    assert_true(str_contains($login, 'Je scan is gestart, binnen ~15 minuten klaar.'));
     assert_true(str_contains($login, "unset(\$_SESSION['ai_scan_login_prefill'])"));
 });
 

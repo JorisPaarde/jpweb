@@ -24,6 +24,10 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
 
     <?php if ($score['status'] === 'none'): ?>
       <p class="app-empty">Er is nog geen scan gekoppeld aan dit account.</p>
+    <?php elseif (!empty($score['retrying'])): ?>
+      <div class="app-score" aria-live="polite">
+        <p><strong>De scan lukte niet in één keer.</strong> Ik probeer het nog één keer automatisch; je krijgt een mail als hij klaar is.</p>
+      </div>
     <?php elseif (in_array($score['status'], ['bezig', 'bevestigd', 'onbevestigd'], true)): ?>
       <div class="app-score app-live" aria-live="polite" data-live-progress>
         <p><strong>Je scan loopt.</strong> <span data-live-step>Ik maak je scan klaar…</span></p>
@@ -37,7 +41,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
       </div>
     <?php elseif ($score['status'] === 'mislukt'): ?>
       <div class="app-score" aria-live="polite">
-        <p>De scan is niet gelukt. Ik kijk ernaar en start hem opnieuw. Je krijgt een mail als hij klaar is.</p>
+        <p>De scan is niet gelukt. Ik kijk er zelf naar en neem contact met je op.</p>
       </div>
     <?php else: ?>
       <section class="app-score" aria-label="Hoofdgetal">

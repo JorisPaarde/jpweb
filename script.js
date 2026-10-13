@@ -285,7 +285,7 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
     const email = emailField instanceof HTMLInputElement ? emailField.value.trim() : "";
     const text = typeof message === "string" && message
       ? message
-      : `Check je mail. We hebben een bevestigingslink gestuurd naar ${email || "je adres"}. Zie je niets? Kijk in je spam of stuur opnieuw.`;
+      : `Check je mail. Ik heb een bevestigingslink gestuurd naar ${email || "je adres"}. Zie je niets? Kijk in je spam of vraag de scan opnieuw aan.`;
 
     scanStatus.innerHTML = `
       <span class="form-status-icon" aria-hidden="true">✓</span>
@@ -394,11 +394,50 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
     return data;
   };
 
+  const validateScanForm = () => {
+    const errors = {};
+    const emailField = scanForm.elements.namedItem("email");
+    const websiteField = scanForm.elements.namedItem("website");
+    const privacyField = scanForm.elements.namedItem("privacy");
+    const email = emailField instanceof HTMLInputElement ? emailField.value.trim() : "";
+    const website = websiteField instanceof HTMLInputElement ? websiteField.value.trim() : "";
+
+    if (email === "") {
+      errors.email = "Vul je e-mailadres in.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(email)) {
+      errors.email = "Vul een geldig e-mailadres in, bijvoorbeeld naam@bedrijf.nl.";
+    }
+
+    if (website === "") {
+      errors.website = "Vul de website van je bedrijf in.";
+    } else {
+      const host = website.replace(/^https?:\/\//i, "").split(/[/?#]/)[0].replace(/:\d+$/, "");
+      if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i.test(host)) {
+        errors.website = "Vul een geldige website in, bijvoorbeeld jouwbedrijf.nl.";
+      } else if (!/\.(nl|be|eu|com)$/i.test(host)) {
+        errors.website = "Ik scan websites die eindigen op .nl, .be, .eu of .com.";
+      }
+    }
+
+    if (!(privacyField instanceof HTMLInputElement) || !privacyField.checked) {
+      errors.privacy = "Vink aan dat je akkoord gaat, anders kan ik de scan niet starten.";
+    }
+
+    return errors;
+  };
+
   scanForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearScanErrors();
     scanStatus.hidden = true;
     scanStatus.classList.remove("is-error", "is-success");
+
+    const localErrors = validateScanForm();
+    if (Object.keys(localErrors).length > 0) {
+      showScanError("Controleer de gemarkeerde velden en probeer het opnieuw.");
+      applyScanFieldErrors(localErrors);
+      return;
+    }
 
     const submitButton = scanForm.querySelector('button[type="submit"]');
     if (submitButton instanceof HTMLButtonElement) {

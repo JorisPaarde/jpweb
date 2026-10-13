@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Minimal SMTP client (SSL on port 465) for transactional AI-scan mail.
- * Never sends passwords. Bodies are Dutch, "Hoi," / "ik" / "Groet,".
+ * Never sends passwords. Bodies are Dutch, "Hoi," / "ik" / "Groet,\nJoris".
  */
 
 /**
@@ -163,6 +163,7 @@ function ai_scan_mail_confirm(array $config, string $to, string $website, string
         'De link werkt 24 uur. Heb jij dit niet aangevraagd? Dan hoef je niets te doen; de aanvraag wordt na 7 dagen vanzelf verwijderd.',
         '',
         'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
@@ -184,6 +185,50 @@ function ai_scan_mail_welcome(array $config, string $to, string $website, string
         'De scan voor ' . $website . ' is gestart. Ik mail je als de uitslag klaar is.',
         '',
         'Groet,',
+        'Joris',
+    ]);
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
+
+function ai_scan_mail_password_reset(array $config, string $to, string $resetUrl): array
+{
+    $subject = 'Kies een nieuw wachtwoord';
+    $body = implode("\n", [
+        'Hoi,',
+        '',
+        'Je vroeg om een nieuw wachtwoord voor je AI-scan account.',
+        'Kies het via deze link (1 uur geldig, werkt één keer):',
+        $resetUrl,
+        '',
+        'Heb jij dit niet gevraagd? Dan hoef je niets te doen; je huidige wachtwoord blijft werken.',
+        '',
+        'Groet,',
+        'Joris',
+    ]);
+
+    return ai_scan_send_mail($config, $to, $subject, $body);
+}
+
+/**
+ * Interne melding aan info@: een scan is ook na de automatische herpoging mislukt.
+ */
+function ai_scan_mail_failed_alert(array $config, string $publicId, string $domain, string $message): array
+{
+    $to = (string) (($config['smtp']['alert_to'] ?? '') ?: ($config['smtp']['from_email'] ?? 'info@jpwebcreation.nl'));
+    $subject = 'AI-scan mislukt na herpoging: ' . $domain;
+    $body = implode("\n", [
+        'Hoi,',
+        '',
+        'Een AI-scan is twee keer mislukt en staat nu op mislukt.',
+        'Domein: ' . $domain,
+        'Scan: ' . $publicId,
+        'Melding: ' . mb_substr(str_replace(["\r", "\n"], ' ', $message), 0, 300),
+        '',
+        'Zie /admin/scans.php.',
+        '',
+        'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
@@ -201,6 +246,7 @@ function ai_scan_mail_scan_ready(array $config, string $to, string $website, str
         $dashboardUrl,
         '',
         'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
@@ -219,6 +265,7 @@ function ai_scan_mail_stale_alert(array $config, int $staleCount, array $sampleI
         'Voorbeelden: ' . $ids,
         '',
         'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
@@ -248,13 +295,14 @@ function ai_scan_mail_tier_request_admin(
         'Soort: ' . $kind,
         '',
         'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
 }
 
 /**
- * Customer confirmation after a tier request. First person "ik", ends with "Groet,".
+ * Customer confirmation after a tier request. First person "ik", ends with "Groet,\nJoris".
  *
  * @param array<string, mixed> $tiers
  */
@@ -277,13 +325,14 @@ function ai_scan_mail_tier_request_customer(
         'Ik pas het aan en laat het je weten.',
         '',
         'Groet,',
+        'Joris',
     ]);
 
     return ai_scan_send_mail($config, $to, $subject, $body);
 }
 
 /**
- * Customer mail when the admin changes the tier. First person "ik", ends with "Groet,".
+ * Customer mail when the admin changes the tier. First person "ik", ends with "Groet,\nJoris".
  *
  * @param array{id: string, questions: int, actions: int, monthly: int, read_only: bool, weekly_measurement: bool} $effective
  * @param array<string, mixed> $tiers
@@ -308,6 +357,7 @@ function ai_scan_mail_tier_changed_customer(
             'Je laatste uitslag blijft zichtbaar. Nieuwe metingen staan in het abonnement.',
             '',
             'Groet,',
+            'Joris',
         ]);
     } else {
         $body = implode("\n", [
@@ -317,6 +367,7 @@ function ai_scan_mail_tier_changed_customer(
             'Je kunt nu tot ' . $questions . ' vragen per meting en ' . $actions . ' verbeteracties per maand gebruiken.',
             '',
             'Groet,',
+            'Joris',
         ]);
     }
 

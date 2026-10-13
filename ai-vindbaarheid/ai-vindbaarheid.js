@@ -152,27 +152,32 @@
     }
 
     if (monthlyEl instanceof HTMLElement) {
-      monthlyEl.textContent = isAbove ? requestLabel : formatEuro(tier.monthly);
+      monthlyEl.textContent = isAbove ? "Prijs op maat" : formatEuro(tier.monthly);
     }
 
-    if (weeklyEl instanceof HTMLElement) {
-      weeklyEl.textContent = isAbove ? "—" : `${formatEuro(tier.weekly)} per week`;
+    // Boven het maximum is er geen vaste prijs: verberg de lege prijsdetails.
+    root.querySelectorAll(".geo-pricing-monthly small, .geo-pricing-meta, .geo-pricing-actions").forEach((node) => {
+      if (node instanceof HTMLElement) {
+        node.hidden = isAbove;
+      }
+    });
+
+    if (weeklyEl instanceof HTMLElement && !isAbove) {
+      weeklyEl.textContent = `${formatEuro(tier.weekly)} per week`;
     }
 
-    if (annualEl instanceof HTMLElement) {
-      annualEl.textContent = isAbove
-        ? "—"
-        : `${formatEuro(tier.annual)} per jaar (10 maanden)`;
+    if (annualEl instanceof HTMLElement && !isAbove) {
+      annualEl.textContent = `${formatEuro(tier.annual)} per jaar (10 maanden)`;
     }
 
-    if (actionsEl instanceof HTMLElement) {
-      actionsEl.textContent = isAbove ? "—" : String(tier.actions);
+    if (actionsEl instanceof HTMLElement && !isAbove) {
+      actionsEl.textContent = String(tier.actions);
     }
 
     if (contactEl instanceof HTMLElement) {
       if (isAbove) {
         contactEl.hidden = false;
-        contactEl.textContent = requestLabel;
+        contactEl.textContent = "Voor meer dan 1000 vragen maak ik een prijs op maat. Mail of bel me.";
       } else {
         contactEl.hidden = true;
         contactEl.textContent = "";
@@ -296,6 +301,8 @@
             if (input instanceof HTMLInputElement) {
               input.checked = true;
             }
+            // Het getoonde pakket is uren én het aantal vragen op de kaart (de eerste tier).
+            range.value = "0";
             goToPrices();
           },
         ));

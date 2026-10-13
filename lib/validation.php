@@ -55,6 +55,57 @@ function ai_scan_log_validation_rule(string $rule, array $context = []): void
 }
 
 /**
+ * Veilige, Nederlandse melding per validatieregel (nooit of een adres al gescand is).
+ *
+ * @param array<string, mixed> $config
+ * @return array{field: string, message: string}
+ */
+function ai_scan_validation_public_error(array $config, string $rule, string $emailRaw = '', string $websiteRaw = ''): array
+{
+    $tlds = $config['website_allowed_tlds'] ?? ['nl', 'be', 'eu', 'com'];
+    $tldText = ai_scan_allowed_tlds_text(is_array($tlds) ? $tlds : ['nl', 'be', 'eu', 'com']);
+
+    return match ($rule) {
+        'consent' => ['field' => 'privacy', 'message' => 'Vink aan dat je akkoord gaat, anders kan ik de scan niet starten.'],
+        'email_syntax', 'email_normalize' => [
+            'field' => 'email',
+            'message' => trim($emailRaw) === '' ? 'Vul je e-mailadres in.' : 'Vul een geldig e-mailadres in, bijvoorbeeld naam@bedrijf.nl.',
+        ],
+        'email_tld_blocked', 'email_disposable' => ['field' => 'email', 'message' => 'Gebruik een e-mailadres dat je zelf blijft lezen. Je uitslag komt daar terecht.'],
+        'email_mx' => ['field' => 'email', 'message' => 'Dit e-mailadres lijkt niet te bestaan. Controleer de spelling.'],
+        'website_parse' => [
+            'field' => 'website',
+            'message' => trim($websiteRaw) === '' ? 'Vul de website van je bedrijf in.' : 'Vul een geldige website in, bijvoorbeeld jouwbedrijf.nl.',
+        ],
+        'website_tld' => ['field' => 'website', 'message' => 'Ik scan websites die eindigen op ' . $tldText . '.'],
+        'website_dns', 'website_http' => ['field' => 'website', 'message' => 'Ik kan deze website niet bereiken. Controleer het adres.'],
+        default => ['field' => 'form', 'message' => AI_SCAN_INVALID_PUBLIC_MESSAGE],
+    };
+}
+
+/**
+ * ".nl, .be, .eu of .com"
+ *
+ * @param list<string> $tlds
+ */
+function ai_scan_allowed_tlds_text(array $tlds): string
+{
+    $items = [];
+    foreach ($tlds as $tld) {
+        $tld = strtolower(ltrim(trim((string) $tld), '.'));
+        if ($tld !== '') {
+            $items[] = '.' . $tld;
+        }
+    }
+    if (count($items) < 2) {
+        return implode('', $items);
+    }
+    $last = array_pop($items);
+
+    return implode(', ', $items) . ' of ' . $last;
+}
+
+/**
  * Strict syntax: filter_var + regex (no odd chars, no consecutive dots, TLD ≥ 2 letters).
  */
 function ai_scan_email_syntax_ok(string $email): bool
@@ -223,24 +274,33 @@ function ai_scan_host_resolves(string $host): bool
 }
 
 /**
+ * @param array<string, mixed> $config
+ * @return array{ok: false, code: string, rule: string, field: string, message: string}
+ */
+function ai_scan_validation_failure(array $config, string $rule, string $emailRaw, string $websiteRaw): array
+{
+    return ['ok' => false, 'code' => 'invalid', 'rule' => $rule] + ai_scan_validation_public_error($config, $rule, $emailRaw, $websiteRaw);
+}
+
+/**
  * Run all signup email/website rules. On failure returns public code `invalid`
  * and logs the internal rule name.
  *
  * @param array<string, mixed> $config
- * @return array{ok: true, email: string, website: array{ok: bool, url: string, host: string, domain: string}}|array{ok: false, code: string, rule: string}
+ * @return array{ok: true, email: string, email_delivery: string, website: array{ok: bool, url: string, host: string, domain: string}}|array{ok: false, code: string, rule: string, field: string, message: string}
  */
 function ai_scan_validate_signup(array $config, string $emailRaw, string $websiteRaw, bool $consent): array
 {
     if (!$consent) {
         ai_scan_log_validation_rule('consent');
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'consent'];
+        return ai_scan_validation_failure($config, 'consent', $emailRaw, $websiteRaw);
     }
 
     if (!ai_scan_email_syntax_ok($emailRaw)) {
         ai_scan_log_validation_rule('email_syntax', ['email' => $emailRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'email_syntax'];
+        return ai_scan_validation_failure($config, 'email_syntax', $emailRaw, $websiteRaw);
     }
 
     $blockedTlds = $config['email_blocked_tlds'] ?? ['ru', 'su', 'by', 'in', 'cn', 'tk', 'top', 'xyz', 'buzz'];
@@ -251,26 +311,26 @@ function ai_scan_validate_signup(array $config, string $emailRaw, string $websit
     if (ai_scan_email_tld_blocked($emailRaw, $blockedTlds)) {
         ai_scan_log_validation_rule('email_tld_blocked', ['email' => $emailRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'email_tld_blocked'];
+        return ai_scan_validation_failure($config, 'email_tld_blocked', $emailRaw, $websiteRaw);
     }
 
     if (ai_scan_is_disposable_email_configured($emailRaw, $config)) {
         ai_scan_log_validation_rule('email_disposable', ['email' => $emailRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'email_disposable'];
+        return ai_scan_validation_failure($config, 'email_disposable', $emailRaw, $websiteRaw);
     }
 
     if (!ai_scan_email_domain_has_dns($emailRaw)) {
         ai_scan_log_validation_rule('email_mx', ['email' => $emailRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'email_mx'];
+        return ai_scan_validation_failure($config, 'email_mx', $emailRaw, $websiteRaw);
     }
 
     $parsed = ai_scan_parse_website($websiteRaw);
     if (!$parsed['ok']) {
         ai_scan_log_validation_rule('website_parse', ['website' => $websiteRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'website_parse'];
+        return ai_scan_validation_failure($config, 'website_parse', $emailRaw, $websiteRaw);
     }
 
     $allowedWebsiteTlds = $config['website_allowed_tlds'] ?? ['nl', 'be', 'eu', 'com'];
@@ -285,13 +345,13 @@ function ai_scan_validate_signup(array $config, string $emailRaw, string $websit
     ) {
         ai_scan_log_validation_rule('website_tld', ['host' => $host]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'website_tld'];
+        return ai_scan_validation_failure($config, 'website_tld', $emailRaw, $websiteRaw);
     }
 
     if (!ai_scan_host_resolves($host) && !ai_scan_host_resolves($domain)) {
         ai_scan_log_validation_rule('website_dns', ['host' => $host]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'website_dns'];
+        return ai_scan_validation_failure($config, 'website_dns', $emailRaw, $websiteRaw);
     }
 
     $requireHttp = (bool) ($config['website_require_http'] ?? false);
@@ -300,7 +360,7 @@ function ai_scan_validate_signup(array $config, string $emailRaw, string $websit
         if (!$skip && !ai_scan_site_reachable((string) $parsed['url'])) {
             ai_scan_log_validation_rule('website_http', ['url' => $parsed['url']]);
 
-            return ['ok' => false, 'code' => 'invalid', 'rule' => 'website_http'];
+            return ai_scan_validation_failure($config, 'website_http', $emailRaw, $websiteRaw);
         }
     }
 
@@ -308,12 +368,15 @@ function ai_scan_validate_signup(array $config, string $emailRaw, string $websit
     if (!ai_scan_email_syntax_ok($normalizedEmail) && !filter_var($normalizedEmail, FILTER_VALIDATE_EMAIL)) {
         ai_scan_log_validation_rule('email_normalize', ['email' => $emailRaw]);
 
-        return ['ok' => false, 'code' => 'invalid', 'rule' => 'email_normalize'];
+        return ai_scan_validation_failure($config, 'email_normalize', $emailRaw, $websiteRaw);
     }
 
     return [
         'ok' => true,
+        // Genormaliseerd (zonder +alias/gmail-punten): alleen voor hashes en limieten.
         'email' => $normalizedEmail,
+        // Zoals ingevoerd (getrimd, lowercase): voor bezorging en opslag.
+        'email_delivery' => strtolower(trim($emailRaw)),
         'website' => [
             'ok' => true,
             'url' => (string) $parsed['url'],

@@ -235,7 +235,7 @@ test('tier request mails info@ and customer; throttle skips mail', static functi
             $sawCustomer = true;
             $body = (string) ($entry['body'] ?? '');
             assert_true(str_starts_with($body, 'Hoi firma.nl,'));
-            assert_true(str_ends_with(rtrim($body), 'Groet,'));
+            assert_true(str_ends_with(rtrim($body), "Groet,\nJoris"));
             assert_true(!preg_match('/\b(wij|we|ons)\b/iu', $body), 'customer mail must use ik, not wij/we/ons');
             assert_true(str_contains($body, 'Ik heb je aanvraag ontvangen'));
             assert_true(str_contains($body, 'Ik pas het aan'));
@@ -326,7 +326,7 @@ test('admin set tier applies immediately, pauses excess, mails customer', static
         }
         $body = (string) ($entry['body'] ?? '');
         assert_true(str_starts_with($body, 'Hoi '));
-        assert_true(str_ends_with(rtrim($body), 'Groet,'));
+        assert_true(str_ends_with(rtrim($body), "Groet,\nJoris"));
         assert_true(str_contains($body, 'Ik heb je abonnement aangepast'));
         assert_true(str_contains($body, '25 vragen'));
         assert_true(str_contains($body, '3 verbeteracties'));
