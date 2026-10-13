@@ -428,7 +428,7 @@ test('retry promise: first failure re-queues once, second is final with an inter
     $id = geo_insert_scan($pdo, 'bevestigd', 0, 'retry.nl');
     assert_true(ai_scan_claim_job($pdo, $id, $now) !== null);
 
-    $r1 = ai_scan_fail_or_retry_job($pdo, $config, $id, 'te weinig concurrenten afgeleid (0)', $now + 10);
+    $r1 = ai_scan_fail_or_retry_job($pdo, $config, $id, 'te weinig concurrenten afgeleid (0)', $now + 10, 0.42);
     assert_same(['ok' => true, 'retry' => true, 'final' => false, 'attempts' => 1], $r1);
     $row = $pdo->query('SELECT * FROM scans WHERE id = ' . $id)->fetch();
     assert_same('bevestigd', $row['status']);
@@ -438,10 +438,13 @@ test('retry promise: first failure re-queues once, second is final with an inter
     assert_same('te weinig concurrenten afgeleid (0)', $row['last_failure']);
     $job = ai_scan_next_job($pdo, $config, $now + 11);
     assert_same($id, (int) $job['id'], 'job staat weer klaar voor de runner');
+    assert_true(abs((float) $job['spent_eur'] - 0.42) < 1e-9, 'herpoging krijgt besteed bedrag mee (restant-budget)');
+    ai_scan_fail_or_retry_job($pdo, $config, 999999, 'x', $now + 11, 0.10);
     assert_same([], geo_mails($mailLog), 'geen mail bij herpoging');
 
     assert_true(ai_scan_claim_job($pdo, $id, $now + 12) !== null);
-    $r2 = ai_scan_fail_or_retry_job($pdo, $config, $id, 'opnieuw mislukt', $now + 20);
+    $r2 = ai_scan_fail_or_retry_job($pdo, $config, $id, 'opnieuw mislukt', $now + 20, 0.30);
+    assert_true(abs((float) $pdo->query('SELECT spent_eur FROM scans WHERE id = ' . $id)->fetchColumn() - 0.42) < 1e-9, 'besteed gaat nooit omlaag');
     assert_same(['ok' => true, 'retry' => false, 'final' => true, 'attempts' => 2], $r2);
     $row = $pdo->query('SELECT * FROM scans WHERE id = ' . $id)->fetch();
     assert_same('mislukt', $row['status']);
@@ -461,7 +464,7 @@ test('retry promise: first failure re-queues once, second is final with an inter
 
 test('retry promise: runner.php wires fail to retry and exposes it in health; copy and admin page', static function (): void {
     $runner = geo_src('api/runner.php');
-    assert_true(str_contains($runner, 'ai_scan_fail_or_retry_job($pdo, $config, $id, $message)'));
+    assert_true(str_contains($runner, 'ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent)'));
     foreach (["'retry' =>", "'final' =>", "'attempts' =>", "'retrying' => \$retrying", "'failed' => \$failed"] as $needle) {
         assert_true(str_contains($runner, $needle), $needle);
     }

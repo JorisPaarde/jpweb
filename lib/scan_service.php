@@ -414,7 +414,7 @@ function ai_scan_next_job(PDO $pdo, array $config, int $now = 0): ?array
     ai_scan_purge_old_ip_hashes($pdo, $now);
 
     $stmt = $pdo->query(
-        "SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, attempts
+        "SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, attempts, spent_eur
          FROM scans
          WHERE status = 'bevestigd'
          ORDER BY queued_at ASC, id ASC
@@ -441,7 +441,7 @@ function ai_scan_claim_job(PDO $pdo, int $scanId, int $now = 0): ?array
     }
 
     $stmt = $pdo->prepare(
-        'SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, claimed_at, attempts
+        'SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, claimed_at, attempts, spent_eur
          FROM scans WHERE id = :id'
     );
     $stmt->execute(['id' => $scanId]);
@@ -596,9 +596,14 @@ function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0):
  *
  * @return array{ok: bool, retry?: bool, final?: bool, attempts?: int}
  */
-function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string $message, int $now = 0): array
+function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string $message, int $now = 0, float $spentEur = 0.0): array
 {
     $now = $now > 0 ? $now : time();
+    // Totaal besteed over alle pogingen (runner stuurt cumulatief); nooit omlaag, zodat een herpoging alleen het restant krijgt.
+    if ($spentEur > 0 && is_finite($spentEur)) {
+        $sp = $pdo->prepare('UPDATE scans SET spent_eur = MAX(spent_eur, CAST(:s AS REAL)) WHERE id = :id');
+        $sp->execute(['s' => min($spentEur, 1000.0), 'id' => $scanId]);
+    }
     $maxRetries = max(0, (int) ($config['scan_max_retries'] ?? 1));
     $message = mb_substr($message, 0, 2000);
 

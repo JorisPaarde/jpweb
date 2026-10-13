@@ -98,6 +98,7 @@ function ai_scan_migrate(PDO $pdo): void
     // Mislukte scan: aantal mislukte pogingen en de melding van de eerste mislukking (alleen beheer).
     ai_scan_ensure_column($pdo, 'scans', 'attempts', 'INTEGER NOT NULL DEFAULT 0');
     ai_scan_ensure_column($pdo, 'scans', 'last_failure', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'scans', 'spent_eur', 'REAL NOT NULL DEFAULT 0');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS rate_events (

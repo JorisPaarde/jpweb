@@ -214,7 +214,8 @@ if ($action === 'fail') {
     if ($id < 1) {
         ai_scan_json_response(['ok' => false, 'error' => 'missing_id'], 400);
     }
-    $outcome = ai_scan_fail_or_retry_job($pdo, $config, $id, $message);
+    $spent = (float) ($body['spent_eur'] ?? 0);
+    $outcome = ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent);
     if (empty($outcome['ok'])) {
         ai_scan_json_response(['ok' => false, 'error' => 'not_failable'], 409);
     }
