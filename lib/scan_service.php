@@ -103,7 +103,7 @@ function ai_scan_user_used_free_scan(PDO $pdo, string $emailHash): bool
  * Submit a free-scan request. Returns a contract status code.
  * Rate-limit hits use code `rate_limited` (HTTP 429 at the edge).
  *
- * @return array{code: string, scan_id?: int, retry_after?: int, rule?: string}
+ * @return array{code: string, scan_id?: int, retry_after?: int, rule?: string, field?: string, message?: string}
  */
 function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $now = 0): array
 {
@@ -128,13 +128,19 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
 
     $validated = ai_scan_validate_signup($config, $emailRaw, $websiteRaw, $consent);
     if (!$validated['ok']) {
+        // Ongeldige pogingen tellen mee voor de IP-limiet (los van de burst, zodat een typfout herstellen kan).
+        ai_scan_form_invalid_record($pdo, $ip, $now);
+
         return [
             'code' => 'invalid',
             'rule' => (string) ($validated['rule'] ?? 'unknown'),
+            'field' => (string) ($validated['field'] ?? 'form'),
+            'message' => (string) ($validated['message'] ?? AI_SCAN_INVALID_PUBLIC_MESSAGE),
         ];
     }
 
     $normalizedEmail = (string) $validated['email'];
+    $deliveryEmail = (string) ($validated['email_delivery'] ?? $normalizedEmail);
     $parsed = $validated['website'];
     $emailHash = ai_scan_email_hash($normalizedEmail);
     $domain = (string) $parsed['domain'];
@@ -194,7 +200,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         );
         $stmt->execute([
             'public_id' => $publicId,
-            'email' => $normalizedEmail,
+            'email' => $deliveryEmail,
             'email_hash' => $emailHash,
             'website_url' => (string) $parsed['url'],
             'domain' => $domain,
@@ -220,7 +226,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
 
     $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
     $confirmUrl = $base . '/ai-scan.php?confirm=' . rawurlencode($confirmToken);
-    $mail = ai_scan_mail_confirm($config, $normalizedEmail, $domain, $confirmUrl);
+    $mail = ai_scan_mail_confirm($config, $deliveryEmail, $domain, $confirmUrl);
     if (!$mail['ok']) {
         error_log('ai_scan confirm_mail_failed scan_id=' . (int) $scanId . ' cause=' . ai_scan_mail_error_cause((string) ($mail['error'] ?? 'unknown')));
         // Keep the row so a resend path can exist later; surface generic error.
@@ -408,7 +414,7 @@ function ai_scan_next_job(PDO $pdo, array $config, int $now = 0): ?array
     ai_scan_purge_old_ip_hashes($pdo, $now);
 
     $stmt = $pdo->query(
-        "SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at
+        "SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, attempts
          FROM scans
          WHERE status = 'bevestigd'
          ORDER BY queued_at ASC, id ASC
@@ -435,7 +441,7 @@ function ai_scan_claim_job(PDO $pdo, int $scanId, int $now = 0): ?array
     }
 
     $stmt = $pdo->prepare(
-        'SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, claimed_at
+        'SELECT id, public_id, email, website_url, domain, status, created_at, confirmed_at, queued_at, claimed_at, attempts
          FROM scans WHERE id = :id'
     );
     $stmt->execute(['id' => $scanId]);
@@ -561,6 +567,9 @@ function ai_scan_flush_ready_mails(PDO $pdo, array $config, int $limit = 10, int
     return $sent;
 }
 
+/**
+ * Definitief mislukt: status mislukt, melding bewaard, poging geteld.
+ */
 function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0): bool
 {
     $now = $now > 0 ? $now : time();
@@ -568,6 +577,7 @@ function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0):
         "UPDATE scans SET
             status = 'mislukt',
             error_message = :msg,
+            attempts = attempts + 1,
             completed_at = :completed_at
          WHERE id = :id AND status IN ('bevestigd', 'bezig')"
     );
@@ -578,6 +588,72 @@ function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0):
     ]);
 
     return $upd->rowCount() === 1;
+}
+
+/**
+ * Runner meldt een mislukking: de eerste keer gaat de job terug de wachtrij in (automatisch opnieuw),
+ * de tweede keer is hij definitief mislukt en krijgt Joris een melding. Maximaal `scan_max_retries` (1) keer opnieuw.
+ *
+ * @return array{ok: bool, retry?: bool, final?: bool, attempts?: int}
+ */
+function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string $message, int $now = 0): array
+{
+    $now = $now > 0 ? $now : time();
+    $maxRetries = max(0, (int) ($config['scan_max_retries'] ?? 1));
+    $message = mb_substr($message, 0, 2000);
+
+    $requeue = $pdo->prepare(
+        "UPDATE scans SET
+            status = 'bevestigd',
+            attempts = attempts + 1,
+            last_failure = :msg,
+            error_message = NULL,
+            claimed_at = NULL,
+            progress_json = NULL,
+            progress_at = NULL,
+            queued_at = :now
+         WHERE id = :id AND status IN ('bevestigd', 'bezig') AND attempts < :max"
+    );
+    $requeue->execute(['msg' => $message, 'now' => $now, 'id' => $scanId, 'max' => $maxRetries]);
+    if ($requeue->rowCount() === 1) {
+        error_log('ai_scan job_retry scan_id=' . $scanId);
+
+        return ['ok' => true, 'retry' => true, 'final' => false, 'attempts' => 1];
+    }
+
+    if (!ai_scan_fail_job($pdo, $scanId, $message, $now)) {
+        return ['ok' => false];
+    }
+    error_log('ai_scan job_failed_final scan_id=' . $scanId);
+    try {
+        $row = $pdo->prepare('SELECT public_id, domain, attempts FROM scans WHERE id = :id');
+        $row->execute(['id' => $scanId]);
+        $scan = $row->fetch();
+        if ($scan !== false) {
+            ai_scan_mail_failed_alert($config, (string) $scan['public_id'], (string) $scan['domain'], $message);
+        }
+    } catch (Throwable $e) {
+        // De melding is bijzaak; de status staat al op mislukt.
+    }
+
+    return ['ok' => true, 'retry' => false, 'final' => true, 'attempts' => $maxRetries + 1];
+}
+
+/**
+ * Staat er een job klaar voor de runner? Zelfde definitie als ai_scan_next_job, maar alleen lezen:
+ * een bevestigde scan die wacht (ook opnieuw te proberen), of een wachtdag-job waarvoor vandaag ruimte is.
+ */
+function ai_scan_has_runnable_job(PDO $pdo, array $config, int $now = 0): bool
+{
+    $now = $now > 0 ? $now : time();
+    if ($pdo->query("SELECT 1 FROM scans WHERE status = 'bevestigd' LIMIT 1")->fetch() !== false) {
+        return true;
+    }
+    if ($pdo->query("SELECT 1 FROM scans WHERE status = 'wacht_dag' LIMIT 1")->fetch() === false) {
+        return false;
+    }
+
+    return ai_scan_count_free_scans_today($pdo, $now) < (int) ($config['daily_free_scans'] ?? 20);
 }
 
 function ai_scan_purge_expired_unconfirmed(PDO $pdo, int $now): int
@@ -646,7 +722,7 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     }
 
     $hash = ai_scan_hash_password($password);
-    $upd = $pdo->prepare('UPDATE users SET password_hash = :h WHERE id = :id');
+    $upd = $pdo->prepare('UPDATE users SET password_hash = :h, password_version = password_version + 1 WHERE id = :id');
     $upd->execute([
         'h' => $hash,
         'id' => $userId,
@@ -657,7 +733,60 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     $mailStmt = $pdo->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
     $mailStmt->execute(['id' => $userId]);
 
-    return ['ok' => true, 'code' => 'ok', 'email' => (string) ($mailStmt->fetchColumn() ?: '')];
+    return [
+        'ok' => true,
+        'code' => 'ok',
+        'email' => (string) ($mailStmt->fetchColumn() ?: ''),
+        'scan_status' => (string) ($scan['status'] ?? ''),
+    ];
+}
+
+/**
+ * Wachtwoord vergeten: stuurt, als er een account bestaat, een eenmalige link naar de bestaande
+ * wachtwoordpagina (/ai-scan/wachtwoord/?t=…). De aanroeper toont altijd dezelfde neutrale melding.
+ * Beperkt per IP en per e-mailadres; telt ook pogingen voor onbekende adressen.
+ *
+ * @return string 'sent' | 'no_account' | 'rate_limited' | 'mail_failed' (alleen voor logs/tests, nooit tonen)
+ */
+function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRaw, string $ip, int $now = 0): string
+{
+    $now = $now > 0 ? $now : time();
+    $ipKey = ai_scan_ip_hash($ip);
+    $emailHash = ai_scan_email_hash(ai_scan_normalize_email($emailRaw));
+
+    $ipMax = (int) ($config['reset_ip_max_per_hour'] ?? 5);
+    $emailSeconds = (int) ($config['reset_email_seconds'] ?? 600);
+    if (
+        ($ipMax > 0 && ai_scan_rate_count($pdo, 'reset_ip', $ipKey, $now - 3600) >= $ipMax)
+        || ($emailSeconds > 0 && ai_scan_rate_count($pdo, 'reset_email', $emailHash, $now - $emailSeconds) >= 1)
+    ) {
+        return 'rate_limited';
+    }
+    ai_scan_rate_hit($pdo, 'reset_ip', $ipKey, $now);
+    ai_scan_rate_hit($pdo, 'reset_email', $emailHash, $now);
+
+    $stmt = $pdo->prepare('SELECT id, email FROM users WHERE email_hash = :h LIMIT 1');
+    $stmt->execute(['h' => $emailHash]);
+    $user = $stmt->fetch();
+    if ($user === false) {
+        return 'no_account';
+    }
+    $scan = ai_scan_latest_for_user($pdo, (int) $user['id']);
+    if ($scan === null) {
+        return 'no_account';
+    }
+
+    // De token hangt aan de laatste scan van het account; dezelfde pagina en functie als bij het eerste wachtwoord.
+    $token = ai_scan_random_token(32);
+    $ttl = (int) ($config['reset_token_ttl'] ?? 3600);
+    $pdo->prepare(
+        'UPDATE scans SET password_token_hash = :h, password_token_expires_at = :x WHERE id = :id'
+    )->execute(['h' => ai_scan_hash_token($token), 'x' => $now + $ttl, 'id' => $scan['id']]);
+
+    $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
+    $mail = ai_scan_mail_password_reset($config, (string) $user['email'], $base . '/ai-scan/wachtwoord/?t=' . rawurlencode($token));
+
+    return $mail['ok'] ? 'sent' : 'mail_failed';
 }
 
 /**

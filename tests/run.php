@@ -323,7 +323,8 @@ test('submit + confirm + set password + runner flow', static function (): void {
 
     $scan = $pdo->query('SELECT * FROM scans')->fetch();
     assert_same('onbevestigd', $scan['status']);
-    assert_same('owner@example.com', $scan['email']);
+    assert_same('owner+test@example.com', $scan['email'], 'bezorgadres houdt de +alias');
+    assert_same(ai_scan_email_hash('owner@example.com'), $scan['email_hash'], 'hash gebruikt de genormaliseerde vorm');
 
     // Recover confirm token from mail log URL is hard; inject known token.
     $token = 'confirm-token-test-1';
@@ -352,7 +353,7 @@ test('submit + confirm + set password + runner flow', static function (): void {
     ]);
     $set = ai_scan_set_password($pdo, $pwToken, 'super-secret-password');
     assert_true($set['ok']);
-    assert_same('owner@example.com', $set['email']);
+    assert_same('owner+test@example.com', $set['email']);
     $replay = ai_scan_set_password($pdo, $pwToken, 'other-secret-password');
     assert_true(!$replay['ok'], 'password token must be single-use');
     $user = $pdo->query('SELECT * FROM users')->fetch();
@@ -779,6 +780,7 @@ require __DIR__ . '/app_writes_test.php';
 require __DIR__ . '/gsc_test.php';
 require __DIR__ . '/free_scan_block_test.php';
 require __DIR__ . '/scan_form_test.php';
+require __DIR__ . '/geo_fix_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);

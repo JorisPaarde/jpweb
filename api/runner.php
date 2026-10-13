@@ -11,7 +11,8 @@ declare(strict_types=1);
  *   GET  ?action=next          → next queued job (status bevestigd) or null
  *   POST action=claim          body: {id} → claim job (bezig)
  *   POST action=complete       body: {id, html, json} → store result (klaar) + scan-klaar mail (once)
- *   POST action=fail           body: {id, message} → mark mislukt
+ *   POST action=fail           body: {id, message} → eerste keer: terug de wachtrij in (retry:true);
+ *                              tweede keer: definitief mislukt (final:true) + melding aan beheer
  *   GET|POST action=health     → stale-job check + queue counts + flush ready mails
  */
 
@@ -73,11 +74,24 @@ if ($action === 'health') {
         $stmt->execute(['s' => $status]);
         $counts[$status] = (int) ($stmt->fetch()['c'] ?? 0);
     }
+    $retrying = (int) $pdo->query("SELECT COUNT(*) FROM scans WHERE status IN ('bevestigd', 'bezig') AND attempts > 0")->fetchColumn();
+    $failed = [];
+    foreach ($pdo->query("SELECT public_id, domain, attempts, completed_at, error_message FROM scans WHERE status = 'mislukt' AND attempts > 0 ORDER BY completed_at DESC, id DESC LIMIT 10")->fetchAll() as $row) {
+        $failed[] = [
+            'public_id' => (string) $row['public_id'],
+            'domain' => (string) $row['domain'],
+            'attempts' => (int) $row['attempts'],
+            'failed_at' => $row['completed_at'] !== null ? (int) $row['completed_at'] : null,
+            'message' => mb_substr((string) $row['error_message'], 0, 200),
+        ];
+    }
     $stale = ai_scan_check_stale_jobs($pdo, $config);
     $readyFlushed = ai_scan_flush_ready_mails($pdo, $config);
     ai_scan_json_response([
         'ok' => true,
         'counts' => $counts,
+        'retrying' => $retrying,
+        'failed' => $failed,
         'stale' => $stale,
         'ready_mail_flushed' => $readyFlushed,
     ]);
@@ -200,10 +214,16 @@ if ($action === 'fail') {
     if ($id < 1) {
         ai_scan_json_response(['ok' => false, 'error' => 'missing_id'], 400);
     }
-    if (!ai_scan_fail_job($pdo, $id, $message)) {
+    $outcome = ai_scan_fail_or_retry_job($pdo, $config, $id, $message);
+    if (empty($outcome['ok'])) {
         ai_scan_json_response(['ok' => false, 'error' => 'not_failable'], 409);
     }
-    ai_scan_json_response(['ok' => true]);
+    ai_scan_json_response([
+        'ok' => true,
+        'retry' => (bool) $outcome['retry'],
+        'final' => (bool) $outcome['final'],
+        'attempts' => (int) $outcome['attempts'],
+    ]);
 }
 
 ai_scan_json_response(['ok' => false, 'error' => 'unknown_action'], 400);

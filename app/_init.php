@@ -576,7 +576,7 @@ function app_load_competitors_view(PDO $pdo, int $userId, array $result, bool $i
  *
  * @param array<string, mixed> $result
  * @param array<string, mixed>|null $scan
- * @return array{mentioned: int|null, answers: int|null, level: string, ready: bool, status: string}
+ * @return array{mentioned: int|null, answers: int|null, level: string, ready: bool, status: string, retrying: bool}
  */
 function app_score_view(array $result, ?array $scan): array
 {
@@ -619,5 +619,7 @@ function app_score_view(array $result, ?array $scan): array
         'level' => $level,
         'ready' => $status === 'klaar' && ($mentioned !== null || !empty($scan['result_html'])),
         'status' => $status,
+        // Eerste poging mislukt, tweede loopt of staat klaar.
+        'retrying' => in_array($status, ['bevestigd', 'bezig'], true) && (int) ($scan['attempts'] ?? 0) > 0,
     ];
 }

@@ -1200,6 +1200,7 @@ function ai_scan_request_email_change(
             'Tot die tijd blijft je oude e-mailadres actief. Heb jij dit niet aangevraagd? Negeer deze mail.',
             '',
             'Groet,',
+            'Joris',
         ])
     );
 
@@ -1216,6 +1217,7 @@ function ai_scan_request_email_change(
                 'Was jij dit niet? Negeer de bevestigingsmail of neem contact op.',
                 '',
                 'Groet,',
+                'Joris',
             ])
         );
     }

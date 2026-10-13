@@ -404,3 +404,21 @@
 .geo-pick-card span { opacity: 0.8; }
 .geo-pick-card .geo-pick-cta { margin-top: 0.3rem; font-weight: 600; opacity: 1; }
 .geo-pick-fallback { margin-top: 0.75rem; }
+
+.geo-pricing-monthly small[hidden] {
+  display: none;
+}
+
+/* Alleen op smalle schermen: tabellen scrollen zijwaarts, dit zegt dat erbij. */
+.geo-swipe-hint {
+  display: none;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .geo-swipe-hint {
+    display: block;
+  }
+}

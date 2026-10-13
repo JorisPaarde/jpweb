@@ -39,6 +39,11 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
     ai_scan_respond_code($result['code'], $asJson);
 }
 
+if ($method === 'GET' && !$asJson) {
+    // Een bezoeker die het formulieradres opent: terug naar de pagina met het formulier.
+    ai_scan_redirect('/ai-vindbaarheid/', 302);
+}
+
 if ($method !== 'POST') {
     http_response_code(405);
     header('Allow: GET, POST');
@@ -72,13 +77,20 @@ if (!ai_scan_verify_csrf($config, $csrf)) {
 $result = ai_scan_submit($pdo, $config, $input, ai_scan_client_ip());
 
 if ($result['code'] === 'invalid') {
-    // One neat, neutral message — never reveal which rule failed.
-    ai_scan_store_form_state($config, [
-        'email' => $input['email'],
-        'website' => $input['website'],
-    ], [
-        'form' => AI_SCAN_INVALID_PUBLIC_MESSAGE,
-    ]);
+    // Per veld een veilige melding; nooit of een adres of website al gescand is (dat blijft already_scanned).
+    $field = (string) ($result['field'] ?? 'form');
+    $message = (string) ($result['message'] ?? AI_SCAN_INVALID_PUBLIC_MESSAGE);
+    $values = ['email' => $input['email'], 'website' => $input['website']];
+    ai_scan_store_form_state($config, $values, [$field => $message]);
+    if ($asJson) {
+        ai_scan_json_response([
+            'ok' => false,
+            'code' => 'invalid',
+            'message' => 'Controleer het gemarkeerde veld en probeer het opnieuw.',
+            'errors' => [$field => $message],
+            'values' => $values,
+        ], 422);
+    }
 }
 
 $extra = [];

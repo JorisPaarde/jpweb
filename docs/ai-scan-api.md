@@ -124,15 +124,25 @@ B2 stuurt daarna de **"scan klaar"-mail** (Nederlands, `Hoi,`, ik-vorm, korte te
 
 ### `POST /api/runner.php` body `{"action":"fail","id":12,"message":"…"}`
 
-Status `mislukt`. Geen "scan klaar"-mail.
+Maximaal **één automatische herpoging** per scan (`scan_max_retries`, default 1; kolom `scans.attempts`).
+
+- Eerste mislukking (job `bevestigd` of `bezig`): de job gaat terug naar `bevestigd` (claim gewist, voortgang gewist, `queued_at` = nu, melding bewaard in `last_failure`). Antwoord: `{"ok":true,"retry":true,"final":false,"attempts":1}`. `action=next` geeft hem daarna weer; het jobobject bevat `attempts`.
+- Tweede mislukking: status `mislukt`, melding in `error_message`, interne melding aan `info@` (geen mail naar de klant). Antwoord: `{"ok":true,"retry":false,"final":true,"attempts":2}`.
+- **409** `not_failable` als de job al `klaar` of `mislukt` is. Geen "scan klaar"-mail.
 
 ### `GET|POST /api/runner.php?action=health`
 
 Queue-tellingen + stale-job check (alert naar `info@` als jobs >30 min wachten; max. 1 alert/uur).
 
 ```json
-{ "ok": true, "counts": { "bevestigd": 1, "bezig": 0, "…": 0 }, "stale": { "checked": true, "alerted": false, "stale": 0 } }
+{ "ok": true, "counts": { "bevestigd": 1, "bezig": 0, "…": 0 }, "retrying": 0, "failed": [{ "public_id": "…", "domain": "…", "attempts": 2, "failed_at": 1791885701, "message": "…" }], "stale": { "checked": true, "alerted": false, "stale": 0 } }
 ```
+
+`retrying` = jobs met `attempts > 0` die weer klaarstaan of lopen; `failed` = laatste 10 definitief mislukte scans (na herpoging). Zichtbaar voor beheer op `/admin/scans.php`.
+
+### `GET /ai-scan-queue.php` (publiek, zonder token)
+
+Voor de scan-wachter. Antwoord altijd alleen `{"work":true}` of `{"work":false}` (`Cache-Control: no-store`). `true` = er staat een job klaar voor de runner: een `bevestigd`e scan (ook een opnieuw te proberen scan), of een `wacht_dag`-scan waarvoor vandaag nog ruimte is (zelfde definitie als `action=next`, maar alleen lezen). Geen aantallen, id's of persoonsgegevens. Alleen GET/HEAD (anders 405 met `{"work":false}`); bij een storing HTTP 503 met `{"work":false}`.
 
 ## Stale-job alert
 

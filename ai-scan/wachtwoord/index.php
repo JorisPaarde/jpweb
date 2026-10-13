@@ -27,7 +27,7 @@ if (ai_scan_request_method() === 'POST') {
         $result = ai_scan_set_password($pdo, $token, $password);
         if (!$result['ok']) {
             $error = match ($result['code']) {
-                'expired' => 'Deze link is verlopen (24 uur geldig).',
+                'expired' => 'Deze link is verlopen. Vraag via "Wachtwoord vergeten?" op de inlogpagina een nieuwe aan.',
                 'no_account' => 'Bij deze link hoort geen account meer. Vraag de scan opnieuw aan of mail info@jpwebcreation.nl.',
                 default => 'Deze link is ongeldig of al gebruikt.',
             };
@@ -35,6 +35,7 @@ if (ai_scan_request_method() === 'POST') {
             ai_scan_start_session($config);
             $_SESSION['ai_scan_login_prefill'] = [
                 'email' => (string) ($result['email'] ?? ''),
+                'scan_status' => (string) ($result['scan_status'] ?? ''),
                 'at' => time(),
             ];
             ai_scan_redirect('/login/', 303);
@@ -53,6 +54,7 @@ $csrf = ai_scan_csrf_token($config);
   <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
+    .ai-auth .auth-back { display: inline-block; margin-bottom: 1.5rem; }
     .ai-auth h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
     .ai-auth p { color: var(--muted, #5e6862); margin-bottom: 1.5rem; }
     .ai-auth label { display: block; margin: 0.75rem 0 0.35rem; font-weight: 600; }
@@ -70,6 +72,7 @@ $csrf = ai_scan_csrf_token($config);
 </head>
 <body>
   <main class="ai-auth">
+    <a class="auth-back" href="/">← Terug naar jpwebcreation.nl</a>
     <h1>Wachtwoord kiezen</h1>
     <?php if ($done): ?>
       <p>Je wachtwoord is ingesteld. Je kunt nu <a href="/login/">inloggen</a> op je dashboard.</p>

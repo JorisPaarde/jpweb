@@ -17,7 +17,10 @@ $prefill = $_SESSION['ai_scan_login_prefill'] ?? null;
 unset($_SESSION['ai_scan_login_prefill']);
 if (is_array($prefill) && (int) ($prefill['at'] ?? 0) > time() - 600) {
     $prefillEmail = (string) ($prefill['email'] ?? '');
-    $notice = 'Je wachtwoord is ingesteld, log nu in. Je scan is gestart, binnen ~15 minuten klaar.';
+    $notice = 'Je wachtwoord is ingesteld, log nu in.';
+    if (in_array((string) ($prefill['scan_status'] ?? ''), ['bevestigd', 'wacht_dag', 'bezig'], true)) {
+        $notice .= ' Je scan is gestart, binnen ~15 minuten klaar.';
+    }
 }
 $next = (string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/');
 if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')
@@ -40,8 +43,9 @@ if ($method === 'POST') {
         $password = (string) ($_POST['password'] ?? '');
         ai_scan_login_rate_record($pdo, ai_scan_client_ip(), time());
 
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email LIMIT 1');
-        $stmt->execute(['email' => $email]);
+        // Zoeken op de genormaliseerde hash: het opgeslagen adres kan een +alias bevatten.
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email_hash = :h LIMIT 1');
+        $stmt->execute(['h' => ai_scan_email_hash($email)]);
         $user = $stmt->fetch();
 
         $hash = is_array($user) ? (string) ($user['password_hash'] ?? '') : '';
@@ -73,6 +77,8 @@ $csrf = ai_scan_csrf_token($config);
   <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
+    .ai-auth .auth-back { display: inline-block; margin-bottom: 1.5rem; }
+    .ai-auth .auth-forgot { margin: 1rem 0 0; }
     .ai-auth h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
     .ai-auth p { color: var(--muted, #5e6862); margin-bottom: 1.5rem; }
     .ai-auth label { display: block; margin: 0.75rem 0 0.35rem; font-weight: 600; }
@@ -92,6 +98,7 @@ $csrf = ai_scan_csrf_token($config);
 </head>
 <body>
   <main class="ai-auth">
+    <a class="auth-back" href="/">← Terug naar jpwebcreation.nl</a>
     <h1>Inloggen</h1>
     <p>Bekijk je AI-scan in je dashboard.</p>
     <?php if ($notice !== ''): ?>
@@ -109,6 +116,7 @@ $csrf = ai_scan_csrf_token($config);
       <input id="password" name="password" type="password" autocomplete="current-password" required>
       <button type="submit">Inloggen</button>
     </form>
+    <p class="auth-forgot"><a href="/login/vergeten/">Wachtwoord vergeten?</a></p>
   </main>
 </body>
 </html>

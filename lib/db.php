@@ -95,6 +95,9 @@ function ai_scan_migrate(PDO $pdo): void
     ai_scan_ensure_column($pdo, 'scans', 'ip_block_hash', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'scans', 'progress_json', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'scans', 'progress_at', 'INTEGER NULL');
+    // Mislukte scan: aantal mislukte pogingen en de melding van de eerste mislukking (alleen beheer).
+    ai_scan_ensure_column($pdo, 'scans', 'attempts', 'INTEGER NOT NULL DEFAULT 0');
+    ai_scan_ensure_column($pdo, 'scans', 'last_failure', 'TEXT NULL');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS rate_events (
