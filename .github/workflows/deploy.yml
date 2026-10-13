@@ -229,6 +229,13 @@ jobs:
             < /tmp/freescan-dispatch.php
           rm -f /tmp/freescan-dispatch.php
 
+      - name: One-time purge testaccount example.com (GEO-testronde 13 okt)
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='purge-example-com-20261013' OPS_MODE='purge_test' OPS_EMAIL='jpweb-geotest-1013@agentmail.to' OPS_WEBSITE='example.com' OPS_USER_CREATED_FROM='1791881100' OPS_USER_CREATED_TO='1791882000' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops purge-example-com: exit $? (zie hierboven)"
+
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl
