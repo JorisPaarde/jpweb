@@ -151,7 +151,7 @@ if ($gsc['connected_at'] !== null) {
     <?php endif; ?>
   <?php elseif (!$gsc['configured']): ?>
     <p class="gsc-card__note">
-      Koppelen is nog niet beschikbaar. Ik richt Google OAuth eerst in; daarna kun je hier verbinden.
+      Koppelen is nog niet beschikbaar. Ik richt de koppeling met Google eerst in; daarna kun je hier verbinden.
     </p>
   <?php elseif ($gsc['connected']): ?>
     <dl class="gsc-card__status">
