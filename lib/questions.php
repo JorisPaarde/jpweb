@@ -1148,12 +1148,14 @@ function ai_scan_request_email_change(
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_CURRENT_WRONG];
     }
 
-    $normalized = ai_scan_normalize_email($newEmail);
-    if ($normalized === '' || !ai_scan_email_syntax_ok($normalized)) {
+    // Contactadres behoudt +alias; de genormaliseerde vorm dient alleen voor hash/uniciteit.
+    $contact = strtolower(trim($newEmail));
+    $normalized = ai_scan_normalize_email($contact);
+    if ($normalized === '' || !ai_scan_email_syntax_ok($contact)) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_INVALID];
     }
     $oldEmail = (string) ($user['email'] ?? '');
-    if ($normalized === $oldEmail) {
+    if ($contact === strtolower($oldEmail)) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_SAME];
     }
 
@@ -1178,7 +1180,7 @@ function ai_scan_request_email_change(
         'UPDATE users SET pending_email = :e, pending_email_token_hash = :h, pending_email_expires_at = :x
          WHERE id = :id'
     )->execute([
-        'e' => $normalized,
+        'e' => $contact,
         'h' => ai_scan_hash_token($token),
         'x' => $now + $ttl,
         'id' => $userId,
@@ -1188,7 +1190,7 @@ function ai_scan_request_email_change(
     $url = $base . '/app/confirm-email.php?t=' . rawurlencode($token);
     ai_scan_send_mail(
         $config,
-        $normalized,
+        $contact,
         'Bevestig je nieuwe e-mailadres',
         implode("\n", [
             'Hoi,',
@@ -1253,7 +1255,7 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
     }
 
     $userId = (int) $user['id'];
-    $newHash = ai_scan_email_hash($newEmail);
+    $newHash = ai_scan_email_hash(ai_scan_normalize_email($newEmail));
     $exists = $pdo->prepare('SELECT 1 FROM users WHERE email_hash = :h AND id != :id LIMIT 1');
     $exists->execute(['h' => $newHash, 'id' => $userId]);
     if ($exists->fetch() !== false) {

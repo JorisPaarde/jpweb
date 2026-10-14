@@ -288,7 +288,7 @@ test('email change requires current password, throttled, confirm applies', stati
     @unlink($mailLog);
     putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
 
-    $wrong = ai_scan_request_email_change($pdo, $config, $paid, 'nieuw@voorbeeld.nl', 'wrong-pass');
+    $wrong = ai_scan_request_email_change($pdo, $config, $paid, 'Nieuw+geo@voorbeeld.nl', 'wrong-pass');
     assert_true(empty($wrong['ok']));
     assert_same(AI_SCAN_PASSWORD_CURRENT_WRONG, $wrong['error'] ?? '');
 
@@ -296,17 +296,17 @@ test('email change requires current password, throttled, confirm applies', stati
     assert_true(empty($same['ok']));
     assert_same(AI_SCAN_EMAIL_SAME, $same['error'] ?? '');
 
-    $ok = ai_scan_request_email_change($pdo, $config, $paid, 'nieuw@voorbeeld.nl', fake_pw('test-pw', 12));
+    $ok = ai_scan_request_email_change($pdo, $config, $paid, 'Nieuw+geo@voorbeeld.nl', fake_pw('test-pw', 12));
     assert_true(!empty($ok['ok']), $ok['error'] ?? 'email request failed');
     assert_same(AI_SCAN_EMAIL_PENDING_SENT, $ok['message'] ?? '');
 
     $user = $pdo->query('SELECT * FROM users WHERE id = ' . (int) $paid['id'])->fetch();
     assert_same('paid@voorbeeld.nl', $user['email']);
-    assert_same('nieuw@voorbeeld.nl', $user['pending_email']);
+    assert_same('nieuw+geo@voorbeeld.nl', $user['pending_email']);
     assert_true(!empty($user['pending_email_token_hash']));
 
     $mailBlob = is_file($mailLog) ? (string) file_get_contents($mailLog) : '';
-    assert_true(str_contains($mailBlob, 'nieuw@voorbeeld.nl'), 'confirm mail to new');
+    assert_true(str_contains($mailBlob, 'nieuw+geo@voorbeeld.nl'), 'confirm mail to new');
     assert_true(str_contains($mailBlob, 'paid@voorbeeld.nl'), 'notice to old');
     assert_true(str_contains($mailBlob, 'Ik heb een verzoek ontvangen'), 'old notice uses ik');
     assert_true(str_contains($mailBlob, "Groet,\n") || str_contains($mailBlob, 'Groet,'), 'old notice ends Groet');
@@ -327,7 +327,8 @@ test('email change requires current password, throttled, confirm applies', stati
     $confirm = ai_scan_confirm_email_change($pdo, $token);
     assert_true(!empty($confirm['ok']), $confirm['error'] ?? 'confirm failed');
     $user = $pdo->query('SELECT email, pending_email FROM users WHERE id = ' . (int) $paid['id'])->fetch();
-    assert_same('nieuw@voorbeeld.nl', $user['email']);
+    assert_same('nieuw+geo@voorbeeld.nl', $user['email']);
+    assert_same(ai_scan_email_hash('nieuw@voorbeeld.nl'), (string) $pdo->query('SELECT email_hash FROM users WHERE id = ' . (int) $paid['id'])->fetchColumn());
     assert_true($user['pending_email'] === null || $user['pending_email'] === '');
     putenv('JPWEB_AI_SCAN_MAIL_LOG');
 });
