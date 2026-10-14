@@ -229,18 +229,6 @@ jobs:
             < /tmp/freescan-dispatch.php
           rm -f /tmp/freescan-dispatch.php
 
-      - name: One-time Appfront in concurrentenlijst JPWC + check testaccounts (GEO wk42)
-        run: |
-          set -euo pipefail
-          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='appfront-jpwc-20261014' OPS_MODE='set_profile' OPS_EMAIL='jorispaarde@gmail.com' OPS_WEBSITE='jpwebcreation.nl' OPS_PROFILE_B64='eyJjb21wZXRpdG9ycyI6IHsibGlzdCI6IFt7Im5hbWUiOiAiQXBwZnJvbnQiLCAiYWxpYXNlcyI6IFsiQXBwZnJvbnQiXSwgImRvbWFpbnMiOiBbImFwcGZyb250Lm5sIl19XX19' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
-            < ops/cleanup.php || echo "ops appfront-jpwc: exit $? (zie hierboven)"
-          for e in jpweb-geotest-1013@agentmail.to jpweb-scan-test@agentmail.to; do
-            ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-              "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='count-$(echo $e | cut -d@ -f1)-20261014' OPS_MODE='count_user' OPS_EMAIL='$e' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
-              < ops/cleanup.php || echo "ops count: exit $?"
-          done
-
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl
