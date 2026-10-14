@@ -26,7 +26,7 @@ set_exception_handler(static function (Throwable $e): void {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -38,6 +38,17 @@ require_once rtrim($root, '/') . '/lib/questions.php';
 $sqlite = (string) ($config['sqlite_path'] ?? '');
 $markerDir = dirname($sqlite) . '/ops-markers';
 $marker = $markerDir . '/' . $job . '.done';
+if ($mode === 'count_user') {
+    // Alleen-lezen diagnose: bestaat er een account (met scan) voor dit adres? Print alleen aantallen.
+    $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
+    $u = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
+    $u->execute(['e' => $eh]);
+    $ids = array_map('intval', $u->fetchAll(PDO::FETCH_COLUMN));
+    $scans = 0;
+    foreach ($ids as $id) { $scans += ai_scan_latest_for_user($pdo, $id) === null ? 0 : 1; }
+    echo "ops {$job}: users=" . count($ids) . " users_met_scan={$scans}\n";
+    exit(0);
+}
 if (is_file($marker)) {
     echo "ops {$job}: al uitgevoerd, overgeslagen\n";
     exit(0);
