@@ -111,6 +111,7 @@ app_render_layout($ctx, 'Account', static function (array $ctx) use (
       <form method="post" action="/app/account.php">
         <input type="hidden" name="csrf" value="<?= app_h($csrf) ?>">
         <input type="hidden" name="action" value="change_password">
+        <input type="email" name="username" autocomplete="username" value="<?= app_h($email) ?>" readonly hidden aria-hidden="true" tabindex="-1">
         <label class="field">
           <span class="field__label">Huidig wachtwoord</span>
           <input type="password" name="current_password" required autocomplete="current-password">
