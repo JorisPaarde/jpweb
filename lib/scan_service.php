@@ -848,6 +848,10 @@ function ai_scan_delete_account(PDO $pdo, int $userId, int $now = 0): bool
             "UPDATE scans SET
                 email = '',
                 website_url = '',
+                domain = '',
+                progress_json = NULL,
+                progress_at = NULL,
+                last_failure = NULL,
                 result_html = NULL,
                 result_json = NULL,
                 error_message = NULL,

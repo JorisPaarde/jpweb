@@ -512,3 +512,85 @@ test('write UI pages expose forms and CSRF for paid flows', static function (): 
     assert_true(str_contains($acc, 'change_password'));
     assert_true(str_contains($acc, 'current_password'));
 });
+
+/**
+ * Run account-delete.php as a POST and return the redirect target.
+ *
+ * @param array<string, mixed> $config
+ */
+function app_delete_post(array $config, int $uid, string $website): string
+{
+    app_ui_login($config, $uid, 1);
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1');
+    $cfgPath = sys_get_temp_dir() . '/jpweb-delete-config.php';
+    file_put_contents($cfgPath, '<?php return ' . var_export($config, true) . ";\n");
+    putenv('JPWEB_AI_SCAN_CONFIG=' . $cfgPath);
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_POST = ['csrf' => ai_scan_csrf_token($config), 'confirm_website' => $website];
+    $target = '';
+    try {
+        require dirname(__DIR__) . '/account-delete.php';
+    } catch (RuntimeException $e) {
+        $target = $e->getMessage();
+    }
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT');
+    putenv('JPWEB_AI_SCAN_CONFIG');
+    $_POST = [];
+
+    return $target;
+}
+
+test('account-delete.php enforces subscription and website confirmation on the server', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $domain = (string) $pdo->query('SELECT domain FROM scans WHERE user_id = ' . $uid)->fetchColumn();
+    $exists = static fn (): bool => $pdo->query('SELECT id FROM users WHERE id = ' . $uid)->fetch() !== false;
+
+    // Active subscription: refused even with the right website.
+    $t = app_delete_post($config, $uid, $domain);
+    assert_true(str_contains($t, '/app/account.php'), 'active subscription redirects back: ' . $t);
+    assert_true($exists(), 'active subscription must not be deleted');
+
+    // Cancelling subscription but wrong website: refused.
+    $pdo->prepare("UPDATE users SET subscription_status = 'canceling' WHERE id = :id")->execute(['id' => $uid]);
+    $t = app_delete_post($config, $uid, 'verkeerd.nl');
+    assert_true(str_contains($t, '/app/account.php'), 'wrong website redirects back: ' . $t);
+    assert_true($exists(), 'wrong website must not be deleted');
+    assert_true(!empty($_SESSION['user_id']), 'session kept after refusal');
+
+    // Right website: deleted.
+    $t = app_delete_post($config, $uid, 'https://www.' . strtoupper($domain) . '/');
+    assert_true(str_contains($t, 's=deleted'), 'success redirect: ' . $t);
+    assert_true(!$exists(), 'account deleted');
+});
+
+test('account-delete.php shows success only when deletion succeeds', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $domain = (string) $pdo->query('SELECT domain FROM scans WHERE user_id = ' . $uid)->fetchColumn();
+    $pdo->prepare("UPDATE users SET subscription_status = 'none' WHERE id = :id")->execute(['id' => $uid]);
+    // Force a database failure inside the delete transaction.
+    $pdo->exec('CREATE TRIGGER block_user_delete BEFORE DELETE ON users BEGIN SELECT RAISE(ABORT, \'forced\'); END');
+
+    $t = app_delete_post($config, $uid, $domain);
+    assert_true(str_contains($t, '/app/account.php'), 'failure redirects to account: ' . $t);
+    assert_true(!str_contains($t, 'deleted'), 'no success on failure');
+    assert_true($pdo->query('SELECT id FROM users WHERE id = ' . $uid)->fetch() !== false, 'account kept');
+    assert_true(!empty($_SESSION['user_id']), 'session kept on failure');
+    assert_true(!empty($_SESSION['ai_scan_flash']), 'recoverable error shown');
+});
+
+test('GDPR delete clears domain, progress and failure content, keeps hashes', static function (): void {
+    [$config, $pdo, $free, $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $pdo->prepare("UPDATE scans SET progress_json = '{\"q\":\"geheim\"}', last_failure = 'fout geheim' WHERE user_id = :id")
+        ->execute(['id' => $uid]);
+    $hashes = $pdo->query('SELECT email_hash, domain_hash FROM scans WHERE user_id = ' . $uid)->fetch();
+    assert_true(ai_scan_delete_account($pdo, $uid));
+    $row = $pdo->query('SELECT * FROM scans WHERE email_hash = ' . $pdo->quote((string) $hashes['email_hash']))->fetch();
+    assert_same('', $row['domain']);
+    assert_true($row['progress_json'] === null && $row['last_failure'] === null, 'scan content wiped');
+    assert_same($hashes['domain_hash'], $row['domain_hash']);
+    $n = $pdo->query('SELECT COUNT(*) FROM free_scan_blocks WHERE domain_hash = ' . $pdo->quote((string) $hashes['domain_hash']))->fetchColumn();
+    assert_true((int) $n >= 1, 'block hash kept');
+});

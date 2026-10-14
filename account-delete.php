@@ -2,11 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/lib/bootstrap.php';
-
-[$config, $pdo] = ai_scan_boot();
-ai_scan_security_headers();
-ai_scan_assert_allowed_host($config);
+require_once __DIR__ . '/app/_init.php';
 
 if (ai_scan_request_method() !== 'POST') {
     http_response_code(405);
@@ -15,12 +11,28 @@ if (ai_scan_request_method() !== 'POST') {
     exit;
 }
 
-$userId = ai_scan_require_user($config, $pdo);
+$ctx = app_boot('account');
+$config = $ctx['config'];
+$pdo = $ctx['pdo'];
+$userId = (int) $ctx['user']['id'];
 $csrf = (string) ($_POST['csrf'] ?? '');
 if (!ai_scan_verify_csrf($config, $csrf)) {
     ai_scan_redirect('/dashboard/?deleted=csrf', 303);
 }
 
-ai_scan_delete_account($pdo, $userId);
+$error = '';
+if (!app_account_can_delete($ctx)) {
+    $error = 'Zeg eerst je abonnement op voordat je je account verwijdert.';
+} elseif (!app_account_website_confirmed($ctx, (string) ($_POST['confirm_website'] ?? ''))) {
+    $error = 'De ingevulde website komt niet overeen. Je account is niet verwijderd.';
+} elseif (!ai_scan_delete_account($pdo, $userId)) {
+    $error = 'Verwijderen is niet gelukt. Probeer het later opnieuw.';
+}
+if ($error !== '') {
+    ai_scan_start_session($config);
+    $_SESSION['ai_scan_flash'] = $error;
+    ai_scan_redirect('/app/account.php', 303);
+}
+
 ai_scan_logout_user($config);
 ai_scan_redirect('/ai-scan/?s=deleted', 303);

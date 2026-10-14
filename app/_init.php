@@ -627,3 +627,34 @@ function app_score_view(array $result, ?array $scan): array
         'retrying' => in_array($status, ['bevestigd', 'bezig'], true) && (int) ($scan['attempts'] ?? 0) > 0,
     ];
 }
+
+/**
+ * Same rule as the account page: an active subscription must be cancelled first.
+ *
+ * @param array<string, mixed> $ctx
+ */
+function app_account_can_delete(array $ctx): bool
+{
+    $status = (string) ($ctx['user']['subscription_status'] ?? 'none');
+
+    return !empty($ctx['is_free']) || in_array($status, ['ended', 'none', 'canceling'], true);
+}
+
+/**
+ * Compare a typed website with the one the account page shows (scheme, www and path ignored).
+ *
+ * @param array<string, mixed> $ctx
+ */
+function app_account_website_confirmed(array $ctx, string $typed): bool
+{
+    $norm = static function (string $v): string {
+        $v = strtolower(trim($v));
+        $v = (string) preg_replace('#^[a-z][a-z0-9+.-]*://#', '', $v);
+        $v = (string) preg_replace('#^www\.#', '', $v);
+
+        return rtrim(explode('/', $v, 2)[0], '.');
+    };
+    $expected = $norm((string) ($ctx['profile']['website'] ?? ($ctx['scan']['domain'] ?? '')));
+
+    return $expected !== '' && $norm($typed) === $expected;
+}
