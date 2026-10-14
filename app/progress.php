@@ -13,7 +13,7 @@ ai_scan_security_headers();
 ai_scan_assert_allowed_host($config);
 
 $userId = ai_scan_current_user_id($config);
-if ($userId === null) {
+if ($userId === null || !ai_scan_session_password_version_ok($pdo, $userId)) {
     ai_scan_json_response(['ok' => false, 'error' => 'login'], 401);
 }
 header('Cache-Control: no-store');

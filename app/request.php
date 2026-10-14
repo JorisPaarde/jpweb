@@ -49,7 +49,7 @@ ai_scan_start_session($config);
 $_SESSION['ai_scan_flash'] = (string) ($result['message'] ?? AI_SCAN_TIER_REQUEST_MESSAGE);
 
 $next = (string) ($_POST['next'] ?? '/dashboard/');
-if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//') || str_contains($next, '\\')) {
+if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//') || str_contains($next, '\\') || preg_match('/[\x00-\x1F\x7F]/', $next) === 1) {
     $next = '/dashboard/';
 }
 
