@@ -716,24 +716,36 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
         return ['ok' => false, 'code' => 'no_account'];
     }
 
-    // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
-    $consume = $pdo->prepare(
-        'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL
-         WHERE id = :id AND password_token_hash = :h'
-    );
-    $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
-    if ($consume->rowCount() !== 1) {
-        return ['ok' => false, 'code' => 'invalid_token'];
-    }
+    $pdo->beginTransaction();
+    try {
+        // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
+        $consume = $pdo->prepare(
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL
+             WHERE id = :id AND password_token_hash = :h'
+        );
+        $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
+        if ($consume->rowCount() !== 1) {
+            $pdo->rollBack();
+            return ['ok' => false, 'code' => 'invalid_token'];
+        }
 
-    $hash = ai_scan_hash_password($password);
-    $upd = $pdo->prepare('UPDATE users SET password_hash = :h, password_version = password_version + 1 WHERE id = :id');
-    $upd->execute([
-        'h' => $hash,
-        'id' => $userId,
-    ]);
-    if ($upd->rowCount() !== 1) {
-        return ['ok' => false, 'code' => 'no_account'];
+        $hash = ai_scan_hash_password($password);
+        $upd = $pdo->prepare('UPDATE users SET password_hash = :h, password_version = password_version + 1, pending_email = NULL, pending_email_token_hash = NULL, pending_email_expires_at = NULL WHERE id = :id');
+        $upd->execute([
+            'h' => $hash,
+            'id' => $userId,
+        ]);
+        if ($upd->rowCount() !== 1) {
+            $pdo->rollBack();
+            return ['ok' => false, 'code' => 'no_account'];
+        }
+        $pdo->prepare(
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+        )->execute(['id' => $userId]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
     }
     $mailStmt = $pdo->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
     $mailStmt->execute(['id' => $userId]);
