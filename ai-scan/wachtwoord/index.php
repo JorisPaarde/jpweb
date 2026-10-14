@@ -44,6 +44,17 @@ if (ai_scan_request_method() === 'POST') {
 }
 
 $csrf = ai_scan_csrf_token($config);
+
+// E-mailadres bij de link, zodat de wachtwoordmanager het nieuwe wachtwoord bij het juiste account opslaat.
+$accountEmail = '';
+if ($token !== '') {
+    $lookup = $pdo->prepare(
+        'SELECT u.email FROM scans s JOIN users u ON u.id = s.user_id
+         WHERE s.password_token_hash = :h AND s.password_token_expires_at >= :now LIMIT 1'
+    );
+    $lookup->execute(['h' => ai_scan_hash_token($token), 'now' => time()]);
+    $accountEmail = (string) ($lookup->fetchColumn() ?: '');
+}
 ?><!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -83,9 +94,10 @@ $csrf = ai_scan_csrf_token($config);
       <?php if ($error !== ''): ?>
         <p class="error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
       <?php endif; ?>
-      <form method="post" action="/ai-scan/wachtwoord/" autocomplete="off">
+      <form method="post" action="/ai-scan/wachtwoord/">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" name="t" value="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>">
+        <input type="email" name="username" autocomplete="username" value="<?= htmlspecialchars($accountEmail, ENT_QUOTES, 'UTF-8') ?>" readonly hidden aria-hidden="true" tabindex="-1">
         <label for="password">Nieuw wachtwoord</label>
         <input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required>
         <label for="password2">Herhaal wachtwoord</label>

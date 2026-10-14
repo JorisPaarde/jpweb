@@ -73,7 +73,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
       <form method="post" action="/login/vergeten/" novalidate>
         <input type="hidden" name="csrf" value="<?= $h($csrf) ?>">
         <label for="email">E-mailadres</label>
-        <input id="email" name="email" type="email" autocomplete="email" required autofocus>
+        <input id="email" name="email" type="email" autocomplete="username" required autofocus>
         <button type="submit">Stuur me een link</button>
       </form>
       <p style="margin-top:1.25rem"><a href="/login/">Terug naar inloggen</a></p>

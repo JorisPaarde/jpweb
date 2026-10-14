@@ -111,7 +111,7 @@ $csrf = ai_scan_csrf_token($config);
       <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
       <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES, 'UTF-8') ?>">
       <label for="email">E-mailadres</label>
-      <input id="email" name="email" type="email" autocomplete="email" required value="<?= htmlspecialchars($prefillEmail, ENT_QUOTES, 'UTF-8') ?>"<?= $prefillEmail !== '' ? '' : ' autofocus' ?>>
+      <input id="email" name="email" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" required value="<?= htmlspecialchars($prefillEmail, ENT_QUOTES, 'UTF-8') ?>"<?= $prefillEmail !== '' ? '' : ' autofocus' ?>>
       <label for="password">Wachtwoord</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required>
       <button type="submit">Inloggen</button>
