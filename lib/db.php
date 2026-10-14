@@ -136,6 +136,10 @@ function ai_scan_migrate(PDO $pdo): void
     ai_scan_ensure_column($pdo, 'users', 'pending_tier_id', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'users', 'tier_changed_at', 'INTEGER NULL');
     ai_scan_ensure_column($pdo, 'users', 'password_version', 'INTEGER NOT NULL DEFAULT 1');
+    // Password recovery also revokes pending email changes before the app has been opened.
+    ai_scan_ensure_column($pdo, 'users', 'pending_email', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'users', 'pending_email_token_hash', 'TEXT NULL');
+    ai_scan_ensure_column($pdo, 'users', 'pending_email_expires_at', 'INTEGER NULL');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS subscription_events (

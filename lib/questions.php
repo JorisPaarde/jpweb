@@ -1271,6 +1271,7 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
             pending_email_expires_at = NULL
          WHERE id = :id AND pending_email_token_hash = :h'
     );
+    $pdo->beginTransaction();
     try {
         $consume->execute([
             'e' => $newEmail,
@@ -1278,10 +1279,16 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
             'id' => $userId,
             'h' => ai_scan_hash_token($token),
         ]);
+        if ($consume->rowCount() !== 1) {
+            $pdo->rollBack();
+            return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
+        }
+        $pdo->prepare(
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+        )->execute(['id' => $userId]);
+        $pdo->commit();
     } catch (PDOException $e) {
-        return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
-    }
-    if ($consume->rowCount() !== 1) {
+        $pdo->rollBack();
         return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
     }
 
@@ -1327,13 +1334,23 @@ function ai_scan_change_password(
     }
 
     $newVersion = (int) ($user['password_version'] ?? 1) + 1;
-    $pdo->prepare(
-        'UPDATE users SET password_hash = :h, password_version = :v WHERE id = :id'
-    )->execute([
-        'h' => ai_scan_hash_password($newPassword),
-        'v' => $newVersion,
-        'id' => $userId,
-    ]);
+    $pdo->beginTransaction();
+    try {
+        $pdo->prepare(
+            'UPDATE users SET password_hash = :h, password_version = :v, pending_email = NULL, pending_email_token_hash = NULL, pending_email_expires_at = NULL WHERE id = :id'
+        )->execute([
+            'h' => ai_scan_hash_password($newPassword),
+            'v' => $newVersion,
+            'id' => $userId,
+        ]);
+        $pdo->prepare(
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+        )->execute(['id' => $userId]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
     ai_scan_rate_hit($pdo, 'account_password_change', $userKey, $now);
 
     if (session_status() === PHP_SESSION_ACTIVE) {
