@@ -845,7 +845,7 @@ function ai_scan_gsc_complete_connect(
  */
 function ai_scan_gsc_safe_next(string $next, string $fallback = '/app/gsc/preview.php'): string
 {
-    if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//') || str_contains($next, '\\')) {
+    if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//') || str_contains($next, '\\') || preg_match('/[\x00-\x1F\x7F]/', $next) === 1) {
         return $fallback;
     }
     if (str_contains($next, '://')) {

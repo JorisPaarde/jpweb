@@ -39,7 +39,7 @@ if (empty($check['ok'])) {
 
 $sessionUserId = ai_scan_current_user_id($config);
 $oauthUserId = (int) ($check['user_id'] ?? 0);
-if ($sessionUserId === null || $sessionUserId !== $oauthUserId) {
+if ($sessionUserId === null || $sessionUserId !== $oauthUserId || !ai_scan_session_password_version_ok($pdo, $sessionUserId)) {
     $_SESSION['ai_scan_flash'] = 'Je sessie kwam niet overeen. Log opnieuw in en probeer het nog eens.';
     ai_scan_redirect('/login/?next=' . rawurlencode($next), 303);
 }

@@ -21,7 +21,7 @@ if (ai_scan_request_method() !== 'POST') {
     exit;
 }
 
-$userId = ai_scan_require_user($config);
+$userId = ai_scan_require_user($config, $pdo);
 $csrf = (string) ($_POST['csrf'] ?? '');
 $next = ai_scan_gsc_safe_next((string) ($_POST['next'] ?? ''), '/dashboard/');
 
