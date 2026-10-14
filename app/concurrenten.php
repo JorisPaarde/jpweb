@@ -14,6 +14,8 @@ if (ai_scan_request_method() === 'POST') {
     $action = ai_scan_clean_input('action', 40);
     if (!ai_scan_verify_csrf($ctx['config'], $token)) {
         $errorLocal = 'De sessie is verlopen. Probeer het opnieuw.';
+    } elseif (!empty($ctx['result']['demo'])) {
+        $errorLocal = 'Dit is een voorbeeldaccount; hier kun je niets aanpassen.';
     } elseif ($action === 'add') {
         $name = ai_scan_clean_input('name', 80);
         $aliasesRaw = ai_scan_clean_input('aliases', 400);

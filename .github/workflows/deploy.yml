@@ -79,6 +79,7 @@ jobs:
             --exclude='tests/' \
             --exclude='config-examples/' \
             --exclude='ops/' \
+            --exclude='tools/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
@@ -210,6 +211,7 @@ jobs:
             --exclude='tests/' \
             --exclude='config-examples/' \
             --exclude='ops/' \
+            --exclude='tools/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
@@ -235,6 +237,16 @@ jobs:
           ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
             "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='purge-resettest-20261014' OPS_MODE='purge_test' OPS_EMAIL='jpweb-geotest-1013@agentmail.to' OPS_WEBSITE='jpweb-resettest.nl' OPS_USER_CREATED_FROM='1791968000' OPS_USER_CREATED_TO='1791968300' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
             < ops/cleanup.php || echo "ops purge-resettest: exit $? (zie hierboven)"
+
+      - name: One-time Smooth-demoaccount (demo dashboard, geen scan, geen mail)
+        run: |
+          set -euo pipefail
+          K="-i $HOME/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes"
+          ssh $K "$DEPLOY_USER@$DEPLOY_HOST" 'mkdir -p "$HOME/private/ops" && chmod 700 "$HOME/private/ops" && umask 077 && cat > "$HOME/private/ops/smooth-demo.json"' < ops/smooth-demo.json
+          ssh $K "$DEPLOY_USER@$DEPLOY_HOST" 'umask 077 && cat > "$HOME/private/ops/import_smooth_demo.php"' < tools/import_smooth_demo.php
+          ssh $K "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='smooth-demo-20261014' OPS_MODE='create_smooth_demo' OPS_EMAIL='jpweb-scan-test@agentmail.to' OPS_DEMO_FILE=\$HOME/private/ops/smooth-demo.json OPS_DEMO_LIB=\$HOME/private/ops/import_smooth_demo.php /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops smooth-demo: exit $? (zie hierboven)"
 
       - name: Verify production deployment
         env:

@@ -1,0 +1,183 @@
+{
+ "version": 1,
+ "actions": [
+  {
+   "id": "SMO-2026-W42-01",
+   "week": "2026-W42",
+   "created": "2026-10-12",
+   "type": "verbeteren",
+   "status": "voorgesteld",
+   "title": "Laat de intro van de jukbeenderen-pagina aansluiten op de vraag over fillers in Haarlem.",
+   "why": "Bij de vraag \"Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen zonder dat mijn gezicht er heel anders uit gaat zien?\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+   "questions": [
+    "q07"
+   ],
+   "control_questions": [
+    "q19",
+    "q12",
+    "q01"
+   ],
+   "page_url": "https://www.smooth-operator.nl/behandeling-jukbeenderen",
+   "element": "intro",
+   "template_id": "onderwerp_match_intro",
+   "evidence": "lab_b2c",
+   "split_seed": "smooth-operator:2026-W42:2026-10-12",
+   "now": {
+    "snapshot": "2026-10-12",
+    "quote": "Prominente jukbeenderen zijn een teken van jeugdigheid en schoonheid.",
+    "absent_check": null
+   },
+   "becomes": "Fillers in Haarlem bij Smooth Operator: prominente jukbeenderen zijn een teken van jeugdigheid en schoonheid. Kort antwoord op 'Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen…': hier lees je voor wie fillers geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+   "placeholders": [],
+   "check_label": false,
+   "runs": [
+    "20261012-151847"
+   ],
+   "log": null,
+   "effect": null,
+   "reassessed": {
+    "date": "2026-10-13",
+    "logic_version": 8,
+    "before": {
+     "status": "voorgesteld",
+     "questions": [
+      "q07"
+     ],
+     "control_questions": [
+      "q01",
+      "q04",
+      "q06",
+      "q05",
+      "q02",
+      "q14"
+     ],
+     "title": "Laat de intro aansluiten op de zoekvraag.",
+     "becomes": "Kort antwoord op 'Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen…': wij helpen je daarmee. Op deze pagina lees je wat we doen, voor wie, en in [jouw werkgebied]."
+    }
+   }
+  },
+  {
+   "id": "SMO-2026-W42-02",
+   "week": "2026-W42",
+   "created": "2026-10-12",
+   "type": "verbeteren",
+   "status": "voorgesteld",
+   "title": "Laat de intro van de botox behandeling-pagina aansluiten op de vraag over botox in Haarlem.",
+   "why": "Bij de vraag \"botox Haarlem centrum arts natuurlijk resultaat\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+   "questions": [
+    "q11"
+   ],
+   "control_questions": [
+    "q19",
+    "q12",
+    "q01"
+   ],
+   "page_url": "https://www.smooth-operator.nl/botox-behandeling-haarlem",
+   "element": "intro",
+   "template_id": "onderwerp_match_intro",
+   "evidence": "lab_b2c",
+   "split_seed": "smooth-operator:2026-W42:2026-10-12",
+   "now": {
+    "snapshot": "2026-10-12",
+    "quote": "Botox, afgekort voor botulinumtoxine, is een behandeling die gebruikt wordt om rimpels en lijnen in het gezicht te verminderen.",
+    "absent_check": null
+   },
+   "becomes": "Botox in Haarlem bij Smooth Operator: botox, afgekort voor botulinumtoxine, is een behandeling die gebruikt wordt om rimpels en lijnen in het gezicht te verminderen. Kort antwoord op 'botox Haarlem centrum arts natuurlijk resultaat': hier lees je voor wie botox geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+   "placeholders": [],
+   "check_label": false,
+   "runs": [
+    "20261012-151847"
+   ],
+   "log": null,
+   "effect": null,
+   "reassessed": {
+    "date": "2026-10-13",
+    "logic_version": 8,
+    "before": {
+     "status": "voorgesteld",
+     "questions": [
+      "q11"
+     ],
+     "control_questions": [
+      "q01",
+      "q04",
+      "q06",
+      "q05",
+      "q02",
+      "q14"
+     ],
+     "title": "Laat de intro aansluiten op de zoekvraag.",
+     "becomes": "Kort antwoord op 'botox Haarlem centrum arts natuurlijk resultaat': wij helpen je daarmee. Op deze pagina lees je wat we doen, voor wie, en in [jouw werkgebied]."
+    }
+   }
+  },
+  {
+   "id": "SMO-2026-W42-03",
+   "week": "2026-W42",
+   "created": "2026-10-12",
+   "type": "verbeteren",
+   "status": "voorgesteld",
+   "title": "Laat de intro van de medische botox behandeling-pagina aansluiten op de vraag over botox in Haarlem.",
+   "why": "Bij de vraag \"Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een vrijblijvend consult waarin ik de arts spreek voordat ik beslis?\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+   "questions": [
+    "q13"
+   ],
+   "control_questions": [
+    "q19",
+    "q12",
+    "q01"
+   ],
+   "page_url": "https://www.smooth-operator.nl/botox-medisch",
+   "element": "intro",
+   "template_id": "onderwerp_match_intro",
+   "evidence": "lab_b2c",
+   "split_seed": "smooth-operator:2026-W42:2026-10-12",
+   "now": {
+    "snapshot": "2026-10-12",
+    "quote": "Botox (botulinumtoxine) kan worden gebruikt als effectieve behandeling voor overmatig zweten, ook bekend als hyperhidrose.",
+    "absent_check": null
+   },
+   "becomes": "Botox in Haarlem bij Smooth Operator: botox (botulinumtoxine) kan worden gebruikt als effectieve behandeling voor overmatig zweten, ook bekend als hyperhidrose. Kort antwoord op 'Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een…': hier lees je voor wie botox geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+   "placeholders": [],
+   "check_label": false,
+   "runs": [
+    "20261012-151847"
+   ],
+   "log": null,
+   "effect": null,
+   "reassessed": {
+    "date": "2026-10-13",
+    "logic_version": 8,
+    "before": {
+     "status": "voorgesteld",
+     "questions": [
+      "q13"
+     ],
+     "control_questions": [
+      "q01",
+      "q04",
+      "q06",
+      "q05",
+      "q02",
+      "q14"
+     ],
+     "title": "Laat de intro aansluiten op de zoekvraag.",
+     "becomes": "Kort antwoord op 'Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een…': wij helpen je daarmee. Op deze pagina lees je wat we doen, voor wie, en in [jouw werkgebied]."
+    }
+   }
+  }
+ ],
+ "last_run": {
+  "date": "2026-10-13",
+  "week": "2026-W42",
+  "snapshot": "2026-10-12",
+  "dropped": [],
+  "new": 0,
+  "logic_version": 8,
+  "reassessed": [
+   "SMO-2026-W42-01",
+   "SMO-2026-W42-02",
+   "SMO-2026-W42-03"
+  ]
+ }
+}
