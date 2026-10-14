@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 // Buffer output so session/cookie headers during included app renders do not warn.
 ob_start();
+// The sandbox cannot write PHP's system session directory.
+ini_set('session.save_path', sys_get_temp_dir());
 
 putenv('JPWEB_AI_SCAN_ALLOW_INSECURE=1');
 putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
@@ -781,6 +783,7 @@ require __DIR__ . '/gsc_test.php';
 require __DIR__ . '/free_scan_block_test.php';
 require __DIR__ . '/scan_form_test.php';
 require __DIR__ . '/geo_fix_test.php';
+require __DIR__ . '/smooth_demo_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);

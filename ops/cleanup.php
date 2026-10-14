@@ -26,7 +26,7 @@ set_exception_handler(static function (Throwable $e): void {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user', 'create_smooth_demo'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -221,6 +221,12 @@ try {
                 $summary = 'vervangen=' . ($out !== false ? 1 : 0) . ' toegevoegd=1';
             }
         }
+    } elseif ($mode === 'create_smooth_demo') {
+        require_once (string) getenv('OPS_DEMO_LIB');
+        $data = json_decode((string) file_get_contents((string) getenv('OPS_DEMO_FILE')), true, 512, JSON_THROW_ON_ERROR);
+        smooth_demo_create($pdo, strtolower(trim($email)), $data);
+        $r = ['ok' => true];
+        $summary = 'users=1 scans=1 vragen=25 mail=0';
     } elseif ($mode === 'create_test_user') {
         // Testaccount zonder scanrun: users-rij + niet-uitvoerbare scanrij (status test_geen_scan), geen mail.
         $em = strtolower(trim((string) getenv('OPS_EMAIL')));

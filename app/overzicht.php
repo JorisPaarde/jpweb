@@ -21,6 +21,10 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
     $csrf = (string) $ctx['csrf'];
     ?>
     <h1>Overzicht</h1>
+    <?php if (!empty($ctx['result']['demo'])): ?>
+      <p class="app-lead"><?= app_h((string) $ctx['result']['demo_note']) ?></p>
+      <p><?= app_h((string) $ctx['result']['question_set_label']) ?> · 25 vragen</p>
+    <?php endif; ?>
 
     <?php if ($score['status'] === 'none'): ?>
       <p class="app-empty">Er is nog geen scan gekoppeld aan dit account.</p>
@@ -153,7 +157,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
           <p class="app-empty">Er staan deze week nog geen acties klaar.</p>
         <?php else: ?>
           <?php foreach ($actions as $action):
-              app_render_action_card($action, $isFree, false, (string) $ctx['csrf']);
+              app_render_action_card($action, $isFree || !empty($ctx['result']['demo']), false, (string) $ctx['csrf']);
           endforeach; ?>
         <?php endif; ?>
         <p><a href="/app/acties.php">Alle acties</a></p>

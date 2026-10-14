@@ -105,7 +105,7 @@ app_render_layout($ctx, 'Vragen', static function (array $ctx) use (
       <p class="field__error" role="alert"><?= app_h($errorLocal) ?></p>
     <?php endif; ?>
 
-    <h2>Vaste vragen (<?= (int) $nCore ?>, versie <?= (int) $q['core_version'] ?>)</h2>
+    <h2>Vaste vragen (<?= (int) $nCore ?>, versie <?= app_h(!empty($ctx['result']['demo']) ? '2 · Koopvragen' : (string) (int) $q['core_version']) ?>)</h2>
     <?php if ($q['core'] === []): ?>
       <p class="app-empty">Er staan nog geen vragen. Na je scan zie je hier welke vragen ik AI-assistenten stelde.</p>
     <?php else: ?>
@@ -123,7 +123,9 @@ app_render_layout($ctx, 'Vragen', static function (array $ctx) use (
           <li class="q-item">
             <div class="q-item__top">
               <div>
-                <?php if ($named): ?>
+                <?php if ($m === null && $named === null): ?>
+                  <span class="app-list__muted">nog niet gemeten</span>
+                <?php elseif ($named): ?>
                   <span class="q-hit">✓</span>
                   <?php if ($k !== null && $m !== null): ?>
                     <span class="app-list__muted">genoemd in <?= $k ?> van <?= $m ?></span>

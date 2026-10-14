@@ -87,7 +87,7 @@ app_render_layout($ctx, 'Acties', static function (array $ctx) use (
       <p class="app-empty">Er staan deze week nog geen acties klaar.</p>
     <?php else: ?>
       <?php foreach ($current as $action):
-          app_render_action_card($action, $isFree, false, $csrf);
+          app_render_action_card($action, $isFree || !empty($ctx['result']['demo']), false, $csrf);
       endforeach; ?>
     <?php endif; ?>
     <?php if ($hiddenCount > 0): ?>
@@ -101,7 +101,7 @@ app_render_layout($ctx, 'Acties', static function (array $ctx) use (
       <?php
       $show = array_slice($archive, 0, 10);
       foreach ($show as $action):
-          app_render_action_card($action, $isFree, false, $csrf);
+          app_render_action_card($action, $isFree || !empty($ctx['result']['demo']), false, $csrf);
       endforeach;
       if (count($archive) > 10):
           ?>

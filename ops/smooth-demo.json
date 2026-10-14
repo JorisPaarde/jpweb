@@ -1,0 +1,297 @@
+{
+    "demo": true,
+    "company": "Smooth Operator",
+    "brand_aliases": [
+        "SmoothOperator",
+        "Smooth Operator Haarlem"
+    ],
+    "question_set_version": "core-v2-koop",
+    "question_set_label": "Koopvragen, versie 2",
+    "core_version": 2,
+    "competitors_version": 1,
+    "demo_note": "Ik laat hier bestaande meetgegevens zien. De cijfers en voorstellen komen uit de eerdere meting van 12 oktober 2026. Ik heb daarna acht vragen vervangen. Bij die nieuwe vragen staat nog geen uitslag. Ik start vanuit deze demo geen nieuwe meting.",
+    "updated_at": 1791824839,
+    "mentioned": 17,
+    "answers": 113,
+    "questions": {
+        "core": [
+            {
+                "source_id": "q01",
+                "text": "Ik ben 38 en kijk door mijn frons vaak boos, terwijl ik dat niet ben. Bij welke arts in Haarlem kan ik dit subtiel laten behandelen?",
+                "mentioned": 0,
+                "answers": 4
+            },
+            {
+                "source_id": "q02",
+                "text": "Mijn lippen worden dunner nu ik ouder word, maar ik wil geen opvallend opgespoten mond. Wie kan me rond Haarlem adviseren over een natuurlijke behandeling?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "v2a",
+                "text": "Welke arts in Haarlem geeft botox voor voorhoofd en kraaienpootjes met behoud van mimiek?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "q04",
+                "text": "Ik overweeg fillers voor mijn traangootjes. Welke arts rond Haarlem kan beoordelen of dat bij mijn vermoeide uitstraling past en de risico's uitleggen?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "q05",
+                "text": "Welke klinieken in Haarlem zijn een goede keuze voor botox door een arts als ik vooral een natuurlijk resultaat wil?",
+                "mentioned": 1,
+                "answers": 5
+            },
+            {
+                "source_id": "q06",
+                "text": "Welke arts in Kennemerland heeft ervaring met subtiele fillers voor de kaaklijn en kin bij mannen boven de 40?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "q07",
+                "text": "Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen zonder dat mijn gezicht er heel anders uit gaat zien?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "v2b",
+                "text": "Coonen Kliniek of City Clinics Haarlem: wie is beter voor een eerste botoxbehandeling?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "v2c",
+                "text": "Welke artsen rond Haarlem zijn een goed alternatief voor Arthur Ludlage voor subtiele lipfillers?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "v2d",
+                "text": "Welke kliniek in Haarlem heeft betaalbare botox per zone?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "q11",
+                "text": "botox Haarlem centrum arts natuurlijk resultaat",
+                "mentioned": 1,
+                "answers": 4
+            },
+            {
+                "source_id": "q12",
+                "text": "lipfillers arts omgeving Heemstede Haarlem",
+                "mentioned": 0,
+                "answers": 4
+            },
+            {
+                "source_id": "q13",
+                "text": "Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een vrijblijvend consult waarin ik de arts spreek voordat ik beslis?",
+                "mentioned": 0,
+                "answers": 4
+            },
+            {
+                "source_id": "v2e",
+                "text": "Welke kliniek in Haarlem is betrouwbaar voor lipfillers door een arts, met hulp bij complicaties?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "v2f",
+                "text": "Welke kliniek in Haarlem is het voordeligst voor frons, voorhoofd en kraaienpootjes, inclusief controle?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "q16",
+                "text": "Ik overweeg fillers voor mijn kaaklijn, maar wil weten hoeveel er nodig is en wat het totaal kost. Waar kan ik in Haarlem een persoonlijk behandelplan laten maken?",
+                "mentioned": 0,
+                "answers": 3
+            },
+            {
+                "source_id": "v2g",
+                "text": "Welke arts in Haarlem behandelt de neus-lippenplooi met een natuurlijk resultaat?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "q18",
+                "text": "Ik zoek skinboosters voor een frissere huid zonder extra volume in mijn gezicht. Waar kan ik in Haarlem advies krijgen over de mogelijkheden en kosten?",
+                "mentioned": 1,
+                "answers": 4
+            },
+            {
+                "source_id": "q19",
+                "text": "Ik overweeg botox tegen tandenknarsen. Welke arts in Haarlem kan eerst beoordelen of dit geschikt is voor mijn kaakklachten?",
+                "mentioned": 1,
+                "answers": 5
+            },
+            {
+                "source_id": "q20",
+                "text": "Welke kliniek rond Haarlem biedt persoonlijke begeleiding bij afvallen en kan ook adviseren over plaatselijke vetophopingen?",
+                "mentioned": 2,
+                "answers": 4
+            },
+            {
+                "source_id": "v2h",
+                "text": "Welke arts in Haarlem behandelt overmatig zweten met botox, en wat kost dat daar?",
+                "mentioned": null,
+                "answers": null
+            },
+            {
+                "source_id": "q22",
+                "text": "Ik wil een huidverbeteringsbehandeling boeken in Haarlem, maar heb binnenkort een belangrijke afspraak. Welke kliniek kan vooraf duidelijk uitleggen wat de hersteltijd en nazorg zijn?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "q23",
+                "text": "Ik zweet zo veel onder mijn oksels dat gewone deodorant niet helpt. Welke arts in de omgeving van Haarlem kan beoordelen welke behandeling bij mij past?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "q24",
+                "text": "Ik ben een man van 45 en mijn haar wordt steeds dunner. Waar kan ik in Haarlem terecht voor persoonlijk behandeladvies voordat ik ergens aan begin?",
+                "mentioned": 0,
+                "answers": 5
+            },
+            {
+                "source_id": "q25",
+                "text": "Ik blijf een plaatselijk vetrolletje houden ondanks sporten en gezonder eten. Wie kan rond Haarlem beoordelen of een lokale behandeling zinvol is?",
+                "mentioned": 0,
+                "answers": 5
+            }
+        ],
+        "rotating": []
+    },
+    "actions": [
+        {
+            "id": "SMO-2026-W42-01",
+            "week": "2026-W42",
+            "type": "verbeteren",
+            "status": "voorgesteld",
+            "title": "Laat de intro van de jukbeenderen-pagina aansluiten op de vraag over fillers in Haarlem.",
+            "why": "Bij de vraag \"Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen zonder dat mijn gezicht er heel anders uit gaat zien?\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+            "page_path": "https:\/\/www.smooth-operator.nl\/behandeling-jukbeenderen",
+            "now": "Prominente jukbeenderen zijn een teken van jeugdigheid en schoonheid.",
+            "becomes": "Fillers in Haarlem bij Smooth Operator: prominente jukbeenderen zijn een teken van jeugdigheid en schoonheid. Kort antwoord op 'Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen…': hier lees je voor wie fillers geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+            "evidence": "Ik baseer dit voorstel op de eerdere meting en de opgeslagen pagina.",
+            "questions": [
+                "q07"
+            ],
+            "control_questions": [
+                "q19",
+                "q12",
+                "q01"
+            ]
+        },
+        {
+            "id": "SMO-2026-W42-02",
+            "week": "2026-W42",
+            "type": "verbeteren",
+            "status": "voorgesteld",
+            "title": "Laat de intro van de botox behandeling-pagina aansluiten op de vraag over botox in Haarlem.",
+            "why": "Bij de vraag \"botox Haarlem centrum arts natuurlijk resultaat\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+            "page_path": "https:\/\/www.smooth-operator.nl\/botox-behandeling-haarlem",
+            "now": "Botox, afgekort voor botulinumtoxine, is een behandeling die gebruikt wordt om rimpels en lijnen in het gezicht te verminderen.",
+            "becomes": "Botox in Haarlem bij Smooth Operator: botox, afgekort voor botulinumtoxine, is een behandeling die gebruikt wordt om rimpels en lijnen in het gezicht te verminderen. Kort antwoord op 'botox Haarlem centrum arts natuurlijk resultaat': hier lees je voor wie botox geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+            "evidence": "Ik baseer dit voorstel op de eerdere meting en de opgeslagen pagina.",
+            "questions": [
+                "q11"
+            ],
+            "control_questions": [
+                "q19",
+                "q12",
+                "q01"
+            ]
+        },
+        {
+            "id": "SMO-2026-W42-03",
+            "week": "2026-W42",
+            "type": "verbeteren",
+            "status": "voorgesteld",
+            "title": "Laat de intro van de medische botox behandeling-pagina aansluiten op de vraag over botox in Haarlem.",
+            "why": "Bij de vraag \"Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een vrijblijvend consult waarin ik de arts spreek voordat ik beslis?\" word je in 0 van de 1 antwoorden genoemd. De intro sluit nog niet aan op die zoekvraag.",
+            "page_path": "https:\/\/www.smooth-operator.nl\/botox-medisch",
+            "now": "Botox (botulinumtoxine) kan worden gebruikt als effectieve behandeling voor overmatig zweten, ook bekend als hyperhidrose.",
+            "becomes": "Botox in Haarlem bij Smooth Operator: botox (botulinumtoxine) kan worden gebruikt als effectieve behandeling voor overmatig zweten, ook bekend als hyperhidrose. Kort antwoord op 'Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een…': hier lees je voor wie botox geschikt is, wat het kost en hoe je een afspraak maakt in Haarlem.",
+            "evidence": "Ik baseer dit voorstel op de eerdere meting en de opgeslagen pagina.",
+            "questions": [
+                "q13"
+            ],
+            "control_questions": [
+                "q19",
+                "q12",
+                "q01"
+            ]
+        }
+    ],
+    "trend": [
+        {
+            "week": "2026-W42 · eerdere vragen",
+            "mentioned": 17,
+            "answers": 113
+        }
+    ],
+    "competitors": {
+        "list": [
+            {
+                "name": "Coonen Kliniek",
+                "aliases": [
+                    "Coonen Kliniek",
+                    "Coonenkliniek",
+                    "Joris Coonen"
+                ],
+                "domains": [
+                    "coonenkliniek.nl"
+                ],
+                "status": "active"
+            },
+            {
+                "name": "City Clinics",
+                "aliases": [
+                    "City Clinics",
+                    "City Clinics Haarlem",
+                    "CityClinics"
+                ],
+                "domains": [
+                    "cityclinics.nl"
+                ],
+                "status": "active"
+            },
+            {
+                "name": "Arthur Ludlage",
+                "aliases": [
+                    "Arthur Ludlage",
+                    "Ludlage"
+                ],
+                "domains": [
+                    "arthurludlage.nl"
+                ],
+                "status": "active"
+            }
+        ],
+        "mentioned_this_week": [
+            {
+                "name": "Coonen Kliniek",
+                "count": 66
+            },
+            {
+                "name": "Arthur Ludlage",
+                "count": 34
+            },
+            {
+                "name": "City Clinics",
+                "count": 25
+            }
+        ]
+    },
+    "aio": {
+        "present": 18,
+        "calls": 25
+    }
+}

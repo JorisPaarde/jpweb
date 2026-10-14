@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "updated": "2026-10-12",
+  "status": "active",
+  "approved_by_joris": false,
+  "competitors": [
+    {
+      "name": "Coonen Kliniek",
+      "aliases": [
+        "Coonen Kliniek",
+        "Coonenkliniek",
+        "Joris Coonen"
+      ],
+      "domains": [
+        "coonenkliniek.nl"
+      ],
+      "status": "active"
+    },
+    {
+      "name": "City Clinics",
+      "aliases": [
+        "City Clinics",
+        "City Clinics Haarlem",
+        "CityClinics"
+      ],
+      "domains": [
+        "cityclinics.nl"
+      ],
+      "status": "active"
+    },
+    {
+      "name": "Arthur Ludlage",
+      "aliases": [
+        "Arthur Ludlage",
+        "Ludlage"
+      ],
+      "domains": [
+        "arthurludlage.nl"
+      ],
+      "status": "active"
+    }
+  ]
+}

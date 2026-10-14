@@ -89,6 +89,10 @@ function app_boot(string $pageId): array
 
     $scan = ai_scan_latest_for_user($pdo, $userId);
     $result = app_decode_result($scan);
+    if (!empty($result['demo'])) {
+        $isFree = false; // Show the imported results; the paused account keeps writes disabled.
+        $canWrite = false;
+    }
 
     ai_scan_start_session($config);
     $flash = '';

@@ -1,0 +1,383 @@
+{
+ "core_version": 2,
+ "core": [
+  {
+   "id": "q01",
+   "vraag": "Ik ben 38 en kijk door mijn frons vaak boos, terwijl ik dat niet ben. Bij welke arts in Haarlem kan ik dit subtiel laten behandelen?",
+   "categorie": "doelgroep",
+   "place_append": false,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q02",
+   "vraag": "Mijn lippen worden dunner nu ik ouder word, maar ik wil geen opvallend opgespoten mond. Wie kan me rond Haarlem adviseren over een natuurlijke behandeling?",
+   "categorie": "doelgroep",
+   "place_append": false,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "v2a",
+   "vraag": "Welke arts in Haarlem geeft botox voor voorhoofd en kraaienpootjes met behoud van mimiek?",
+   "intent_type": "eis",
+   "categorie": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q03",
+   "fase": "kiezen"
+  },
+  {
+   "id": "q04",
+   "vraag": "Ik overweeg fillers voor mijn traangootjes. Welke arts rond Haarlem kan beoordelen of dat bij mijn vermoeide uitstraling past en de risico's uitleggen?",
+   "categorie": "lokaal",
+   "place_append": false,
+   "intent_type": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q05",
+   "vraag": "Welke klinieken in Haarlem zijn een goede keuze voor botox door een arts als ik vooral een natuurlijk resultaat wil?",
+   "categorie": "lokaal",
+   "place_append": true,
+   "intent_type": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q06",
+   "vraag": "Welke arts in Kennemerland heeft ervaring met subtiele fillers voor de kaaklijn en kin bij mannen boven de 40?",
+   "categorie": "doelgroep",
+   "place_append": true,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q07",
+   "vraag": "Welke kliniek in Haarlem kan me adviseren over fillers voor mijn jukbeenderen zonder dat mijn gezicht er heel anders uit gaat zien?",
+   "categorie": "lokaal",
+   "place_append": true,
+   "intent_type": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "v2b",
+   "vraag": "Coonen Kliniek of City Clinics Haarlem: wie is beter voor een eerste botoxbehandeling?",
+   "intent_type": "vergelijking",
+   "categorie": "vergelijking",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q08",
+   "fase": "kiezen"
+  },
+  {
+   "id": "v2c",
+   "vraag": "Welke artsen rond Haarlem zijn een goed alternatief voor Arthur Ludlage voor subtiele lipfillers?",
+   "intent_type": "vergelijking",
+   "categorie": "vergelijking",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q09",
+   "fase": "kiezen"
+  },
+  {
+   "id": "v2d",
+   "vraag": "Welke kliniek in Haarlem heeft betaalbare botox per zone?",
+   "intent_type": "budget",
+   "categorie": "budget",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q10",
+   "fase": "kiezen"
+  },
+  {
+   "id": "q11",
+   "vraag": "botox Haarlem centrum arts natuurlijk resultaat",
+   "categorie": "lokaal",
+   "place_append": true,
+   "intent_type": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q12",
+   "vraag": "lipfillers arts omgeving Heemstede Haarlem",
+   "categorie": "lokaal",
+   "place_append": true,
+   "intent_type": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q13",
+   "vraag": "Ik wil voor het eerst botox laten doen in Haarlem. Welke kliniek biedt een vrijblijvend consult waarin ik de arts spreek voordat ik beslis?",
+   "categorie": "eis",
+   "place_append": false,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "v2e",
+   "vraag": "Welke kliniek in Haarlem is betrouwbaar voor lipfillers door een arts, met hulp bij complicaties?",
+   "intent_type": "eis",
+   "categorie": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q14",
+   "fase": "kiezen"
+  },
+  {
+   "id": "v2f",
+   "vraag": "Welke kliniek in Haarlem is het voordeligst voor frons, voorhoofd en kraaienpootjes, inclusief controle?",
+   "intent_type": "budget",
+   "categorie": "budget",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q15",
+   "fase": "kiezen"
+  },
+  {
+   "id": "q16",
+   "vraag": "Ik overweeg fillers voor mijn kaaklijn, maar wil weten hoeveel er nodig is en wat het totaal kost. Waar kan ik in Haarlem een persoonlijk behandelplan laten maken?",
+   "categorie": "eis",
+   "place_append": false,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "v2g",
+   "vraag": "Welke arts in Haarlem behandelt de neus-lippenplooi met een natuurlijk resultaat?",
+   "intent_type": "lokaal",
+   "categorie": "lokaal",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q17",
+   "fase": "kiezen"
+  },
+  {
+   "id": "q18",
+   "vraag": "Ik zoek skinboosters voor een frissere huid zonder extra volume in mijn gezicht. Waar kan ik in Haarlem advies krijgen over de mogelijkheden en kosten?",
+   "categorie": "eis",
+   "place_append": false,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q19",
+   "vraag": "Ik overweeg botox tegen tandenknarsen. Welke arts in Haarlem kan eerst beoordelen of dit geschikt is voor mijn kaakklachten?",
+   "categorie": "eis",
+   "place_append": false,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q20",
+   "vraag": "Welke kliniek rond Haarlem biedt persoonlijke begeleiding bij afvallen en kan ook adviseren over plaatselijke vetophopingen?",
+   "categorie": "eis",
+   "place_append": true,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "v2h",
+   "vraag": "Welke arts in Haarlem behandelt overmatig zweten met botox, en wat kost dat daar?",
+   "intent_type": "budget",
+   "categorie": "budget",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": "q21",
+   "fase": "kiezen"
+  },
+  {
+   "id": "q22",
+   "vraag": "Ik wil een huidverbeteringsbehandeling boeken in Haarlem, maar heb binnenkort een belangrijke afspraak. Welke kliniek kan vooraf duidelijk uitleggen wat de hersteltijd en nazorg zijn?",
+   "categorie": "eis",
+   "place_append": false,
+   "intent_type": "eis",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q23",
+   "vraag": "Ik zweet zo veel onder mijn oksels dat gewone deodorant niet helpt. Welke arts in de omgeving van Haarlem kan beoordelen welke behandeling bij mij past?",
+   "categorie": "doelgroep",
+   "place_append": false,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q24",
+   "vraag": "Ik ben een man van 45 en mijn haar wordt steeds dunner. Waar kan ik in Haarlem terecht voor persoonlijk behandeladvies voordat ik ergens aan begin?",
+   "categorie": "doelgroep",
+   "place_append": false,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  },
+  {
+   "id": "q25",
+   "vraag": "Ik blijf een plaatselijk vetrolletje houden ondanks sporten en gezonder eten. Wie kan rond Haarlem beoordelen of een lokale behandeling zinvol is?",
+   "categorie": "doelgroep",
+   "place_append": false,
+   "intent_type": "doelgroep",
+   "intent_type_source": "migratie",
+   "bron": "migratie",
+   "vervangt": null
+  }
+ ],
+ "history": [
+  {
+   "version": 1,
+   "date": "2026-10-12",
+   "ids": [
+    "q01",
+    "q02",
+    "q03",
+    "q04",
+    "q05",
+    "q06",
+    "q07",
+    "q08",
+    "q09",
+    "q10",
+    "q11",
+    "q12",
+    "q13",
+    "q14",
+    "q15",
+    "q16",
+    "q17",
+    "q18",
+    "q19",
+    "q20",
+    "q21",
+    "q22",
+    "q23",
+    "q24",
+    "q25"
+   ],
+   "note": "start: huidige meetvragen"
+  },
+  {
+   "version": 2,
+   "date": "2026-10-12",
+   "ids": [
+    "q01",
+    "q02",
+    "v2a",
+    "q04",
+    "q05",
+    "q06",
+    "q07",
+    "v2b",
+    "v2c",
+    "v2d",
+    "q11",
+    "q12",
+    "q13",
+    "v2e",
+    "v2f",
+    "q16",
+    "v2g",
+    "q18",
+    "q19",
+    "q20",
+    "v2h",
+    "q22",
+    "q23",
+    "q24",
+    "q25"
+   ],
+   "note": "migratie koopvragen",
+   "map": {
+    "q01": "q01",
+    "q02": "q02",
+    "q03": "v2a",
+    "q04": "q04",
+    "q05": "q05",
+    "q06": "q06",
+    "q07": "q07",
+    "q08": "v2b",
+    "q09": "v2c",
+    "q10": "v2d",
+    "q11": "q11",
+    "q12": "q12",
+    "q13": "q13",
+    "q14": "v2e",
+    "q15": "v2f",
+    "q16": "q16",
+    "q17": "v2g",
+    "q18": "q18",
+    "q19": "q19",
+    "q20": "q20",
+    "q21": "v2h",
+    "q22": "q22",
+    "q23": "q23",
+    "q24": "q24",
+    "q25": "q25"
+   },
+   "retired": [
+    "q03",
+    "q08",
+    "q09",
+    "q10",
+    "q14",
+    "q15",
+    "q17",
+    "q21"
+   ]
+  }
+ ],
+ "rotating": {
+  "2026-W42": {
+   "set_version": "rot-2026-W42",
+   "created": "2026-10-12T15:18:47+02:00",
+   "backend": "claude",
+   "questions": [
+    {
+     "id": "r42a",
+     "vraag": "Mijn voorhoofd en wenkbrauwen hangen zwaarder dan vroeger en ik zie er moe uit. Welke arts in Haarlem kan beoordelen of botox of iets anders past?",
+     "categorie": "probleemgericht"
+    },
+    {
+     "id": "r42b",
+     "vraag": "Welke arts in Haarlem of omgeving behandelt steelwratjes door ze weg te branden, en hoeveel behandelingen heb ik daarvoor meestal nodig?",
+     "categorie": "oplossingsgericht"
+    },
+    {
+     "id": "r42c",
+     "vraag": "Ik zoek een kliniek in Haarlem voor anti-aging en longevity bij een arts. Waar moet ik op letten om serieuze aanbieders te onderscheiden?",
+     "categorie": "beslissingsgericht"
+    }
+   ]
+  }
+ },
+ "question_set_version": "core-v2-koop"
+}
