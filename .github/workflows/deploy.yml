@@ -71,6 +71,8 @@ jobs:
       - name: Deploy static files
         run: |
           rsync -az --delete \
+            --filter='H /app/gsc/preview.php' \
+            --filter='R /app/gsc/preview.php' \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='.DS_Store' \
@@ -203,6 +205,8 @@ jobs:
       - name: Deploy static files
         run: |
           rsync -az --delete \
+            --filter='H /app/gsc/preview.php' \
+            --filter='R /app/gsc/preview.php' \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='.DS_Store' \
