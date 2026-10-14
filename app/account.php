@@ -56,8 +56,7 @@ $email = (string) ($ctx['user']['email'] ?? '');
 $pendingEmail = (string) ($ctx['user']['pending_email'] ?? '');
 $website = (string) ($ctx['profile']['website'] ?? ($ctx['scan']['domain'] ?? ''));
 $isFree = !empty($ctx['is_free']);
-$status = (string) ($ctx['user']['subscription_status'] ?? 'none');
-$canDelete = $isFree || in_array($status, ['ended', 'none', 'canceling'], true);
+$canDelete = app_account_can_delete($ctx);
 
 app_render_layout($ctx, 'Account', static function (array $ctx) use (
     $email,
