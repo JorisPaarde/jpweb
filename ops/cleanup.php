@@ -26,7 +26,7 @@ set_exception_handler(static function (Throwable $e): void {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -179,6 +179,70 @@ try {
             }
             $r = ['ok' => true];
             $summary = 'requeued=' . $requeued . ' users=1 velden_gevuld=' . $filled . ' concurrenten_toegevoegd=' . $added . ' concurrenten_totaal=' . count($names);
+        }
+    } elseif ($mode === 'replace_competitor') {
+        // Vervangt de actieve concurrent die het minst genoemd is (gelijk: oudste) door OPS_NEW_NAME/OPS_NEW_DOMAIN.
+        $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
+        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
+        $sel->execute(['e' => $eh]);
+        $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
+        if ($ids === [] && $website !== '') {
+            $pw = ai_scan_parse_website($website);
+            $sd = $pdo->prepare('SELECT DISTINCT user_id FROM scans WHERE domain_hash = :d AND user_id IS NOT NULL');
+            $sd->execute(['d' => !empty($pw['ok']) ? ai_scan_domain_hash((string) $pw['domain']) : '']);
+            $ids = $sd->fetchAll(PDO::FETCH_COLUMN);
+        }
+        $new = trim((string) getenv('OPS_NEW_NAME'));
+        $newDomain = trim((string) getenv('OPS_NEW_DOMAIN'));
+        if (count($ids) !== 1 || $new === '') {
+            $r = ['ok' => false];
+            $summary = 'users_gevonden=' . count($ids);
+        } else {
+            $uid = (int) $ids[0];
+            $dup = $pdo->prepare("SELECT COUNT(*) FROM competitors WHERE user_id = :u AND LOWER(name) = :n AND status = 'active'");
+            $dup->execute(['u' => $uid, 'n' => mb_strtolower($new)]);
+            if ((int) $dup->fetchColumn() > 0) {
+                $r = ['ok' => true];
+                $summary = 'al_aanwezig=1';
+            } else {
+                $low = $pdo->prepare("SELECT id, name, mentioned_count FROM competitors WHERE user_id = :u AND status = 'active' ORDER BY mentioned_count ASC, created_at ASC, id ASC LIMIT 1");
+                $low->execute(['u' => $uid]);
+                $out = $low->fetch();
+                $now = time();
+                if ($out !== false) {
+                    $pdo->prepare('DELETE FROM competitors WHERE id = :id')->execute(['id' => (int) $out['id']]);
+                    echo "ops {$job}: eruit=" . $out['name'] . ' genoemd=' . (int) $out['mentioned_count'] . "\n";
+                }
+                $pdo->prepare(
+                    'INSERT INTO competitors(user_id, name, aliases_json, domains_json, source, status, mentioned_count, created_at, updated_at)
+                     VALUES(:u, :n, :a, :d, \'scan\', \'active\', 0, :c, :c)'
+                )->execute(['u' => $uid, 'n' => $new, 'a' => json_encode([$new]), 'd' => json_encode($newDomain !== '' ? [$newDomain] : []), 'c' => $now]);
+                $r = ['ok' => true];
+                $summary = 'vervangen=' . ($out !== false ? 1 : 0) . ' toegevoegd=1';
+            }
+        }
+    } elseif ($mode === 'create_test_user') {
+        // Testaccount zonder scanrun: users-rij + niet-uitvoerbare scanrij (status test_geen_scan), geen mail.
+        $em = strtolower(trim((string) getenv('OPS_EMAIL')));
+        $eh = ai_scan_email_hash(ai_scan_normalize_email($em));
+        $pw = ai_scan_parse_website($website);
+        $ex = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email_hash = :e');
+        $ex->execute(['e' => $eh]);
+        if ($em === '' || empty($pw['ok']) || (int) $ex->fetchColumn() > 0) {
+            $r = ['ok' => false];
+            $summary = 'input_of_bestaat';
+        } else {
+            $now = time();
+            $pdo->prepare('INSERT INTO users(email, email_hash, password_hash, created_at, free_scan_used) VALUES(:e, :h, NULL, :c, 1)')
+                ->execute(['e' => $em, 'h' => $eh, 'c' => $now]);
+            $uid = (int) $pdo->lastInsertId();
+            $pdo->prepare(
+                "INSERT INTO scans(public_id, user_id, email, email_hash, website_url, domain, domain_hash, status, created_at)
+                 VALUES(:p, :u, :e, :h, :w, :d, :dh, 'test_geen_scan', :c)"
+            )->execute(['p' => ai_scan_random_token(16), 'u' => $uid, 'e' => $em, 'h' => $eh, 'w' => (string) $pw['url'],
+                'd' => (string) $pw['domain'], 'dh' => ai_scan_domain_hash((string) $pw['domain']), 'c' => $now]);
+            $r = ['ok' => true];
+            $summary = 'users=1 scans=1 created_at=' . $now;
         }
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
