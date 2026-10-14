@@ -231,6 +231,13 @@ jobs:
             < /tmp/freescan-dispatch.php
           rm -f /tmp/freescan-dispatch.php
 
+      - name: One-time Smooth-demo zonder niet-koopvraag (frons)
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='demo-drop-frons-20261014' OPS_MODE='demo_drop_question' OPS_EMAIL='jpweb-scan-test@agentmail.to' OPS_MATCH='kijk door mijn frons' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops demo-drop-frons: exit $? (zie hierboven)"
+
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl
