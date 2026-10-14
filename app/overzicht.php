@@ -23,7 +23,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
     <h1>Overzicht</h1>
     <?php if (!empty($ctx['result']['demo'])): ?>
       <p class="app-lead"><?= app_h((string) $ctx['result']['demo_note']) ?></p>
-      <p><?= app_h((string) $ctx['result']['question_set_label']) ?> · 25 vragen</p>
+      <p><?= app_h((string) $ctx['result']['question_set_label']) ?> · <?= (int) count($ctx['result']['questions']['core'] ?? []) ?> vragen</p>
     <?php endif; ?>
 
     <?php if ($score['status'] === 'none'): ?>

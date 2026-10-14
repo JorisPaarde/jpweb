@@ -49,3 +49,10 @@ test('smooth demo: concurrenten.php blocks writes for demo accounts', static fun
     $src = (string) file_get_contents(dirname(__DIR__) . '/app/concurrenten.php');
     assert_true(str_contains($src, "elseif (!empty(\$ctx['result']['demo']))"), 'demo write guard in concurrenten.php');
 });
+
+test('smooth demo: overzicht shows the real number of demo questions, not a fixed 25', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/app/overzicht.php');
+    assert_true(!str_contains($src, '· 25 vragen'), 'no hardcoded 25');
+    $ops = (string) file_get_contents(dirname(__DIR__) . '/ops/cleanup.php');
+    assert_true(str_contains($ops, "'demo_drop_question'") && str_contains($ops, "empty(\$res['demo'])"), 'drop only on demo accounts');
+});

@@ -26,7 +26,7 @@ set_exception_handler(static function (Throwable $e): void {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user', 'create_smooth_demo'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user', 'create_smooth_demo', 'demo_drop_question'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -249,6 +249,31 @@ try {
                 'd' => (string) $pw['domain'], 'dh' => ai_scan_domain_hash((string) $pw['domain']), 'c' => $now]);
             $r = ['ok' => true];
             $summary = 'users=1 scans=1 created_at=' . $now;
+        }
+    } elseif ($mode === 'demo_drop_question') {
+        // Alleen demo-accounts: verberg één vaste vraag (tekst bevat OPS_MATCH). Meetdata blijft ongewijzigd.
+        $eh = ai_scan_email_hash(ai_scan_normalize_email(trim((string) getenv('OPS_EMAIL'))));
+        $match = trim((string) getenv('OPS_MATCH'));
+        $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e');
+        $sel->execute(['e' => $eh]);
+        $ids = $sel->fetchAll(PDO::FETCH_COLUMN);
+        $scan = count($ids) === 1 ? ai_scan_latest_for_user($pdo, (int) $ids[0]) : null;
+        $res = $scan !== null ? json_decode((string) ($scan['result_json'] ?? ''), true) : null;
+        if (mb_strlen($match) < 5 || !is_array($res) || empty($res['demo'])) {
+            $r = ['ok' => false];
+            $summary = 'geen_demo_of_match';
+        } else {
+            $uid = (int) $ids[0];
+            $q = $pdo->prepare("UPDATE questions SET status = 'deleted', updated_at = :t WHERE user_id = :u AND status != 'deleted' AND text LIKE :m");
+            $q->execute(['t' => time(), 'u' => $uid, 'm' => '%' . $match . '%']);
+            $hidden = $q->rowCount();
+            $before = count($res['questions']['core'] ?? []);
+            $res['questions']['core'] = array_values(array_filter($res['questions']['core'] ?? [],
+                static fn ($x): bool => !str_contains((string) (is_array($x) ? ($x['text'] ?? '') : $x), $match)));
+            $pdo->prepare('UPDATE scans SET result_json = :j WHERE id = :id')
+                ->execute(['j' => json_encode($res, JSON_UNESCAPED_UNICODE), 'id' => (int) $scan['id']]);
+            $r = ['ok' => $hidden <= 1];
+            $summary = 'verborgen=' . $hidden . ' result_core=' . $before . '->' . count($res['questions']['core']);
         }
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
