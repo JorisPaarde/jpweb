@@ -9,10 +9,28 @@ declare(strict_types=1);
  * ?state=connected|disconnected|free  & optional ?embed=1
  */
 
+// Never bootstrap the database from a deployed web route. Local QA requires
+// an explicit opt-in and config; HTTP is limited to the loopback PHP test server.
+$previewConfig = getenv('JPWEB_AI_SCAN_CONFIG');
+$localRuntime = PHP_SAPI === 'cli'
+    || (PHP_SAPI === 'cli-server'
+        && in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true));
+if (!$localRuntime || getenv('JPWEB_GSC_PREVIEW_LOCAL_TEST') !== '1'
+    || !is_string($previewConfig) || $previewConfig === '' || !is_readable($previewConfig)) {
+    http_response_code(404);
+    exit;
+}
+
 require_once dirname(__DIR__, 2) . '/lib/bootstrap.php';
 require_once dirname(__DIR__, 2) . '/lib/gsc.php';
 
-[$config, $pdo] = ai_scan_boot();
+$config = ai_scan_load_config($previewConfig);
+if (!in_array(parse_url((string) ($config['base_url'] ?? ''), PHP_URL_HOST), ['localhost', '127.0.0.1', '[::1]'], true)) {
+    http_response_code(404);
+    exit;
+}
+$pdo = ai_scan_db($config);
+ai_scan_migrate($pdo);
 ai_scan_gsc_ensure_schema($pdo);
 ai_scan_security_headers();
 
