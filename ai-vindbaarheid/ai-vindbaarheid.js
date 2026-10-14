@@ -244,9 +244,12 @@
     if (!(range instanceof HTMLInputElement) || !tiers.length) {
       return;
     }
-    const goToPrices = () => {
+    // Scroll naar het blok met de prijs die bij de keuze hoort: bij "Alleen advies" de schuif met de
+    // abonnementsprijs, bij "Compleet" het urenblok. Zo staat bovenaan nooit een prijs die je niet koos.
+    const goToPrices = (target) => {
       update(config);
-      root.scrollIntoView({ behavior: "smooth", block: "start" });
+      const block = target instanceof HTMLElement ? target : root;
+      block.scrollIntoView({ behavior: "smooth", block: "start" });
     };
     const makeButton = (title, lines, onPick) => {
       const button = document.createElement("button");
@@ -276,7 +279,7 @@
           [`${formatEuro(tier.monthly)} per maand`, `${tier.actions} verbeteracties per maand`],
           () => {
             range.value = String(index);
-            goToPrices();
+            goToPrices(root.querySelector(".geo-pricing-tool"));
           },
         ));
       });
@@ -303,7 +306,7 @@
             }
             // Het getoonde pakket is uren én het aantal vragen op de kaart (de eerste tier).
             range.value = "0";
-            goToPrices();
+            goToPrices(root.querySelector(".geo-pricing-compleet"));
           },
         ));
       });
