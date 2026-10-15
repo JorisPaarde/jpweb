@@ -273,6 +273,28 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
  *
  * @return array{code: string, user_id?: int, scan_id?: int}
  */
+/**
+ * Toestand van een bevestigingslink: ok (knop tonen), expired, used (al bevestigd) of invalid.
+ */
+function ai_scan_confirm_token_state(PDO $pdo, string $token, int $now = 0): string
+{
+    $now = $now > 0 ? $now : time();
+    if ($token === '') {
+        return 'invalid';
+    }
+    $stmt = $pdo->prepare('SELECT status, confirm_expires_at FROM scans WHERE confirm_token_hash = :h LIMIT 1');
+    $stmt->execute(['h' => ai_scan_hash_token($token)]);
+    $scan = $stmt->fetch();
+    if ($scan === false) {
+        return 'invalid';
+    }
+    if ((string) $scan['status'] !== 'onbevestigd') {
+        return 'used';
+    }
+
+    return (int) ($scan['confirm_expires_at'] ?? 0) < $now ? 'expired' : 'ok';
+}
+
 function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): array
 {
     $now = $now > 0 ? $now : time();
