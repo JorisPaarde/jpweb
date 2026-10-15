@@ -257,8 +257,51 @@ test('tier request mails info@ and customer; throttle skips mail', static functi
     assert_true($r2['ok']);
     assert_true(!empty($r2['throttled']));
     assert_true(!$r2['mailed']);
-    assert_same(AI_SCAN_TIER_REQUEST_MESSAGE, $r2['message']);
+    assert_same(AI_SCAN_TIER_REQUEST_SAVED_MESSAGE, $r2['message']);
+    assert_same(2, (int) $pdo->query("SELECT COUNT(*) FROM subscription_events WHERE event = 'request'")->fetchColumn());
     assert_true(!is_file($mailLog) || trim((string) file_get_contents($mailLog)) === '');
+});
+
+test('tier request: throttled cancel is stored, failed mail is retried and message is honest', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $config['tier_request_mail_per_email_seconds'] = 600;
+    $config['tier_request_mail_global_max_per_hour'] = 40;
+    $now = time();
+    $pdo->prepare(
+        'INSERT INTO users(email, email_hash, password_hash, created_at, free_scan_used, tier_id, subscription_status)
+         VALUES(:e, :h, NULL, :c, 1, \'q50\', \'active\')'
+    )->execute(['e' => 'stop@firma.nl', 'h' => ai_scan_email_hash('stop@firma.nl'), 'c' => $now]);
+    $user = $pdo->query('SELECT * FROM users WHERE email = \'stop@firma.nl\'')->fetch();
+
+    // Throttled: cancel must still be stored and flagged for a later mail.
+    ai_scan_tier_request_mail_rate_record($pdo, (string) $user['email_hash'], $now);
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+    $r = ai_scan_request_tier_change($pdo, $config, $user, '', 'cancel', $now + 5);
+    assert_true($r['ok'] && !$r['mailed']);
+    assert_same(AI_SCAN_TIER_REQUEST_SAVED_MESSAGE, $r['message']);
+    assert_same(1, (int) $pdo->query("SELECT COUNT(*) FROM subscription_events WHERE event = 'request' AND note = 'cancel' AND mail_pending = 1")->fetchColumn());
+    assert_true(!is_file($mailLog) || trim((string) file_get_contents($mailLog)) === '');
+
+    // Still inside the window: retry sends nothing.
+    assert_same(0, ai_scan_flush_tier_request_mails($pdo, $config, 10, $now + 60));
+    // After the window: the stored request is mailed once, then no longer pending.
+    assert_same(1, ai_scan_flush_tier_request_mails($pdo, $config, 10, $now + 700));
+    assert_true(str_contains((string) file_get_contents($mailLog), 'Soort: cancel'));
+    assert_same(0, (int) $pdo->query("SELECT COUNT(*) FROM subscription_events WHERE mail_pending = 1")->fetchColumn());
+    assert_same(0, ai_scan_flush_tier_request_mails($pdo, $config, 10, $now + 1400));
+
+    // Failing delivery: stored, honest message, still pending.
+    $config2 = $config;
+    $config2['tier_request_mail_per_email_seconds'] = 0;
+    putenv('JPWEB_AI_SCAN_MAIL_LOG');
+    $config2['smtp'] = ['host' => '127.0.0.1', 'port' => 1, 'from_email' => 'info@jpwebcreation.nl'];
+    $fail = ai_scan_request_tier_change($pdo, $config2, $user, 'q100', 'upgrade', $now + 2000);
+    if ($fail['mailed']) {
+        return; // mail transport accepted in this environment; nothing to assert
+    }
+    assert_same(AI_SCAN_TIER_REQUEST_SAVED_MESSAGE, $fail['message']);
+    assert_same(1, (int) $pdo->query("SELECT COUNT(*) FROM subscription_events WHERE mail_pending = 1")->fetchColumn());
 });
 
 test('admin set tier applies immediately, pauses excess, mails customer', static function (): void {
