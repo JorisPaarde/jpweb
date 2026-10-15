@@ -223,14 +223,27 @@ const scanForm = document.querySelector(".geo-scan-form");
 if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
   const scanMessages = {
     invalid: "Controleer de ingevulde gegevens en probeer het opnieuw.",
-    rate_limit: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over een uur opnieuw.",
-    already_scanned: "Voor deze website of dit e-mailadres is al een gratis scan gedaan. Ik stuur een inloglink naar het e-mailadres van die scan.",
+    already_scanned: "Voor deze website of dit e-mailadres is al een gratis scan gedaan. Log in met het e-mailadres van die scan.",
+    ip_already_scanned: "Vanaf deze internetverbinding is al een gratis scan gedaan. Komt dat niet van jou, bijvoorbeeld op een kantoor- of mobiel netwerk? Mail me op info@jpwebcreation.nl, dan regel ik het.",
     disposable_email: "Gebruik een e-mailadres dat je blijft lezen. Je inloggegevens en uitslag komen daar terecht.",
     daily_limit: "Vandaag zijn alle gratis scans bezet. Bevestig je adres; je scan start dan automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail.",
     blocked_website: "Ik mag deze website niet lezen. Daardoor kan ik geen goede vragen maken. Neem contact op als je denkt dat dit niet klopt.",
-    rate_limited: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over tien minuten opnieuw.",
+    rate_limited: "Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het later opnieuw.",
     daily_full: "Vandaag zijn alle gratis scans bezet. Ik heb je een mail gestuurd: bevestig je adres, dan start je scan automatisch op de eerstvolgende dag met ruimte.",
     error: "Verzenden is niet gelukt. Mail je vraag naar info@jpwebcreation.nl.",
+  };
+
+  const scanWaitPhrase = (seconds) => {
+    if (!(seconds > 0)) {
+      return "later";
+    }
+    if (seconds <= 90) {
+      return "over een minuut";
+    }
+    if (seconds < 3600) {
+      return `over ${Math.ceil(seconds / 60)} minuten`;
+    }
+    return seconds <= 3600 ? "over een uur" : "morgen";
   };
 
   const clearScanErrors = () => {
@@ -481,6 +494,12 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
       }
 
       const status = payload?.code ?? payload?.status;
+      if (status === "rate_limited") {
+        showScanError(
+          `Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het ${scanWaitPhrase(Number(payload?.retry_after))} opnieuw.`
+        );
+        return;
+      }
       showScanError(
         (status && scanMessages[status])
           || payload?.message

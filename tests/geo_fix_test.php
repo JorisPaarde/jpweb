@@ -91,7 +91,7 @@ test('ip limit: one free scan per ip is permanent; ipv6 per /64, ipv4 per addres
     $pdo->prepare('UPDATE scans SET confirm_token_hash = :h')->execute(['h' => ai_scan_hash_token('t6')]);
     assert_same('confirmed', ai_scan_confirm($pdo, $config, 't6', $now)['code']);
     // Zelfde /64, ander adres, veel later: nog steeds geblokkeerd.
-    assert_same('already_scanned', geo_submit($pdo, $config, 'b@twee.nl', 'https://twee.nl', '2001:db8:1:2:abcd::9', $now + 90000)['code']);
+    assert_same('ip_already_scanned', geo_submit($pdo, $config, 'b@twee.nl', 'https://twee.nl', '2001:db8:1:2:abcd::9', $now + 90000)['code']);
     // Ander /64 en ander IPv4-adres mogen wel.
     assert_same('check_mail', geo_submit($pdo, $config, 'c@drie.nl', 'https://drie.nl', '2001:db8:1:3::1', $now + 90000)['code']);
     assert_same('check_mail', geo_submit($pdo, $config, 'd@vier.nl', 'https://vier.nl', '4.4.4.4', $now + 90000)['code']);

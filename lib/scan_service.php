@@ -124,7 +124,6 @@ function ai_scan_purge_expired_pending(PDO $pdo, string $emailHash, string $doma
 function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $now = 0): array
 {
     $now = $now > 0 ? $now : time();
-    $retryAfter = ai_scan_rate_limit_retry_after($config);
 
     // Honeypot: always look like success.
     $honeypot = trim((string) ($input['hp_field'] ?? $input['bedrijfsfax'] ?? ''));
@@ -132,8 +131,8 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         return ['code' => 'check_mail'];
     }
 
-    if (ai_scan_form_ip_rate_limited($pdo, $config, $ip, $now)) {
-        return ['code' => 'rate_limited', 'retry_after' => $retryAfter];
+    if (($wait = ai_scan_form_ip_wait($pdo, $config, $ip, $now)) > 0) {
+        return ['code' => 'rate_limited', 'retry_after' => $wait];
     }
 
     $emailRaw = trim((string) ($input['email'] ?? ''));
@@ -162,13 +161,13 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     $domain = (string) $parsed['domain'];
     $domainHash = ai_scan_domain_hash($domain);
 
-    if (ai_scan_form_target_rate_limited($pdo, $config, $emailHash, $domainHash, $now)) {
-        return ['code' => 'rate_limited', 'retry_after' => $retryAfter];
+    if (($wait = ai_scan_form_target_wait($pdo, $config, $emailHash, $domainHash, $now)) > 0) {
+        return ['code' => 'rate_limited', 'retry_after' => $wait];
     }
 
     // Prevent using the form to spam confirm mails.
-    if (ai_scan_confirm_mail_rate_limited($pdo, $config, $emailHash, $now)) {
-        return ['code' => 'rate_limited', 'retry_after' => (int) ($config['confirm_mail_per_email_seconds'] ?? 600)];
+    if (($wait = ai_scan_confirm_mail_wait($pdo, $config, $emailHash, $now)) > 0) {
+        return ['code' => 'rate_limited', 'retry_after' => $wait];
     }
 
     // Config free_scan_one_per_ip (default aan) — alleen tests zetten dit uit.
@@ -179,12 +178,15 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
 
     // First scan free (één per e-mail, domein en IP); daarna alleen abonnement → already_scanned.
     if (
-        ai_scan_ip_used_free_scan($pdo, $ipBlockHash)
-        || ai_scan_has_block($pdo, $emailHash, $domainHash)
+        ai_scan_has_block($pdo, $emailHash, $domainHash)
         || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
         || ai_scan_user_used_free_scan($pdo, $emailHash)
     ) {
         return ['code' => 'already_scanned'];
+    }
+    // Alleen de internetverbinding is al gebruikt (kantoor, mobiel netwerk): aparte melding met weg naar contact.
+    if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
+        return ['code' => 'ip_already_scanned'];
     }
 
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
@@ -201,11 +203,15 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         if (
             ai_scan_has_block($pdo, $emailHash, $domainHash)
             || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
-            || ai_scan_ip_used_free_scan($pdo, $ipBlockHash)
         ) {
             $pdo->rollBack();
 
             return ['code' => 'already_scanned'];
+        }
+        if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
+            $pdo->rollBack();
+
+            return ['code' => 'ip_already_scanned'];
         }
 
         $stmt = $pdo->prepare(

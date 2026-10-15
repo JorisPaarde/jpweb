@@ -12,15 +12,21 @@ ai_scan_security_headers();
 
 $code = (string) ($_GET['s'] ?? '');
 $pages = [
-    'confirmed' => ['Je e-mailadres is bevestigd', 'Je scan is gestart, binnen ~15 minuten klaar. Zodra de uitslag klaar is, krijg je een mail van mij. Je krijgt ook een mail met een link om een wachtwoord te kiezen; daarmee log je straks in.', true],
+    'confirmed' => ['Je e-mailadres is bevestigd', 'Je scan is gestart; die is meestal binnen een kwartier klaar. Zodra de uitslag klaar is, krijg je een mail van mij. Je krijgt ook een mail met een link om een wachtwoord te kiezen; daarmee log je straks in.', true],
     'check_mail' => ['Kijk in je mail', 'Ik heb je een mail gestuurd. Klik op de link om je e-mailadres te bevestigen; daarna start de scan.', false],
     'daily_full' => ['Je scan staat ingepland', 'Vandaag zijn alle gratis scans bezet. Je scan start automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail van mij zodra de uitslag klaar is.', true],
     'already_scanned' => ['Al een gratis scan gedaan', 'Voor deze website of dit e-mailadres is al een gratis scan gedaan. Log in met het e-mailadres van die scan.', true],
+    'ip_already_scanned' => ['Al een gratis scan gedaan', 'Vanaf deze internetverbinding is al een gratis scan gedaan. Komt dat niet van jou, bijvoorbeeld op een kantoor- of mobiel netwerk? Mail me op info@jpwebcreation.nl, dan regel ik het.', false],
     'expired' => ['Link verlopen', 'Deze bevestigingslink is verlopen. Vraag de scan opnieuw aan.', false],
     'invalid_token' => ['Link ongeldig', 'Deze link is ongeldig of al gebruikt. Heb je al bevestigd? Dan staat je scan al in de wachtrij.', true],
     'deleted' => ['Account verwijderd', 'Je account en gegevens zijn verwijderd.', false],
     'rate_limited' => ['Even wachten', 'Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over tien minuten opnieuw.', false],
 ];
+$wait = ai_scan_wait_phrase((int) ($_GET['w'] ?? 0));
+if ($code === 'rate_limited') {
+    $pages['rate_limited'][1] = 'Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het '
+        . ($wait !== '' ? $wait : 'later') . ' opnieuw.';
+}
 [$title, $text, $showLogin] = $pages[$code] ?? ['Er ging iets mis', 'Dat is niet gelukt. Mail je vraag naar info@jpwebcreation.nl, dan help ik je verder.', false];
 if (!isset($pages[$code]) && $code === '') {
     header('Location: /ai-vindbaarheid/', true, 302);
