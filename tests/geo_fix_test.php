@@ -348,7 +348,7 @@ test('GET /ai-scan.php without action redirects to the form page instead of 405'
 
 test('mobile tables explain that they scroll', static function (): void {
     $html = geo_src('ai-vindbaarheid/index.html');
-    assert_same(2, substr_count($html, 'class="geo-swipe-hint"'));
+    assert_same(1, substr_count($html, 'class="geo-swipe-hint"'));
     assert_true(str_contains(geo_src('ai-vindbaarheid/ai-vindbaarheid.css'), '.geo-swipe-hint'));
 });
 
@@ -569,4 +569,14 @@ test('testronde 0255: wacht_dag-blok pollt mee; boven 1000 vragen staan mail- en
     assert_true(!str_contains($contact, 'innerHTML') && str_contains($contact, 'createElement("a")'), 'contactblok via DOM-elementen');
     assert_true(!str_contains($geo, 'Mail of bel me.";'), 'geen platte tekst meer');
     assert_true(str_contains(geo_src('app/layout.php'), 'app.js?v=6'), 'app.js cache-bust');
+});
+
+test('M3/P3-A: promo belooft geen "één klik" meer en de AI-tabel past op 390 px zonder scrollen', static function (): void {
+    $html = geo_src('ai-vindbaarheid/index.html');
+    assert_true(!str_contains($html, 'met één klik'), 'bevestigen kost nu mail plus knop');
+    assert_true(str_contains($html, 'Je krijgt een mail met een knop. Na het bevestigen start ik je scan.'));
+    $css = geo_src('ai-vindbaarheid/ai-vindbaarheid.css');
+    assert_true(!(bool) preg_match('/\.geo-ai-table,\s*\.geo-pricing-table \{[^}]*min-width/', $css), 'AI-tabel heeft geen vaste minimumbreedte');
+    assert_true(!str_contains($css, 'min-width: 520px'));
+    assert_true(str_contains($html, 'ai-vindbaarheid.css?v=11'));
 });

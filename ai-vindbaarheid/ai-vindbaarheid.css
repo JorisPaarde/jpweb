@@ -301,11 +301,11 @@
 .geo-ai-table,
 .geo-pricing-table {
   width: 100%;
-  min-width: 520px;
   border-collapse: collapse;
   font-size: 0.98rem;
 }
 
+/* De AI-tabel heeft drie smalle kolommen en past ook op 390 px; alleen de prijstabel scrolt. */
 .geo-pricing-table {
   min-width: 720px;
 }
