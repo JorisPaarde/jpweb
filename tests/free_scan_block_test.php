@@ -62,6 +62,9 @@ test('one free scan per IP (keyed hash, survives confirm, lifted with email/doma
     // IPv6: same /64 counts as one
     assert_same(ai_scan_ip_block_hash($config, '2001:db8:1:2::1'), ai_scan_ip_block_hash($config, '2001:db8:1:2:ffff::9'));
     assert_same('', ai_scan_ip_block_hash($config, ''));
+    // IPv4-mapped = plain IPv4, not a shared /64
+    assert_true(ai_scan_ip_block_hash($config, '::ffff:1.2.3.4') !== ai_scan_ip_block_hash($config, '::ffff:1.2.3.5'));
+    assert_same(ai_scan_ip_block_hash($config, '1.2.3.4'), ai_scan_ip_block_hash($config, '::ffff:1.2.3.4'));
 
     // admin lift by email removes the IP block too (same row)
     ai_scan_admin_lift_free_scan_block($pdo, 'ip1@firma.nl', 'firma.nl');
