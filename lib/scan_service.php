@@ -293,14 +293,15 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
     }
 
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
-    $dailyFull = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit;
-    $status = $dailyFull ? 'wacht_dag' : 'bevestigd';
+    $status = 'bevestigd';
 
     $passwordToken = ai_scan_random_token(32);
     $passwordTtl = (int) ($config['password_token_ttl'] ?? 86400);
 
     try {
-        $pdo->beginTransaction();
+        // Write lock first: capacity is decided and reserved in the same transaction.
+        $pdo->exec('BEGIN IMMEDIATE');
+        $status = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit ? 'wacht_dag' : 'bevestigd';
 
         $userStmt = $pdo->prepare('SELECT * FROM users WHERE email_hash = :h LIMIT 1');
         $userStmt->execute(['h' => $scan['email_hash']]);
@@ -397,28 +398,39 @@ function ai_scan_promote_waitlist(PDO $pdo, array $config, int $now = 0): int
 {
     $now = $now > 0 ? $now : time();
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
-    $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
-    if ($slots <= 0) {
-        return 0;
-    }
+    $ownTx = !$pdo->inTransaction();
 
-    $sel = $pdo->prepare(
-        "SELECT id FROM scans WHERE status = 'wacht_dag' ORDER BY confirmed_at ASC, id ASC LIMIT :lim"
-    );
-    $sel->bindValue('lim', $slots, PDO::PARAM_INT);
-    $sel->execute();
-    $ids = array_map(static fn ($r) => (int) $r['id'], $sel->fetchAll());
-    if ($ids === []) {
-        return 0;
-    }
+    try {
+        // Count and promote under one write lock, shared with ai_scan_confirm().
+        if ($ownTx) {
+            $pdo->exec('BEGIN IMMEDIATE');
+        }
+        $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
+        $n = 0;
+        if ($slots > 0) {
+            $sel = $pdo->prepare(
+                "SELECT id FROM scans WHERE status = 'wacht_dag' ORDER BY confirmed_at ASC, id ASC LIMIT :lim"
+            );
+            $sel->bindValue('lim', $slots, PDO::PARAM_INT);
+            $sel->execute();
+            $ids = array_map(static fn ($r) => (int) $r['id'], $sel->fetchAll());
 
-    $upd = $pdo->prepare(
-        "UPDATE scans SET status = 'bevestigd', queued_at = :queued_at WHERE id = :id AND status = 'wacht_dag'"
-    );
-    $n = 0;
-    foreach ($ids as $id) {
-        $upd->execute(['queued_at' => $now, 'id' => $id]);
-        $n += $upd->rowCount();
+            $upd = $pdo->prepare(
+                "UPDATE scans SET status = 'bevestigd', queued_at = :queued_at WHERE id = :id AND status = 'wacht_dag'"
+            );
+            foreach ($ids as $id) {
+                $upd->execute(['queued_at' => $now, 'id' => $id]);
+                $n += $upd->rowCount();
+            }
+        }
+        if ($ownTx) {
+            $pdo->commit();
+        }
+    } catch (Throwable $e) {
+        if ($ownTx && $pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
     }
 
     return $n;
