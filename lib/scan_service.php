@@ -471,7 +471,7 @@ function ai_scan_claim_job(PDO $pdo, int $scanId, int $now = 0): ?array
     return $row === false ? null : $row;
 }
 
-function ai_scan_complete_job(PDO $pdo, array $config, int $scanId, string $html, string $json, int $now = 0): bool
+function ai_scan_complete_job(PDO $pdo, array $config, int $scanId, string $html, string $json, int $now = 0, ?int $claimToken = null): bool
 {
     $now = $now > 0 ? $now : time();
     // Basic JSON sanity.
@@ -487,13 +487,14 @@ function ai_scan_complete_job(PDO $pdo, array $config, int $scanId, string $html
             result_json = :json,
             completed_at = :completed_at,
             error_message = NULL
-         WHERE id = :id AND status = 'bezig'"
+         WHERE id = :id AND status = 'bezig' AND (:tok IS NULL OR claimed_at = :tok)"
     );
     $upd->execute([
         'html' => $html,
         'json' => $json,
         'completed_at' => $now,
         'id' => $scanId,
+        'tok' => $claimToken,
     ]);
 
     if ($upd->rowCount() !== 1) {
@@ -591,7 +592,7 @@ function ai_scan_flush_ready_mails(PDO $pdo, array $config, int $limit = 10, int
 /**
  * Definitief mislukt: status mislukt, melding bewaard, poging geteld.
  */
-function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0): bool
+function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0, ?int $claimToken = null): bool
 {
     $now = $now > 0 ? $now : time();
     $upd = $pdo->prepare(
@@ -600,12 +601,13 @@ function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0):
             error_message = :msg,
             attempts = attempts + 1,
             completed_at = :completed_at
-         WHERE id = :id AND status IN ('bevestigd', 'bezig')"
+         WHERE id = :id AND status IN ('bevestigd', 'bezig') AND (:tok IS NULL OR claimed_at = :tok)"
     );
     $upd->execute([
         'msg' => mb_substr($message, 0, 2000),
         'completed_at' => $now,
         'id' => $scanId,
+        'tok' => $claimToken,
     ]);
 
     return $upd->rowCount() === 1;
@@ -617,9 +619,17 @@ function ai_scan_fail_job(PDO $pdo, int $scanId, string $message, int $now = 0):
  *
  * @return array{ok: bool, retry?: bool, final?: bool, attempts?: int}
  */
-function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string $message, int $now = 0, float $spentEur = 0.0): array
+function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string $message, int $now = 0, float $spentEur = 0.0, ?int $claimToken = null): array
 {
     $now = $now > 0 ? $now : time();
+    // Een late melding van een oude poging (andere claim) mag niets meer wijzigen.
+    if ($claimToken !== null) {
+        $cur = $pdo->prepare("SELECT 1 FROM scans WHERE id = :id AND status = 'bezig' AND claimed_at = :tok");
+        $cur->execute(['id' => $scanId, 'tok' => $claimToken]);
+        if ($cur->fetch() === false) {
+            return ['ok' => false];
+        }
+    }
     // Totaal besteed over alle pogingen (runner stuurt cumulatief); nooit omlaag, zodat een herpoging alleen het restant krijgt.
     if ($spentEur > 0 && is_finite($spentEur)) {
         $sp = $pdo->prepare('UPDATE scans SET spent_eur = MAX(spent_eur, CAST(:s AS REAL)) WHERE id = :id');
@@ -638,16 +648,16 @@ function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string 
             progress_json = NULL,
             progress_at = NULL,
             queued_at = :now
-         WHERE id = :id AND status IN ('bevestigd', 'bezig') AND attempts < :max"
+         WHERE id = :id AND status IN ('bevestigd', 'bezig') AND attempts < :max AND (:tok IS NULL OR claimed_at = :tok)"
     );
-    $requeue->execute(['msg' => $message, 'now' => $now, 'id' => $scanId, 'max' => $maxRetries]);
+    $requeue->execute(['msg' => $message, 'now' => $now, 'id' => $scanId, 'max' => $maxRetries, 'tok' => $claimToken]);
     if ($requeue->rowCount() === 1) {
         error_log('ai_scan job_retry scan_id=' . $scanId);
 
         return ['ok' => true, 'retry' => true, 'final' => false, 'attempts' => 1];
     }
 
-    if (!ai_scan_fail_job($pdo, $scanId, $message, $now)) {
+    if (!ai_scan_fail_job($pdo, $scanId, $message, $now, $claimToken)) {
         return ['ok' => false];
     }
     error_log('ai_scan job_failed_final scan_id=' . $scanId);
@@ -663,6 +673,33 @@ function ai_scan_fail_or_retry_job(PDO $pdo, array $config, int $scanId, string 
     }
 
     return ['ok' => true, 'retry' => false, 'final' => true, 'attempts' => $maxRetries + 1];
+}
+
+/**
+ * Verlopen claims (status bezig, claim ouder dan stale_job_seconds): de runner is weggevallen zonder fail.
+ * Zelfde begrensde route als een gemelde mislukking: eerst terug de wachtrij in, daarna definitief mislukt.
+ * Het claim-token zorgt dat een tussentijds herclaimde of afgeronde scan niet wordt geraakt.
+ */
+function ai_scan_recover_expired_claims(PDO $pdo, array $config, int $now = 0): int
+{
+    $now = $now > 0 ? $now : time();
+    $staleAfter = (int) ($config['stale_job_seconds'] ?? 2700);
+    $stmt = $pdo->prepare(
+        "SELECT id, claimed_at FROM scans
+         WHERE status = 'bezig' AND claimed_at IS NOT NULL AND claimed_at <= :cutoff
+         ORDER BY claimed_at ASC LIMIT 20"
+    );
+    $stmt->execute(['cutoff' => $now - $staleAfter]);
+    $recovered = 0;
+    foreach ($stmt->fetchAll() as $row) {
+        $r = ai_scan_fail_or_retry_job($pdo, $config, (int) $row['id'], 'claim verlopen: runner gaf geen resultaat', $now, 0.0, (int) $row['claimed_at']);
+        if (!empty($r['ok'])) {
+            $recovered++;
+            error_log('ai_scan claim_expired scan_id=' . (int) $row['id']);
+        }
+    }
+
+    return $recovered;
 }
 
 /**

@@ -462,9 +462,65 @@ test('retry promise: first failure re-queues once, second is final with an inter
     assert_same(['ok' => false], ai_scan_fail_or_retry_job($pdo, $config, $id, 'nog eens', $now + 30));
 });
 
+test('expired claim: process death after claim is retried once, then fails finally', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    @unlink($mailLog);
+    $id = geo_insert_scan($pdo, 'bevestigd', 0, 'claimdood.nl');
+    assert_true(ai_scan_claim_job($pdo, $id, $now) !== null);
+    $stale = (int) $config['stale_job_seconds'];
+
+    // Nog niet verlopen: blijft bezig.
+    assert_same(0, ai_scan_recover_expired_claims($pdo, $config, $now + $stale - 1));
+    assert_same('bezig', (string) $pdo->query("SELECT status FROM scans WHERE id = $id")->fetchColumn());
+
+    // Verlopen: terug de wachtrij in, uitvoerbaar voor de runner.
+    ai_scan_check_stale_jobs($pdo, $config, $now + $stale + 1);
+    $row = $pdo->query("SELECT status, attempts, claimed_at FROM scans WHERE id = $id")->fetch();
+    assert_same('bevestigd', (string) $row['status']);
+    assert_same(1, (int) $row['attempts']);
+    assert_true($row['claimed_at'] === null);
+    $next = ai_scan_next_job($pdo, $config, $now + $stale + 2);
+    assert_true($next !== null && (int) $next['id'] === $id);
+
+    // Tweede poging valt ook uit: definitief mislukt, geen derde ronde.
+    assert_true(ai_scan_claim_job($pdo, $id, $now + $stale + 3) !== null);
+    assert_same(1, ai_scan_recover_expired_claims($pdo, $config, $now + 2 * $stale + 10));
+    $row = $pdo->query("SELECT status, attempts FROM scans WHERE id = $id")->fetch();
+    assert_same('mislukt', (string) $row['status']);
+    assert_same(2, (int) $row['attempts']);
+    assert_same(0, ai_scan_recover_expired_claims($pdo, $config, $now + 5 * $stale));
+});
+
+test('expired claim: late result of an old attempt is ignored', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    @unlink($mailLog);
+    $id = geo_insert_scan($pdo, 'bevestigd', 0, 'laat.nl');
+    $old = ai_scan_claim_job($pdo, $id, $now);
+    $oldToken = (int) $old['claimed_at'];
+    $stale = (int) $config['stale_job_seconds'];
+    $later = $now + $stale + 5;
+    ai_scan_recover_expired_claims($pdo, $config, $later);
+    $new = ai_scan_claim_job($pdo, $id, $later + 1);
+    assert_true($new !== null);
+
+    // De oude poging meldt zich laat: resultaat en fout worden genegeerd.
+    assert_true(!ai_scan_complete_job($pdo, $config, $id, '<p>oud</p>', '{"a":1}', $later + 2, $oldToken));
+    assert_same(['ok' => false], ai_scan_fail_or_retry_job($pdo, $config, $id, 'oud', $later + 2, 0.0, $oldToken));
+    $row = $pdo->query("SELECT status, result_html, attempts FROM scans WHERE id = $id")->fetch();
+    assert_same('bezig', (string) $row['status']);
+    assert_true($row['result_html'] === null);
+    assert_same(1, (int) $row['attempts']);
+
+    // De huidige poging mag wel afronden.
+    assert_true(ai_scan_complete_job($pdo, $config, $id, '<p>nieuw</p>', '{"a":2}', $later + 3, (int) $new['claimed_at']));
+    assert_same('klaar', (string) $pdo->query("SELECT status FROM scans WHERE id = $id")->fetchColumn());
+});
+
 test('retry promise: runner.php wires fail to retry and exposes it in health; copy and admin page', static function (): void {
     $runner = geo_src('api/runner.php');
-    assert_true(str_contains($runner, 'ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent)'));
+    assert_true(str_contains($runner, 'ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent, '));
     foreach (["'retry' =>", "'final' =>", "'attempts' =>", "'retrying' => \$retrying", "'failed' => \$failed"] as $needle) {
         assert_true(str_contains($runner, $needle), $needle);
     }

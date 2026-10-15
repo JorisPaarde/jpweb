@@ -184,7 +184,7 @@ if ($action === 'complete') {
     if ($id < 1 || $html === '' || $json === '') {
         ai_scan_json_response(['ok' => false, 'error' => 'missing_fields'], 400);
     }
-    if (!ai_scan_complete_job($pdo, $config, $id, $html, $json)) {
+    if (!ai_scan_complete_job($pdo, $config, $id, $html, $json, 0, isset($body['claimed_at']) ? (int) $body['claimed_at'] : null)) {
         ai_scan_json_response(['ok' => false, 'error' => 'not_completable'], 409);
     }
     ai_scan_json_response(['ok' => true]);
@@ -216,7 +216,7 @@ if ($action === 'fail') {
         ai_scan_json_response(['ok' => false, 'error' => 'missing_id'], 400);
     }
     $spent = (float) ($body['spent_eur'] ?? 0);
-    $outcome = ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent);
+    $outcome = ai_scan_fail_or_retry_job($pdo, $config, $id, $message, 0, $spent, isset($body['claimed_at']) ? (int) $body['claimed_at'] : null);
     if (empty($outcome['ok'])) {
         ai_scan_json_response(['ok' => false, 'error' => 'not_failable'], 409);
     }
