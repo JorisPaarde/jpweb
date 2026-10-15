@@ -14,6 +14,8 @@ function ai_scan_check_stale_jobs(PDO $pdo, array $config, int $now = 0, bool $f
     $staleAfter = (int) ($config['stale_job_seconds'] ?? 2700);
     $cooldown = (int) ($config['stale_alert_cooldown'] ?? 3600);
 
+    ai_scan_recover_expired_claims($pdo, $config, $now);
+
     $cutoff = $now - $staleAfter;
     $stmt = $pdo->prepare(
         "SELECT id, public_id, queued_at, status FROM scans
