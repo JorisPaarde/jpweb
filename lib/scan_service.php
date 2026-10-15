@@ -1049,8 +1049,8 @@ function ai_scan_admin_cancel_pending(PDO $pdo, string $emailRaw, string $websit
 }
 
 /**
- * Eenmalige opschoning van testdata (deploy-ops): blokkades (e-mail/domein/IP), scans
- * voor dit e-mailadres/domein, en de gebruiker alleen als die binnen het tijdvenster is aangemaakt.
+ * Eenmalige opschoning van testdata (deploy-ops): alleen scans, blokkades (e-mail/IP) en gebruiker
+ * van dit e-mailadres die binnen het tijdvenster zijn aangemaakt. Andere accounts op hetzelfde domein blijven staan.
  *
  * @return array{ok: bool, blocks?: int, scans?: int, users?: int, user_skipped?: int, error?: string}
  */
@@ -1059,17 +1059,36 @@ function ai_scan_ops_purge_test_data(PDO $pdo, string $emailRaw, string $website
     if (trim($emailRaw) === '' || trim($websiteRaw) === '' || $createdFrom <= 0 || $createdTo <= $createdFrom) {
         return ['ok' => false, 'error' => 'input'];
     }
-    $lift = ai_scan_admin_lift_free_scan_block($pdo, $emailRaw, $websiteRaw, 'deploy');
-    if (empty($lift['ok'])) {
-        return ['ok' => false, 'error' => (string) ($lift['error'] ?? 'lift')];
+    $email = trim($emailRaw);
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        return ['ok' => false, 'error' => 'email'];
     }
-    $emailHash = ai_scan_email_hash(ai_scan_normalize_email(trim($emailRaw)));
     $parsed = ai_scan_parse_website($websiteRaw);
-    $domainHash = ai_scan_domain_hash((string) $parsed['domain']);
+    if (empty($parsed['ok'])) {
+        return ['ok' => false, 'error' => 'domain'];
+    }
+    $emailHash = ai_scan_email_hash(ai_scan_normalize_email($email));
+    $window = ['e' => $emailHash, 'f' => $createdFrom, 't' => $createdTo];
 
-    $stmt = $pdo->prepare('DELETE FROM scans WHERE domain_hash = :d OR (email_hash = :e AND created_at BETWEEN :f AND :t)');
-    $stmt->execute(['e' => $emailHash, 'd' => $domainHash, 'f' => $createdFrom, 't' => $createdTo]);
-    $scans = $stmt->rowCount();
+    $sel = $pdo->prepare('SELECT id, ip_block_hash FROM scans WHERE email_hash = :e AND created_at BETWEEN :f AND :t');
+    $sel->execute($window);
+    $scanRows = $sel->fetchAll();
+
+    $blocks = 0;
+    $delBlock = $pdo->prepare('DELETE FROM free_scan_blocks WHERE email_hash = :e AND created_at BETWEEN :f AND :t');
+    $delBlock->execute($window);
+    $blocks += $delBlock->rowCount();
+    $delIp = $pdo->prepare('DELETE FROM free_scan_blocks WHERE ip_hash = :h AND created_at BETWEEN :f AND :t');
+    $delScan = $pdo->prepare('DELETE FROM scans WHERE id = :id');
+    $scans = 0;
+    foreach ($scanRows as $row) {
+        if ((string) ($row['ip_block_hash'] ?? '') !== '') {
+            $delIp->execute(['h' => (string) $row['ip_block_hash'], 'f' => $createdFrom, 't' => $createdTo]);
+            $blocks += $delIp->rowCount();
+        }
+        $delScan->execute(['id' => (int) $row['id']]);
+        $scans += $delScan->rowCount();
+    }
 
     $users = 0;
     $skipped = 0;
@@ -1085,7 +1104,7 @@ function ai_scan_ops_purge_test_data(PDO $pdo, string $emailRaw, string $website
         }
     }
 
-    return ['ok' => true, 'blocks' => (int) $lift['deleted'], 'scans' => $scans, 'users' => $users, 'user_skipped' => $skipped];
+    return ['ok' => true, 'blocks' => $blocks, 'scans' => $scans, 'users' => $users, 'user_skipped' => $skipped];
 }
 
 /**

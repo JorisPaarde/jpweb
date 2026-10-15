@@ -130,6 +130,33 @@ test('ops purge test data removes blocks, scans and only the user created in win
     assert_same(1, $r['user_skipped']);
 });
 
+test('ops purge test data leaves other accounts, older scans and their blocks on the same domain', static function (): void {
+    [, $pdo] = boot_test_db();
+    $eh = ai_scan_email_hash('jorispaarde@gmail.com');
+    $oh = ai_scan_email_hash('klant@intake-engine.nl');
+    $dh = ai_scan_domain_hash('intake-engine.nl');
+    $ins = $pdo->prepare("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, ip_block_hash)
+        VALUES(:p, 'x', :e, 'u', 'd', :d, 'klaar', :c, :ip)");
+    $ins->execute(['p' => 'test', 'e' => $eh, 'd' => $dh, 'c' => 150, 'ip' => 'ipT']);
+    $ins->execute(['p' => 'old', 'e' => $eh, 'd' => $dh, 'c' => 50, 'ip' => 'ipOld']);
+    $ins->execute(['p' => 'other', 'e' => $oh, 'd' => $dh, 'c' => 150, 'ip' => 'ipO']);
+    $ins->execute(['p' => 'other-old', 'e' => $oh, 'd' => $dh, 'c' => 20, 'ip' => 'ipO2']);
+    $blk = $pdo->prepare('INSERT INTO free_scan_blocks(email_hash, domain_hash, ip_hash, created_at) VALUES(:e, :d, :ip, :c)');
+    $blk->execute(['e' => $eh, 'd' => $dh, 'ip' => 'ipT', 'c' => 150]);
+    $blk->execute(['e' => $eh, 'd' => $dh, 'ip' => 'ipOld', 'c' => 50]);
+    $blk->execute(['e' => $oh, 'd' => $dh, 'ip' => 'ipO', 'c' => 150]);
+    $blk->execute(['e' => $oh, 'd' => $dh, 'ip' => 'ipO2', 'c' => 20]);
+
+    $r = ai_scan_ops_purge_test_data($pdo, 'jorispaarde@gmail.com', 'intake-engine.nl', 100, 200);
+    assert_true($r['ok']);
+    assert_same(1, $r['scans']);
+    assert_same(1, $r['blocks']);
+    $left = $pdo->query('SELECT public_id FROM scans ORDER BY public_id')->fetchAll(PDO::FETCH_COLUMN);
+    assert_same(['old', 'other', 'other-old'], $left);
+    $ips = $pdo->query('SELECT ip_hash FROM free_scan_blocks ORDER BY ip_hash')->fetchAll(PDO::FETCH_COLUMN);
+    assert_same(['ipO', 'ipO2', 'ipOld'], $ips);
+});
+
 test('ai-scan status page exists for redirect codes', static function (): void {
     $src = (string) file_get_contents(dirname(__DIR__) . '/ai-scan/index.php');
     assert_true(str_contains($src, "'confirmed'"));
