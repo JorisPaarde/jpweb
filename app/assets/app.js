@@ -227,6 +227,7 @@
     }
 
     function render(p) {
+      if (!stepEl || !srcEl || !ansEl) return;
       var step = LIVE_STEPS[p.step] || LIVE_STEPS.site;
       if (p.step === 'meten' && p.active_source) step = 'Ik vraag nu ' + p.active_source + '…';
       stepEl.textContent = step;
