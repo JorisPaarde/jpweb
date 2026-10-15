@@ -787,6 +787,7 @@ require __DIR__ . '/geo_fix_test.php';
 require __DIR__ . '/smooth_demo_test.php';
 require __DIR__ . '/account_tokens_test.php';
 require __DIR__ . '/route_guards_test.php';
+require __DIR__ . '/ops_gsc_purge_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);

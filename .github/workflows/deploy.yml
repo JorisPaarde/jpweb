@@ -235,6 +235,13 @@ jobs:
             < /tmp/freescan-dispatch.php
           rm -f /tmp/freescan-dispatch.php
 
+      - name: One-time purge GSC-previewaccounts
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "OPS_ROOT='$DEPLOY_PATH' OPS_JOB='purge-gsc-preview-v1' OPS_MODE='purge_gsc_preview' /usr/local/bin/php -d display_errors=stderr -d error_reporting=E_ALL" \
+            < ops/cleanup.php || echo "ops purge-gsc-preview-v1: exit $? (zie hierboven)"
+
       - name: Verify production deployment
         env:
           BASE_URL: https://jpwebcreation.nl
