@@ -29,7 +29,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
     <?php if ($score['status'] === 'none'): ?>
       <p class="app-empty">Er is nog geen scan gekoppeld aan dit account.</p>
     <?php elseif (!empty($score['retrying'])): ?>
-      <div class="app-score" aria-live="polite">
+      <div class="app-score" aria-live="polite" data-live-progress>
         <p><strong>De scan lukte niet in één keer.</strong> Ik probeer het nog één keer automatisch; je krijgt een mail als hij klaar is.</p>
       </div>
     <?php elseif (in_array($score['status'], ['bezig', 'bevestigd', 'onbevestigd'], true)): ?>

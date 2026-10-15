@@ -544,3 +544,14 @@ test('retry promise: customer view flags a retrying scan; migration is idempoten
     assert_same(false, app_score_view([], ['status' => 'bevestigd', 'attempts' => 0])['retrying']);
     assert_same(false, app_score_view([], ['status' => 'mislukt', 'attempts' => 2])['retrying']);
 });
+
+test('retry view keeps live progress polling; logout in sidebar beats .logout-form button', static function (): void {
+    $ov = geo_src('app/overzicht.php');
+    $retry = substr($ov, (int) strpos($ov, "!empty(\$score['retrying'])"), 400);
+    assert_true(str_contains($retry, 'data-live-progress'), 'retry branch must poll for the final status');
+    $css = geo_src('app/assets/app.css');
+    assert_true(preg_match('/^\s*\.logout-form \.app-nav__logout\s*\{[^}]*color:\s*var\(--app-muted\)/m', $css) === 1, 'sidebar logout muted colour must outrank .logout-form button');
+    assert_true(preg_match('/\.logout-form \.app-nav__logout\s*\{[^}]*padding-left:\s*0\.85rem/', $css) === 1, 'aligned with .app-nav__link--text');
+    $js = geo_src('app/assets/app.js');
+    assert_true(str_contains($js, 'if (!stepEl || !srcEl || !ansEl) return;'), 'render tolerates the retry box');
+});
