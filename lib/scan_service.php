@@ -300,7 +300,8 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
 
     try {
         // Write lock first: capacity is decided and reserved in the same transaction.
-        $pdo->exec('BEGIN IMMEDIATE');
+        $pdo->beginTransaction();
+        ai_scan_take_write_lock($pdo);
         $status = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit ? 'wacht_dag' : 'bevestigd';
 
         $userStmt = $pdo->prepare('SELECT * FROM users WHERE email_hash = :h LIMIT 1');
@@ -391,6 +392,17 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
 }
 
 /**
+ * Take the SQLite write lock inside a PDO-managed transaction. A raw
+ * exec('BEGIN IMMEDIATE') is not tracked by PDO on every PHP version, so
+ * commit() then fails with "There is no active transaction"; a no-op write
+ * acquires the same lock while PDO keeps its own transaction state.
+ */
+function ai_scan_take_write_lock(PDO $pdo): void
+{
+    $pdo->exec('UPDATE scans SET id = id WHERE 0');
+}
+
+/**
  * Promote waitlisted jobs when today still has free capacity.
  * A wacht_dag job only starts once promoted (queued_at is refreshed to now).
  */
@@ -403,7 +415,8 @@ function ai_scan_promote_waitlist(PDO $pdo, array $config, int $now = 0): int
     try {
         // Count and promote under one write lock, shared with ai_scan_confirm().
         if ($ownTx) {
-            $pdo->exec('BEGIN IMMEDIATE');
+            $pdo->beginTransaction();
+            ai_scan_take_write_lock($pdo);
         }
         $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
         $n = 0;
