@@ -138,6 +138,7 @@
 
 .geo-pricing-tool,
 .geo-pricing-compleet {
+  scroll-margin-top: 84px;
   padding: clamp(22px, 3vw, 32px);
   background: var(--white);
   border: 1px solid var(--line);

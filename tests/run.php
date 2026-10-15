@@ -778,6 +778,7 @@ test('password_hash used, never plaintext column', static function (): void {
 require __DIR__ . '/testronde_1256_test.php';
 require __DIR__ . '/tiers_test.php';
 require __DIR__ . '/tiers_drift_test.php';
+require __DIR__ . '/testronde_1256_conf_test.php';
 require __DIR__ . '/app_ui_test.php';
 require __DIR__ . '/app_writes_test.php';
 require __DIR__ . '/gsc_test.php';
