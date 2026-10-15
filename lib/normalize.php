@@ -37,17 +37,31 @@ function ai_scan_domain_hash(string $domain): string
 }
 
 /**
+ * IPv4-mapped IPv6 (::ffff:a.b.c.d) is gewoon een IPv4-adres: geef dan de 4 bytes terug.
+ */
+function ai_scan_ip_unmap(string $bin): string
+{
+    if (strlen($bin) === 16 && substr($bin, 0, 12) === "\0\0\0\0\0\0\0\0\0\0\xff\xff") {
+        return substr($bin, 12);
+    }
+
+    return $bin;
+}
+
+/**
  * Sleutel voor de tijdelijke IP-vensters. IPv6 op /64-prefix, zoals de blijvende blokkade;
  * IPv4 en onbekende waarden blijven ongewijzigd.
  */
 function ai_scan_ip_hash(string $ip): string
 {
     $bin = @inet_pton(trim($ip));
+    if ($bin !== false) {
+        $bin = ai_scan_ip_unmap($bin);
+    }
+    if ($bin !== false && strlen($bin) === 4) {
+        return hash('sha256', 'ip:' . inet_ntop($bin));
+    }
     if ($bin !== false && strlen($bin) === 16) {
-        if (substr($bin, 0, 12) === "\0\0\0\0\0\0\0\0\0\0\xff\xff") {
-            return hash('sha256', 'ip:' . inet_ntop(substr($bin, 12)));
-        }
-
         return hash('sha256', 'ip:' . bin2hex(substr($bin, 0, 8)) . '/64');
     }
 
@@ -66,6 +80,7 @@ function ai_scan_ip_block_hash(array $config, string $ip): string
     if ($bin === false) {
         return '';
     }
+    $bin = ai_scan_ip_unmap($bin);
     if (strlen($bin) === 16) {
         $bin = substr($bin, 0, 8) . str_repeat("\0", 8);
     }
