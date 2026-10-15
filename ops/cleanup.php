@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Eenmalige opschoning, via de deploy over ssh (stdin) uitgevoerd. Nooit in de webroot.
- * Env: OPS_ROOT (webroot), OPS_JOB (markernaam), OPS_MODE (cancel_pending|lift),
+ * Env: OPS_ROOT (webroot), OPS_JOB (markernaam), OPS_MODE (cancel_pending|lift|purge_gsc_preview),
  *      OPS_EMAIL, OPS_WEBSITE. Print alleen aantallen.
  */
 
@@ -26,7 +26,7 @@ set_exception_handler(static function (Throwable $e): void {
 $root = (string) getenv('OPS_ROOT');
 $job = preg_replace('/[^a-z0-9-]/', '', (string) getenv('OPS_JOB')) ?? '';
 $mode = (string) getenv('OPS_MODE');
-if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user', 'create_smooth_demo', 'demo_drop_question'], true)) {
+if ($root === '' || $job === '' || !in_array($mode, ['cancel_pending', 'lift', 'purge_test', 'set_tier', 'set_profile', 'count_user', 'replace_competitor', 'create_test_user', 'create_smooth_demo', 'demo_drop_question', 'purge_gsc_preview'], true)) {
     fwrite(STDERR, "ops: OPS_ROOT/OPS_JOB/OPS_MODE ontbreekt\n");
     exit(1);
 }
@@ -275,6 +275,24 @@ try {
             $r = ['ok' => $hidden <= 1];
             $summary = 'verborgen=' . $hidden . ' result_core=' . $before . '->' . count($res['questions']['core']);
         }
+    } elseif ($mode === 'purge_gsc_preview') {
+        // Vaste allowlist (nooit OPS_EMAIL): alleen de GSC-previewaccounts en hun gsc_connections.
+        $users = 0;
+        $conns = 0;
+        foreach (['preview-gsc-connected@example.nl', 'preview-gsc-disconnected@example.nl', 'preview-gsc-free@example.nl'] as $fixed) {
+            $sel = $pdo->prepare('SELECT id FROM users WHERE email_hash = :e OR lower(email) = :raw');
+            $sel->execute(['e' => ai_scan_email_hash(ai_scan_normalize_email($fixed)), 'raw' => $fixed]);
+            foreach (array_map('intval', $sel->fetchAll(PDO::FETCH_COLUMN)) as $uid) {
+                $c = $pdo->prepare('DELETE FROM gsc_connections WHERE user_id = :u');
+                $c->execute(['u' => $uid]);
+                $conns += $c->rowCount();
+                $d = $pdo->prepare('DELETE FROM users WHERE id = :u');
+                $d->execute(['u' => $uid]);
+                $users += $d->rowCount();
+            }
+        }
+        $r = ['ok' => true];
+        $summary = 'users=' . $users . ' gsc_connections=' . $conns . ' require_http=' . (!empty($config['website_require_http']) ? 1 : 0);
     } elseif ($mode === 'purge_test') {
         $r = ai_scan_ops_purge_test_data($pdo, (string) getenv('OPS_EMAIL'), (string) getenv('OPS_WEBSITE'), (int) getenv('OPS_USER_CREATED_FROM'), (int) getenv('OPS_USER_CREATED_TO'));
         $summary = 'blocks=' . (int) ($r['blocks'] ?? 0) . ' scans=' . (int) ($r['scans'] ?? 0) . ' users=' . (int) ($r['users'] ?? 0) . ' users_overgeslagen=' . (int) ($r['user_skipped'] ?? 0);
