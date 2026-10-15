@@ -555,3 +555,18 @@ test('retry view keeps live progress polling; logout in sidebar beats .logout-fo
     $js = geo_src('app/assets/app.js');
     assert_true(str_contains($js, 'if (!stepEl || !srcEl || !ansEl) return;'), 'render tolerates the retry box');
 });
+
+test('testronde 0255: wacht_dag-blok pollt mee; boven 1000 vragen staan mail- en bellink als DOM-elementen', static function (): void {
+    $ov = geo_src('app/overzicht.php');
+    $wait = substr($ov, (int) strpos($ov, "=== 'wacht_dag'"), 250);
+    assert_true(str_contains($wait, 'data-live-progress'), 'wacht_dag-blok moet pollen');
+    $js = geo_src('app/assets/app.js');
+    assert_true(str_contains($js, "d.status !== 'wacht_dag'"), 'wachtblok herlaadt zodra de status wijzigt');
+    assert_true(str_contains($js, 'if (!stepEl || !srcEl || !ansEl) return;'), 'render tolerant voor blok zonder stapelementen');
+    $geo = geo_src('ai-vindbaarheid/ai-vindbaarheid.js');
+    assert_true(str_contains($geo, 'mailto:info@jpwebcreation.nl') && str_contains($geo, 'tel:+31621228884'), 'mail- en bellink aanwezig');
+    $contact = substr($geo, (int) strpos($geo, 'if (contactEl instanceof HTMLElement)'), 700);
+    assert_true(!str_contains($contact, 'innerHTML') && str_contains($contact, 'createElement("a")'), 'contactblok via DOM-elementen');
+    assert_true(!str_contains($geo, 'Mail of bel me.";'), 'geen platte tekst meer');
+    assert_true(str_contains(geo_src('app/layout.php'), 'app.js?v=6'), 'app.js cache-bust');
+});
