@@ -31,8 +31,47 @@ if ($method === 'GET' && (string) ($_GET['action'] ?? '') === 'state') {
     ai_scan_json_response($state);
 }
 
+// De link in de mail toont alleen een knop. Pas het versturen van die knop bevestigt, zodat een
+// mailscanner die de link vooraf opent niets start.
 if ($method === 'GET' && isset($_GET['confirm'])) {
-    $result = ai_scan_confirm($pdo, $config, (string) $_GET['confirm']);
+    $confirmToken = htmlspecialchars((string) $_GET['confirm'], ENT_QUOTES, 'UTF-8');
+    header('Content-Type: text/html; charset=utf-8');
+    header('X-Robots-Tag: noindex, nofollow');
+    ?><!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Scan bevestigen · JP Web Creation</title>
+  <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
+  <style>
+    .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
+    .ai-auth h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .ai-auth p { color: var(--muted, #5e6862); margin-bottom: 1.5rem; }
+    .ai-auth button {
+      width: 100%; min-height: 48px; background: var(--green, #315f4f); color: #fff; border: 0;
+      border-radius: 0.4rem; font: inherit; font-weight: 600; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main class="ai-auth">
+    <h1>Scan bevestigen</h1>
+    <p>Klik op de knop om je e-mailadres te bevestigen. Daarna start ik je gratis scan.</p>
+    <form method="post" action="/ai-scan.php">
+      <input type="hidden" name="confirm" value="<?= $confirmToken ?>">
+      <button type="submit">Bevestig mijn scan</button>
+    </form>
+  </main>
+</body>
+</html>
+<?php
+    exit;
+}
+
+if ($method === 'POST' && isset($_POST['confirm'])) {
+    $result = ai_scan_confirm($pdo, $config, (string) $_POST['confirm']);
     if (!$asJson && $result['code'] === 'confirmed' && (string) ($result['password_token'] ?? '') !== '') {
         ai_scan_redirect('/ai-scan/wachtwoord/?t=' . rawurlencode((string) $result['password_token']), 303);
     }

@@ -57,12 +57,12 @@ $linkProblem = match ($tokenState) {
 // E-mailadres bij de link, zodat de wachtwoordmanager het nieuwe wachtwoord bij het juiste account opslaat.
 $accountEmail = '';
 if ($token !== '') {
-    $lookup = $pdo->prepare(
-        'SELECT u.email FROM scans s JOIN users u ON u.id = s.user_id
-         WHERE s.password_token_hash = :h AND s.password_token_expires_at >= :now LIMIT 1'
-    );
-    $lookup->execute(['h' => ai_scan_hash_token($token), 'now' => time()]);
-    $accountEmail = (string) ($lookup->fetchColumn() ?: '');
+    $found = ai_scan_find_password_token($pdo, $token);
+    if ($found !== null && (int) $found['token_expires_at'] >= time()) {
+        $lookup = $pdo->prepare('SELECT email FROM users WHERE id = :id LIMIT 1');
+        $lookup->execute(['id' => (int) ($found['user_id'] ?? 0)]);
+        $accountEmail = (string) ($lookup->fetchColumn() ?: '');
+    }
 }
 ?><!DOCTYPE html>
 <html lang="nl">
