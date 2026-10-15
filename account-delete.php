@@ -20,7 +20,9 @@ $pdo = $ctx['pdo'];
 $userId = (int) $ctx['user']['id'];
 $csrf = (string) ($_POST['csrf'] ?? '');
 if (!ai_scan_verify_csrf($config, $csrf)) {
-    ai_scan_redirect('/dashboard/?deleted=csrf', 303);
+    ai_scan_start_session($config);
+    $_SESSION['ai_scan_flash'] = 'De sessie is verlopen. Probeer het opnieuw.';
+    ai_scan_redirect('/app/account.php', 303);
 }
 
 $error = '';

@@ -243,7 +243,7 @@ test('expired unconfirmed request no longer blocks email, domain or IP', static 
 
     assert_same('check_mail', ai_scan_submit($pdo, $config, $in, '9.9.9.2', $now)['code']);
     // binnen de geldigheid blijft de aanvraag staan
-    assert_same('already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.2', $now + 60)['code']);
+    assert_same('ip_already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.2', $now + 60)['code']);
     // na verloop van de bevestigingslink (en het uurvenster) kan een nieuwe aanvraag gewoon
     $later = $now + 90000;
     $r = ai_scan_submit($pdo, $config, $in, '9.9.9.2', $later);
@@ -262,7 +262,7 @@ test('confirmed scans keep blocking after the confirm window', static function (
     $pdo->prepare('UPDATE scans SET confirm_token_hash = :h WHERE email = :e')
         ->execute(['h' => ai_scan_hash_token('tk'), 'e' => 'klaar@firma.nl']);
     assert_same('confirmed', ai_scan_confirm($pdo, $config, 'tk', $now)['code']);
-    assert_same('already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.3', $now + 90000)['code']);
+    assert_same('ip_already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.3', $now + 90000)['code']);
 });
 
 test('IPv6 rate windows share one /64, IPv4 stays per address', static function (): void {

@@ -176,6 +176,12 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     // Verlopen onbevestigde aanvragen reserveren niets meer: ruim ze op zodat een nieuwe aanvraag kan.
     ai_scan_purge_expired_pending($pdo, $emailHash, $domainHash, $ipBlockHash, $now);
 
+    // Eerst het IP: deze melding mag niet verraden of e-mail of domein al gebruikt zijn.
+    // Alleen de internetverbinding is al gebruikt (kantoor, mobiel netwerk): aparte melding met weg naar contact.
+    if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
+        return ['code' => 'ip_already_scanned'];
+    }
+
     // First scan free (één per e-mail, domein en IP); daarna alleen abonnement → already_scanned.
     if (
         ai_scan_has_block($pdo, $emailHash, $domainHash)
@@ -183,10 +189,6 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         || ai_scan_user_used_free_scan($pdo, $emailHash)
     ) {
         return ['code' => 'already_scanned'];
-    }
-    // Alleen de internetverbinding is al gebruikt (kantoor, mobiel netwerk): aparte melding met weg naar contact.
-    if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
-        return ['code' => 'ip_already_scanned'];
     }
 
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
@@ -200,6 +202,11 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         $pdo->beginTransaction();
 
         // Re-check inside transaction for races.
+        if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
+            $pdo->rollBack();
+
+            return ['code' => 'ip_already_scanned'];
+        }
         if (
             ai_scan_has_block($pdo, $emailHash, $domainHash)
             || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
@@ -207,11 +214,6 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
             $pdo->rollBack();
 
             return ['code' => 'already_scanned'];
-        }
-        if (ai_scan_ip_used_free_scan($pdo, $ipBlockHash)) {
-            $pdo->rollBack();
-
-            return ['code' => 'ip_already_scanned'];
         }
 
         $stmt = $pdo->prepare(

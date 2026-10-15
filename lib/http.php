@@ -95,7 +95,7 @@ function ai_scan_respond_code(string $code, bool $asJson = false, array $extra =
         }
 
         // 303 zodat ook een bezoeker zonder JS de statuspagina ziet (een Location bij 429 wordt niet gevolgd).
-        ai_scan_redirect('/ai-scan/?s=rate_limited&w=' . max(1, $retryAfter), 303);
+        ai_scan_redirect('/ai-scan/?s=rate_limited&w=' . ai_scan_wait_bucket($retryAfter), 303);
         exit;
     }
 
@@ -133,6 +133,28 @@ function ai_scan_security_headers(): void
 /**
  * Wachttijd in klanttaal ("over 10 minuten"); lege string als de wachttijd onbekend is.
  */
+/**
+ * Rondt een wachttijd naar boven af op een vaste waarde, zodat de statuspagina alleen bekende waarden toont.
+ */
+function ai_scan_wait_bucket(int $seconds): int
+{
+    foreach ([60, 300, 600, 900, 1800, 3600] as $bucket) {
+        if ($seconds <= $bucket) {
+            return $bucket;
+        }
+    }
+
+    return min(24, (int) ceil($seconds / 3600)) * 3600;
+}
+
+/**
+ * Alleen een waarde die ai_scan_wait_bucket zelf kan geven; alles anders telt als onbekend (0).
+ */
+function ai_scan_wait_known(int $seconds): int
+{
+    return $seconds > 0 && ai_scan_wait_bucket($seconds) === $seconds ? $seconds : 0;
+}
+
 function ai_scan_wait_phrase(int $seconds): string
 {
     if ($seconds <= 0) {

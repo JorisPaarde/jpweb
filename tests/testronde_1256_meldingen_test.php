@@ -18,7 +18,11 @@ test('P2-3: alleen-IP-blokkade krijgt eigen melding, e-mail of domein houdt alre
     $now = time();
     assert_same('check_mail', geo_submit($pdo, $config, 'a@een.nl', 'https://een.nl', '7.7.7.1', $now)['code']);
     assert_same('ip_already_scanned', geo_submit($pdo, $config, 'b@twee.nl', 'https://twee.nl', '7.7.7.1', $now + 1)['code']);
-    assert_same('already_scanned', geo_submit($pdo, $config, 'a@een.nl', 'https://twee.nl', '7.7.7.1', $now + 2)['code']);
+    // P3-N3: zelfde IP, maar e-mail of domein al gebruikt: dezelfde melding, dus geen verschil af te lezen.
+    assert_same('ip_already_scanned', geo_submit($pdo, $config, 'a@een.nl', 'https://twee.nl', '7.7.7.1', $now + 2)['code']);
+    assert_same('ip_already_scanned', geo_submit($pdo, $config, 'b@twee.nl', 'https://een.nl', '7.7.7.1', $now + 3)['code']);
+    // Ander IP: e-mail of domein gebruikt blijft already_scanned.
+    assert_same('already_scanned', geo_submit($pdo, $config, 'a@een.nl', 'https://twee.nl', '7.7.7.9', $now + 4)['code']);
 
     $js = (string) file_get_contents(dirname(__DIR__) . '/script.js');
     assert_true(str_contains($js, 'ip_already_scanned:') && str_contains($js, 'info@jpwebcreation.nl'));
@@ -134,4 +138,25 @@ test('M2: wachttijd is de langste resterende blokkade, geen volledig venster', s
 
     $js = (string) file_get_contents(dirname(__DIR__) . '/script.js');
     assert_true(!str_contains($js, '"morgen"'), 'geen "morgen" meer in de wachttekst');
+});
+
+test('P3-N4: w op de statuspagina toont alleen bekende wachttijden', static function (): void {
+    [$config] = boot_test_db();
+    $html = tr1256_render($config, 'ai-scan/index.php', ['s' => 'rate_limited', 'w' => '86399']);
+    assert_true(!str_contains($html, '1440 minuten') && str_contains($html, 'Probeer het later opnieuw.'));
+    $html = tr1256_render($config, 'ai-scan/index.php', ['s' => 'rate_limited', 'w' => '7']);
+    assert_true(str_contains($html, 'Probeer het later opnieuw.'));
+    $html = tr1256_render($config, 'ai-scan/index.php', ['s' => 'rate_limited', 'w' => '99999999']);
+    assert_true(str_contains($html, 'Probeer het later opnieuw.'));
+    assert_same(600, ai_scan_wait_bucket(541));
+    assert_same(4 * 3600, ai_scan_wait_bucket(3 * 3600 + 5));
+    assert_same(86400, ai_scan_wait_bucket(999999));
+    assert_same(0, ai_scan_wait_known(541));
+    assert_same(600, ai_scan_wait_known(600));
+});
+
+test('P3-N5: CSRF-fout bij account verwijderen gaat terug naar het account met melding', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/account-delete.php');
+    assert_true(!str_contains($src, 'deleted=csrf'));
+    assert_true(preg_match("~verify_csrf.*?ai_scan_flash'\] = 'De sessie is verlopen[^;]*;\s*ai_scan_redirect\('/app/account\.php', 303\)~s", $src) === 1);
 });

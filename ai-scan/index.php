@@ -16,13 +16,13 @@ $pages = [
     'check_mail' => ['Kijk in je mail', 'Ik heb je een mail gestuurd. Klik op de link om je e-mailadres te bevestigen; daarna start de scan.', false],
     'daily_full' => ['Je scan staat ingepland', 'Vandaag zijn alle gratis scans bezet. Je scan start automatisch op de eerstvolgende dag met ruimte. Je krijgt een mail van mij zodra de uitslag klaar is.', true],
     'already_scanned' => ['Al een gratis scan gedaan', 'Voor deze website of dit e-mailadres is al een gratis scan gedaan. Log in met het e-mailadres van die scan.', true],
-    'ip_already_scanned' => ['Al een gratis scan gedaan', 'Vanaf deze internetverbinding is al een gratis scan gedaan. Komt dat niet van jou, bijvoorbeeld op een kantoor- of mobiel netwerk? Mail me op info@jpwebcreation.nl, dan regel ik het.', false],
+    'ip_already_scanned' => ['Al een gratis scan gedaan', 'Vanaf deze internetverbinding is al een gratis scan gedaan. Komt dat niet van jou, bijvoorbeeld op een kantoor- of mobiel netwerk? Mail me op info@jpwebcreation.nl, dan regel ik het. Heb je al een scan gedaan? Log dan in.', true],
     'expired' => ['Link verlopen', 'Deze bevestigingslink is verlopen. Vraag de scan opnieuw aan.', false],
     'invalid_token' => ['Link ongeldig', 'Deze link is ongeldig of al gebruikt. Heb je al bevestigd? Dan staat je scan al in de wachtrij.', true],
     'deleted' => ['Account verwijderd', 'Je account en gegevens zijn verwijderd.', false],
     'rate_limited' => ['Even wachten', 'Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het over tien minuten opnieuw.', false],
 ];
-$wait = ai_scan_wait_phrase((int) ($_GET['w'] ?? 0));
+$wait = ai_scan_wait_phrase(ai_scan_wait_known((int) ($_GET['w'] ?? 0)));
 if ($code === 'rate_limited') {
     $pages['rate_limited'][1] = 'Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het '
         . ($wait !== '' ? $wait : 'later') . ' opnieuw.';
