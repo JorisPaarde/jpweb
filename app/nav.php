@@ -72,6 +72,9 @@ if (!function_exists('app_nav_icon')) {
         </li>
       <?php endforeach; ?>
     </ul>
-    <a class="app-nav__logout" href="/logout.php">Uitloggen</a>
+    <form class="logout-form" method="post" action="/logout.php">
+      <input type="hidden" name="csrf" value="<?= app_h((string) ($ctx['csrf'] ?? '')) ?>">
+      <button type="submit" class="app-nav__logout">Uitloggen</button>
+    </form>
   </div>
 </nav>

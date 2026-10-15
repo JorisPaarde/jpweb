@@ -28,6 +28,8 @@ const AI_SCAN_PASSWORD_THROTTLED = 'Je hebt je wachtwoord net gewijzigd. Probeer
 const AI_SCAN_PASSWORD_FAIL_THROTTLED = 'Te veel pogingen met een verkeerd wachtwoord. Probeer het over een kwartier opnieuw.';
 const AI_SCAN_EMAIL_THROTTLED = 'Je hebt net een e-mailwijziging aangevraagd. Probeer het later opnieuw.';
 const AI_SCAN_EMAIL_INVALID = 'Controleer het nieuwe e-mailadres en probeer het opnieuw.';
+const AI_SCAN_EMAIL_DISPOSABLE = 'Gebruik een e-mailadres dat je zelf blijft lezen. Een tijdelijk adres kan ik niet gebruiken.';
+const AI_SCAN_EMAIL_NO_MAILBOX = 'Dit e-mailadres lijkt niet te bestaan. Controleer de spelling.';
 const AI_SCAN_EMAIL_SAME = 'Dat is al je huidige e-mailadres.';
 const AI_SCAN_EMAIL_PENDING_SENT = 'Ik heb een bevestigingsmail gestuurd naar het nieuwe adres. Tot die bevestigd is, blijft je oude e-mailadres actief.';
 
@@ -1173,6 +1175,13 @@ function ai_scan_request_email_change(
     if ($contact === strtolower($oldEmail)) {
         return ['ok' => false, 'error' => AI_SCAN_EMAIL_SAME];
     }
+    // Zelfde controle als bij het aanvragen van een scan: geen wegwerpadres, wel een domein dat mail ontvangt.
+    if (ai_scan_is_disposable_email_configured($contact, $config)) {
+        return ['ok' => false, 'error' => AI_SCAN_EMAIL_DISPOSABLE];
+    }
+    if (!ai_scan_email_domain_has_dns($contact)) {
+        return ['ok' => false, 'error' => AI_SCAN_EMAIL_NO_MAILBOX];
+    }
 
     $userKey = ai_scan_account_user_rate_key($userId);
     $cooldown = (int) ($config['account_email_change_seconds'] ?? 600);
@@ -1299,7 +1308,7 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
             return ['ok' => false, 'error' => 'Ongeldige of verlopen link.'];
         }
         $pdo->prepare(
-            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL, reset_token_hash = NULL, reset_token_expires_at = NULL WHERE user_id = :id'
         )->execute(['id' => $userId]);
         $pdo->commit();
     } catch (PDOException $e) {
@@ -1359,7 +1368,7 @@ function ai_scan_change_password(
             'id' => $userId,
         ]);
         $pdo->prepare(
-            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL, reset_token_hash = NULL, reset_token_expires_at = NULL WHERE user_id = :id'
         )->execute(['id' => $userId]);
         $pdo->commit();
     } catch (Throwable $e) {

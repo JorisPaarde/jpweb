@@ -773,6 +773,29 @@ function ai_scan_purge_old_ip_hashes(PDO $pdo, int $now): int
 }
 
 /**
+ * Zoekt de scan bij een wachtwoordlink: de welkomstlink of de wachtwoord-vergeten-link.
+ *
+ * @return array<string, mixed>|null scanrij plus token_kind ('password'|'reset') en token_expires_at
+ */
+function ai_scan_find_password_token(PDO $pdo, string $token): ?array
+{
+    $hash = ai_scan_hash_token($token);
+    foreach (['password', 'reset'] as $kind) {
+        $stmt = $pdo->prepare('SELECT * FROM scans WHERE ' . $kind . '_token_hash = :h LIMIT 1');
+        $stmt->execute(['h' => $hash]);
+        $scan = $stmt->fetch();
+        if ($scan !== false) {
+            $scan['token_kind'] = $kind;
+            $scan['token_expires_at'] = (int) ($scan[$kind . '_token_expires_at'] ?? 0);
+
+            return $scan;
+        }
+    }
+
+    return null;
+}
+
+/**
  * Controleert een wachtwoordlink zonder hem te gebruiken (voor het tonen van de pagina).
  *
  * @return 'ok'|'invalid_token'|'expired'|'no_account'
@@ -783,20 +806,17 @@ function ai_scan_password_token_state(PDO $pdo, string $token, int $now = 0): st
     if ($token === '') {
         return 'invalid_token';
     }
-    $stmt = $pdo->prepare(
-        'SELECT s.password_token_expires_at, s.user_id, u.id AS uid
-         FROM scans s LEFT JOIN users u ON u.id = s.user_id
-         WHERE s.password_token_hash = :h LIMIT 1'
-    );
-    $stmt->execute(['h' => ai_scan_hash_token($token)]);
-    $row = $stmt->fetch();
-    if ($row === false) {
+    $row = ai_scan_find_password_token($pdo, $token);
+    if ($row === null) {
         return 'invalid_token';
     }
-    if ((int) ($row['password_token_expires_at'] ?? 0) < $now) {
+    if ((int) $row['token_expires_at'] < $now) {
         return 'expired';
     }
-    if ((int) ($row['user_id'] ?? 0) < 1 || $row['uid'] === null) {
+    $userId = (int) ($row['user_id'] ?? 0);
+    $user = $pdo->prepare('SELECT 1 FROM users WHERE id = :id LIMIT 1');
+    $user->execute(['id' => $userId]);
+    if ($userId < 1 || $user->fetch() === false) {
         return 'no_account';
     }
 
@@ -815,16 +835,12 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
         return ['ok' => false, 'code' => 'invalid'];
     }
 
-    $stmt = $pdo->prepare(
-        'SELECT * FROM scans WHERE password_token_hash = :h LIMIT 1'
-    );
-    $stmt->execute(['h' => ai_scan_hash_token($token)]);
-    $scan = $stmt->fetch();
-    if ($scan === false) {
+    $scan = ai_scan_find_password_token($pdo, $token);
+    if ($scan === null) {
         return ['ok' => false, 'code' => 'invalid_token'];
     }
 
-    if ((int) ($scan['password_token_expires_at'] ?? 0) < $now) {
+    if ((int) $scan['token_expires_at'] < $now) {
         return ['ok' => false, 'code' => 'expired'];
     }
 
@@ -839,9 +855,10 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     $pdo->beginTransaction();
     try {
         // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
+        $kind = (string) $scan['token_kind'];
         $consume = $pdo->prepare(
-            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL
-             WHERE id = :id AND password_token_hash = :h'
+            'UPDATE scans SET ' . $kind . '_token_hash = NULL, ' . $kind . '_token_expires_at = NULL
+             WHERE id = :id AND ' . $kind . '_token_hash = :h'
         );
         $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
         if ($consume->rowCount() !== 1) {
@@ -860,7 +877,7 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
             return ['ok' => false, 'code' => 'no_account'];
         }
         $pdo->prepare(
-            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL WHERE user_id = :id'
+            'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL, reset_token_hash = NULL, reset_token_expires_at = NULL WHERE user_id = :id'
         )->execute(['id' => $userId]);
         $pdo->commit();
     } catch (Throwable $e) {
@@ -913,11 +930,11 @@ function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRa
         return 'no_account';
     }
 
-    // De token hangt aan de laatste scan van het account; dezelfde pagina en functie als bij het eerste wachtwoord.
+    // Eigen veld op de laatste scan van het account, zodat een nog geldige welkomstlink blijft werken.
     $token = ai_scan_random_token(32);
     $ttl = (int) ($config['reset_token_ttl'] ?? 3600);
     $pdo->prepare(
-        'UPDATE scans SET password_token_hash = :h, password_token_expires_at = :x WHERE id = :id'
+        'UPDATE scans SET reset_token_hash = :h, reset_token_expires_at = :x WHERE id = :id'
     )->execute(['h' => ai_scan_hash_token($token), 'x' => $now + $ttl, 'id' => $scan['id']]);
 
     $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
@@ -977,6 +994,7 @@ function ai_scan_delete_account(PDO $pdo, int $userId, int $now = 0): bool
                 error_message = NULL,
                 confirm_token_hash = NULL,
                 password_token_hash = NULL,
+                reset_token_hash = NULL,
                 ip_hash = NULL,
                 status = CASE WHEN status IN ('klaar', 'mislukt') THEN status ELSE 'mislukt' END
              WHERE user_id = :id"

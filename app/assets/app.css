@@ -369,6 +369,34 @@ summary:focus-visible {
   color: var(--app-accent);
 }
 
+.logout-form {
+  margin: 0;
+}
+
+.logout-form button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.meer-list__button {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--app-line);
+  color: var(--app-ink);
+  font-size: 1.05rem;
+  min-height: 48px;
+}
+
+.meer-list__button:hover {
+  color: var(--app-accent);
+}
+
 .plan-card {
   background: var(--app-surface);
   border: 1px solid var(--app-line);
