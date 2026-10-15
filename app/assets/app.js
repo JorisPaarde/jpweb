@@ -251,6 +251,7 @@
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (d) {
           if (!d || !d.ok) return;
+          if (box.hasAttribute('data-live-wait') && d.status !== 'wacht_dag') { stopped = true; window.location.reload(); return; }
           if (d.status === 'klaar' || d.status === 'mislukt') { stopped = true; window.location.reload(); return; }
           if (d.progress) render(d.progress);
         })

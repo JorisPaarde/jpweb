@@ -177,10 +177,16 @@
     if (contactEl instanceof HTMLElement) {
       if (isAbove) {
         contactEl.hidden = false;
-        contactEl.textContent = "Voor meer dan 1000 vragen maak ik een prijs op maat. Mail of bel me.";
+        const mailLink = document.createElement("a");
+        mailLink.href = "mailto:info@jpwebcreation.nl";
+        mailLink.textContent = "Mail";
+        const telLink = document.createElement("a");
+        telLink.href = "tel:+31621228884";
+        telLink.textContent = "bel me";
+        contactEl.replaceChildren("Voor meer dan 1000 vragen maak ik een prijs op maat. ", mailLink, " of ", telLink, ".");
       } else {
         contactEl.hidden = true;
-        contactEl.textContent = "";
+        contactEl.replaceChildren();
       }
     }
 
