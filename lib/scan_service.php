@@ -293,14 +293,16 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
     }
 
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
-    $dailyFull = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit;
-    $status = $dailyFull ? 'wacht_dag' : 'bevestigd';
+    $status = 'bevestigd';
 
     $passwordToken = ai_scan_random_token(32);
     $passwordTtl = (int) ($config['password_token_ttl'] ?? 86400);
 
     try {
+        // Write lock first: capacity is decided and reserved in the same transaction.
         $pdo->beginTransaction();
+        ai_scan_take_write_lock($pdo);
+        $status = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit ? 'wacht_dag' : 'bevestigd';
 
         $userStmt = $pdo->prepare('SELECT * FROM users WHERE email_hash = :h LIMIT 1');
         $userStmt->execute(['h' => $scan['email_hash']]);
@@ -390,6 +392,17 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
 }
 
 /**
+ * Take the SQLite write lock inside a PDO-managed transaction. A raw
+ * exec('BEGIN IMMEDIATE') is not tracked by PDO on every PHP version, so
+ * commit() then fails with "There is no active transaction"; a no-op write
+ * acquires the same lock while PDO keeps its own transaction state.
+ */
+function ai_scan_take_write_lock(PDO $pdo): void
+{
+    $pdo->exec('UPDATE scans SET id = id WHERE 0');
+}
+
+/**
  * Promote waitlisted jobs when today still has free capacity.
  * A wacht_dag job only starts once promoted (queued_at is refreshed to now).
  */
@@ -397,28 +410,40 @@ function ai_scan_promote_waitlist(PDO $pdo, array $config, int $now = 0): int
 {
     $now = $now > 0 ? $now : time();
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
-    $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
-    if ($slots <= 0) {
-        return 0;
-    }
+    $ownTx = !$pdo->inTransaction();
 
-    $sel = $pdo->prepare(
-        "SELECT id FROM scans WHERE status = 'wacht_dag' ORDER BY confirmed_at ASC, id ASC LIMIT :lim"
-    );
-    $sel->bindValue('lim', $slots, PDO::PARAM_INT);
-    $sel->execute();
-    $ids = array_map(static fn ($r) => (int) $r['id'], $sel->fetchAll());
-    if ($ids === []) {
-        return 0;
-    }
+    try {
+        // Count and promote under one write lock, shared with ai_scan_confirm().
+        if ($ownTx) {
+            $pdo->beginTransaction();
+            ai_scan_take_write_lock($pdo);
+        }
+        $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
+        $n = 0;
+        if ($slots > 0) {
+            $sel = $pdo->prepare(
+                "SELECT id FROM scans WHERE status = 'wacht_dag' ORDER BY confirmed_at ASC, id ASC LIMIT :lim"
+            );
+            $sel->bindValue('lim', $slots, PDO::PARAM_INT);
+            $sel->execute();
+            $ids = array_map(static fn ($r) => (int) $r['id'], $sel->fetchAll());
 
-    $upd = $pdo->prepare(
-        "UPDATE scans SET status = 'bevestigd', queued_at = :queued_at WHERE id = :id AND status = 'wacht_dag'"
-    );
-    $n = 0;
-    foreach ($ids as $id) {
-        $upd->execute(['queued_at' => $now, 'id' => $id]);
-        $n += $upd->rowCount();
+            $upd = $pdo->prepare(
+                "UPDATE scans SET status = 'bevestigd', queued_at = :queued_at WHERE id = :id AND status = 'wacht_dag'"
+            );
+            foreach ($ids as $id) {
+                $upd->execute(['queued_at' => $now, 'id' => $id]);
+                $n += $upd->rowCount();
+            }
+        }
+        if ($ownTx) {
+            $pdo->commit();
+        }
+    } catch (Throwable $e) {
+        if ($ownTx && $pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
     }
 
     return $n;
