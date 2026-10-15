@@ -36,8 +36,21 @@ function ai_scan_domain_hash(string $domain): string
     return hash('sha256', 'domain:' . $domain);
 }
 
+/**
+ * Sleutel voor de tijdelijke IP-vensters. IPv6 op /64-prefix, zoals de blijvende blokkade;
+ * IPv4 en onbekende waarden blijven ongewijzigd.
+ */
 function ai_scan_ip_hash(string $ip): string
 {
+    $bin = @inet_pton(trim($ip));
+    if ($bin !== false && strlen($bin) === 16) {
+        if (substr($bin, 0, 12) === "\0\0\0\0\0\0\0\0\0\0\xff\xff") {
+            return hash('sha256', 'ip:' . inet_ntop(substr($bin, 12)));
+        }
+
+        return hash('sha256', 'ip:' . bin2hex(substr($bin, 0, 8)) . '/64');
+    }
+
     return hash('sha256', 'ip:' . $ip);
 }
 
