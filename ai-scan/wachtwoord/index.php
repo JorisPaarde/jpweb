@@ -106,6 +106,12 @@ if ($token !== '') {
       <?php if ($tokenState === 'no_account'): ?>
         <p>Vraag de scan opnieuw aan of mail info@jpwebcreation.nl, dan help ik je verder.</p>
         <p class="auth-links"><a href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
+      <?php elseif ($token === ''): ?>
+        <p>Deze pagina werkt alleen met de link uit mijn e-mail. Ben je die kwijt, of wil je je wachtwoord opnieuw kiezen? Vraag dan een nieuwe link aan, of log in met je wachtwoord.</p>
+        <p class="auth-links">
+          <a class="auth-primary" href="/login/vergeten/">Nieuwe wachtwoordlink aanvragen</a>
+          <a href="/login/">Inloggen</a>
+        </p>
       <?php else: ?>
         <p>Heb je al een account? Vraag dan een nieuwe link aan om je wachtwoord te kiezen.</p>
         <p class="auth-links">

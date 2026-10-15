@@ -80,3 +80,33 @@ test('P3-12: e-mailwijziging weigert wegwerpadressen en domeinen zonder mail', s
     assert_same(AI_SCAN_EMAIL_NO_MAILBOX, $noMail['error'] ?? '');
     assert_same(null, $pdo->query('SELECT pending_email FROM users WHERE id = ' . (int) $paid['id'])->fetchColumn() ?: null, 'niets opgeslagen');
 });
+
+test('P3-N1: bevestigknop alleen bij een geldige, niet-verlopen link', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $add = static function (string $id, string $token, string $status, int $exp) use ($pdo): void {
+        $pdo->prepare(
+            "INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, confirm_token_hash, confirm_expires_at)
+             VALUES(:id, :e, :eh, 'https://firma.nl/', 'firma.nl', 'dh', :s, :now, :h, :exp)"
+        )->execute(['id' => $id, 'e' => $id . '@firma.nl', 'eh' => ai_scan_email_hash($id . '@firma.nl'), 's' => $status, 'now' => time(), 'h' => ai_scan_hash_token($token), 'exp' => $exp]);
+    };
+    $add('n1ok', 'tok-ok', 'onbevestigd', time() + 3600);
+    $add('n1old', 'tok-old', 'onbevestigd', time() - 10);
+    $add('n1used', 'tok-used', 'bevestigd', time() + 3600);
+
+    $ok = route_guard_run($config, 'ai-scan.php', [], 'GET', [], ['confirm' => 'tok-ok']);
+    assert_true(str_contains($ok['body'], 'Bevestig mijn scan'), 'geldige link toont knop');
+
+    foreach (['tok-old' => 'verlopen', 'tok-used' => 'al bevestigd', 'onbekend' => 'ongeldig'] as $t => $msg) {
+        $r = route_guard_run($config, 'ai-scan.php', [], 'GET', [], ['confirm' => $t]);
+        assert_true(!str_contains($r['body'], 'Bevestig mijn scan') && !str_contains($r['body'], 'name="confirm"'), "geen knop bij '$t'");
+        assert_true(str_contains($r['body'], $msg), "melding bij '$t'");
+        assert_true(str_contains($r['body'], 'href="/login/') || str_contains($r['body'], 'href="/ai-vindbaarheid/"'), "vervolgstap bij '$t'");
+    }
+});
+
+test('P3-N2: wachtwoordpagina zonder link vraagt niet of je al een account hebt', static function (): void {
+    [$config] = boot_test_db();
+    $html = tr1256_render($config, 'ai-scan/wachtwoord/index.php', []);
+    assert_true(!str_contains($html, 'Heb je al een account?'), 'geen account-vraag zonder link');
+    assert_true(str_contains($html, 'href="/login/vergeten/"') && str_contains($html, 'href="/login/"'), 'verwijst naar vergeten en inloggen');
+});

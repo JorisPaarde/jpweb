@@ -35,6 +35,7 @@ if ($method === 'GET' && (string) ($_GET['action'] ?? '') === 'state') {
 // mailscanner die de link vooraf opent niets start.
 if ($method === 'GET' && isset($_GET['confirm'])) {
     $confirmToken = htmlspecialchars((string) $_GET['confirm'], ENT_QUOTES, 'UTF-8');
+    $confirmState = ai_scan_confirm_token_state($pdo, (string) $_GET['confirm']);
     header('Content-Type: text/html; charset=utf-8');
     header('X-Robots-Tag: noindex, nofollow');
     ?><!DOCTYPE html>
@@ -58,11 +59,21 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
 <body>
   <main class="ai-auth">
     <h1>Scan bevestigen</h1>
-    <p>Klik op de knop om je e-mailadres te bevestigen. Daarna start ik je gratis scan.</p>
-    <form method="post" action="/ai-scan.php">
-      <input type="hidden" name="confirm" value="<?= $confirmToken ?>">
-      <button type="submit">Bevestig mijn scan</button>
-    </form>
+    <?php if ($confirmState === 'ok'): ?>
+      <p>Klik op de knop om je e-mailadres te bevestigen. Daarna start ik je gratis scan.</p>
+      <form method="post" action="/ai-scan.php">
+        <input type="hidden" name="confirm" value="<?= $confirmToken ?>">
+        <button type="submit">Bevestig mijn scan</button>
+      </form>
+    <?php elseif ($confirmState === 'used'): ?>
+      <p class="error" role="alert">Deze scan is al bevestigd.</p>
+      <p>Je kunt inloggen om je resultaat te bekijken. Heb je nog geen wachtwoord gekozen? Vraag dan een nieuwe link aan.</p>
+      <p><a href="/login/">Inloggen</a> · <a href="/login/vergeten/">Wachtwoord vergeten</a></p>
+    <?php else: ?>
+      <p class="error" role="alert"><?= $confirmState === 'expired' ? 'Deze link is verlopen.' : 'Deze link is ongeldig.' ?></p>
+      <p>Vraag de gratis scan opnieuw aan, dan stuur ik je een nieuwe link. Lukt dat niet? Mail me op info@jpwebcreation.nl.</p>
+      <p><a href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
+    <?php endif; ?>
   </main>
 </body>
 </html>
