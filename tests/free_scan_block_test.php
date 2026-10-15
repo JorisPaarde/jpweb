@@ -261,3 +261,23 @@ test('confirmed scans keep blocking after the confirm window', static function (
     assert_same('confirmed', ai_scan_confirm($pdo, $config, 'tk', $now)['code']);
     assert_same('already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.3', $now + 90000)['code']);
 });
+
+test('IPv6 rate windows share one /64, IPv4 stays per address', static function (): void {
+    assert_same(ai_scan_ip_hash('2001:db8:1:2::1'), ai_scan_ip_hash('2001:db8:1:2:ffff::9'));
+    assert_true(ai_scan_ip_hash('2001:db8:1:2::1') !== ai_scan_ip_hash('2001:db8:1:3::1'));
+    assert_true(ai_scan_ip_hash('5.6.7.8') !== ai_scan_ip_hash('5.6.7.9'));
+    assert_true(ai_scan_ip_hash('::ffff:1.2.3.4') !== ai_scan_ip_hash('::ffff:1.2.3.5'));
+    assert_same(ai_scan_ip_hash('1.2.3.4'), ai_scan_ip_hash('::ffff:1.2.3.4'));
+    assert_true(ai_scan_ip_hash('::ffff:1.2.3.4') !== ai_scan_ip_hash('::1'));
+
+    [$config, $pdo] = boot_test_db();
+    $config['form_ip_max_per_hour'] = 2;
+    $config['form_burst_seconds'] = 0;
+    $config['free_scan_one_per_ip'] = false;
+    $now = time();
+    for ($i = 0; $i < 2; $i++) {
+        ai_scan_form_invalid_record($pdo, '2001:db8:1:2::' . dechex($i + 1), $now + $i);
+    }
+    assert_true(ai_scan_form_ip_rate_limited($pdo, $config, '2001:db8:1:2::abcd', $now + 3));
+    assert_true(!ai_scan_form_ip_rate_limited($pdo, $config, '2001:db8:1:3::1', $now + 3));
+});
