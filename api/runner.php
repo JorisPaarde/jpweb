@@ -62,6 +62,7 @@ if ($action === '' && $method === 'GET') {
 
 try {
     ai_scan_check_stale_jobs($pdo, $config);
+    ai_scan_promote_waitlist($pdo, $config);
     ai_scan_flush_ready_mails($pdo, $config);
     ai_scan_flush_tier_request_mails($pdo, $config);
 } catch (Throwable $e) {

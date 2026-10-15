@@ -12,13 +12,6 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 ai_scan_security_headers();
 ai_scan_assert_allowed_host($config);
 
-try {
-    ai_scan_check_stale_jobs($pdo, $config);
-    ai_scan_promote_waitlist($pdo, $config);
-} catch (Throwable $e) {
-    // ignore
-}
-
 $userId = ai_scan_require_user($config, $pdo);
 $scan = ai_scan_latest_for_user($pdo, $userId);
 $wantsJson = ai_scan_wants_json() || (string) ($_GET['format'] ?? '') === 'json';
