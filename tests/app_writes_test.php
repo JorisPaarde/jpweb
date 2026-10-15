@@ -619,3 +619,82 @@ test('new scan result: new action ids are added, old ones archived with status a
     $again = app_load_actions($pdo, $uid, $new);
     assert_same(count($rows), count($again));
 });
+
+function app_make_demo(PDO $pdo, int $uid): void
+{
+    $row = $pdo->query('SELECT result_json FROM scans WHERE user_id = ' . $uid)->fetchColumn();
+    $res = json_decode((string) $row, true);
+    $res = is_array($res) ? $res : [];
+    $res['demo'] = true;
+    $pdo->prepare('UPDATE scans SET result_json = :r WHERE user_id = :u')
+        ->execute(['r' => json_encode($res), 'u' => $uid]);
+}
+
+test('demo account cannot delete itself or change its password, and sees an ik-message', static function (): void {
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $domain = (string) $pdo->query('SELECT domain FROM scans WHERE user_id = ' . $uid)->fetchColumn();
+    $pdo->prepare("UPDATE users SET subscription_status = 'none' WHERE id = :id")->execute(['id' => $uid]);
+    app_make_demo($pdo, $uid);
+
+    $t = app_delete_post($config, $uid, $domain);
+    assert_true(str_contains($t, '/app/account.php'), 'demo delete redirects back: ' . $t);
+    assert_true($pdo->query('SELECT id FROM users WHERE id = ' . $uid)->fetch() !== false, 'demo account kept');
+    assert_same(APP_ACCOUNT_DEMO_MESSAGE, (string) ($_SESSION['ai_scan_flash'] ?? ''));
+
+    $hashBefore = (string) $pdo->query('SELECT password_hash FROM users WHERE id = ' . $uid)->fetchColumn();
+    $html = app_ui_render($config, $uid, dirname(__DIR__) . '/app/account.php', [], [
+        'csrf' => ai_scan_csrf_token($config),
+        'action' => 'change_password',
+        'current_password' => fake_pw('test-pw', 12),
+        'new_password' => fake_pw('nieuw-ww', 77),
+    ], 'POST');
+    assert_same($hashBefore, (string) $pdo->query('SELECT password_hash FROM users WHERE id = ' . $uid)->fetchColumn());
+    assert_true(str_contains($html, 'demo-account'), 'message shown');
+    assert_true(str_contains($html, 'disabled'), 'buttons disabled');
+});
+
+test('GET on account-delete.php redirects to the account page', static function (): void {
+    [$config, , , $paid] = app_writes_seed();
+    app_ui_login($config, (int) $paid['id'], 1);
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1');
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $target = '';
+    $code = 0;
+    try {
+        require dirname(__DIR__) . '/account-delete.php';
+    } catch (RuntimeException $e) {
+        $target = $e->getMessage();
+        $code = $e->getCode();
+    }
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT');
+    assert_true(str_contains($target, '/app/account.php'), 'GET redirects: ' . $target);
+    assert_same(303, $code);
+});
+
+test('password change drops the pending e-mail notice on the page', static function (): void {
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $pdo->prepare("UPDATE users SET pending_email = 'nieuw@voorbeeld.nl', pending_email_token_hash = 'x', pending_email_expires_at = :x WHERE id = :id")
+        ->execute(['x' => time() + 3600, 'id' => $uid]);
+    $html = app_ui_render($config, $uid, dirname(__DIR__) . '/app/account.php', [], [
+        'csrf' => ai_scan_csrf_token($config),
+        'action' => 'change_password',
+        'current_password' => fake_pw('test-pw', 12),
+        'new_password' => fake_pw('nieuw-ww', 78),
+    ], 'POST');
+    assert_true(str_contains($html, 'Je wachtwoord is gewijzigd'), 'password changed');
+    assert_true(!str_contains($html, 'Bevestiging openstaand'), 'stale pending notice gone');
+});
+
+test('email change reports honestly when the confirmation mail cannot be sent', static function (): void {
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $config['base_url'] = 'https://jpwebcreation.nl';
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=0');
+    $res = ai_scan_request_email_change($pdo, $config, $paid, 'nieuw@voorbeeld.nl', fake_pw('test-pw', 12));
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
+    assert_true(empty($res['ok']), 'not ok');
+    assert_same(AI_SCAN_EMAIL_NOT_SENT, $res['error'] ?? '');
+    $u = $pdo->query('SELECT pending_email FROM users WHERE id = ' . (int) $paid['id'])->fetch();
+    assert_true(empty($u['pending_email']), 'no pending state without a sent mail');
+});

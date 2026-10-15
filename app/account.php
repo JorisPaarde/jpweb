@@ -36,6 +36,8 @@ if (ai_scan_request_method() === 'POST') {
         } else {
             $emailError = (string) ($res['error'] ?? 'Er ging iets mis.');
         }
+    } elseif ($action === 'change_password' && !empty($ctx['is_demo'])) {
+        $passwordError = APP_ACCOUNT_DEMO_MESSAGE;
     } elseif ($action === 'change_password') {
         $res = ai_scan_change_password(
             $ctx['pdo'],
@@ -46,6 +48,13 @@ if (ai_scan_request_method() === 'POST') {
         );
         if (!empty($res['ok'])) {
             $flashLocal = (string) ($res['message'] ?? 'Je wachtwoord is gewijzigd.');
+            // Een wachtwoordwijziging laat een openstaande e-mailbevestiging vervallen.
+            $stmt = $ctx['pdo']->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => (int) $ctx['user']['id']]);
+            $fresh = $stmt->fetch();
+            if ($fresh !== false) {
+                $ctx['user'] = $fresh;
+            }
         } else {
             $passwordError = (string) ($res['error'] ?? 'Er ging iets mis.');
         }
@@ -57,12 +66,14 @@ $pendingEmail = (string) ($ctx['user']['pending_email'] ?? '');
 $website = (string) ($ctx['profile']['website'] ?? ($ctx['scan']['domain'] ?? ''));
 $isFree = !empty($ctx['is_free']);
 $canDelete = app_account_can_delete($ctx);
+$isDemo = !empty($ctx['is_demo']);
 
 app_render_layout($ctx, 'Account', static function (array $ctx) use (
     $email,
     $pendingEmail,
     $website,
     $canDelete,
+    $isDemo,
     $flashLocal,
     $errorLocal,
     $emailError,
@@ -122,13 +133,19 @@ app_render_layout($ctx, 'Account', static function (array $ctx) use (
             <span class="field__error" id="pw-error"><?= app_h($passwordError) ?></span>
           <?php endif; ?>
         </label>
-        <button type="submit" class="btn">Wachtwoord wijzigen</button>
+        <?php if ($isDemo): ?>
+          <p class="app-locked"><?= app_h(APP_ACCOUNT_DEMO_MESSAGE) ?></p>
+        <?php endif; ?>
+        <button type="submit" class="btn"<?= $isDemo ? ' disabled' : '' ?>>Wachtwoord wijzigen</button>
       </form>
     </section>
 
     <section class="plan-card">
       <h2>Verwijder mijn account</h2>
-      <?php if (!$canDelete): ?>
+      <?php if ($isDemo): ?>
+        <p class="app-locked"><?= app_h(APP_ACCOUNT_DEMO_MESSAGE) ?></p>
+        <button type="button" class="btn btn--danger" disabled>Verwijder mijn account</button>
+      <?php elseif (!$canDelete): ?>
         <p class="app-locked">Zeg eerst je abonnement op voordat je je account verwijdert.</p>
       <?php else: ?>
         <button type="button" class="btn btn--danger" data-open-dialog="dialog-delete">Verwijder mijn account</button>
