@@ -99,6 +99,22 @@ function ai_scan_user_used_free_scan(PDO $pdo, string $emailHash): bool
     return $stmt->fetch() !== false;
 }
 
+function ai_scan_purge_expired_pending(PDO $pdo, string $emailHash, string $domainHash, string $ipBlockHash, int $now): void
+{
+    $pdo->prepare(
+        "DELETE FROM scans
+         WHERE status = 'onbevestigd'
+           AND confirm_expires_at < :now
+           AND (email_hash = :email_hash OR domain_hash = :domain_hash OR (:ip <> '' AND ip_block_hash = :ip2))"
+    )->execute([
+        'now' => $now,
+        'email_hash' => $emailHash,
+        'domain_hash' => $domainHash,
+        'ip' => $ipBlockHash,
+        'ip2' => $ipBlockHash,
+    ]);
+}
+
 /**
  * Submit a free-scan request. Returns a contract status code.
  * Rate-limit hits use code `rate_limited` (HTTP 429 at the edge).
@@ -157,6 +173,9 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
 
     // Config free_scan_one_per_ip (default aan) — alleen tests zetten dit uit.
     $ipBlockHash = ($config['free_scan_one_per_ip'] ?? true) ? ai_scan_ip_block_hash($config, $ip) : '';
+
+    // Verlopen onbevestigde aanvragen reserveren niets meer: ruim ze op zodat een nieuwe aanvraag kan.
+    ai_scan_purge_expired_pending($pdo, $emailHash, $domainHash, $ipBlockHash, $now);
 
     // First scan free (één per e-mail, domein en IP); daarna alleen abonnement → already_scanned.
     if (
@@ -229,7 +248,9 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     $mail = ai_scan_mail_confirm($config, $deliveryEmail, $domain, $confirmUrl);
     if (!$mail['ok']) {
         error_log('ai_scan confirm_mail_failed scan_id=' . (int) $scanId . ' cause=' . ai_scan_mail_error_cause((string) ($mail['error'] ?? 'unknown')));
-        // Keep the row so a resend path can exist later; surface generic error.
+        // Definitieve verzendfout: geef e-mail, domein en IP vrij zodat een nieuwe aanvraag kan.
+        $pdo->prepare("DELETE FROM scans WHERE id = :id AND status = 'onbevestigd'")->execute(['id' => $scanId]);
+
         return ['code' => 'error', 'scan_id' => $scanId];
     }
 

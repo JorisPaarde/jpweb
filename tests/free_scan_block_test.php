@@ -215,3 +215,49 @@ test('live progress: stored only while running, view exposes safe fields', stati
     $runner = (string) file_get_contents(dirname(__DIR__) . '/api/runner.php');
     assert_true(str_contains($runner, "\$action === 'progress'"));
 });
+
+test('failed confirm mail releases email, domain and IP for a new request', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $now = time();
+    $in = ['email' => 'mailfail@firma.nl', 'website' => 'https://mailfail.nl', 'consent' => '1'];
+
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=0');
+    $r1 = ai_scan_submit($pdo, $config, $in, '9.9.9.1', $now);
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
+    assert_same('error', $r1['code']);
+    assert_same(0, (int) $pdo->query("SELECT COUNT(*) FROM scans WHERE status = 'onbevestigd'")->fetchColumn());
+
+    $r2 = ai_scan_submit($pdo, $config, $in, '9.9.9.1', $now + 1);
+    assert_same('check_mail', $r2['code']);
+});
+
+test('expired unconfirmed request no longer blocks email, domain or IP', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $now = time();
+    $in = ['email' => 'verlopen@firma.nl', 'website' => 'https://verlopen.nl', 'consent' => '1'];
+
+    assert_same('check_mail', ai_scan_submit($pdo, $config, $in, '9.9.9.2', $now)['code']);
+    // binnen de geldigheid blijft de aanvraag staan
+    assert_same('already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.2', $now + 60)['code']);
+    // na verloop van de bevestigingslink (en het uurvenster) kan een nieuwe aanvraag gewoon
+    $later = $now + 90000;
+    $r = ai_scan_submit($pdo, $config, $in, '9.9.9.2', $later);
+    assert_same('check_mail', $r['code']);
+    assert_same(1, (int) $pdo->query("SELECT COUNT(*) FROM scans WHERE email = 'verlopen@firma.nl'")->fetchColumn());
+    $row = $pdo->query("SELECT confirm_expires_at FROM scans WHERE email = 'verlopen@firma.nl'")->fetch();
+    assert_true((int) $row['confirm_expires_at'] > $later);
+});
+
+test('confirmed scans keep blocking after the confirm window', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $now = time();
+    $in = ['email' => 'klaar@firma.nl', 'website' => 'https://klaar.nl', 'consent' => '1'];
+    assert_same('check_mail', ai_scan_submit($pdo, $config, $in, '9.9.9.3', $now)['code']);
+    $pdo->prepare('UPDATE scans SET confirm_token_hash = :h WHERE email = :e')
+        ->execute(['h' => ai_scan_hash_token('tk'), 'e' => 'klaar@firma.nl']);
+    assert_same('confirmed', ai_scan_confirm($pdo, $config, 'tk', $now)['code']);
+    assert_same('already_scanned', ai_scan_submit($pdo, $config, $in, '9.9.9.3', $now + 90000)['code']);
+});
