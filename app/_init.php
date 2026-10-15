@@ -89,7 +89,8 @@ function app_boot(string $pageId): array
 
     $scan = ai_scan_latest_for_user($pdo, $userId);
     $result = app_decode_result($scan);
-    if (!empty($result['demo'])) {
+    $isDemo = !empty($result['demo']);
+    if ($isDemo) {
         $isFree = false; // Show the imported results; the paused account keeps writes disabled.
         $canWrite = false;
     }
@@ -116,6 +117,7 @@ function app_boot(string $pageId): array
         'tiers' => $tiers,
         'effective' => $effective,
         'can_write' => $canWrite,
+        'is_demo' => $isDemo,
         'scan' => $scan,
         'result' => $result,
         'csrf' => ai_scan_csrf_token($config),
@@ -628,6 +630,8 @@ function app_score_view(array $result, ?array $scan): array
     ];
 }
 
+const APP_ACCOUNT_DEMO_MESSAGE = 'Dit is een demo-account. Ik laat hier geen wachtwoordwijziging of verwijdering toe.';
+
 /**
  * Same rule as the account page: an active subscription must be cancelled first.
  *
@@ -635,6 +639,9 @@ function app_score_view(array $result, ?array $scan): array
  */
 function app_account_can_delete(array $ctx): bool
 {
+    if (!empty($ctx['is_demo'])) {
+        return false;
+    }
     $status = (string) ($ctx['user']['subscription_status'] ?? 'none');
 
     return !empty($ctx['is_free']) || in_array($status, ['ended', 'none', 'canceling'], true);
