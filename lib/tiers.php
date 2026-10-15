@@ -279,6 +279,12 @@ function ai_scan_effective_tier(array $user, array $tiers): array
         return $freeResult;
     }
 
+    // A cancelled subscription keeps paid rights only until period_end.
+    $periodEnd = $user['period_end'] ?? null;
+    if ($status === 'canceling' && $periodEnd !== null && $periodEnd !== '' && (int) $periodEnd <= time()) {
+        return $freeResult;
+    }
+
     if ($tierId === 'custom') {
         $customQ = (int) ($user['custom_questions'] ?? 0);
         $above = $tiers['above_max'] ?? [];

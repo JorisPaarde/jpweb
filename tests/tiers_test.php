@@ -84,6 +84,26 @@ test('ai_scan_effective_tier matches file for every tier (drift 5)', static func
     ], $tiers);
     assert_same('free', $ended['id']);
 
+    foreach (['q50', 'custom'] as $tid) {
+        $lapsed = ai_scan_effective_tier([
+            'tier_id' => $tid,
+            'custom_questions' => 1200,
+            'subscription_status' => 'canceling',
+            'period_end' => time() - 86400,
+        ], $tiers);
+        assert_same('free', $lapsed['id'], 'canceling past period_end falls back to free');
+        assert_same(true, $lapsed['read_only']);
+        assert_same(false, $lapsed['weekly_measurement']);
+        assert_same((int) $tiers['free']['actions'], $lapsed['actions']);
+    }
+    $running = ai_scan_effective_tier([
+        'tier_id' => 'q50',
+        'subscription_status' => 'canceling',
+        'period_end' => time() + 86400,
+    ], $tiers);
+    assert_same('q50', $running['id'], 'canceling before period_end keeps paid rights');
+    assert_same(true, $running['weekly_measurement']);
+
     $custom = ai_scan_effective_tier([
         'tier_id' => 'custom',
         'custom_questions' => 1200,
