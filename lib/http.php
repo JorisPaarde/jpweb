@@ -145,5 +145,7 @@ function ai_scan_wait_phrase(int $seconds): string
         return 'over ' . (int) ceil($seconds / 60) . ' minuten';
     }
 
-    return $seconds <= 3600 ? 'over een uur' : 'morgen';
+    $hours = (int) ceil($seconds / 3600);
+
+    return $hours <= 1 ? 'over een uur' : "over {$hours} uur";
 }

@@ -243,7 +243,8 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
     if (seconds < 3600) {
       return `over ${Math.ceil(seconds / 60)} minuten`;
     }
-    return seconds <= 3600 ? "over een uur" : "morgen";
+    const hours = Math.ceil(seconds / 3600);
+    return hours <= 1 ? "over een uur" : `over ${hours} uur`;
   };
 
   const clearScanErrors = () => {

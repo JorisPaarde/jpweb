@@ -45,6 +45,38 @@ function ai_scan_rate_global_key(): string
 }
 
 /**
+ * Resterende seconden tot een venster weer onder de grens zit (0 = niet geblokkeerd).
+ * Telt events uit meerdere buckets samen; het oudste event dat de grens overschrijdt valt als eerste weg.
+ *
+ * @param string[] $buckets
+ */
+function ai_scan_rate_window_remaining(
+    PDO $pdo,
+    array $buckets,
+    string $keyHash,
+    int $window,
+    int $max,
+    int $now
+): int {
+    if ($window <= 0 || $max <= 0) {
+        return 0;
+    }
+    $placeholders = implode(',', array_fill(0, count($buckets), '?'));
+    $stmt = $pdo->prepare(
+        "SELECT created_at FROM rate_events
+         WHERE bucket IN ($placeholders) AND key_hash = ? AND created_at >= ?
+         ORDER BY created_at ASC"
+    );
+    $stmt->execute([...array_values($buckets), $keyHash, $now - $window]);
+    $times = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    if (count($times) < $max) {
+        return 0;
+    }
+
+    return max(1, $times[count($times) - $max] + $window - $now);
+}
+
+/**
  * Pogingen vanaf dit IP: geslaagde aanvragen plus ongeldige pogingen.
  */
 function ai_scan_form_ip_attempts(PDO $pdo, string $keyHash, int $since): int
@@ -70,30 +102,27 @@ function ai_scan_form_ip_rate_limited(PDO $pdo, array $config, string $ip, int $
 }
 
 /**
- * Seconds until the blocking IP window is over (0 = not limited): burst, hour or day.
+ * Seconds until the last active IP block (burst, hour or day) is over (0 = not limited).
  */
 function ai_scan_form_ip_wait(PDO $pdo, array $config, string $ip, int $now): int
 {
     $key = ai_scan_ip_hash($ip);
     ai_scan_rate_prune($pdo, $now - 86400);
 
-    $burstWindow = (int) ($config['form_burst_seconds'] ?? 60);
-    $burstMax = (int) ($config['form_burst_max'] ?? 1);
-    if ($burstWindow > 0 && ai_scan_rate_count($pdo, 'form_ip', $key, $now - $burstWindow) >= $burstMax) {
-        return $burstWindow;
-    }
+    $both = ['form_ip', 'form_ip_invalid'];
 
-    $perHour = (int) ($config['form_ip_max_per_hour'] ?? 3);
-    if ($perHour > 0 && ai_scan_form_ip_attempts($pdo, $key, $now - 3600) >= $perHour) {
-        return 3600;
-    }
-
-    $perDay = (int) ($config['form_ip_max_per_day'] ?? 20);
-    if ($perDay > 0 && ai_scan_form_ip_attempts($pdo, $key, $now - 86400) >= $perDay) {
-        return 86400;
-    }
-
-    return 0;
+    return max(
+        ai_scan_rate_window_remaining(
+            $pdo,
+            ['form_ip'],
+            $key,
+            (int) ($config['form_burst_seconds'] ?? 60),
+            (int) ($config['form_burst_max'] ?? 1),
+            $now
+        ),
+        ai_scan_rate_window_remaining($pdo, $both, $key, 3600, (int) ($config['form_ip_max_per_hour'] ?? 3), $now),
+        ai_scan_rate_window_remaining($pdo, $both, $key, 86400, (int) ($config['form_ip_max_per_day'] ?? 20), $now)
+    );
 }
 
 /**
@@ -110,7 +139,7 @@ function ai_scan_form_target_rate_limited(
 }
 
 /**
- * Seconds until the blocking email/domain window is over (0 = not limited).
+ * Seconds until the last active email/domain block is over (0 = not limited).
  */
 function ai_scan_form_target_wait(
     PDO $pdo,
@@ -122,26 +151,26 @@ function ai_scan_form_target_wait(
     $burstWindow = (int) ($config['form_burst_seconds'] ?? 60);
     $burstMax = (int) ($config['form_burst_max'] ?? 1);
 
-    if ($burstWindow > 0) {
-        if (ai_scan_rate_count($pdo, 'form_email', $emailHash, $now - $burstWindow) >= $burstMax) {
-            return $burstWindow;
-        }
-        if (ai_scan_rate_count($pdo, 'form_domain', $domainHash, $now - $burstWindow) >= $burstMax) {
-            return $burstWindow;
-        }
-    }
-
-    $emailPerHour = (int) ($config['form_email_max_per_hour'] ?? 3);
-    if ($emailPerHour > 0 && ai_scan_rate_count($pdo, 'form_email', $emailHash, $now - 3600) >= $emailPerHour) {
-        return 3600;
-    }
-
-    $domainPerHour = (int) ($config['form_domain_max_per_hour'] ?? 3);
-    if ($domainPerHour > 0 && ai_scan_rate_count($pdo, 'form_domain', $domainHash, $now - 3600) >= $domainPerHour) {
-        return 3600;
-    }
-
-    return 0;
+    return max(
+        ai_scan_rate_window_remaining($pdo, ['form_email'], $emailHash, $burstWindow, $burstMax, $now),
+        ai_scan_rate_window_remaining($pdo, ['form_domain'], $domainHash, $burstWindow, $burstMax, $now),
+        ai_scan_rate_window_remaining(
+            $pdo,
+            ['form_email'],
+            $emailHash,
+            3600,
+            (int) ($config['form_email_max_per_hour'] ?? 3),
+            $now
+        ),
+        ai_scan_rate_window_remaining(
+            $pdo,
+            ['form_domain'],
+            $domainHash,
+            3600,
+            (int) ($config['form_domain_max_per_hour'] ?? 3),
+            $now
+        )
+    );
 }
 
 /**
@@ -153,25 +182,28 @@ function ai_scan_confirm_mail_rate_limited(PDO $pdo, array $config, string $emai
 }
 
 /**
- * Seconds until a new confirmation mail may be sent (0 = not limited).
+ * Seconds until a new confirmation mail may be sent (0 = not limited): longest of cooldown and global cap.
  */
 function ai_scan_confirm_mail_wait(PDO $pdo, array $config, string $emailHash, int $now): int
 {
-    $perEmailSeconds = (int) ($config['confirm_mail_per_email_seconds'] ?? 600);
-    if ($perEmailSeconds > 0
-        && ai_scan_rate_count($pdo, 'confirm_mail_email', $emailHash, $now - $perEmailSeconds) >= 1
-    ) {
-        return $perEmailSeconds;
-    }
-
-    $globalMax = (int) ($config['confirm_mail_global_max_per_hour'] ?? 40);
-    if ($globalMax > 0
-        && ai_scan_rate_count($pdo, 'confirm_mail_global', ai_scan_rate_global_key(), $now - 3600) >= $globalMax
-    ) {
-        return 3600;
-    }
-
-    return 0;
+    return max(
+        ai_scan_rate_window_remaining(
+            $pdo,
+            ['confirm_mail_email'],
+            $emailHash,
+            (int) ($config['confirm_mail_per_email_seconds'] ?? 600),
+            1,
+            $now
+        ),
+        ai_scan_rate_window_remaining(
+            $pdo,
+            ['confirm_mail_global'],
+            ai_scan_rate_global_key(),
+            3600,
+            (int) ($config['confirm_mail_global_max_per_hour'] ?? 40),
+            $now
+        )
+    );
 }
 
 function ai_scan_form_rate_record(
