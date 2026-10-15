@@ -154,6 +154,7 @@ function ai_scan_migrate(PDO $pdo): void
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )'
     );
+    ai_scan_ensure_column($pdo, 'subscription_events', 'mail_pending', 'INTEGER NOT NULL DEFAULT 0');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_subscription_events_user ON subscription_events(user_id, ts)');
 
     $pdo->exec(

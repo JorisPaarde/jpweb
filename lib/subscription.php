@@ -7,6 +7,8 @@ declare(strict_types=1);
  */
 
 const AI_SCAN_TIER_REQUEST_MESSAGE = 'Aanvraag ontvangen, ik pas je abonnement aan.';
+const AI_SCAN_TIER_REQUEST_SAVED_MESSAGE = 'Aanvraag opgeslagen. Mijn melding is nog niet verstuurd, ik probeer het later opnieuw.';
+const AI_SCAN_TIER_REQUEST_INVALID_MESSAGE = 'Ik kon deze aanvraag niet opslaan. Probeer het opnieuw.';
 const AI_SCAN_FREE_WRITE_MESSAGE = 'Zit in het abonnement: elke week een nieuwe meting.';
 
 /**
@@ -134,12 +136,12 @@ function ai_scan_request_tier_change(
     if ($kind === 'cancel') {
         $requestedTier = $requestedTier !== '' ? $requestedTier : 'free';
     } elseif ($requestedTier === '') {
-        return ['ok' => false, 'mailed' => false, 'message' => AI_SCAN_TIER_REQUEST_MESSAGE, 'error' => 'missing_tier'];
+        return ['ok' => false, 'mailed' => false, 'message' => AI_SCAN_TIER_REQUEST_INVALID_MESSAGE, 'error' => 'missing_tier'];
     }
 
     if ($kind !== 'cancel' && $requestedTier !== 'free' && $requestedTier !== 'custom') {
         if (ai_scan_tier_by_id($tiers, $requestedTier) === null) {
-            return ['ok' => false, 'mailed' => false, 'message' => AI_SCAN_TIER_REQUEST_MESSAGE, 'error' => 'unknown_tier'];
+            return ['ok' => false, 'mailed' => false, 'message' => AI_SCAN_TIER_REQUEST_INVALID_MESSAGE, 'error' => 'unknown_tier'];
         }
     }
 
@@ -147,50 +149,8 @@ function ai_scan_request_tier_change(
     $emailHash = (string) ($user['email_hash'] ?? ($email !== '' ? ai_scan_email_hash($email) : ''));
     $fromTier = (string) ($user['tier_id'] ?? 'free');
 
-    if ($emailHash !== '' && ai_scan_tier_request_mail_rate_limited($pdo, $config, $emailHash, $now)) {
-        return [
-            'ok' => true,
-            'mailed' => false,
-            'throttled' => true,
-            'message' => AI_SCAN_TIER_REQUEST_MESSAGE,
-        ];
-    }
-
-    $accountName = ai_scan_account_display_name($pdo, $user);
-    $toInfo = (string) (($config['smtp']['alert_to'] ?? '') ?: ($config['smtp']['from_email'] ?? 'info@jpwebcreation.nl'));
-    if ($toInfo === '') {
-        $toInfo = 'info@jpwebcreation.nl';
-    }
-
-    $infoMail = ai_scan_mail_tier_request_admin(
-        $config,
-        $toInfo,
-        $accountName,
-        $email,
-        $fromTier,
-        $requestedTier,
-        $kind
-    );
-
-    $customerMailed = false;
-    if ($email !== '' && !empty($infoMail['ok'])) {
-        $confirm = ai_scan_mail_tier_request_customer(
-            $config,
-            $email,
-            $accountName,
-            $requestedTier,
-            $kind,
-            $tiers
-        );
-        $customerMailed = !empty($confirm['ok']);
-    }
-
-    $mailed = !empty($infoMail['ok']);
-    if ($mailed && $emailHash !== '') {
-        ai_scan_tier_request_mail_rate_record($pdo, $emailHash, $now);
-    }
-
-    ai_scan_subscription_event(
+    // Eerst duurzaam opslaan; alleen de beheerdersmail wordt gethrottled of herhaald.
+    $eventId = ai_scan_subscription_event(
         $pdo,
         (int) $user['id'],
         'request',
@@ -200,13 +160,122 @@ function ai_scan_request_tier_change(
         $kind,
         $now
     );
+    $pdo->prepare('UPDATE subscription_events SET mail_pending = 1 WHERE id = :id')->execute(['id' => $eventId]);
 
-    return [
+    $mailed = false;
+    $customerMailed = false;
+    $throttled = $emailHash !== '' && ai_scan_tier_request_mail_rate_limited($pdo, $config, $emailHash, $now);
+    if (!$throttled) {
+        $sent = ai_scan_deliver_tier_request_mails($pdo, $config, $user, $fromTier, $requestedTier, $kind, $tiers);
+        $mailed = $sent['mailed'];
+        $customerMailed = $sent['customer_mailed'];
+        if ($mailed) {
+            $pdo->prepare('UPDATE subscription_events SET mail_pending = 0 WHERE id = :id')->execute(['id' => $eventId]);
+            if ($emailHash !== '') {
+                ai_scan_tier_request_mail_rate_record($pdo, $emailHash, $now);
+            }
+        }
+    }
+
+    $result = [
         'ok' => true,
         'mailed' => $mailed,
         'customer_mailed' => $customerMailed,
-        'message' => AI_SCAN_TIER_REQUEST_MESSAGE,
+        'message' => $mailed ? AI_SCAN_TIER_REQUEST_MESSAGE : AI_SCAN_TIER_REQUEST_SAVED_MESSAGE,
     ];
+    if ($throttled) {
+        $result['throttled'] = true;
+    }
+
+    return $result;
+}
+
+/**
+ * Mail info@ and, when that worked, the customer confirmation.
+ *
+ * @param array<string, mixed> $config
+ * @param array<string, mixed> $user
+ * @param array<string, mixed> $tiers
+ * @return array{mailed: bool, customer_mailed: bool}
+ */
+function ai_scan_deliver_tier_request_mails(
+    PDO $pdo,
+    array $config,
+    array $user,
+    string $fromTier,
+    string $requestedTier,
+    string $kind,
+    array $tiers
+): array {
+    $email = (string) ($user['email'] ?? '');
+    $accountName = ai_scan_account_display_name($pdo, $user);
+    $toInfo = (string) (($config['smtp']['alert_to'] ?? '') ?: ($config['smtp']['from_email'] ?? 'info@jpwebcreation.nl'));
+    if ($toInfo === '') {
+        $toInfo = 'info@jpwebcreation.nl';
+    }
+
+    $infoMail = ai_scan_mail_tier_request_admin($config, $toInfo, $accountName, $email, $fromTier, $requestedTier, $kind);
+
+    $customerMailed = false;
+    if ($email !== '' && !empty($infoMail['ok'])) {
+        $confirm = ai_scan_mail_tier_request_customer($config, $email, $accountName, $requestedTier, $kind, $tiers);
+        $customerMailed = !empty($confirm['ok']);
+    }
+
+    return ['mailed' => !empty($infoMail['ok']), 'customer_mailed' => $customerMailed];
+}
+
+/**
+ * Retry opgeslagen aanvragen waarvan de beheerdersmail nog niet is verstuurd.
+ * Respecteert dezelfde throttle; geeft het aantal verzonden aanvragen terug.
+ *
+ * @param array<string, mixed> $config
+ */
+function ai_scan_flush_tier_request_mails(PDO $pdo, array $config, int $limit = 10, ?int $now = null): int
+{
+    $now ??= time();
+    $stmt = $pdo->prepare(
+        'SELECT * FROM subscription_events
+         WHERE event = \'request\' AND mail_pending = 1 AND ts > :since
+         ORDER BY id ASC LIMIT :lim'
+    );
+    $stmt->bindValue('since', $now - 7 * 86400, PDO::PARAM_INT);
+    $stmt->bindValue('lim', max(1, $limit), PDO::PARAM_INT);
+    $stmt->execute();
+    $tiers = ai_scan_load_tiers();
+    $sent = 0;
+    foreach ($stmt->fetchAll() as $event) {
+        $u = $pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $u->execute(['id' => (int) $event['user_id']]);
+        $user = $u->fetch();
+        if ($user === false) {
+            $pdo->prepare('UPDATE subscription_events SET mail_pending = 0 WHERE id = :id')->execute(['id' => (int) $event['id']]);
+            continue;
+        }
+        $email = (string) ($user['email'] ?? '');
+        $emailHash = (string) ($user['email_hash'] ?? ($email !== '' ? ai_scan_email_hash($email) : ''));
+        if ($emailHash !== '' && ai_scan_tier_request_mail_rate_limited($pdo, $config, $emailHash, $now)) {
+            continue;
+        }
+        $r = ai_scan_deliver_tier_request_mails(
+            $pdo,
+            $config,
+            $user,
+            (string) ($event['from_tier'] ?? 'free'),
+            (string) ($event['to_tier'] ?? ''),
+            (string) ($event['note'] ?? 'account'),
+            $tiers
+        );
+        if ($r['mailed']) {
+            $pdo->prepare('UPDATE subscription_events SET mail_pending = 0 WHERE id = :id')->execute(['id' => (int) $event['id']]);
+            if ($emailHash !== '') {
+                ai_scan_tier_request_mail_rate_record($pdo, $emailHash, $now);
+            }
+            $sent++;
+        }
+    }
+
+    return $sent;
 }
 
 /**
@@ -385,7 +454,7 @@ function ai_scan_subscription_event(
     string $byRole,
     ?string $note,
     ?int $now = null
-): void {
+): int {
     $stmt = $pdo->prepare(
         'INSERT INTO subscription_events(user_id, ts, event, from_tier, to_tier, by_role, note)
          VALUES(:user_id, :ts, :event, :from_tier, :to_tier, :by_role, :note)'
@@ -399,6 +468,8 @@ function ai_scan_subscription_event(
         'by_role' => $byRole,
         'note' => $note,
     ]);
+
+    return (int) $pdo->lastInsertId();
 }
 
 /**
