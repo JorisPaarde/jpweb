@@ -782,6 +782,7 @@ require __DIR__ . '/app_writes_test.php';
 require __DIR__ . '/gsc_test.php';
 require __DIR__ . '/gsc_preview_test.php';
 require __DIR__ . '/free_scan_block_test.php';
+require __DIR__ . '/daily_capacity_race_test.php';
 require __DIR__ . '/scan_form_test.php';
 require __DIR__ . '/geo_fix_test.php';
 require __DIR__ . '/smooth_demo_test.php';
