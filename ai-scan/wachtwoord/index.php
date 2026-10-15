@@ -19,8 +19,8 @@ if (ai_scan_request_method() === 'POST') {
 
     if (!ai_scan_verify_csrf($config, $csrf)) {
         $error = 'De sessie is verlopen. Probeer het opnieuw.';
-    } elseif (strlen($password) < 10) {
-        $error = 'Kies een wachtwoord van minimaal 10 tekens.';
+    } elseif (mb_strlen($password) < AI_SCAN_PASSWORD_MIN_LENGTH) {
+        $error = 'Kies een wachtwoord van minimaal ' . AI_SCAN_PASSWORD_MIN_LENGTH . ' tekens.';
     } elseif ($password !== $password2) {
         $error = 'De wachtwoorden komen niet overeen.';
     } else {
@@ -44,6 +44,15 @@ if (ai_scan_request_method() === 'POST') {
 }
 
 $csrf = ai_scan_csrf_token($config);
+
+// Controleer de link al bij het openen, zodat een ongeldige of verlopen link meteen een herstelroute toont.
+$tokenState = ai_scan_password_token_state($pdo, $token);
+$linkProblem = match ($tokenState) {
+    'ok' => '',
+    'expired' => 'Deze link is verlopen.',
+    'no_account' => 'Bij deze link hoort geen account meer.',
+    default => $token === '' ? 'Deze link is ongeldig.' : 'Deze link is ongeldig of al gebruikt.',
+};
 
 // E-mailadres bij de link, zodat de wachtwoordmanager het nieuwe wachtwoord bij het juiste account opslaat.
 $accountEmail = '';
@@ -74,6 +83,11 @@ if ($token !== '') {
       border-radius: 0.4rem; font: inherit; background: #fff;
     }
     .ai-auth .error { color: #a84832; margin: 0.75rem 0; }
+    .ai-auth .auth-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; }
+    .ai-auth .auth-primary {
+      display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.25rem;
+      background: var(--green, #315f4f); color: #fff; border-radius: 0.4rem; font-weight: 600; text-decoration: none;
+    }
     .ai-auth button {
       margin-top: 1.25rem; width: 100%; min-height: 48px;
       background: var(--green, #315f4f); color: #fff; border: 0;
@@ -87,10 +101,20 @@ if ($token !== '') {
     <h1>Wachtwoord kiezen</h1>
     <?php if ($done): ?>
       <p>Je wachtwoord is ingesteld. Je kunt nu <a href="/login/">inloggen</a> op je dashboard.</p>
-    <?php elseif ($token === ''): ?>
-      <p class="error">Deze link is ongeldig.</p>
+    <?php elseif ($linkProblem !== ''): ?>
+      <p class="error" role="alert"><?= htmlspecialchars($linkProblem, ENT_QUOTES, 'UTF-8') ?></p>
+      <?php if ($tokenState === 'no_account'): ?>
+        <p>Vraag de scan opnieuw aan of mail info@jpwebcreation.nl, dan help ik je verder.</p>
+        <p class="auth-links"><a href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
+      <?php else: ?>
+        <p>Heb je al een account? Vraag dan een nieuwe link aan om je wachtwoord te kiezen.</p>
+        <p class="auth-links">
+          <a class="auth-primary" href="/login/vergeten/">Nieuwe wachtwoordlink aanvragen</a>
+          <a href="/login/">Inloggen</a>
+        </p>
+      <?php endif; ?>
     <?php else: ?>
-      <p>Kies zelf een wachtwoord. Ik stuur nooit een wachtwoord per mail.</p>
+      <p>Kies zelf een wachtwoord van minimaal <?= AI_SCAN_PASSWORD_MIN_LENGTH ?> tekens. Ik stuur nooit een wachtwoord per mail.</p>
       <?php if ($error !== ''): ?>
         <p class="error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
       <?php endif; ?>
@@ -99,9 +123,9 @@ if ($token !== '') {
         <input type="hidden" name="t" value="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>">
         <input type="email" name="username" autocomplete="username" value="<?= htmlspecialchars($accountEmail, ENT_QUOTES, 'UTF-8') ?>" readonly hidden aria-hidden="true" tabindex="-1">
         <label for="password">Nieuw wachtwoord</label>
-        <input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="<?= AI_SCAN_PASSWORD_MIN_LENGTH ?>" required>
         <label for="password2">Herhaal wachtwoord</label>
-        <input id="password2" name="password2" type="password" autocomplete="new-password" minlength="10" required>
+        <input id="password2" name="password2" type="password" autocomplete="new-password" minlength="<?= AI_SCAN_PASSWORD_MIN_LENGTH ?>" required>
         <button type="submit">Wachtwoord opslaan</button>
       </form>
     <?php endif; ?>

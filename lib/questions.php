@@ -22,7 +22,7 @@ const AI_SCAN_COMPETITOR_LIMIT = 'Je vaste lijst mag maximaal ' . AI_SCAN_COMPET
 
 const AI_SCAN_SETTINGS_SAVE_LIMIT_MSG = 'Je hebt vandaag vaak opgeslagen. Probeer het morgen weer.';
 
-const AI_SCAN_PASSWORD_TOO_SHORT = 'Kies een wachtwoord van minimaal 12 tekens.';
+const AI_SCAN_PASSWORD_TOO_SHORT = 'Kies een wachtwoord van minimaal ' . AI_SCAN_PASSWORD_MIN_LENGTH . ' tekens.';
 const AI_SCAN_PASSWORD_CURRENT_WRONG = 'Het huidige wachtwoord klopt niet.';
 const AI_SCAN_PASSWORD_THROTTLED = 'Je hebt je wachtwoord net gewijzigd. Probeer het later opnieuw.';
 const AI_SCAN_PASSWORD_FAIL_THROTTLED = 'Te veel pogingen met een verkeerd wachtwoord. Probeer het over een kwartier opnieuw.';
@@ -1336,7 +1336,7 @@ function ai_scan_change_password(
 
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_CURRENT_WRONG];
     }
-    if (mb_strlen($newPassword) < 12) {
+    if (mb_strlen($newPassword) < AI_SCAN_PASSWORD_MIN_LENGTH) {
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_TOO_SHORT];
     }
 

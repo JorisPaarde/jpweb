@@ -767,6 +767,37 @@ function ai_scan_purge_old_ip_hashes(PDO $pdo, int $now): int
 }
 
 /**
+ * Controleert een wachtwoordlink zonder hem te gebruiken (voor het tonen van de pagina).
+ *
+ * @return 'ok'|'invalid_token'|'expired'|'no_account'
+ */
+function ai_scan_password_token_state(PDO $pdo, string $token, int $now = 0): string
+{
+    $now = $now > 0 ? $now : time();
+    if ($token === '') {
+        return 'invalid_token';
+    }
+    $stmt = $pdo->prepare(
+        'SELECT s.password_token_expires_at, s.user_id, u.id AS uid
+         FROM scans s LEFT JOIN users u ON u.id = s.user_id
+         WHERE s.password_token_hash = :h LIMIT 1'
+    );
+    $stmt->execute(['h' => ai_scan_hash_token($token)]);
+    $row = $stmt->fetch();
+    if ($row === false) {
+        return 'invalid_token';
+    }
+    if ((int) ($row['password_token_expires_at'] ?? 0) < $now) {
+        return 'expired';
+    }
+    if ((int) ($row['user_id'] ?? 0) < 1 || $row['uid'] === null) {
+        return 'no_account';
+    }
+
+    return 'ok';
+}
+
+/**
  * Set password from one-time token. Never emails the password.
  *
  * @return array{ok: bool, code: string}
@@ -774,7 +805,7 @@ function ai_scan_purge_old_ip_hashes(PDO $pdo, int $now): int
 function ai_scan_set_password(PDO $pdo, string $token, string $password, int $now = 0): array
 {
     $now = $now > 0 ? $now : time();
-    if ($token === '' || strlen($password) < 10) {
+    if ($token === '' || mb_strlen($password) < AI_SCAN_PASSWORD_MIN_LENGTH) {
         return ['ok' => false, 'code' => 'invalid'];
     }
 

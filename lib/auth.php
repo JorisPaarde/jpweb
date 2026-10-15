@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/** Eén minimum voor wachtwoord kiezen, herstellen en wijzigen. */
+const AI_SCAN_PASSWORD_MIN_LENGTH = 12;
+
 function ai_scan_start_session(array $config): bool
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
