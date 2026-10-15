@@ -594,3 +594,28 @@ test('GDPR delete clears domain, progress and failure content, keeps hashes', st
     $n = $pdo->query('SELECT COUNT(*) FROM free_scan_blocks WHERE domain_hash = ' . $pdo->quote((string) $hashes['domain_hash']))->fetchColumn();
     assert_true((int) $n >= 1, 'block hash kept');
 });
+
+test('new scan result: new action ids are added, old ones archived with status and log kept', static function (): void {
+    [, $pdo, , $paid, $result] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $result['actions'] = [['id' => 'oud-a1', 'title' => 'Oude actie A', 'type' => 'verbeteren']];
+    $first = app_load_actions($pdo, $uid, $result);
+    assert_true($first !== [], 'seeded actions');
+    $oldId = (string) $first[0]['public_id'];
+    $pdo->prepare('UPDATE actions SET status = \'live_gemeld\', log_text = \'Live gemeld op 2026-01-01\' WHERE user_id = :u AND public_id = :p')
+        ->execute(['u' => $uid, 'p' => $oldId]);
+
+    $new = $result;
+    $new['actions'] = [['id' => 'nieuw-b1', 'title' => 'Nieuwe actie B', 'type' => 'verbeteren']];
+    $rows = app_load_actions($pdo, $uid, $new);
+    assert_same('nieuw-b1', (string) $rows[0]['public_id']);
+    assert_same(0, (int) $rows[0]['archived']);
+    $old = $pdo->query('SELECT * FROM actions WHERE user_id = ' . $uid . ' AND public_id = ' . $pdo->quote($oldId))->fetch();
+    assert_same(1, (int) $old['archived']);
+    assert_same('live_gemeld', $old['status']);
+    assert_same('Live gemeld op 2026-01-01', $old['log_text']);
+
+    // Reloading the same result is idempotent.
+    $again = app_load_actions($pdo, $uid, $new);
+    assert_same(count($rows), count($again));
+});

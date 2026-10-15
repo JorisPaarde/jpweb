@@ -1067,18 +1067,16 @@ function ai_scan_action_set_status(
 function ai_scan_ensure_actions_persisted(PDO $pdo, int $userId, array $result): void
 {
     ai_scan_ensure_questions_schema($pdo);
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM actions WHERE user_id = :u');
-    $stmt->execute(['u' => $userId]);
-    if ((int) $stmt->fetchColumn() > 0) {
-        return;
-    }
-
     $fromResult = $result['actions'] ?? null;
     if (!is_array($fromResult) || $fromResult === []) {
         return;
     }
 
     $now = time();
+    $existing = $pdo->prepare('SELECT public_id FROM actions WHERE user_id = :u');
+    $existing->execute(['u' => $userId]);
+    $known = array_flip(array_map('strval', $existing->fetchAll(PDO::FETCH_COLUMN)));
+    $current = [];
     $ins = $pdo->prepare(
         'INSERT INTO actions(
             user_id, public_id, type, status, title, page_path, why_text, page_text,
@@ -1096,9 +1094,15 @@ function ai_scan_ensure_actions_persisted(PDO $pdo, int $userId, array $result):
             continue;
         }
         $i++;
+        $publicId = (string) ($item['id'] ?? ('a' . $i));
+        $current[$publicId] = true;
+        if (isset($known[$publicId])) {
+            continue;
+        }
+        $known[$publicId] = true;
         $ins->execute([
             'u' => $userId,
-            'p' => (string) ($item['id'] ?? ('a' . $i)),
+            'p' => $publicId,
             'type' => (string) ($item['type'] ?? 'verbeteren'),
             'status' => (string) ($item['status'] ?? 'voorgesteld'),
             'title' => (string) ($item['title'] ?? 'Actie'),
@@ -1116,6 +1120,17 @@ function ai_scan_ensure_actions_persisted(PDO $pdo, int $userId, array $result):
             'sort' => $i,
             'c' => $now,
         ]);
+    }
+
+    // Actions from earlier results that are not in this one are archived;
+    // status and log stay untouched.
+    $archive = $pdo->prepare(
+        'UPDATE actions SET archived = 1, updated_at = :t WHERE user_id = :u AND public_id = :p AND archived = 0'
+    );
+    foreach ($known as $publicId => $_) {
+        if (!isset($current[(string) $publicId])) {
+            $archive->execute(['t' => $now, 'u' => $userId, 'p' => (string) $publicId]);
+        }
     }
 }
 
