@@ -41,7 +41,7 @@ app_render_layout($ctx, 'Overzicht', static function (array $ctx) use ($score, $
       </div>
     <?php elseif ($score['status'] === 'wacht_dag'): ?>
       <div class="app-score" aria-live="polite">
-        <p>Geen meting deze week — je scan staat in de rij. Zodra er weer ruimte is, start hij automatisch.</p>
+        <p>Je eerste scan staat in de rij; vandaag zijn alle gratis scans bezet. Zodra er ruimte is, start hij automatisch en krijg je een mail.</p>
       </div>
     <?php elseif ($score['status'] === 'mislukt'): ?>
       <div class="app-score" aria-live="polite">

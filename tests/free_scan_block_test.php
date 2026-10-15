@@ -43,7 +43,7 @@ test('one free scan per IP (keyed hash, survives confirm, lifted with email/doma
     assert_same('check_mail', $r1['code']);
     // pending scan from same IP blocks a different email/domain
     $r2 = ai_scan_submit($pdo, $config, ['email' => 'ip2@ander.nl', 'website' => 'https://ander.nl', 'consent' => '1'], '5.6.7.8', $now);
-    assert_same('already_scanned', $r2['code']);
+    assert_same('ip_already_scanned', $r2['code']);
 
     $pdo->prepare('UPDATE scans SET confirm_token_hash = :h WHERE email = :e')
         ->execute(['h' => ai_scan_hash_token('tip'), 'e' => 'ip1@firma.nl']);
@@ -54,7 +54,7 @@ test('one free scan per IP (keyed hash, survives confirm, lifted with email/doma
     assert_same(0, (int) $pdo->query('SELECT COUNT(*) FROM scans WHERE ip_block_hash IS NOT NULL')->fetchColumn());
 
     $r3 = ai_scan_submit($pdo, $config, ['email' => 'ip3@derde.nl', 'website' => 'https://derde.nl', 'consent' => '1'], '5.6.7.8', $now + 7200);
-    assert_same('already_scanned', $r3['code']);
+    assert_same('ip_already_scanned', $r3['code']);
     // other IP still fine
     $r4 = ai_scan_submit($pdo, $config, ['email' => 'ip4@vierde.nl', 'website' => 'https://vierde.nl', 'consent' => '1'], '5.6.7.9', $now + 7200);
     assert_same('check_mail', $r4['code']);

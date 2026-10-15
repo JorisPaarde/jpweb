@@ -94,9 +94,8 @@ function ai_scan_respond_code(string $code, bool $asJson = false, array $extra =
             ], 429);
         }
 
-        // Keep the promo status page, but signal 429 to clients/proxies.
-        http_response_code(429);
-        header('Location: /ai-scan/?s=' . rawurlencode('rate_limited'), true, 429);
+        // 303 zodat ook een bezoeker zonder JS de statuspagina ziet (een Location bij 429 wordt niet gevolgd).
+        ai_scan_redirect('/ai-scan/?s=rate_limited&w=' . max(1, $retryAfter), 303);
         exit;
     }
 
@@ -129,4 +128,22 @@ function ai_scan_security_headers(): void
     header('X-Content-Type-Options: nosniff');
     header('Referrer-Policy: same-origin');
     header('Cache-Control: no-store, max-age=0');
+}
+
+/**
+ * Wachttijd in klanttaal ("over 10 minuten"); lege string als de wachttijd onbekend is.
+ */
+function ai_scan_wait_phrase(int $seconds): string
+{
+    if ($seconds <= 0) {
+        return '';
+    }
+    if ($seconds <= 90) {
+        return 'over een minuut';
+    }
+    if ($seconds < 3600) {
+        return 'over ' . (int) ceil($seconds / 60) . ' minuten';
+    }
+
+    return $seconds <= 3600 ? 'over een uur' : 'morgen';
 }
