@@ -55,13 +55,6 @@ function app_boot(string $pageId): array
     }
     ai_scan_assert_allowed_host($config);
 
-    try {
-        ai_scan_check_stale_jobs($pdo, $config);
-        ai_scan_promote_waitlist($pdo, $config);
-    } catch (Throwable $e) {
-        // ignore
-    }
-
     $injected = app_test_user_id_from_env();
     if ($injected !== null) {
         if (session_status() !== PHP_SESSION_ACTIVE) {
