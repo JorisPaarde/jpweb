@@ -390,6 +390,35 @@ test('submit + confirm + set password + runner flow', static function (): void {
     assert_true(!str_contains((string) $mail, 'super-secret-password'));
 });
 
+test('hergebruikte bevestigingslink: herkenbaar als al bevestigd, bevestigt of start niets opnieuw', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $r = ai_scan_submit($pdo, $config, [
+        'email' => 'reuse@example.com',
+        'website' => 'https://reuse-test-site.nl',
+        'consent' => '1',
+    ], '10.0.0.7');
+    assert_same('check_mail', $r['code']);
+    $token = 'confirm-token-reuse-1';
+    $pdo->prepare('UPDATE scans SET confirm_token_hash = :h WHERE id = :id')->execute([
+        'h' => ai_scan_hash_token($token),
+        'id' => $r['scan_id'],
+    ]);
+    assert_same('ok', ai_scan_confirm_token_state($pdo, $token));
+    assert_same('confirmed', ai_scan_confirm($pdo, $config, $token)['code']);
+
+    assert_same('used', ai_scan_confirm_token_state($pdo, $token), 'hergebruikte link is al bevestigd');
+    assert_same('invalid', ai_scan_confirm_token_state($pdo, 'onbekend-token'));
+
+    $before = $pdo->query('SELECT status, queued_at, password_token_hash, confirmed_at FROM scans')->fetch();
+    $again = ai_scan_confirm($pdo, $config, $token);
+    assert_same('confirmed', $again['code']);
+    assert_true(!isset($again['password_token']), 'replay geeft geen wachtwoordlink');
+    assert_same($before, $pdo->query('SELECT status, queued_at, password_token_hash, confirmed_at FROM scans')->fetch());
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn());
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM free_scan_blocks')->fetchColumn());
+    assert_same('error', ai_scan_confirm($pdo, $config, 'onbekend-token')['code']);
+});
+
 test('scan klaar mail only once per scan', static function (): void {
     [$config, $pdo, , $mailLog] = boot_test_db();
     $now = time();

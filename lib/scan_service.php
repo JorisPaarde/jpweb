@@ -288,7 +288,10 @@ function ai_scan_confirm_token_state(PDO $pdo, string $token, int $now = 0): str
     $stmt->execute(['h' => ai_scan_hash_token($token)]);
     $scan = $stmt->fetch();
     if ($scan === false) {
-        return 'invalid';
+        $used = $pdo->prepare('SELECT 1 FROM scans WHERE confirmed_token_hash = :h LIMIT 1');
+        $used->execute(['h' => ai_scan_hash_token($token)]);
+
+        return $used->fetchColumn() !== false ? 'used' : 'invalid';
     }
     if ((string) $scan['status'] !== 'onbevestigd') {
         return 'used';
@@ -310,8 +313,11 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
     $scan = $stmt->fetch();
 
     if ($scan === false) {
-        // Already used or unknown — do not leak; friendly confirmed if account exists path is frontend.
-        return ['code' => 'error'];
+        // Unknown, or an already used link: never confirm or start anything again.
+        $used = $pdo->prepare('SELECT 1 FROM scans WHERE confirmed_token_hash = :h LIMIT 1');
+        $used->execute(['h' => $tokenHash]);
+
+        return ['code' => $used->fetchColumn() !== false ? 'confirmed' : 'error'];
     }
 
     if ((string) $scan['status'] !== 'onbevestigd') {
@@ -371,6 +377,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
                 user_id = :user_id,
                 status = :status,
                 confirm_token_hash = NULL,
+                confirmed_token_hash = :confirmed_token_hash,
                 confirm_expires_at = NULL,
                 confirmed_at = :confirmed_at,
                 queued_at = :queued_at,
@@ -385,6 +392,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
             'queued_at' => $now,
             'password_token_hash' => ai_scan_hash_token($passwordToken),
             'password_token_expires_at' => $now + $passwordTtl,
+            'confirmed_token_hash' => $tokenHash,
             'id' => $scan['id'],
             'expected' => 'onbevestigd',
         ]);
@@ -1017,6 +1025,7 @@ function ai_scan_delete_account(PDO $pdo, int $userId, int $now = 0): bool
                 result_json = NULL,
                 error_message = NULL,
                 confirm_token_hash = NULL,
+                confirmed_token_hash = NULL,
                 password_token_hash = NULL,
                 reset_token_hash = NULL,
                 ip_hash = NULL,
