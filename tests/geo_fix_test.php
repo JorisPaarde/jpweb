@@ -274,7 +274,7 @@ test('password reset: link expires after an hour and ip is rate limited', static
 
 test('login page links to password reset and back to the site; reset page is neutral', static function (): void {
     $login = geo_src('login/index.php');
-    assert_true(str_contains($login, 'href="/login/vergeten/">Wachtwoord vergeten?'));
+    assert_true(str_contains($login, '>Wachtwoord vergeten?') && str_contains($login, "'/login/vergeten/'"));
     assert_true(str_contains($login, '← Terug naar jpwebcreation.nl'));
     assert_true(str_contains($login, 'email_hash = :h'), 'login zoekt op genormaliseerde hash');
     $reset = geo_src('login/vergeten/index.php');

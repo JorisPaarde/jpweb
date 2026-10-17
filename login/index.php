@@ -22,11 +22,8 @@ if (is_array($prefill) && (int) ($prefill['at'] ?? 0) > time() - 600) {
         $notice .= ' Je scan is gestart, binnen ~15 minuten klaar.';
     }
 }
-$next = (string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/');
-if ($next === '' || !str_starts_with($next, '/') || str_starts_with($next, '//')
-    || str_contains($next, '\\') || preg_match('/[\x00-\x1F\x7F]/', $next) === 1) {
-    $next = '/dashboard/';
-}
+$next = ai_scan_safe_next((string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/'));
+$forgotHref = '/login/vergeten/' . ($next !== '/dashboard/' ? '?next=' . rawurlencode($next) : '');
 
 if (ai_scan_current_user_id($config) !== null && $method === 'GET') {
     ai_scan_redirect($next, 303);
@@ -116,7 +113,7 @@ $csrf = ai_scan_csrf_token($config);
       <input id="password" name="password" type="password" autocomplete="current-password" required>
       <button type="submit">Inloggen</button>
     </form>
-    <p class="auth-forgot"><a href="/login/vergeten/">Wachtwoord vergeten?</a></p>
+    <p class="auth-forgot"><a href="<?= htmlspecialchars($forgotHref, ENT_QUOTES, 'UTF-8') ?>">Wachtwoord vergeten?</a></p>
   </main>
 </body>
 </html>
