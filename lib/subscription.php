@@ -575,10 +575,13 @@ function ai_scan_require_admin_user(PDO $pdo, array $config): array
     $stmt->execute(['id' => $userId]);
     $user = $stmt->fetch();
     if ($user === false || !ai_scan_user_is_admin($config, $user)) {
-        http_response_code(403);
-        header('Content-Type: text/plain; charset=UTF-8');
-        echo 'Forbidden';
-        exit;
+        ai_scan_error_page(
+            403,
+            'Hier heb je geen toegang toe',
+            'Dit deel van de site is alleen voor mij als beheerder. Je andere gegevens vind je gewoon in je account.',
+            '/app/',
+            'Terug naar mijn account'
+        );
     }
 
     return $user;

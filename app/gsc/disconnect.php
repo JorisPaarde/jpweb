@@ -15,10 +15,7 @@ ai_scan_security_headers();
 ai_scan_assert_allowed_host($config);
 
 if (ai_scan_request_method() !== 'POST') {
-    http_response_code(405);
-    header('Allow: POST');
-    echo 'Method Not Allowed';
-    exit;
+    ai_scan_post_only_page();
 }
 
 $userId = ai_scan_require_user($config, $pdo);

@@ -167,7 +167,10 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
 
     // Prevent using the form to spam confirm mails.
     if (($wait = ai_scan_confirm_mail_wait($pdo, $config, $emailHash, $now)) > 0) {
-        return ['code' => 'rate_limited', 'retry_after' => $wait];
+        // Bepaalt de landelijke mailgrens de wachttijd, dan ligt het aan de drukte en niet aan de bezoeker.
+        $busy = ai_scan_confirm_mail_global_wait($pdo, $config, $now) >= $wait;
+
+        return ['code' => 'rate_limited', 'retry_after' => $wait, 'busy' => $busy];
     }
 
     // Config free_scan_one_per_ip (default aan) — alleen tests zetten dit uit.

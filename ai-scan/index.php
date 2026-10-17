@@ -27,6 +27,9 @@ if ($code === 'rate_limited') {
     $pages['rate_limited'][1] = 'Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het '
         . ($wait !== '' ? $wait : 'later') . ' opnieuw.';
 }
+if ($code === 'rate_limited' && (string) ($_GET['b'] ?? '') === '1') {
+    $pages['rate_limited'] = ['Het is nu even druk', 'Het is nu even druk. Probeer het ' . ($wait !== '' ? $wait : 'later') . ' opnieuw.', false];
+}
 [$title, $text, $showLogin] = $pages[$code] ?? ['Er ging iets mis', 'Dat is niet gelukt. Mail je vraag naar info@jpwebcreation.nl, dan help ik je verder.', false];
 if (!isset($pages[$code]) && $code === '') {
     header('Location: /ai-vindbaarheid/', true, 302);
