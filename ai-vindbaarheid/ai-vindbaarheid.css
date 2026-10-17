@@ -239,6 +239,18 @@
   color: var(--muted);
 }
 
+.geo-pricing-contact a {
+  color: var(--green-dark);
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.geo-pricing-contact a:hover {
+  text-decoration-thickness: 2px;
+}
+
 .geo-pricing-compleet h3 {
   margin: 8px 0 0;
   font-size: var(--type-item-title);
