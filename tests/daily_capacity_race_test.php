@@ -117,3 +117,48 @@ test('confirm and promotion share one capacity: no over-booking across connectio
     assert_same(1, capacity_count($a, 'bevestigd'));
     assert_same(1, capacity_count($a, 'wacht_dag'));
 });
+
+/**
+ * Statement class that runs a hook right after the first free_scan_used lookup,
+ * i.e. after the check outside the transaction and before the transaction starts.
+ */
+class FreeScanRaceStatement extends PDOStatement
+{
+    public static ?Closure $afterLookup = null;
+
+    protected function __construct()
+    {
+    }
+
+    public function execute(?array $params = null): bool
+    {
+        $ok = parent::execute($params);
+        if (self::$afterLookup !== null && str_contains($this->queryString, 'SELECT free_scan_used FROM users')) {
+            $hook = self::$afterLookup;
+            self::$afterLookup = null;
+            $hook();
+        }
+
+        return $ok;
+    }
+}
+
+test('submit: free scan used by a parallel request is re-checked inside the transaction', static function (): void {
+    [$config, $a, $sqlite] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $now = time();
+    $email = 'parallel@firma.nl';
+    $b = ai_scan_db($config);
+    $a->setAttribute(PDO::ATTR_STATEMENT_CLASS, [FreeScanRaceStatement::class]);
+
+    // After A's first check passed, B marks the free scan of this e-mail address as used.
+    FreeScanRaceStatement::$afterLookup = static function () use ($b, $email, $now): void {
+        $b->prepare('INSERT INTO users (email, email_hash, password_hash, created_at, free_scan_used) VALUES (:e, :h, NULL, :t, 1)')
+            ->execute(['e' => $email, 'h' => ai_scan_email_hash($email), 't' => $now]);
+    };
+    $r = ai_scan_submit($a, $config, ['email' => $email, 'website' => 'https://parallel-firma.nl', 'consent' => '1'], '7.8.9.1', $now);
+    $a->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['PDOStatement']);
+
+    assert_same('already_scanned', $r['code']);
+    assert_same(0, (int) $a->query('SELECT COUNT(*) FROM scans')->fetchColumn());
+});
