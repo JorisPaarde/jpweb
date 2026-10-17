@@ -32,6 +32,7 @@ const AI_SCAN_EMAIL_DISPOSABLE = 'Gebruik een e-mailadres dat je zelf blijft lez
 const AI_SCAN_EMAIL_NO_MAILBOX = 'Dit e-mailadres lijkt niet te bestaan. Controleer de spelling.';
 const AI_SCAN_EMAIL_SAME = 'Dat is al je huidige e-mailadres.';
 const AI_SCAN_EMAIL_PENDING_SENT = 'Ik heb een bevestigingsmail gestuurd naar het nieuwe adres. Tot die bevestigd is, blijft je oude e-mailadres actief.';
+const AI_SCAN_ACCOUNT_DEMO_MESSAGE = 'Dit is een demo-account. Ik laat hier geen wijziging van e-mailadres of wachtwoord en geen verwijdering toe.';
 const AI_SCAN_EMAIL_NOT_SENT = 'Ik kon de bevestigingsmail niet versturen. Je e-mailadres is niet gewijzigd; probeer het later opnieuw.';
 
 /**
@@ -1138,6 +1139,19 @@ function ai_scan_ensure_actions_persisted(PDO $pdo, int $userId, array $result):
 }
 
 /**
+ * Demo accounts show imported results and stay read-only: the latest scan carries the demo flag.
+ */
+function ai_scan_user_is_demo(PDO $pdo, int $userId): bool
+{
+    $stmt = $pdo->prepare('SELECT result_json FROM scans WHERE user_id = :id ORDER BY id DESC LIMIT 1');
+    $stmt->execute(['id' => $userId]);
+    $json = $stmt->fetchColumn();
+    $decoded = is_string($json) && $json !== '' ? json_decode($json, true) : null;
+
+    return is_array($decoded) && !empty($decoded['demo']);
+}
+
+/**
  * Request email change: old stays active until token confirm.
  *
  * @param array<string, mixed> $user
@@ -1154,6 +1168,10 @@ function ai_scan_request_email_change(
 ): array {
     $now ??= time();
     $userId = (int) $user['id'];
+
+    if (ai_scan_user_is_demo($pdo, $userId)) {
+        return ['ok' => false, 'error' => AI_SCAN_ACCOUNT_DEMO_MESSAGE];
+    }
 
     if (ai_scan_password_fail_throttled($pdo, $userId, $now)) {
         return ['ok' => false, 'error' => AI_SCAN_PASSWORD_FAIL_THROTTLED];
@@ -1288,6 +1306,9 @@ function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null)
     }
 
     $userId = (int) $user['id'];
+    if (ai_scan_user_is_demo($pdo, $userId)) {
+        return ['ok' => false, 'error' => AI_SCAN_ACCOUNT_DEMO_MESSAGE];
+    }
     $newHash = ai_scan_email_hash(ai_scan_normalize_email($newEmail));
     $exists = $pdo->prepare('SELECT 1 FROM users WHERE email_hash = :h AND id != :id LIMIT 1');
     $exists->execute(['h' => $newHash, 'id' => $userId]);

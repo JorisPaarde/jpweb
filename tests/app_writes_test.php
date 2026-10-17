@@ -654,6 +654,42 @@ test('demo account cannot delete itself or change its password, and sees an ik-m
     assert_true(str_contains($html, 'disabled'), 'buttons disabled');
 });
 
+test('demo account cannot change or confirm an e-mail address', static function (): void {
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $config['base_url'] = 'https://jpwebcreation.nl';
+    $mailLog = sys_get_temp_dir() . '/jpweb-demo-email-' . $uid . '.log';
+    @unlink($mailLog);
+    putenv('JPWEB_AI_SCAN_MAIL_LOG=' . $mailLog);
+    app_make_demo($pdo, $uid);
+
+    $res = ai_scan_request_email_change($pdo, $config, $paid, 'nieuw@voorbeeld.nl', fake_pw('test-pw', 12));
+    assert_true(empty($res['ok']), 'lib refuses demo email change');
+    assert_same(AI_SCAN_ACCOUNT_DEMO_MESSAGE, $res['error'] ?? '');
+    assert_true(!is_file($mailLog), 'no mail sent for demo');
+
+    $html = app_ui_render($config, $uid, dirname(__DIR__) . '/app/account.php', [], [
+        'csrf' => ai_scan_csrf_token($config),
+        'action' => 'change_email',
+        'new_email' => 'nieuw@voorbeeld.nl',
+        'current_password' => fake_pw('test-pw', 12),
+    ], 'POST');
+    $row = $pdo->query('SELECT email, pending_email FROM users WHERE id = ' . $uid)->fetch();
+    assert_same('paid@voorbeeld.nl', (string) $row['email']);
+    assert_true($row['pending_email'] === null || $row['pending_email'] === '', 'no pending email');
+    assert_true(str_contains($html, 'demo-account'), 'message shown');
+    assert_true(str_contains($html, 'E-mailadres wijzigen</button>') && preg_match('/<button[^>]*disabled[^>]*>E-mailadres wijzigen/', $html) === 1, 'email button disabled');
+
+    // A pending change that predates the demo flag cannot be confirmed either.
+    $pdo->prepare('UPDATE users SET pending_email = :e, pending_email_token_hash = :h, pending_email_expires_at = :x WHERE id = :id')
+        ->execute(['e' => 'laat@voorbeeld.nl', 'h' => ai_scan_hash_token('demo-token'), 'x' => time() + 600, 'id' => $uid]);
+    $confirm = ai_scan_confirm_email_change($pdo, 'demo-token');
+    assert_true(empty($confirm['ok']), 'confirm refused for demo');
+    assert_same(AI_SCAN_ACCOUNT_DEMO_MESSAGE, $confirm['error'] ?? '');
+    assert_same('paid@voorbeeld.nl', (string) $pdo->query('SELECT email FROM users WHERE id = ' . $uid)->fetchColumn());
+    @unlink($mailLog);
+});
+
 test('GET on account-delete.php redirects to the account page', static function (): void {
     [$config, , , $paid] = app_writes_seed();
     app_ui_login($config, (int) $paid['id'], 1);

@@ -623,7 +623,7 @@ function app_score_view(array $result, ?array $scan): array
     ];
 }
 
-const APP_ACCOUNT_DEMO_MESSAGE = 'Dit is een demo-account. Ik laat hier geen wachtwoordwijziging of verwijdering toe.';
+const APP_ACCOUNT_DEMO_MESSAGE = AI_SCAN_ACCOUNT_DEMO_MESSAGE;
 
 /**
  * Same rule as the account page: an active subscription must be cancelled first.
