@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/lib/http.php';
+
 const CONTACT_STATE_TTL = 600;
 
 function redirect_with_status(string $status, string $returnPath = '/'): void
@@ -167,7 +169,7 @@ if ($errors !== []) {
     redirect_with_status('invalid', $returnPath);
 }
 
-$clientIp = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+$clientIp = ai_scan_client_ip();
 $rateLimitFile = sys_get_temp_dir() . '/jpweb-contact-' . hash('sha256', $clientIp);
 
 if (is_file($rateLimitFile) && (time() - (int) filemtime($rateLimitFile)) < 30) {
