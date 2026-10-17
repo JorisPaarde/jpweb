@@ -827,6 +827,24 @@ function ai_scan_find_password_token(PDO $pdo, string $token): ?array
         }
     }
 
+    // Wachtwoord-vergeten-links: alleen geldig zolang wachtwoord en adres van het account nog hetzelfde zijn.
+    $stmt = $pdo->prepare(
+        'SELECT r.expires_at, u.id AS uid FROM reset_links r
+         JOIN users u ON u.id = r.user_id AND u.password_version = r.password_version AND u.email_hash = r.email_hash
+         WHERE r.token_hash = :h LIMIT 1'
+    );
+    $stmt->execute(['h' => $hash]);
+    $link = $stmt->fetch();
+    if ($link !== false) {
+        $scan = ai_scan_latest_for_user($pdo, (int) $link['uid']);
+        if ($scan !== null) {
+            $scan['token_kind'] = 'reset_link';
+            $scan['token_expires_at'] = (int) $link['expires_at'];
+
+            return $scan;
+        }
+    }
+
     return null;
 }
 
@@ -891,11 +909,16 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     try {
         // Consume the one-time token atomically first, so a replayed/raced request cannot reuse it.
         $kind = (string) $scan['token_kind'];
-        $consume = $pdo->prepare(
-            'UPDATE scans SET ' . $kind . '_token_hash = NULL, ' . $kind . '_token_expires_at = NULL
-             WHERE id = :id AND ' . $kind . '_token_hash = :h'
-        );
-        $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
+        if ($kind === 'reset_link') {
+            $consume = $pdo->prepare('DELETE FROM reset_links WHERE token_hash = :h AND user_id = :u');
+            $consume->execute(['h' => ai_scan_hash_token($token), 'u' => $userId]);
+        } else {
+            $consume = $pdo->prepare(
+                'UPDATE scans SET ' . $kind . '_token_hash = NULL, ' . $kind . '_token_expires_at = NULL
+                 WHERE id = :id AND ' . $kind . '_token_hash = :h'
+            );
+            $consume->execute(['id' => $scan['id'], 'h' => ai_scan_hash_token($token)]);
+        }
         if ($consume->rowCount() !== 1) {
             $pdo->rollBack();
             return ['ok' => false, 'code' => 'invalid_token'];
@@ -914,6 +937,7 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
         $pdo->prepare(
             'UPDATE scans SET password_token_hash = NULL, password_token_expires_at = NULL, reset_token_hash = NULL, reset_token_expires_at = NULL WHERE user_id = :id'
         )->execute(['id' => $userId]);
+        $pdo->prepare('DELETE FROM reset_links WHERE user_id = :id')->execute(['id' => $userId]);
         $pdo->commit();
     } catch (Throwable $e) {
         $pdo->rollBack();
@@ -933,7 +957,7 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
 /**
  * Wachtwoord vergeten: stuurt, als er een account bestaat, een eenmalige link naar de bestaande
  * wachtwoordpagina (/ai-scan/wachtwoord/?t=…). De aanroeper toont altijd dezelfde neutrale melding.
- * Beperkt per IP en per e-mailadres; telt ook pogingen voor onbekende adressen.
+ * Beperkt per IP en per combinatie van IP en e-mailadres; telt ook pogingen voor onbekende adressen.
  *
  * @return string 'sent' | 'no_account' | 'rate_limited' | 'mail_failed' (alleen voor logs/tests, nooit tonen)
  */
@@ -944,17 +968,19 @@ function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRa
     $emailHash = ai_scan_email_hash(ai_scan_normalize_email($emailRaw));
 
     $ipMax = (int) ($config['reset_ip_max_per_hour'] ?? 5);
-    $emailSeconds = (int) ($config['reset_email_seconds'] ?? 600);
+    $pairSeconds = (int) ($config['reset_email_seconds'] ?? 600);
+    // Per IP en adres samen: een ander IP kan het herstel van dit adres dus niet blokkeren.
+    $pairKey = hash('sha256', $ipKey . '|' . $emailHash);
     if (
         ($ipMax > 0 && ai_scan_rate_count($pdo, 'reset_ip', $ipKey, $now - 3600) >= $ipMax)
-        || ($emailSeconds > 0 && ai_scan_rate_count($pdo, 'reset_email', $emailHash, $now - $emailSeconds) >= 1)
+        || ($pairSeconds > 0 && ai_scan_rate_count($pdo, 'reset_ip_email', $pairKey, $now - $pairSeconds) >= 1)
     ) {
         return 'rate_limited';
     }
     ai_scan_rate_hit($pdo, 'reset_ip', $ipKey, $now);
-    ai_scan_rate_hit($pdo, 'reset_email', $emailHash, $now);
+    ai_scan_rate_hit($pdo, 'reset_ip_email', $pairKey, $now);
 
-    $stmt = $pdo->prepare('SELECT id, email FROM users WHERE email_hash = :h LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, email, email_hash, password_version FROM users WHERE email_hash = :h LIMIT 1');
     $stmt->execute(['h' => $emailHash]);
     $user = $stmt->fetch();
     if ($user === false) {
@@ -965,12 +991,32 @@ function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRa
         return 'no_account';
     }
 
-    // Eigen veld op de laatste scan van het account, zodat een nog geldige welkomstlink blijft werken.
+    // Eigen tabel naast de welkomstlink; een nieuwe aanvraag laat eerdere geldige links bestaan.
+    // Alleen verlopen links worden opgeruimd. Zijn er al 3 geldig, dan gaat er geen nieuwe mail uit,
+    // zodat een aanvraag nooit een link vernietigt die de eigenaar al heeft gekregen.
+    $uid = (int) $user['id'];
+    // Ook links die na een wachtwoord- of adreswijziging niet meer werken tellen niet mee.
+    $pdo->prepare(
+        'DELETE FROM reset_links WHERE user_id = :u AND (expires_at < :n OR password_version <> :v OR email_hash <> :e)'
+    )->execute(['u' => $uid, 'n' => $now, 'v' => (int) $user['password_version'], 'e' => (string) $user['email_hash']]);
+    $open = $pdo->prepare('SELECT COUNT(*) FROM reset_links WHERE user_id = :u');
+    $open->execute(['u' => $uid]);
+    if ((int) $open->fetchColumn() >= 3) {
+        return 'rate_limited';
+    }
     $token = ai_scan_random_token(32);
     $ttl = (int) ($config['reset_token_ttl'] ?? 3600);
     $pdo->prepare(
-        'UPDATE scans SET reset_token_hash = :h, reset_token_expires_at = :x WHERE id = :id'
-    )->execute(['h' => ai_scan_hash_token($token), 'x' => $now + $ttl, 'id' => $scan['id']]);
+        'INSERT INTO reset_links(token_hash, user_id, password_version, email_hash, expires_at, created_at)
+         VALUES(:h, :u, :v, :e, :x, :c)'
+    )->execute([
+        'h' => ai_scan_hash_token($token),
+        'u' => $uid,
+        'v' => (int) $user['password_version'],
+        'e' => (string) $user['email_hash'],
+        'x' => $now + $ttl,
+        'c' => $now,
+    ]);
 
     $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
     $mail = ai_scan_mail_password_reset($config, (string) $user['email'], $base . '/ai-scan/wachtwoord/?t=' . rawurlencode($token));
@@ -1036,6 +1082,7 @@ function ai_scan_delete_account(PDO $pdo, int $userId, int $now = 0): bool
              WHERE user_id = :id"
         )->execute(['id' => $userId]);
 
+        $pdo->prepare('DELETE FROM reset_links WHERE user_id = :id')->execute(['id' => $userId]);
         $pdo->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => $userId]);
         $pdo->commit();
     } catch (Throwable $e) {

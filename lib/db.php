@@ -86,6 +86,21 @@ function ai_scan_migrate(PDO $pdo): void
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_reset_token ON scans(reset_token_hash)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_ready_mail ON scans(status, ready_mail_sent_at)');
 
+    // Wachtwoord-vergeten-links: meerdere tegelijk geldig, zodat een nieuwe aanvraag een eerdere link niet ongeldig maakt.
+    // password_version en email_hash binden de link aan het wachtwoord en adres van dat moment.
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS reset_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token_hash TEXT NOT NULL UNIQUE,
+            user_id INTEGER NOT NULL,
+            password_version INTEGER NOT NULL,
+            email_hash TEXT NOT NULL,
+            expires_at INTEGER NOT NULL,
+            created_at INTEGER NOT NULL
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_reset_links_user ON reset_links(user_id)');
+
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS free_scan_blocks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

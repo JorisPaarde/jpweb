@@ -19,17 +19,12 @@ if (ai_scan_request_method() === 'POST') {
         if (!ai_scan_email_syntax_ok($email)) {
             $error = 'Vul een geldig e-mailadres in.';
         } else {
-            // Account wel/niet en mail mislukt worden nooit getoond. De limiet geldt vóór de accountopzoeking,
-            // dus de wachtmelding is voor bestaande en onbekende adressen identiek.
+            // Account wel/niet, mail mislukt en de limiet worden nooit getoond: altijd dezelfde melding.
             $outcome = ai_scan_request_password_reset($pdo, $config, $email, ai_scan_client_ip());
             if ($outcome === 'mail_failed') {
                 error_log('ai_scan password_reset_mail_failed');
             }
-            if ($outcome === 'rate_limited') {
-                $error = 'Je hebt net al een link aangevraagd. Probeer het later opnieuw.';
-            } else {
-                $sent = true;
-            }
+            $sent = true;
         }
     }
 }
