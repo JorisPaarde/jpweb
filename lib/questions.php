@@ -1281,6 +1281,27 @@ function ai_scan_request_email_change(
 }
 
 /**
+ * Read-only check of an email-change link; changes nothing.
+ *
+ * @return string 'ok', 'expired' or 'invalid'
+ */
+function ai_scan_email_change_token_state(PDO $pdo, string $token, ?int $now = null): string
+{
+    $now ??= time();
+    if ($token === '') {
+        return 'invalid';
+    }
+    $stmt = $pdo->prepare('SELECT pending_email, pending_email_expires_at FROM users WHERE pending_email_token_hash = :h LIMIT 1');
+    $stmt->execute(['h' => ai_scan_hash_token($token)]);
+    $user = $stmt->fetch();
+    if ($user === false || (string) ($user['pending_email'] ?? '') === '') {
+        return 'invalid';
+    }
+
+    return (int) ($user['pending_email_expires_at'] ?? 0) < $now ? 'expired' : 'ok';
+}
+
+/**
  * @return array{ok: bool, error?: string, message?: string}
  */
 function ai_scan_confirm_email_change(PDO $pdo, string $token, ?int $now = null): array

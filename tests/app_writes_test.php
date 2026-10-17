@@ -754,3 +754,87 @@ test('failed email change mail does not leave the cleared pending notice on the 
     $u = $pdo->query('SELECT pending_email FROM users WHERE id = ' . $uid)->fetch();
     assert_true(empty($u['pending_email']), 'pending cleared in db');
 });
+
+/**
+ * Render app/confirm-email.php as an anonymous visitor (no login session).
+ *
+ * @param array<string, mixed> $config
+ */
+function confirm_email_render(array $config, string $method, array $get, array $post, ?string $csrf): string
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (!headers_sent()) {
+            ai_scan_start_session($config);
+        } else {
+            @session_start();
+        }
+    }
+    $_SESSION = $csrf !== null ? ['ai_scan_csrf' => $csrf] : [];
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $_SERVER['HTTP_HOST'] = '127.0.0.1';
+    $_SERVER['HTTPS'] = 'off';
+    $_GET = $get;
+    $_POST = $post;
+    $cfgPath = sys_get_temp_dir() . '/jpweb-confirm-email-config.php';
+    file_put_contents($cfgPath, "<?php\nreturn " . var_export($config, true) . ";\n");
+    putenv('JPWEB_AI_SCAN_CONFIG=' . $cfgPath);
+    putenv('JPWEB_AI_SCAN_ALLOW_INSECURE=1');
+    putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1');
+
+    ob_start();
+    try {
+        include dirname(__DIR__) . '/app/confirm-email.php';
+    } catch (Throwable $e) {
+        ob_end_clean();
+        throw $e;
+    } finally {
+        putenv('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT');
+    }
+
+    return (string) ob_get_clean();
+}
+
+function confirm_email_pending(): array
+{
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $token = 'email-public-confirm-token';
+    $pdo->prepare(
+        'UPDATE users SET pending_email = :e, pending_email_token_hash = :h, pending_email_expires_at = :x WHERE id = :id'
+    )->execute(['e' => 'nieuw@voorbeeld.nl', 'h' => ai_scan_hash_token($token), 'x' => time() + 3600, 'id' => (int) $paid['id']]);
+
+    return [$config, $pdo, (int) $paid['id'], $token];
+}
+
+test('confirm-email GET shows a button and changes nothing', static function (): void {
+    [$config, $pdo, $uid, $token] = confirm_email_pending();
+    $html = confirm_email_render($config, 'GET', ['t' => $token], [], null);
+    assert_true(str_contains($html, 'Bevestig mijn nieuwe e-mailadres'), 'button shown');
+    assert_true(str_contains($html, 'noindex'), 'noindex');
+    assert_same('paid@voorbeeld.nl', (string) $pdo->query('SELECT email FROM users WHERE id = ' . $uid)->fetchColumn());
+    assert_same('nieuw@voorbeeld.nl', (string) $pdo->query('SELECT pending_email FROM users WHERE id = ' . $uid)->fetchColumn());
+    assert_true(!isset($_SESSION['ai_scan_flash']) && !isset($_SESSION['user_id']), 'no flash or login');
+
+    $bad = confirm_email_render($config, 'GET', ['t' => 'onbekend'], [], null);
+    assert_true(str_contains($bad, 'Deze link is ongeldig.') && !str_contains($bad, 'Bevestig mijn'), 'invalid shown at once');
+});
+
+test('confirm-email POST without or with wrong CSRF changes nothing', static function (): void {
+    [$config, $pdo, $uid, $token] = confirm_email_pending();
+    confirm_email_render($config, 'POST', [], ['t' => $token], 'goed-csrf');
+    confirm_email_render($config, 'POST', [], ['t' => $token, 'csrf' => 'fout'], 'goed-csrf');
+    confirm_email_render($config, 'POST', [], ['t' => $token, 'csrf' => 'goed-csrf'], null);
+    assert_same('paid@voorbeeld.nl', (string) $pdo->query('SELECT email FROM users WHERE id = ' . $uid)->fetchColumn());
+    assert_same('nieuw@voorbeeld.nl', (string) $pdo->query('SELECT pending_email FROM users WHERE id = ' . $uid)->fetchColumn());
+});
+
+test('confirm-email POST with token changes the address and shows the result without a session', static function (): void {
+    [$config, $pdo, $uid, $token] = confirm_email_pending();
+    $html = confirm_email_render($config, 'POST', [], ['t' => $token, 'csrf' => 'goed-csrf'], 'goed-csrf');
+    assert_true(str_contains($html, 'Je e-mailadres is bijgewerkt.'), 'success shown');
+    assert_true(str_contains($html, 'href="/login/"'), 'login button');
+    assert_same('nieuw@voorbeeld.nl', (string) $pdo->query('SELECT email FROM users WHERE id = ' . $uid)->fetchColumn());
+    assert_true(!isset($_SESSION['user_id']) && !isset($_SESSION['ai_scan_flash']), 'no login session or flash');
+
+    $again = confirm_email_render($config, 'POST', [], ['t' => $token, 'csrf' => 'goed-csrf'], 'goed-csrf');
+    assert_true(str_contains($again, 'Ongeldige of verlopen link.'), 'second use rejected on the page');
+});
