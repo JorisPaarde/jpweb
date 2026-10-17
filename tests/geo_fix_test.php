@@ -599,5 +599,11 @@ test('M3/P3-A: promo belooft geen "één klik" meer en de AI-tabel past op 390 p
     $css = geo_src('ai-vindbaarheid/ai-vindbaarheid.css');
     assert_true(!(bool) preg_match('/\.geo-ai-table,\s*\.geo-pricing-table \{[^}]*min-width/', $css), 'AI-tabel heeft geen vaste minimumbreedte');
     assert_true(!str_contains($css, 'min-width: 520px'));
-    assert_true(str_contains($html, 'ai-vindbaarheid.css?v=11'));
+    assert_true(str_contains($html, 'ai-vindbaarheid.css?v=12'));
+});
+
+test('C6: mail- en bellink bij 1000+ hebben linkstijl (kleur en onderstreping)', static function (): void {
+    $css = geo_src('ai-vindbaarheid/ai-vindbaarheid.css');
+    assert_true((bool) preg_match('/\.geo-pricing-contact a \{[^}]*color: var\(--green-dark\);[^}]*text-decoration: underline;/s', $css), 'contactlinks onderstreept en gekleurd');
+    assert_true(!(bool) preg_match('/\.geo-pricing-contact a[^{]*\{[^}]*outline:\s*(none|0)/', $css), 'focusmarkering niet weggehaald');
 });
