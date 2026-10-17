@@ -144,6 +144,8 @@
       ? `${questionsLabel}, ${requestLabel}`
       : `${tier.questions} vragen, ${formatEuro(tier.monthly)} per maand`;
 
+    range.setAttribute("aria-valuemin", String(tiers[0].questions));
+    range.setAttribute("aria-valuemax", "1000");
     range.setAttribute("aria-valuenow", String(isAbove ? 1000 : tier.questions));
     range.setAttribute("aria-valuetext", valueText);
 
@@ -224,6 +226,8 @@
       const defaultIndex = (config.tiers ?? []).findIndex((tier) => tier.questions === 100);
       range.value = String(defaultIndex >= 0 ? defaultIndex : 3);
       range.addEventListener("input", () => update(config));
+      // Bij laden dezelfde aria-waarden als na een wijziging, niet alleen de statische HTML.
+      update(config);
     }
 
     hourInputs.forEach((input) => {
