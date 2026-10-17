@@ -7,9 +7,36 @@ function ai_scan_request_method(): string
     return strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 }
 
+/** True when $ip is a node from the fixed QUIC.cloud list (compared in binary form, so IPv6 spelling does not matter). */
+function ai_scan_is_quic_cloud_ip(string $ip): bool
+{
+    static $nodes = null;
+    if ($nodes === null) {
+        $nodes = [];
+        foreach (require __DIR__ . '/quic_cloud_ips.php' as $node) {
+            $packed = @inet_pton($node);
+            if ($packed !== false) {
+                $nodes[$packed] = true;
+            }
+        }
+    }
+    $packed = @inet_pton($ip);
+
+    return $packed !== false && isset($nodes[$packed]);
+}
+
 function ai_scan_client_ip(): string
 {
-    return (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    if (!ai_scan_is_quic_cloud_ip($remote)) {
+        return $remote;
+    }
+
+    // The CDN node appends the visitor's address itself, so only the last item is trustworthy.
+    $items = explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''));
+    $last = trim((string) end($items));
+
+    return filter_var($last, FILTER_VALIDATE_IP) !== false ? $last : $remote;
 }
 
 function ai_scan_request_host(): string
