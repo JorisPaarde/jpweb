@@ -86,3 +86,39 @@ test('runner poll promotes the waitlist (next and health)', static function (): 
         housekeeping_cleanup($dir);
     }
 });
+
+function housekeeping_run_ai_scan(string $dir, string $method, string $action): void
+{
+    $code = '$_SERVER["HTTP_HOST"]="jpwebcreation.nl"; $_SERVER["REQUEST_METHOD"]=' . var_export($method, true) . ';'
+        . ($action !== '' ? '$_GET["action"]=' . var_export($action, true) . ';' : '')
+        . 'require ' . var_export(dirname(__DIR__) . '/ai-scan.php', true) . ';';
+    shell_exec('JPWEB_AI_SCAN_TEST_CATCH_REDIRECT=1 JPWEB_AI_SCAN_CONFIG=' . escapeshellarg($dir . '/config.php')
+        . ' php -r ' . escapeshellarg($code) . ' 2>&1');
+}
+
+test('anonymous ai-scan.php requests (GET, POST, state, csrf) write nothing; runner does the purges', static function (): void {
+    [$dir, $sqlite] = housekeeping_env();
+    housekeeping_run($dir, 'dashboard/index.php'); // creates the schema
+    $pdo = housekeeping_db($sqlite);
+    $stale = geo_insert_scan($pdo, 'onbevestigd', 0, 'oud.nl'); // created_at=1: ruim verlopen
+    $hashed = geo_insert_scan($pdo, 'klaar', 0, 'hash.nl');
+    $pdo->exec("UPDATE scans SET ip_hash = 'abc' WHERE id = " . $hashed);
+    $claimed = geo_insert_scan($pdo, 'bezig', 0, 'claim.nl');
+    $pdo->exec('UPDATE scans SET claimed_at = 1 WHERE id = ' . $claimed);
+
+    foreach ([['GET', ''], ['POST', ''], ['GET', 'state'], ['GET', 'csrf']] as [$method, $action]) {
+        housekeeping_run_ai_scan($dir, $method, $action);
+    }
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM scans WHERE id = ' . $stale)->fetchColumn(), 'anoniem verzoek verwijdert niets');
+    assert_same('abc', (string) $pdo->query('SELECT ip_hash FROM scans WHERE id = ' . $hashed)->fetchColumn(), 'anoniem verzoek wist geen ip-hash');
+    assert_same('bezig', (string) $pdo->query('SELECT status FROM scans WHERE id = ' . $claimed)->fetchColumn(), 'anoniem verzoek raakt verlopen claim niet');
+
+    $run = '$_SERVER["HTTP_HOST"]="jpwebcreation.nl"; $_SERVER["REQUEST_METHOD"]="GET"; $_GET["action"]="health";'
+        . '$_SERVER["HTTP_AUTHORIZATION"]="Bearer ' . str_repeat('r', 40) . '";'
+        . 'require ' . var_export(dirname(__DIR__) . '/api/runner.php', true) . ';';
+    shell_exec('JPWEB_AI_SCAN_CONFIG=' . escapeshellarg($dir . '/config.php') . ' php -r ' . escapeshellarg($run) . ' 2>&1');
+    assert_same(0, (int) $pdo->query('SELECT COUNT(*) FROM scans WHERE id = ' . $stale)->fetchColumn(), 'runner ruimt onbevestigde scan op');
+    assert_same('', (string) $pdo->query('SELECT COALESCE(ip_hash, \'\') FROM scans WHERE id = ' . $hashed)->fetchColumn(), 'runner wist oude ip-hash');
+    $pdo = null;
+    housekeeping_cleanup($dir);
+});

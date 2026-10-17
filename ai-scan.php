@@ -11,15 +11,6 @@ ai_scan_assert_allowed_host($config);
 $method = ai_scan_request_method();
 $asJson = ai_scan_wants_json();
 
-// Lightweight housekeeping on traffic.
-try {
-    ai_scan_check_stale_jobs($pdo, $config);
-    ai_scan_purge_expired_unconfirmed($pdo, time());
-    ai_scan_purge_old_ip_hashes($pdo, time());
-} catch (Throwable $e) {
-    // Never break the public form for housekeeping failures.
-}
-
 if ($method === 'GET' && (string) ($_GET['action'] ?? '') === 'csrf') {
     $token = ai_scan_csrf_token($config);
     ai_scan_json_response(['csrf' => $token]);
