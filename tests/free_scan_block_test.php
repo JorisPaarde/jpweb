@@ -284,3 +284,15 @@ test('IPv6 rate windows share one /64, IPv4 stays per address', static function 
     assert_true(ai_scan_form_ip_rate_limited($pdo, $config, '2001:db8:1:2::abcd', $now + 3));
     assert_true(!ai_scan_form_ip_rate_limited($pdo, $config, '2001:db8:1:3::1', $now + 3));
 });
+
+test('delete dialog says a deleted account gets no new free scan', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/app/account.php');
+    assert_true(preg_match('#id="delete-desc">[^<]*geen nieuwe gratis scan meer doen#', $src) === 1);
+});
+
+test('password page for a deleted account does not point to a refused re-request', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/ai-scan/wachtwoord/index.php');
+    assert_true(!str_contains($src, 'Vraag de scan opnieuw aan'));
+    assert_true(!str_contains($src, 'Naar de gratis scan'));
+    assert_true(substr_count($src, 'info@jpwebcreation.nl') >= 2);
+});

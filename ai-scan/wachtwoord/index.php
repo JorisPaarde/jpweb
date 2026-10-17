@@ -28,7 +28,7 @@ if (ai_scan_request_method() === 'POST') {
         if (!$result['ok']) {
             $error = match ($result['code']) {
                 'expired' => 'Deze link is verlopen. Vraag via "Wachtwoord vergeten?" op de inlogpagina een nieuwe aan.',
-                'no_account' => 'Bij deze link hoort geen account meer. Vraag de scan opnieuw aan of mail info@jpwebcreation.nl.',
+                'no_account' => 'Bij deze link hoort geen account meer. Mail me via info@jpwebcreation.nl, dan help ik je verder.',
                 default => 'Deze link is ongeldig of al gebruikt.',
             };
         } else {
@@ -104,8 +104,7 @@ if ($token !== '') {
     <?php elseif ($linkProblem !== ''): ?>
       <p class="error" role="alert"><?= htmlspecialchars($linkProblem, ENT_QUOTES, 'UTF-8') ?></p>
       <?php if ($tokenState === 'no_account'): ?>
-        <p>Vraag de scan opnieuw aan of mail info@jpwebcreation.nl, dan help ik je verder.</p>
-        <p class="auth-links"><a href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
+        <p>Mail me via <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a>, dan help ik je verder.</p>
       <?php elseif ($token === ''): ?>
         <p>Deze pagina werkt alleen met de link uit mijn e-mail. Ben je die kwijt, of wil je je wachtwoord opnieuw kiezen? Vraag dan een nieuwe link aan, of log in met je wachtwoord.</p>
         <p class="auth-links">
