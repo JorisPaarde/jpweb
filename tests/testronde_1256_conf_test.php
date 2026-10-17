@@ -15,7 +15,7 @@ test('P2-6: pakketkeuze scrolt naar het prijsblok dat bij de keuze hoort', stati
     $css = (string) file_get_contents($root . '/ai-vindbaarheid/ai-vindbaarheid.css');
     assert_true((bool) preg_match('/\.geo-pricing-compleet \{\s*scroll-margin-top: 84px;/', $css), 'blok valt niet onder de vaste kop');
     $html = (string) file_get_contents($root . '/ai-vindbaarheid/index.html');
-    assert_true(str_contains($html, 'ai-vindbaarheid.js?v=10') && str_contains($html, 'ai-vindbaarheid.css?v=12'), 'cache-busting opgehoogd');
+    assert_true(str_contains($html, 'ai-vindbaarheid.js?v=10') && str_contains($html, 'ai-vindbaarheid.css?v=13'), 'cache-busting opgehoogd');
 });
 
 /**
