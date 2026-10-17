@@ -26,6 +26,13 @@ ErrorDocument 404 /404.html
 RedirectMatch 404 (?i)^/(?:private|vendor|config-examples)(?:/|$)
 RedirectMatch 404 (?i)^/(?:lib|tests|data)/
 
+# Interne includes, mapindexen en documentatie krijgen de Nederlandse 404 in plaats van een 500/lege 200/kale 403.
+# De echte pagina's (admin/*.php, app/gsc/*.php endpoints) blijven werken.
+RedirectMatch 404 (?i)^/app/(?:nav|layout|_init|_action_card)\.php$
+RedirectMatch 404 (?i)^/app/gsc/settings-card\.php$
+RedirectMatch 404 (?i)^/(?:admin|app/gsc)/?$
+RedirectMatch 404 (?i)^/docs(?:/|$)
+
 # Gebruik één hoofdadres voor alle publieke pagina's.
 <IfModule mod_rewrite.c>
   RewriteEngine On
