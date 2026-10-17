@@ -291,7 +291,7 @@ test('exact Dutch UI strings present in sources', static function (): void {
         'Je trend begint hierna opnieuw',
         'Ja, wijzig de vragen',
         'Annuleren',
-        'Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Typ je website om te bevestigen.',
+        'Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Daarna kun je met dit e-mailadres of deze website geen nieuwe gratis scan meer doen. Typ je website om te bevestigen.',
         'AI noemde bij je vragen geen andere bedrijven. Ken je zelf een concurrent? Voeg hem toe.',
         'Hoe ik meet',
         'Opzeggen',
@@ -419,7 +419,7 @@ test('meer page links and account delete copy', static function (): void {
     assert_true(str_contains($meer, '/app/account.php'));
     assert_true(str_contains($meer, '/logout.php'));
     $acc = app_ui_render($config, $freeId, dirname(__DIR__) . '/app/account.php');
-    assert_true(str_contains($acc, 'Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Typ je website om te bevestigen.'));
+    assert_true(str_contains($acc, 'Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Daarna kun je met dit e-mailadres of deze website geen nieuwe gratis scan meer doen. Typ je website om te bevestigen.'));
 });
 
 test('dashboard entry redirects HTML to app overzicht and keeps JSON branch', static function (): void {

@@ -160,7 +160,7 @@ app_render_layout($ctx, 'Account', static function (array $ctx) use (
     <div class="dialog-backdrop" id="dialog-delete" role="presentation" hidden>
       <div class="dialog" role="alertdialog" aria-labelledby="delete-title" aria-describedby="delete-desc">
         <h2 id="delete-title">Verwijder mijn account</h2>
-        <p id="delete-desc">Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Typ je website om te bevestigen.</p>
+        <p id="delete-desc">Hiermee verwijder je je account, je uitslagen en je instellingen. Dit kan niet ongedaan worden. Daarna kun je met dit e-mailadres of deze website geen nieuwe gratis scan meer doen. Typ je website om te bevestigen.</p>
         <form method="post" action="/account-delete.php">
           <input type="hidden" name="csrf" value="<?= app_h($csrf) ?>">
           <label class="field">
