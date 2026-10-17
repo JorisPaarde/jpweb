@@ -10,6 +10,8 @@ ai_scan_assert_allowed_host($config);
 
 $error = '';
 $sent = false;
+$next = ai_scan_safe_next((string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/'));
+$backHref = '/login/' . ($next !== '/dashboard/' ? '?next=' . rawurlencode($next) : '');
 
 if (ai_scan_request_method() === 'POST') {
     if (!ai_scan_verify_csrf($config, (string) ($_POST['csrf'] ?? ''))) {
@@ -25,6 +27,10 @@ if (ai_scan_request_method() === 'POST') {
                 error_log('ai_scan password_reset_mail_failed');
             }
             $sent = true;
+            // Bestemming alleen in de sessie van deze browser, nooit in de mail of herstellink.
+            if ($next !== '/dashboard/' && ai_scan_start_session($config)) {
+                $_SESSION['ai_scan_reset_next'] = ['next' => $next, 'at' => time()];
+            }
         }
     }
 }
@@ -64,7 +70,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
     <h1>Wachtwoord vergeten?</h1>
     <?php if ($sent): ?>
       <p class="notice" role="status">Als er een account bestaat voor dit e-mailadres, heb ik je een mail gestuurd met een link om een nieuw wachtwoord te kiezen. De link werkt 1 uur. Zie je niets? Kijk ook in je spam.</p>
-      <p><a href="/login/">Terug naar inloggen</a></p>
+      <p><a href="<?= $h($backHref) ?>">Terug naar inloggen</a></p>
     <?php else: ?>
       <p>Vul je e-mailadres in. Ik stuur je een link waarmee je zelf een nieuw wachtwoord kiest.</p>
       <?php if ($error !== ''): ?>
@@ -72,11 +78,12 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
       <?php endif; ?>
       <form method="post" action="/login/vergeten/" novalidate>
         <input type="hidden" name="csrf" value="<?= $h($csrf) ?>">
+        <input type="hidden" name="next" value="<?= $h($next) ?>">
         <label for="email">E-mailadres</label>
         <input id="email" name="email" type="email" autocomplete="username" required autofocus>
         <button type="submit">Stuur me een link</button>
       </form>
-      <p style="margin-top:1.25rem"><a href="/login/">Terug naar inloggen</a></p>
+      <p style="margin-top:1.25rem"><a href="<?= $h($backHref) ?>">Terug naar inloggen</a></p>
     <?php endif; ?>
   </main>
 </body>

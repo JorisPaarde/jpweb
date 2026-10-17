@@ -86,6 +86,28 @@ function ai_scan_json_response(array $payload, int $status = 200): void
     exit;
 }
 
+/**
+ * Alleen een relatief pad binnen de eigen site is een geldige bestemming na inloggen.
+ * Alles anders (schema, //host, backslash, controletekens, ook na één keer urldecode) valt terug.
+ */
+function ai_scan_safe_next(string $next, string $fallback = '/dashboard/'): string
+{
+    if ($next === '' || $next[0] !== '/' || str_starts_with($next, '//')) {
+        return $fallback;
+    }
+    $decoded = urldecode($next);
+    foreach ([$next, $decoded] as $candidate) {
+        if (str_contains($candidate, '\\') || preg_match('/[\x00-\x1F\x7F]/', $candidate) === 1) {
+            return $fallback;
+        }
+    }
+    if (str_starts_with($decoded, '//')) {
+        return $fallback;
+    }
+
+    return $next;
+}
+
 function ai_scan_redirect(string $location, int $status = 303): void
 {
     // Test harness only: catch redirects under CLI/phpdbg (never on a web SAPI).

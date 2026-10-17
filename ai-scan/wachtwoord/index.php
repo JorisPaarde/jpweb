@@ -38,6 +38,14 @@ if (ai_scan_request_method() === 'POST') {
                 'scan_status' => (string) ($result['scan_status'] ?? ''),
                 'at' => time(),
             ];
+            $resetNext = $_SESSION['ai_scan_reset_next'] ?? null;
+            unset($_SESSION['ai_scan_reset_next']);
+            if (is_array($resetNext) && (int) ($resetNext['at'] ?? 0) > time() - 3600) {
+                $dest = ai_scan_safe_next((string) ($resetNext['next'] ?? ''), '');
+                if ($dest !== '' && $dest !== '/dashboard/') {
+                    ai_scan_redirect('/login/?next=' . rawurlencode($dest), 303);
+                }
+            }
             ai_scan_redirect('/login/', 303);
         }
     }

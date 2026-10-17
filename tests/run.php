@@ -826,6 +826,7 @@ require __DIR__ . '/testronde_1256_auth_test.php';
 require __DIR__ . '/housekeeping_routes_test.php';
 require __DIR__ . '/password_reset_test.php';
 require __DIR__ . '/client_ip_test.php';
+require __DIR__ . '/login_next_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
