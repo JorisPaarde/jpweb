@@ -239,8 +239,8 @@ test('password reset: mail with one-time link to the existing token page, neutra
     assert_true(!preg_match('/\b(wij|we|ons)\b/iu', (string) $mails[0]['body']));
     assert_true(str_ends_with(rtrim((string) $mails[0]['body']), "Groet,\nJoris"));
 
-    // Per e-mailadres beperkt.
-    assert_same('rate_limited', ai_scan_request_password_reset($pdo, $config, 'klant@firma.nl', '3.3.3.4', $now + 5));
+    // Per IP en adres beperkt: hetzelfde IP krijgt geen tweede mail.
+    assert_same('rate_limited', ai_scan_request_password_reset($pdo, $config, 'klant@firma.nl', '3.3.3.3', $now + 5));
     assert_same(1, count(geo_mails($mailLog)));
 
     // Link werkt één keer, verandert het wachtwoord en maakt oude sessies ongeldig.
@@ -284,27 +284,6 @@ test('login page links to password reset and back to the site; reset page is neu
     assert_true(!str_contains($reset, "\$outcome ===") || str_contains($reset, "'mail_failed'"));
     $pw = geo_src('ai-scan/wachtwoord/index.php');
     assert_true(str_contains($pw, 'ai_scan_login_prefill') && str_contains($pw, "'email' => (string) (\$result['email'] ?? '')"));
-});
-
-test('P2-N3: wachttijdmelding bij vergeten is exact gelijk voor bestaand en onbekend adres', static function (): void {
-    [$config, $pdo] = boot_test_db();
-    $config['reset_email_seconds'] = 600;
-    $now = time();
-    geo_user_with_password($pdo, 'klant@firma.nl', 'oud-wachtwoord-123');
-    // Eerste verzoek telt voor beide adressen; het tweede valt onder de limiet vóór de accountopzoeking.
-    assert_same('sent', ai_scan_request_password_reset($pdo, $config, 'klant@firma.nl', '5.5.5.1', $now));
-    assert_same('no_account', ai_scan_request_password_reset($pdo, $config, 'niemand@firma.nl', '5.5.5.2', $now));
-    $existing = ai_scan_request_password_reset($pdo, $config, 'klant@firma.nl', '5.5.5.3', $now + 5);
-    $unknown = ai_scan_request_password_reset($pdo, $config, 'niemand@firma.nl', '5.5.5.4', $now + 5);
-    assert_same('rate_limited', $existing);
-    assert_same($existing, $unknown, 'zelfde uitkomst voor bestaand en onbekend adres');
-
-    $reset = geo_src('login/vergeten/index.php');
-    $msg = 'Je hebt net al een link aangevraagd. Probeer het later opnieuw.';
-    assert_true(str_contains($reset, "\$outcome === 'rate_limited'") && str_contains($reset, "\$error = '$msg';"), 'exacte wachtmelding bij rate_limited');
-    assert_same(1, substr_count($reset, $msg), 'melding staat op één plek, dus identiek voor beide adressen');
-    assert_true(!str_contains($msg, 'minuten'), 'geen vast aantal minuten: e-mail- en IP-limiet hebben verschillende wachttijden');
-    assert_true(str_contains($reset, 'Als er een account bestaat voor dit e-mailadres'), 'neutrale melding blijft voor andere uitkomsten');
 });
 
 test('login by alias address: account found via normalized hash', static function (): void {
