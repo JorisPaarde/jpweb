@@ -213,6 +213,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
         if (
             ai_scan_has_block($pdo, $emailHash, $domainHash)
             || ai_scan_has_existing_scan($pdo, $emailHash, $domainHash)
+            || ai_scan_user_used_free_scan($pdo, $emailHash)
         ) {
             $pdo->rollBack();
 
