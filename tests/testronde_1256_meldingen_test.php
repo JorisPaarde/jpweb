@@ -160,3 +160,70 @@ test('P3-N5: CSRF-fout bij account verwijderen gaat terug naar het account met m
     assert_true(!str_contains($src, 'deleted=csrf'));
     assert_true(preg_match("~verify_csrf.*?ai_scan_flash'\] = 'De sessie is verlopen[^;]*;\s*ai_scan_redirect\('/app/account\.php', 303\)~s", $src) === 1);
 });
+
+// Testronde 16 okt 2026 (13:10): P3-R5, P3-R6, C5.
+
+test('P3-R5: landelijke mailgrens meldt drukte, de eigen wachttijd per e-mail blijft "paar keer"', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['form_burst_seconds'] = 0;
+    $config['confirm_mail_per_email_seconds'] = 600;
+    $config['confirm_mail_global_max_per_hour'] = 1;
+    $now = time();
+    assert_same('check_mail', geo_submit($pdo, $config, 'een@een.nl', 'https://een.nl', '8.8.1.1', $now)['code']);
+
+    // Andere bezoeker, eerste keer: alleen de landelijke grens is bereikt.
+    $r = geo_submit($pdo, $config, 'twee@twee.nl', 'https://twee.nl', '8.8.1.2', $now + 1);
+    assert_same('rate_limited', $r['code']);
+    assert_same(true, $r['busy'] ?? null, 'landelijke grens is drukte');
+
+    // Zelfde e-mailadres opnieuw: de eigen wachttijd is langer dan niets, maar de landelijke grens wint hier niet.
+    $config['confirm_mail_global_max_per_hour'] = 1000;
+    $pdo->exec('DELETE FROM scans');
+    $r = geo_submit($pdo, $config, 'een@een.nl', 'https://een.nl', '8.8.1.1', $now + 30);
+    assert_same('rate_limited', $r['code']);
+    assert_same(false, $r['busy'] ?? null, 'eigen wachttijd is geen drukte');
+
+    $html = tr1256_render($config, 'ai-scan/index.php', ['s' => 'rate_limited', 'w' => '3600', 'b' => '1']);
+    assert_true(str_contains($html, 'Het is nu even druk. Probeer het over een uur opnieuw.'), 'drukte-melding');
+    assert_true(!str_contains($html, 'paar keer achter elkaar'));
+    $html = tr1256_render($config, 'ai-scan/index.php', ['s' => 'rate_limited', 'w' => '600']);
+    assert_true(str_contains($html, 'paar keer achter elkaar'), 'gewone melding blijft');
+});
+
+test('P3-R6/C5: 405 en 403 zijn klantvriendelijk Nederlands met link terug en viewport', static function (): void {
+    $root = dirname(__DIR__);
+    $run = static function (string $code) use ($root): string {
+        return (string) shell_exec(
+            escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg('require ' . var_export($root . '/lib/http.php', true) . '; ' . $code)
+        );
+    };
+    foreach (['ai_scan_post_only_page();', "ai_scan_error_page(403, 'Hier heb je geen toegang toe', 'x', '/app/', 'Terug naar mijn account');"] as $call) {
+        $html = $run($call);
+        assert_true(str_contains($html, 'name="viewport"') && str_contains($html, 'lang="nl"'), 'viewport en taal');
+        assert_true(str_contains($html, 'href="/app/"'), 'link terug');
+        assert_true(!str_contains($html, 'Method Not Allowed') && !str_contains($html, 'Forbidden'));
+    }
+    foreach (['app/request.php', 'app/gsc/connect.php', 'app/gsc/disconnect.php'] as $file) {
+        $src = (string) file_get_contents($root . '/' . $file);
+        assert_true(str_contains($src, 'ai_scan_post_only_page();') && !str_contains($src, 'Method Not Allowed'), $file);
+    }
+    $sub = (string) file_get_contents($root . '/lib/subscription.php');
+    assert_true(!str_contains($sub, "echo 'Forbidden'") && str_contains($sub, "'/app/'"), 'C5');
+});
+
+test('P3-R5: JSON-429 geeft busy mee en script.js toont de drukte-tekst', static function (): void {
+    $root = dirname(__DIR__);
+    $run = static function (string $busy) use ($root): array {
+        $out = (string) shell_exec(
+            escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg(
+                'require ' . var_export($root . '/lib/http.php', true)
+                . "; ai_scan_respond_code('rate_limited', true, ['retry_after' => 3600, 'busy' => " . $busy . ']);'
+            )
+        );
+        return (array) json_decode($out, true);
+    };
+    assert_same(true, $run('true')['busy'] ?? null, 'busy in JSON');
+    assert_same(false, $run('false')['busy'] ?? null, 'geen busy in JSON');
+    $js = (string) file_get_contents($root . '/script.js');
+    assert_true(str_contains($js, 'payload?.busy') && str_contains($js, 'Het is nu even druk.'), 'script.js');
+});

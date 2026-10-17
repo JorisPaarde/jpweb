@@ -137,6 +137,7 @@ if ($result['code'] === 'invalid') {
 $extra = [];
 if ($result['code'] === 'rate_limited') {
     $extra['retry_after'] = (int) ($result['retry_after'] ?? ai_scan_rate_limit_retry_after($config));
+    $extra['busy'] = !empty($result['busy']);
 }
 
 ai_scan_respond_code($result['code'], $asJson, $extra);

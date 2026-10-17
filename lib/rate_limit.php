@@ -195,14 +195,22 @@ function ai_scan_confirm_mail_wait(PDO $pdo, array $config, string $emailHash, i
             1,
             $now
         ),
-        ai_scan_rate_window_remaining(
-            $pdo,
-            ['confirm_mail_global'],
-            ai_scan_rate_global_key(),
-            3600,
-            (int) ($config['confirm_mail_global_max_per_hour'] ?? 40),
-            $now
-        )
+        ai_scan_confirm_mail_global_wait($pdo, $config, $now)
+    );
+}
+
+/**
+ * Seconds until the site-wide hourly cap on confirmation mails has room again (0 = not reached).
+ */
+function ai_scan_confirm_mail_global_wait(PDO $pdo, array $config, int $now): int
+{
+    return ai_scan_rate_window_remaining(
+        $pdo,
+        ['confirm_mail_global'],
+        ai_scan_rate_global_key(),
+        3600,
+        (int) ($config['confirm_mail_global_max_per_hour'] ?? 40),
+        $now
     );
 }
 

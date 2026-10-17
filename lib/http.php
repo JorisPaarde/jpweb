@@ -91,11 +91,15 @@ function ai_scan_respond_code(string $code, bool $asJson = false, array $extra =
                 'ok' => false,
                 'code' => 'rate_limited',
                 'retry_after' => $retryAfter,
+                'busy' => !empty($extra['busy']),
             ], 429);
         }
 
         // 303 zodat ook een bezoeker zonder JS de statuspagina ziet (een Location bij 429 wordt niet gevolgd).
-        ai_scan_redirect('/ai-scan/?s=rate_limited&w=' . ai_scan_wait_bucket($retryAfter), 303);
+        ai_scan_redirect(
+            '/ai-scan/?s=rate_limited&w=' . ai_scan_wait_bucket($retryAfter) . (!empty($extra['busy']) ? '&b=1' : ''),
+            303
+        );
         exit;
     }
 
@@ -170,4 +174,37 @@ function ai_scan_wait_phrase(int $seconds): string
     $hours = (int) ceil($seconds / 3600);
 
     return $hours <= 1 ? 'over een uur' : "over {$hours} uur";
+}
+
+/**
+ * Korte Nederlandse foutpagina met een weg terug; stopt het script.
+ */
+function ai_scan_error_page(int $status, string $title, string $text, string $href, string $label): void
+{
+    http_response_code($status);
+    header('Content-Type: text/html; charset=UTF-8');
+    $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+    echo '<!DOCTYPE html><html lang="nl"><head><meta charset="utf-8">'
+        . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        . '<meta name="robots" content="noindex, nofollow"><title>' . $h($title) . ' · JP Web Creation</title>'
+        . '<link rel="stylesheet" href="/styles.css?v=ai-scan-1"></head>'
+        . '<body><main style="max-width:32rem;margin:4rem auto;padding:0 1.25rem">'
+        . '<h1>' . $h($title) . '</h1><p>' . $h($text) . '</p>'
+        . '<p><a href="' . $h($href) . '">' . $h($label) . '</a></p></main></body></html>';
+    exit;
+}
+
+/**
+ * 405 voor een adres dat alleen via een formulier werkt (POST).
+ */
+function ai_scan_post_only_page(): void
+{
+    header('Allow: POST');
+    ai_scan_error_page(
+        405,
+        'Dit adres werkt alleen vanuit een knop',
+        'Ik kan deze pagina niet openen door het adres in te typen. Ga terug naar je account en gebruik daar de knop. Lukt het dan niet, mail me op info@jpwebcreation.nl.',
+        '/app/',
+        'Terug naar mijn account'
+    );
 }

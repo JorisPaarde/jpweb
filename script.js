@@ -496,8 +496,11 @@ if (scanStatus instanceof HTMLElement && scanForm instanceof HTMLFormElement) {
 
       const status = payload?.code ?? payload?.status;
       if (status === "rate_limited") {
+        const wait = scanWaitPhrase(Number(payload?.retry_after));
         showScanError(
-          `Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het ${scanWaitPhrase(Number(payload?.retry_after))} opnieuw.`
+          payload?.busy
+            ? `Het is nu even druk. Probeer het ${wait} opnieuw.`
+            : `Je hebt het formulier een paar keer achter elkaar verstuurd. Probeer het ${wait} opnieuw.`
         );
         return;
       }
