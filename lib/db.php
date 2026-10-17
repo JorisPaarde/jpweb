@@ -74,6 +74,9 @@ function ai_scan_migrate(PDO $pdo): void
     // Wachtwoord-vergeten-link apart van de welkomstlink, zodat een reset die laatste niet ongeldig maakt.
     ai_scan_ensure_column($pdo, 'scans', 'reset_token_hash', 'TEXT NULL');
     ai_scan_ensure_column($pdo, 'scans', 'reset_token_expires_at', 'INTEGER NULL');
+    // Hash van de al gebruikte bevestigingslink: toont alleen 'al bevestigd', bevestigt nooit opnieuw.
+    ai_scan_ensure_column($pdo, 'scans', 'confirmed_token_hash', 'TEXT NULL');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_confirmed_token ON scans(confirmed_token_hash)');
 
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_status ON scans(status)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_scans_email_hash ON scans(email_hash)');
