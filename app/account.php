@@ -16,6 +16,8 @@ if (ai_scan_request_method() === 'POST') {
     $action = ai_scan_clean_input('action', 40);
     if (!ai_scan_verify_csrf($ctx['config'], $token)) {
         $errorLocal = 'De sessie is verlopen. Probeer het opnieuw.';
+    } elseif ($action === 'change_email' && !empty($ctx['is_demo'])) {
+        $emailError = APP_ACCOUNT_DEMO_MESSAGE;
     } elseif ($action === 'change_email') {
         $res = ai_scan_request_email_change(
             $ctx['pdo'],
@@ -111,7 +113,10 @@ app_render_layout($ctx, 'Account', static function (array $ctx) use (
           <span class="field__label">Huidig wachtwoord</span>
           <input type="password" name="current_password" required autocomplete="current-password">
         </label>
-        <button type="submit" class="btn">E-mailadres wijzigen</button>
+        <?php if ($isDemo): ?>
+          <p class="app-locked"><?= app_h(APP_ACCOUNT_DEMO_MESSAGE) ?></p>
+        <?php endif; ?>
+        <button type="submit" class="btn"<?= $isDemo ? ' disabled' : '' ?>>E-mailadres wijzigen</button>
       </form>
     </section>
 
