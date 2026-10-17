@@ -24,15 +24,15 @@ if (ai_scan_request_method() === 'POST') {
             ai_scan_clean_input('new_email', 200),
             (string) ($_POST['current_password'] ?? '')
         );
+        // Ook bij falen herladen: een mislukte mail wist de openstaande wijziging.
+        $stmt = $ctx['pdo']->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => (int) $ctx['user']['id']]);
+        $fresh = $stmt->fetch();
+        if ($fresh !== false) {
+            $ctx['user'] = $fresh;
+        }
         if (!empty($res['ok'])) {
             $flashLocal = (string) ($res['message'] ?? AI_SCAN_EMAIL_PENDING_SENT);
-            // Refresh user for pending display.
-            $stmt = $ctx['pdo']->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
-            $stmt->execute(['id' => (int) $ctx['user']['id']]);
-            $fresh = $stmt->fetch();
-            if ($fresh !== false) {
-                $ctx['user'] = $fresh;
-            }
         } else {
             $emailError = (string) ($res['error'] ?? 'Er ging iets mis.');
         }
