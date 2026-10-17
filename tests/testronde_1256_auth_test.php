@@ -110,3 +110,12 @@ test('P3-N2: wachtwoordpagina zonder link vraagt niet of je al een account hebt'
     assert_true(!str_contains($html, 'Heb je al een account?'), 'geen account-vraag zonder link');
     assert_true(str_contains($html, 'href="/login/vergeten/"') && str_contains($html, 'href="/login/"'), 'verwijst naar vergeten en inloggen');
 });
+
+test('P3-R1: bevestigingspagina met foutmelding heeft opmaak voor fout en links', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $r = route_guard_run($config, 'ai-scan.php', [], 'GET', [], ['confirm' => 'onbekend-r1']);
+    assert_true(str_contains($r['body'], 'class="error"') && str_contains($r['body'], '.ai-auth .error {'), 'foutmelding heeft eigen stijl');
+    assert_true(str_contains($r['body'], '.ai-auth .auth-primary {') && str_contains($r['body'], 'class="auth-links"') && str_contains($r['body'], 'class="auth-primary" href="/ai-vindbaarheid/"'), 'actie is een herkenbare knop');
+    assert_true(str_contains($r['body'], '.ai-auth p a {') && str_contains($r['body'], 'text-decoration: underline'), 'links in tekst zijn herkenbaar');
+    assert_true(str_contains($r['body'], 'class="auth-back" href="/"'), 'terug naar de site');
+});

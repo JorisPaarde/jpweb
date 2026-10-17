@@ -39,8 +39,16 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
   <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
+    .ai-auth .auth-back { display: inline-block; margin-bottom: 1.5rem; }
     .ai-auth h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
     .ai-auth p { color: var(--muted, #5e6862); margin-bottom: 1.5rem; }
+    .ai-auth p a { color: var(--green, #315f4f); text-decoration: underline; text-underline-offset: 0.15em; }
+    .ai-auth .error { color: #a84832; margin: 0.75rem 0; font-weight: 600; }
+    .ai-auth .auth-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; }
+    .ai-auth .auth-primary {
+      display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.25rem;
+      background: var(--green, #315f4f); color: #fff; border-radius: 0.4rem; font-weight: 600; text-decoration: none;
+    }
     .ai-auth button {
       width: 100%; min-height: 48px; background: var(--green, #315f4f); color: #fff; border: 0;
       border-radius: 0.4rem; font: inherit; font-weight: 600; cursor: pointer;
@@ -49,6 +57,7 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
 </head>
 <body>
   <main class="ai-auth">
+    <a class="auth-back" href="/">← Terug naar jpwebcreation.nl</a>
     <h1>Scan bevestigen</h1>
     <?php if ($confirmState === 'ok'): ?>
       <p>Klik op de knop om je e-mailadres te bevestigen. Daarna start ik je gratis scan.</p>
@@ -59,11 +68,11 @@ if ($method === 'GET' && isset($_GET['confirm'])) {
     <?php elseif ($confirmState === 'used'): ?>
       <p class="error" role="alert">Deze scan is al bevestigd.</p>
       <p>Je kunt inloggen om je resultaat te bekijken. Heb je nog geen wachtwoord gekozen? Vraag dan een nieuwe link aan.</p>
-      <p><a href="/login/">Inloggen</a> · <a href="/login/vergeten/">Wachtwoord vergeten</a></p>
+      <p class="auth-links"><a class="auth-primary" href="/login/">Inloggen</a> <a href="/login/vergeten/">Wachtwoord vergeten</a></p>
     <?php else: ?>
       <p class="error" role="alert"><?= $confirmState === 'expired' ? 'Deze link is verlopen.' : 'Deze link is ongeldig.' ?></p>
       <p>Vraag de gratis scan opnieuw aan, dan stuur ik je een nieuwe link. Lukt dat niet? Mail me op info@jpwebcreation.nl.</p>
-      <p><a href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
+      <p class="auth-links"><a class="auth-primary" href="/ai-vindbaarheid/">Naar de gratis scan</a></p>
     <?php endif; ?>
   </main>
 </body>
