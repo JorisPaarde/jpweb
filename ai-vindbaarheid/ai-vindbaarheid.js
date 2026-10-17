@@ -256,10 +256,15 @@
     }
     // Scroll naar het blok met de prijs die bij de keuze hoort: bij "Alleen advies" de schuif met de
     // abonnementsprijs, bij "Compleet" het urenblok. Zo staat bovenaan nooit een prijs die je niet koos.
-    const goToPrices = (target) => {
+    // Met het toetsenbord (click zonder muisklik: detail 0) gaat de focus mee naar het prijsblok,
+    // zodat de volgende Tab daar verdergaat en niet terugspringt naar de kaart.
+    const goToPrices = (target, focusTarget, event) => {
       update(config);
       const block = target instanceof HTMLElement ? target : root;
       block.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (event && event.detail === 0 && focusTarget instanceof HTMLElement) {
+        focusTarget.focus({ preventScroll: true });
+      }
     };
     const makeButton = (title, lines, onPick) => {
       const button = document.createElement("button");
@@ -287,9 +292,9 @@
         advies.append(makeButton(
           `${tier.questions} vragen`,
           [`${formatEuro(tier.monthly)} per maand`, `${tier.actions} verbeteracties per maand`],
-          () => {
+          (event) => {
             range.value = String(index);
-            goToPrices(root.querySelector(".geo-pricing-tool"));
+            goToPrices(root.querySelector(".geo-pricing-tool"), range, event);
           },
         ));
       });
@@ -309,14 +314,14 @@
         compleet.append(makeButton(
           `${hours} uur per maand`,
           [`vanaf ${formatEuro(price)} per maand`, `met ${first.questions} vragen, ${discount}% korting op de uren`],
-          () => {
+          (event) => {
             const input = root.querySelector(`input[name="compleet-hours"][value="${hours}"]`);
             if (input instanceof HTMLInputElement) {
               input.checked = true;
             }
             // Het getoonde pakket is uren én het aantal vragen op de kaart (de eerste tier).
             range.value = "0";
-            goToPrices(root.querySelector(".geo-pricing-compleet"));
+            goToPrices(root.querySelector(".geo-pricing-compleet"), input, event);
           },
         ));
       });
