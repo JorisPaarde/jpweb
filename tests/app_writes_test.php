@@ -698,3 +698,23 @@ test('email change reports honestly when the confirmation mail cannot be sent', 
     $u = $pdo->query('SELECT pending_email FROM users WHERE id = ' . (int) $paid['id'])->fetch();
     assert_true(empty($u['pending_email']), 'no pending state without a sent mail');
 });
+
+test('failed email change mail does not leave the cleared pending notice on the page', static function (): void {
+    [$config, $pdo, , $paid] = app_writes_seed();
+    $uid = (int) $paid['id'];
+    $pdo->prepare("UPDATE users SET pending_email = 'oud-verzoek@voorbeeld.nl', pending_email_token_hash = 'x', pending_email_expires_at = :x WHERE id = :id")
+        ->execute(['x' => time() + 3600, 'id' => $uid]);
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=0');
+    $html = app_ui_render($config, $uid, dirname(__DIR__) . '/app/account.php', [], [
+        'csrf' => ai_scan_csrf_token($config),
+        'action' => 'change_email',
+        'new_email' => 'nieuw@voorbeeld.nl',
+        'current_password' => fake_pw('test-pw', 12),
+    ], 'POST');
+    putenv('JPWEB_AI_SCAN_MAIL_DRY_RUN=1');
+    assert_true(str_contains($html, AI_SCAN_EMAIL_NOT_SENT), 'failure message shown');
+    assert_true(!str_contains($html, 'Bevestiging openstaand'), 'cleared pending notice not shown');
+    assert_true(!str_contains($html, 'oud-verzoek@voorbeeld.nl'), 'cleared pending address not shown');
+    $u = $pdo->query('SELECT pending_email FROM users WHERE id = ' . $uid)->fetch();
+    assert_true(empty($u['pending_email']), 'pending cleared in db');
+});
