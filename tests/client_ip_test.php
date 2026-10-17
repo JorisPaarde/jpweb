@@ -43,3 +43,37 @@ test('client ip: QUIC.cloud IPv6 node matches in another spelling', static funct
         assert_true($ip === '2001:db8::1', "remote {$remote} gave {$ip}");
     }
 });
+
+/** Runs contact.php as a valid POST in a child process; returns whether the rate-limit file for $expectedIp exists afterwards. */
+function contact_rate_key_for(array $server, string $expectedIp): bool
+{
+    $file = sys_get_temp_dir() . '/jpweb-contact-' . hash('sha256', $expectedIp);
+    @unlink($file);
+    $runner = sys_get_temp_dir() . '/jpweb-contact-runner-' . getmypid() . '.php';
+    file_put_contents($runner, '<?php
+        $_SERVER = array_merge($_SERVER, ' . var_export($server + [
+            'HTTP_HOST' => 'jpwebcreation.nl',
+            'REQUEST_METHOD' => 'POST',
+        ], true) . ');
+        $_POST = ["name" => "Test Naam", "email" => "t@example.com", "message" => "Een testbericht van genoeg lengte", "privacy" => "accepted"];
+        ob_start();
+        require ' . var_export(dirname(__DIR__) . '/contact.php', true) . ';');
+    exec(escapeshellarg(PHP_BINARY) . ' -d sendmail_path=/bin/true ' . escapeshellarg($runner) . ' 2>&1');
+    @unlink($runner);
+    $exists = is_file($file);
+    @unlink($file);
+
+    return $exists;
+}
+
+test('contact rate limit: spoofed X-Forwarded-For from a normal IP keeps the REMOTE_ADDR key', static function (): void {
+    $server = ['REMOTE_ADDR' => '203.0.113.9', 'HTTP_X_FORWARDED_FOR' => '198.51.100.7'];
+    assert_true(contact_rate_key_for($server, '203.0.113.9'), 'key for REMOTE_ADDR missing');
+    assert_true(!contact_rate_key_for($server, '198.51.100.7'), 'spoofed XFF became the key');
+});
+
+test('contact rate limit: QUIC.cloud node keys on the last X-Forwarded-For item', static function (): void {
+    $server = ['REMOTE_ADDR' => '102.221.36.98', 'HTTP_X_FORWARDED_FOR' => '6.6.6.6, 198.51.100.7'];
+    assert_true(contact_rate_key_for($server, '198.51.100.7'), 'key for visitor IP missing');
+    assert_true(!contact_rate_key_for($server, '102.221.36.98'), 'node IP became the key');
+});
