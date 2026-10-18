@@ -47,7 +47,7 @@ test('client ip: QUIC.cloud IPv6 node matches in another spelling', static funct
 /** Runs contact.php as a valid POST in a child process; returns whether the rate-limit file for $expectedIp exists afterwards. */
 function contact_rate_key_for(array $server, string $expectedIp): bool
 {
-    $file = sys_get_temp_dir() . '/jpweb-contact-' . hash('sha256', $expectedIp);
+    $file = sys_get_temp_dir() . '/jpweb-contact-' . ai_scan_ip_hash($expectedIp);
     @unlink($file);
     $runner = sys_get_temp_dir() . '/jpweb-contact-runner-' . getmypid() . '.php';
     file_put_contents($runner, '<?php
@@ -76,6 +76,51 @@ test('contact rate limit: QUIC.cloud node keys on the last X-Forwarded-For item'
     $server = ['REMOTE_ADDR' => '102.221.36.98', 'HTTP_X_FORWARDED_FOR' => '6.6.6.6, 198.51.100.7'];
     assert_true(contact_rate_key_for($server, '198.51.100.7'), 'key for visitor IP missing');
     assert_true(!contact_rate_key_for($server, '102.221.36.98'), 'node IP became the key');
+});
+
+test('contact rate limit: IPv6 addresses in the same /64 share the key, other /64 and IPv4 do not', static function (): void {
+    assert_true(contact_rate_key_for(['REMOTE_ADDR' => '2001:db8:1:2::1'], '2001:db8:1:2:ffff::9'), 'same /64 gave other key');
+    assert_true(!contact_rate_key_for(['REMOTE_ADDR' => '2001:db8:1:2::1'], '2001:db8:1:3::1'), 'other /64 shares key');
+    assert_true(contact_rate_key_for(['REMOTE_ADDR' => '203.0.113.9'], '203.0.113.9'), 'IPv4 key changed');
+});
+
+test('contact rate limit: old limit files are cleaned up, fresh ones stay', static function (): void {
+    $dir = sys_get_temp_dir() . '/jpweb-contact-clean-' . bin2hex(random_bytes(4));
+    mkdir($dir, 0700, true);
+    $old = $dir . '/jpweb-contact-old';
+    $new = $dir . '/jpweb-contact-new';
+    $other = $dir . '/other-file';
+    foreach ([$old, $new, $other] as $f) {
+        touch($f);
+    }
+    touch($old, time() - 2 * 86400);
+    touch($other, time() - 2 * 86400);
+    contact_rate_cleanup($dir, 86400);
+    $result = [is_file($old), is_file($new), is_file($other)];
+    foreach ([$new, $other, $old] as $f) {
+        @unlink($f);
+    }
+    @rmdir($dir);
+    assert_same([false, true, true], $result);
+});
+
+test('contact.php: GET shows a Dutch 405 page with a link to the form', static function (): void {
+    $runner = sys_get_temp_dir() . '/jpweb-contact-get-' . getmypid() . '.php';
+    file_put_contents($runner, '<?php
+        $_SERVER = array_merge($_SERVER, ["HTTP_HOST" => "jpwebcreation.nl", "REQUEST_METHOD" => "GET"]);
+        require ' . var_export(dirname(__DIR__) . '/contact.php', true) . ';
+    ');
+    $out = (string) shell_exec(escapeshellarg(PHP_BINARY) . ' -d display_errors=0 ' . escapeshellarg($runner) . ' 2>&1');
+    @unlink($runner);
+    assert_true(!str_contains($out, 'Method Not Allowed'), 'English text remains');
+    assert_true(str_contains($out, 'lang="nl"') && str_contains($out, 'name="viewport"'), 'not the Dutch page');
+    assert_true(str_contains($out, 'href="/#contact"'), 'link to form missing');
+    $status = (string) shell_exec(escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg(
+        '$_SERVER["HTTP_HOST"]="jpwebcreation.nl";$_SERVER["REQUEST_METHOD"]="GET";'
+        . 'register_shutdown_function(function(){fwrite(STDOUT,"\nSTATUS=".http_response_code());});'
+        . 'ob_start();require ' . var_export(dirname(__DIR__) . '/contact.php', true) . ';'
+    ));
+    assert_true(str_contains($status, 'STATUS=405'), 'status is not 405: ' . $status);
 });
 
 /** Fresh temp folder as QUIC.cloud cache dir; returns the path. */

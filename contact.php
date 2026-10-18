@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/http.php';
+require_once __DIR__ . '/lib/normalize.php';
 
 const CONTACT_STATE_TTL = 600;
 
@@ -124,7 +125,13 @@ if ($requestMethod === 'GET' && (string) ($_GET['action'] ?? '') === 'state') {
 if ($requestMethod !== 'POST') {
     http_response_code(405);
     header('Allow: GET, POST');
-    exit('Method Not Allowed');
+    ai_scan_error_page(
+        405,
+        'Dit adres werkt alleen vanuit het contactformulier',
+        'Ik kan deze pagina niet openen door het adres in te typen. Gebruik het formulier op de website. Lukt het dan niet, mail me op info@jpwebcreation.nl.',
+        '/#contact',
+        'Naar het contactformulier'
+    );
 }
 
 $returnPath = contact_return_path();
@@ -170,7 +177,13 @@ if ($errors !== []) {
 }
 
 $clientIp = ai_scan_client_ip();
-$rateLimitFile = sys_get_temp_dir() . '/jpweb-contact-' . hash('sha256', $clientIp);
+
+if (random_int(1, 50) === 1) {
+    contact_rate_cleanup(sys_get_temp_dir(), 86400);
+}
+
+// IPv6 telt per /64, zodat wisselen van adres binnen hetzelfde netwerk de limiet niet omzeilt.
+$rateLimitFile = sys_get_temp_dir() . '/jpweb-contact-' . ai_scan_ip_hash($clientIp);
 
 if (is_file($rateLimitFile) && (time() - (int) filemtime($rateLimitFile)) < 30) {
     redirect_with_status('wait', $returnPath);

@@ -388,3 +388,14 @@ function ai_scan_post_only_page(): void
         'Terug naar mijn account'
     );
 }
+
+/** Ruimt contact-limietbestanden op die ouder zijn dan $maxAge seconden. */
+function contact_rate_cleanup(string $dir, int $maxAge): void
+{
+    foreach (glob($dir . '/jpweb-contact-*') ?: [] as $file) {
+        $mtime = @filemtime($file);
+        if ($mtime !== false && (time() - $mtime) > $maxAge && is_file($file)) {
+            @unlink($file);
+        }
+    }
+}
