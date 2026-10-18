@@ -60,6 +60,8 @@ if ($action === '' && $method === 'GET') {
     $action = 'next';
 }
 
+ai_scan_quic_cloud_refresh(dirname((string) $config['sqlite_path']));
+
 try {
     ai_scan_check_stale_jobs($pdo, $config);
     ai_scan_promote_waitlist($pdo, $config);

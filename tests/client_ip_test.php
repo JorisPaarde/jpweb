@@ -77,3 +77,126 @@ test('contact rate limit: QUIC.cloud node keys on the last X-Forwarded-For item'
     assert_true(contact_rate_key_for($server, '198.51.100.7'), 'key for visitor IP missing');
     assert_true(!contact_rate_key_for($server, '102.221.36.98'), 'node IP became the key');
 });
+
+/** Fresh temp folder as QUIC.cloud cache dir; returns the path. */
+function quic_env(): string
+{
+    $dir = sys_get_temp_dir() . '/jpweb-quic-' . bin2hex(random_bytes(4));
+    mkdir($dir, 0700, true);
+    ai_scan_quic_cloud_dir($dir, true);
+
+    return $dir;
+}
+
+function quic_env_end(string $dir): void
+{
+    foreach (glob($dir . '/*') ?: [] as $f) {
+        @unlink($f);
+    }
+    @rmdir($dir);
+    ai_scan_quic_cloud_dir(dirname(__DIR__) . '/../private', true);
+}
+
+/** @return list<string> 60 documentation-range IPs */
+function quic_fake_list(int $n = 60): array
+{
+    $ips = [];
+    for ($i = 1; $i <= $n; $i++) {
+        $ips[] = '198.18.0.' . $i;
+    }
+
+    return $ips;
+}
+
+test('quic refresh: a valid list is cached and used next to the snapshot', static function (): void {
+    $dir = quic_env();
+    try {
+        assert_true(!ai_scan_is_quic_cloud_ip('198.18.0.7'));
+        $ok = ai_scan_quic_cloud_refresh($dir, static fn (string $u): string => json_encode(quic_fake_list()), 1000);
+        assert_true($ok && is_file($dir . '/quic-cloud-ips.json'), 'cache not written');
+        assert_true(glob($dir . '/*.tmp') === [], 'tmp file left behind');
+        assert_true(ai_scan_is_quic_cloud_ip('198.18.0.7'), 'cached node unknown');
+        assert_true(ai_scan_is_quic_cloud_ip('102.221.36.98'), 'snapshot node lost');
+        assert_true(client_ip_with(['REMOTE_ADDR' => '198.18.0.7', 'HTTP_X_FORWARDED_FOR' => '6.6.6.6, 198.51.100.7']) === '198.51.100.7');
+    } finally {
+        quic_env_end($dir);
+    }
+});
+
+test('quic refresh: invalid, too small or broken answers are ignored and the old cache stays', static function (): void {
+    $dir = quic_env();
+    try {
+        ai_scan_quic_cloud_refresh($dir, static fn (string $u): string => json_encode(quic_fake_list()), 1000);
+        $before = (string) file_get_contents($dir . '/quic-cloud-ips.json');
+        $bad = [
+            json_encode(quic_fake_list(49)),
+            json_encode(array_merge(array_fill(0, 60, 'nope'), ['203.0.113.5'])),
+            '<html>error</html>',
+            '',
+        ];
+        $t = 1000;
+        foreach ($bad as $body) {
+            $t += 86400 + 1;
+            $ok = ai_scan_quic_cloud_refresh($dir, static fn (string $u): string => $body, $t);
+            assert_true($ok === false);
+            assert_same($before, (string) file_get_contents($dir . '/quic-cloud-ips.json'));
+        }
+        $t += 86400 + 1;
+        assert_true(ai_scan_quic_cloud_refresh($dir, static function (string $u): string { throw new RuntimeException('down'); }, $t) === false);
+        assert_same($before, (string) file_get_contents($dir . '/quic-cloud-ips.json'));
+        assert_true(!ai_scan_is_quic_cloud_ip('203.0.113.5'));
+    } finally {
+        quic_env_end($dir);
+    }
+});
+
+test('quic refresh: at most once per 24 hours, also after a failed attempt', static function (): void {
+    $dir = quic_env();
+    try {
+        $calls = 0;
+        $fetch = static function (string $u) use (&$calls): string {
+            $calls++;
+
+            return '[]';
+        };
+        ai_scan_quic_cloud_refresh($dir, $fetch, 5000);
+        $first = $calls;
+        assert_true($first > 0);
+        ai_scan_quic_cloud_refresh($dir, $fetch, 5000 + 86399);
+        assert_same($first, $calls, 'fetched again within 24h');
+        ai_scan_quic_cloud_refresh($dir, $fetch, 5000 + 86400);
+        assert_true($calls > $first, 'no retry after 24h');
+    } finally {
+        quic_env_end($dir);
+    }
+});
+
+test('quic signal: spoofed X-Forwarded-For from an unknown IP keeps REMOTE_ADDR and logs once an hour', static function (): void {
+    $dir = quic_env();
+    $log = $dir . '/php.log';
+    $oldLog = ini_get('error_log');
+    ini_set('error_log', $log);
+    try {
+        $server = ['REMOTE_ADDR' => '203.0.113.9', 'HTTP_X_FORWARDED_FOR' => '198.51.100.7'];
+        for ($i = 0; $i < 3; $i++) {
+            assert_same('203.0.113.9', client_ip_with($server));
+        }
+        $lines = file($log, FILE_IGNORE_NEW_LINES) ?: [];
+        assert_same(1, count($lines), 'log lines: ' . count($lines));
+        assert_true(str_contains($lines[0], '203.0.113.9') && !str_contains($lines[0], '198.51.100.7'), 'line leaks or misses IP');
+        // After an hour it logs again.
+        touch($dir . '/quic-cloud-unknown-xff.mark', time() - 3601);
+        client_ip_with($server);
+        assert_same(2, count(file($log) ?: []));
+        // No header, no line.
+        touch($dir . '/quic-cloud-unknown-xff.mark', time() - 7200);
+        client_ip_with(['REMOTE_ADDR' => '203.0.113.9']);
+        assert_same(2, count(file($log) ?: []));
+        // A known node never signals.
+        client_ip_with(['REMOTE_ADDR' => '102.221.36.98', 'HTTP_X_FORWARDED_FOR' => '198.51.100.7']);
+        assert_same(2, count(file($log) ?: []));
+    } finally {
+        ini_set('error_log', (string) $oldLog);
+        quic_env_end($dir);
+    }
+});
