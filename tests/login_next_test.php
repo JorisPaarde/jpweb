@@ -106,6 +106,37 @@ test('vergeten: kwaadaardige next komt niet in de sessie; identieke melding voor
     assert_same($a['html'], $b['html'], 'melding identiek');
 });
 
+test('vergeten: tweede aanvraag zonder next wist de oude bestemming, ook na wachtwoord zetten', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $config['reset_email_seconds'] = 0;
+    $now = time();
+    geo_user_with_password($pdo, 'klant@firma.nl', 'oud-' . bin2hex(random_bytes(8)));
+    unset($_SESSION['ai_scan_reset_next']);
+    $csrf = ai_scan_csrf_token($config);
+    login_next_render($config, 'login/vergeten/index.php', [], ['csrf' => $csrf, 'email' => 'klant@firma.nl', 'next' => '/app/vragen.php']);
+    assert_same('/app/vragen.php', $_SESSION['ai_scan_reset_next']['next'] ?? null, 'eerste aanvraag bewaart next');
+    login_next_render($config, 'login/vergeten/index.php', [], ['csrf' => $csrf, 'email' => 'klant@firma.nl']);
+    assert_true(!isset($_SESSION['ai_scan_reset_next']), 'tweede aanvraag zonder next wist de sessiewaarde');
+
+    @unlink($mailLog);
+    ai_scan_request_password_reset($pdo, $config, 'klant@firma.nl', '9.9.9.3', $now);
+    $newPw = 'nw-' . bin2hex(random_bytes(8));
+    $r = login_next_render($config, 'ai-scan/wachtwoord/index.php', [], [
+        'csrf' => ai_scan_csrf_token($config), 't' => reset_link_token($mailLog, 0), 'password' => $newPw, 'password2' => $newPw,
+    ]);
+    assert_same('/login/', $r['redirect'], 'geen oude bestemming na wachtwoord zetten');
+});
+
+test('vergeten: nieuwe next vervangt een eerdere bestemming', static function (): void {
+    [$config, $pdo] = boot_test_db();
+    $config['reset_email_seconds'] = 0;
+    geo_user_with_password($pdo, 'klant@firma.nl', 'oud-' . bin2hex(random_bytes(8)));
+    $csrf = ai_scan_csrf_token($config);
+    $_SESSION['ai_scan_reset_next'] = ['next' => '/app/oud.php', 'at' => time()];
+    login_next_render($config, 'login/vergeten/index.php', [], ['csrf' => $csrf, 'email' => 'klant@firma.nl', 'next' => '/app/vragen.php']);
+    assert_same('/app/vragen.php', $_SESSION['ai_scan_reset_next']['next'] ?? null);
+});
+
 test('wachtwoord: na herstel gaat login naar de oorspronkelijke bestemming, eenmalig en alleen als geldig', static function (): void {
     [$config, $pdo, , $mailLog] = boot_test_db();
     $config['reset_email_seconds'] = 0;

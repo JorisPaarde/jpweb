@@ -31,8 +31,13 @@ if (ai_scan_request_method() === 'POST') {
             $sent = $outcome !== 'demo';
             $demo = !$sent;
             // Bestemming alleen in de sessie van deze browser, nooit in de mail of herstellink.
-            if ($next !== '/dashboard/' && ai_scan_start_session($config)) {
-                $_SESSION['ai_scan_reset_next'] = ['next' => $next, 'at' => time()];
+            // Elke aanvraag vervangt de eerdere: een oude bestemming mag niet blijven staan.
+            if (ai_scan_start_session($config)) {
+                if ($next !== '/dashboard/') {
+                    $_SESSION['ai_scan_reset_next'] = ['next' => $next, 'at' => time()];
+                } else {
+                    unset($_SESSION['ai_scan_reset_next']);
+                }
             }
         }
     }
