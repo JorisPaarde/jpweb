@@ -7,28 +7,159 @@ function ai_scan_request_method(): string
     return strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 }
 
-/** True when $ip is a node from the fixed QUIC.cloud list (compared in binary form, so IPv6 spelling does not matter). */
-function ai_scan_is_quic_cloud_ip(string $ip): bool
+/**
+ * Folder for the refreshed QUIC.cloud list (cache) and the log marker.
+ * The cache lives in the private data folder (next to the SQLite file). Pass $dir to
+ * point it elsewhere (tests) or $reset to rebuild the lookup.
+ */
+function ai_scan_quic_cloud_dir(?string $set = null, bool $reset = false): string
+{
+    static $dir = null;
+    if ($set !== null) {
+        $dir = $set;
+    }
+    if ($reset) {
+        ai_scan_quic_cloud_nodes(true);
+    }
+
+    return $dir ?? dirname(__DIR__) . '/../private';
+}
+
+/**
+ * Valid, unique IPs from a QUIC.cloud answer (JSON list or plain text); junk is skipped.
+ *
+ * @return list<string>
+ */
+function ai_scan_quic_cloud_parse(string $raw): array
+{
+    $decoded = json_decode($raw, true);
+    $items = is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : (preg_split('/[\s,"\[\]]+/', $raw) ?: []);
+    $ips = [];
+    foreach ($items as $item) {
+        $item = trim((string) $item);
+        if ($item !== '' && filter_var($item, FILTER_VALIDATE_IP) !== false) {
+            $ips[(string) inet_ntop((string) inet_pton($item))] = true;
+        }
+    }
+
+    return array_keys($ips);
+}
+
+/** @return array<string, true> packed address => true */
+function ai_scan_quic_cloud_nodes(bool $reset = false): array
 {
     static $nodes = null;
+    if ($reset) {
+        $nodes = null;
+    }
     if ($nodes === null) {
+        $list = require __DIR__ . '/quic_cloud_ips.php';
+        $cache = json_decode((string) @file_get_contents(ai_scan_quic_cloud_dir() . '/quic-cloud-ips.json'), true);
+        if (is_array($cache) && is_array($cache['ips'] ?? null)) {
+            $list = array_merge($list, array_values(array_filter($cache['ips'], 'is_string')));
+        }
         $nodes = [];
-        foreach (require __DIR__ . '/quic_cloud_ips.php' as $node) {
+        foreach ($list as $node) {
             $packed = @inet_pton($node);
             if ($packed !== false) {
                 $nodes[$packed] = true;
             }
         }
     }
+
+    return $nodes;
+}
+
+/** True when $ip is a known QUIC.cloud node (compared in binary form, so IPv6 spelling does not matter). */
+function ai_scan_is_quic_cloud_ip(string $ip): bool
+{
     $packed = @inet_pton($ip);
 
-    return $packed !== false && isset($nodes[$packed]);
+    return $packed !== false && isset(ai_scan_quic_cloud_nodes()[$packed]);
+}
+
+function ai_scan_quic_cloud_fetch(string $url): ?string
+{
+    $body = @file_get_contents($url, false, stream_context_create([
+        'http' => ['timeout' => 5, 'user_agent' => 'JPWebcreationAIScan/1.0'],
+        'ssl' => ['verify_peer' => true, 'verify_peer_name' => true],
+    ]), 0, 262144);
+
+    return $body === false ? null : $body;
+}
+
+/**
+ * Refreshes the cache at most once per 24 hours (attempts count, so a failing source is not hammered).
+ * Only a list of at least 50 valid IPs is written (tmp + rename); otherwise the old cache stays.
+ * Never throws. Runs from the authenticated runner, never from a public page.
+ *
+ * @param null|callable(string): ?string $fetcher
+ */
+function ai_scan_quic_cloud_refresh(?string $dir = null, ?callable $fetcher = null, ?int $now = null): bool
+{
+    try {
+        $dir ??= ai_scan_quic_cloud_dir();
+        $now ??= time();
+        $fetcher ??= 'ai_scan_quic_cloud_fetch';
+        $marker = $dir . '/quic-cloud-ips.checked';
+        if (!is_dir($dir) || !is_writable($dir)) {
+            return false;
+        }
+        if (is_file($marker) && $now - (int) filemtime($marker) < 86400) {
+            return false;
+        }
+        @touch($marker, $now);
+
+        foreach (['https://api.quic.cloud/ips?json', 'https://www.quic.cloud/ips-all?trusted='] as $url) {
+            $ips = ai_scan_quic_cloud_parse((string) $fetcher($url));
+            if (count($ips) < 50) {
+                continue;
+            }
+            sort($ips, SORT_STRING);
+            $tmp = $dir . '/quic-cloud-ips.json.' . bin2hex(random_bytes(4)) . '.tmp';
+            if (@file_put_contents($tmp, json_encode(['fetched_at' => $now, 'ips' => $ips])) === false) {
+                @unlink($tmp);
+
+                return false;
+            }
+            if (!@rename($tmp, $dir . '/quic-cloud-ips.json')) {
+                @unlink($tmp);
+
+                return false;
+            }
+            ai_scan_quic_cloud_nodes(true);
+
+            return true;
+        }
+    } catch (Throwable $e) {
+        // keep the old list
+    }
+
+    return false;
+}
+
+/** Logs (at most once an hour) that a forwarded header came from an address that is not a known node. Header is never trusted. */
+function ai_scan_quic_cloud_signal(string $remote, ?int $now = null): void
+{
+    $marker = ai_scan_quic_cloud_dir() . '/quic-cloud-unknown-xff.mark';
+    $now ??= time();
+    if (is_file($marker) && $now - (int) @filemtime($marker) < 3600) {
+        return;
+    }
+    if (!@touch($marker, $now)) {
+        return;
+    }
+    error_log('jpweb: X-Forwarded-For van onbekend adres ' . (filter_var($remote, FILTER_VALIDATE_IP) !== false ? $remote : 'ongeldig') . ' genegeerd');
 }
 
 function ai_scan_client_ip(): string
 {
     $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
     if (!ai_scan_is_quic_cloud_ip($remote)) {
+        if (trim((string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')) !== '') {
+            ai_scan_quic_cloud_signal($remote);
+        }
+
         return $remote;
     }
 
