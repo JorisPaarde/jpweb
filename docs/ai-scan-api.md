@@ -146,7 +146,7 @@ Voor de scan-wachter. Antwoord altijd alleen `{"work":true}` of `{"work":false}`
 
 ## Stale-job alert
 
-Als een job in `bevestigd` of `wacht_dag` langer dan **30 minuten** (`stale_job_seconds`, default `1800`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Gecheckt bij publieke requests en bij de runner API. Cooldown: **1 uur** (`stale_alert_cooldown`).
+Als een job in `bevestigd` of `wacht_dag` langer dan **30 minuten** (`stale_job_seconds`, default `1800`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Alleen gecheckt (en verlopen claims hersteld) bij runner-aanroepen (`api/runner.php`), niet bij publieke requests. `/ai-scan-queue.php` leest alleen, maar meldt `work:true` ook bij een `bezig`-job met een claim ouder dan dezelfde drempel, zodat de box-wachter de runner start en het herstel snel volgt. Cooldown: **1 uur** (`stale_alert_cooldown`).
 
 ## Config (buiten webroot)
 
