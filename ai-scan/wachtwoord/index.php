@@ -28,6 +28,7 @@ if (ai_scan_request_method() === 'POST') {
         if (!$result['ok']) {
             $error = match ($result['code']) {
                 'expired' => 'Deze link is verlopen. Vraag via "Wachtwoord vergeten?" op de inlogpagina een nieuwe aan.',
+                'demo' => AI_SCAN_ACCOUNT_DEMO_RESET_MESSAGE,
                 'no_account' => 'Bij deze link hoort geen account meer. Mail me via info@jpwebcreation.nl, dan help ik je verder.',
                 default => 'Deze link is ongeldig of al gebruikt.',
             };
@@ -59,6 +60,7 @@ $linkProblem = match ($tokenState) {
     'ok' => '',
     'expired' => 'Deze link is verlopen.',
     'no_account' => 'Bij deze link hoort geen account meer.',
+    'demo' => AI_SCAN_ACCOUNT_DEMO_RESET_MESSAGE,
     default => $token === '' ? 'Deze link is ongeldig.' : 'Deze link is ongeldig of al gebruikt.',
 };
 
@@ -113,6 +115,8 @@ if ($token !== '') {
       <p class="error" role="alert"><?= htmlspecialchars($linkProblem, ENT_QUOTES, 'UTF-8') ?></p>
       <?php if ($tokenState === 'no_account'): ?>
         <p>Mail me via <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a>, dan help ik je verder.</p>
+      <?php elseif ($tokenState === 'demo'): ?>
+        <p><a href="/login/">Inloggen</a></p>
       <?php elseif ($token === ''): ?>
         <p>Deze pagina werkt alleen met de link uit mijn e-mail. Ben je die kwijt, of wil je je wachtwoord opnieuw kiezen? Vraag dan een nieuwe link aan, of log in met je wachtwoord.</p>
         <p class="auth-links">
