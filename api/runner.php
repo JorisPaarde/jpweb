@@ -74,15 +74,28 @@ try {
 }
 
 if ($action === 'health') {
+    // Customer figures exclude internal test addresses; those are reported apart under 'internal'.
+    [$notInternal, $internalParams] = ai_scan_exclude_internal_sql($config);
     $counts = [];
     foreach (['onbevestigd', 'bevestigd', 'wacht_dag', 'bezig', 'klaar', 'mislukt'] as $status) {
-        $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM scans WHERE status = :s');
-        $stmt->execute(['s' => $status]);
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS c FROM scans WHERE status = :s AND $notInternal");
+        $stmt->execute(['s' => $status] + $internalParams);
         $counts[$status] = (int) ($stmt->fetch()['c'] ?? 0);
     }
-    $retrying = (int) $pdo->query("SELECT COUNT(*) FROM scans WHERE status IN ('bevestigd', 'bezig') AND attempts > 0")->fetchColumn();
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM scans WHERE status IN ('bevestigd', 'bezig') AND attempts > 0 AND $notInternal");
+    $stmt->execute($internalParams);
+    $retrying = (int) $stmt->fetchColumn();
+    $internalTotal = 0;
+    if ($internalParams !== []) {
+        $internalTotal = (int) $pdo->query('SELECT COUNT(*) FROM scans')->fetchColumn();
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM scans WHERE $notInternal");
+        $stmt->execute($internalParams);
+        $internalTotal -= (int) $stmt->fetchColumn();
+    }
     $failed = [];
-    foreach ($pdo->query("SELECT public_id, domain, attempts, completed_at, error_message FROM scans WHERE status = 'mislukt' AND attempts > 0 ORDER BY completed_at DESC, id DESC LIMIT 10")->fetchAll() as $row) {
+    $failedStmt = $pdo->prepare("SELECT public_id, domain, attempts, completed_at, error_message FROM scans WHERE status = 'mislukt' AND attempts > 0 AND $notInternal ORDER BY completed_at DESC, id DESC LIMIT 10");
+    $failedStmt->execute($internalParams);
+    foreach ($failedStmt->fetchAll() as $row) {
         $failed[] = [
             'public_id' => (string) $row['public_id'],
             'domain' => (string) $row['domain'],
@@ -97,6 +110,7 @@ if ($action === 'health') {
         'ok' => true,
         'counts' => $counts,
         'retrying' => $retrying,
+        'internal' => $internalTotal,
         'failed' => $failed,
         'stale' => $stale,
         'ready_mail_flushed' => $readyFlushed,

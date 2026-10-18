@@ -46,6 +46,8 @@ return [
 
     // Limits (all overridable).
     'daily_free_scans' => 20,
+    // Interne testadressen (geen geheim): tellen niet mee voor de daglimiet en de health-cijfers.
+    'internal_test_emails' => ['jpweb-geotest-1013@agentmail.to'],
     'confirm_token_ttl' => 86400,
     'password_token_ttl' => 86400,
     'stale_job_seconds' => 2700,
