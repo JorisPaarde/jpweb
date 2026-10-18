@@ -180,3 +180,65 @@ test('reset: na wachtwoord- of adreswijziging tellen onbruikbare links niet mee 
     assert_same(4, count(geo_mails($mailLog)), 'eigenaar krijgt weer een werkende link');
     assert_same('ok', ai_scan_password_token_state($pdo, reset_link_token($mailLog, 3), $now + 11));
 });
+
+function reset_make_demo(PDO $pdo, int $uid): void
+{
+    $pdo->prepare('UPDATE scans SET result_json = :r WHERE user_id = :u')
+        ->execute(['r' => json_encode(['demo' => true]), 'u' => $uid]);
+}
+
+test('reset: demo-account krijgt geen link en geen mail, uitkomst demo', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $config['reset_email_seconds'] = 600;
+    $uid = geo_user_with_password($pdo, 'demo@firma.nl', bin2hex(random_bytes(8)));
+    reset_make_demo($pdo, $uid);
+    @unlink($mailLog);
+
+    assert_same('demo', ai_scan_request_password_reset($pdo, $config, 'Demo@Firma.nl', '8.8.8.1', time()));
+    assert_same([], geo_mails($mailLog), 'geen mail voor demo');
+    assert_same(0, (int) $pdo->query('SELECT COUNT(*) FROM reset_links')->fetchColumn(), 'geen link voor demo');
+    // De limiet geldt ook voor demo-adressen, vóór de accountopzoeking.
+    assert_same('rate_limited', ai_scan_request_password_reset($pdo, $config, 'demo@firma.nl', '8.8.8.1', time() + 5));
+});
+
+test('reset: pagina toont demo-melding; gewone adressen blijven byte-gelijk neutraal', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $config['reset_email_seconds'] = 600;
+    geo_user_with_password($pdo, 'klant@firma.nl', bin2hex(random_bytes(8)));
+    $demo = geo_user_with_password($pdo, 'demo@firma.nl', bin2hex(random_bytes(8)));
+    reset_make_demo($pdo, $demo);
+    @unlink($mailLog);
+
+    $existing = reset_page_post($config, 'klant@firma.nl', '8.8.8.2');
+    $unknown = reset_page_post($config, 'niemand@firma.nl', '8.8.8.3');
+    $limited = reset_page_post($config, 'klant@firma.nl', '8.8.8.2');
+    $page = reset_page_post($config, 'demo@firma.nl', '8.8.8.4');
+    $demoLimited = reset_page_post($config, 'demo@firma.nl', '8.8.8.4');
+
+    assert_true(str_contains($page, AI_SCAN_ACCOUNT_DEMO_RESET_MESSAGE), 'demo-melding getoond');
+    assert_true(!str_contains($page, 'Als er een account bestaat'), 'demo krijgt de neutrale tekst niet');
+    assert_same(1, count(geo_mails($mailLog)), 'alleen het gewone account kreeg een mail');
+    assert_true(str_contains($existing, 'Als er een account bestaat voor dit e-mailadres'));
+    assert_same($existing, $unknown);
+    assert_same($existing, $limited);
+    assert_same($existing, $demoLimited, 'gelimiteerd demo-adres blijft neutraal');
+});
+
+test('reset: bestaande herstellink van een demo-account kan het wachtwoord niet wijzigen', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    $uid = geo_user_with_password($pdo, 'demo@firma.nl', bin2hex(random_bytes(8)));
+    @unlink($mailLog);
+    assert_same('sent', ai_scan_request_password_reset($pdo, $config, 'demo@firma.nl', '8.8.8.5', $now));
+    $token = reset_link_token($mailLog, 0);
+    reset_make_demo($pdo, $uid);
+
+    $before = $pdo->query('SELECT password_hash, password_version FROM users WHERE id = ' . $uid)->fetch();
+    assert_same('demo', ai_scan_password_token_state($pdo, $token, $now + 10));
+    $res = ai_scan_set_password($pdo, $token, bin2hex(random_bytes(10)), $now + 10);
+    assert_same(['ok' => false, 'code' => 'demo'], $res);
+    $after = $pdo->query('SELECT password_hash, password_version FROM users WHERE id = ' . $uid)->fetch();
+    assert_same((int) $before['password_version'], (int) $after['password_version'], 'password_version ongewijzigd');
+    assert_same($before['password_hash'], $after['password_hash'], 'wachtwoord ongewijzigd');
+    assert_same(1, (int) $pdo->query('SELECT COUNT(*) FROM reset_links')->fetchColumn(), 'link niet verbruikt');
+});

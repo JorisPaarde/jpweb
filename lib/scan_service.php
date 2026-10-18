@@ -861,7 +861,7 @@ function ai_scan_find_password_token(PDO $pdo, string $token): ?array
 /**
  * Controleert een wachtwoordlink zonder hem te gebruiken (voor het tonen van de pagina).
  *
- * @return 'ok'|'invalid_token'|'expired'|'no_account'
+ * @return 'ok'|'invalid_token'|'expired'|'no_account'|'demo'
  */
 function ai_scan_password_token_state(PDO $pdo, string $token, int $now = 0): string
 {
@@ -881,6 +881,12 @@ function ai_scan_password_token_state(PDO $pdo, string $token, int $now = 0): st
     $user->execute(['id' => $userId]);
     if ($userId < 1 || $user->fetch() === false) {
         return 'no_account';
+    }
+    if ((string) $row['token_kind'] !== 'password') {
+        require_once __DIR__ . '/questions.php';
+        if (ai_scan_user_is_demo($pdo, $userId)) {
+            return 'demo';
+        }
     }
 
     return 'ok';
@@ -913,6 +919,14 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
     if ($userId < 1 || $exists->fetch() === false) {
         // Account bestaat niet (meer): nooit "wachtwoord ingesteld" tonen.
         return ['ok' => false, 'code' => 'no_account'];
+    }
+
+    // Een herstellink kiest nooit een wachtwoord voor een demo-account (ook niet als hij al bestond).
+    if ((string) $scan['token_kind'] !== 'password') {
+        require_once __DIR__ . '/questions.php';
+        if (ai_scan_user_is_demo($pdo, $userId)) {
+            return ['ok' => false, 'code' => 'demo'];
+        }
     }
 
     $pdo->beginTransaction();
@@ -969,7 +983,7 @@ function ai_scan_set_password(PDO $pdo, string $token, string $password, int $no
  * wachtwoordpagina (/ai-scan/wachtwoord/?t=…). De aanroeper toont altijd dezelfde neutrale melding.
  * Beperkt per IP en per combinatie van IP en e-mailadres; telt ook pogingen voor onbekende adressen.
  *
- * @return string 'sent' | 'no_account' | 'rate_limited' | 'mail_failed' (alleen voor logs/tests, nooit tonen)
+ * @return string 'sent' | 'no_account' | 'rate_limited' | 'mail_failed' (alleen voor logs/tests, nooit tonen) | 'demo' (wel tonen)
  */
 function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRaw, string $ip, int $now = 0): string
 {
@@ -995,6 +1009,11 @@ function ai_scan_request_password_reset(PDO $pdo, array $config, string $emailRa
     $user = $stmt->fetch();
     if ($user === false) {
         return 'no_account';
+    }
+    // Demo-accounts hebben een vast wachtwoord: geen link, geen mail. Demo-adressen zijn publiek.
+    require_once __DIR__ . '/questions.php';
+    if (ai_scan_user_is_demo($pdo, (int) $user['id'])) {
+        return 'demo';
     }
     $scan = ai_scan_latest_for_user($pdo, (int) $user['id']);
     if ($scan === null) {

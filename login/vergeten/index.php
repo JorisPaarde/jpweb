@@ -10,6 +10,7 @@ ai_scan_assert_allowed_host($config);
 
 $error = '';
 $sent = false;
+$demo = false;
 $next = ai_scan_safe_next((string) ($_GET['next'] ?? $_POST['next'] ?? '/dashboard/'));
 $backHref = '/login/' . ($next !== '/dashboard/' ? '?next=' . rawurlencode($next) : '');
 
@@ -26,7 +27,9 @@ if (ai_scan_request_method() === 'POST') {
             if ($outcome === 'mail_failed') {
                 error_log('ai_scan password_reset_mail_failed');
             }
-            $sent = true;
+            // Alleen demo-adressen (publiek bekend) krijgen een eigen melding; alle andere uitkomsten blijven neutraal.
+            $sent = $outcome !== 'demo';
+            $demo = !$sent;
             // Bestemming alleen in de sessie van deze browser, nooit in de mail of herstellink.
             if ($next !== '/dashboard/' && ai_scan_start_session($config)) {
                 $_SESSION['ai_scan_reset_next'] = ['next' => $next, 'at' => time()];
@@ -70,6 +73,9 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
     <h1>Wachtwoord vergeten?</h1>
     <?php if ($sent): ?>
       <p class="notice" role="status">Als er een account bestaat voor dit e-mailadres, heb ik je een mail gestuurd met een link om een nieuw wachtwoord te kiezen. De link werkt 1 uur. Zie je niets? Kijk ook in je spam.</p>
+      <p><a href="<?= $h($backHref) ?>">Terug naar inloggen</a></p>
+    <?php elseif ($demo): ?>
+      <p class="notice" role="status"><?= $h(AI_SCAN_ACCOUNT_DEMO_RESET_MESSAGE) ?></p>
       <p><a href="<?= $h($backHref) ?>">Terug naar inloggen</a></p>
     <?php else: ?>
       <p>Vul je e-mailadres in. Ik stuur je een link waarmee je zelf een nieuw wachtwoord kiest.</p>

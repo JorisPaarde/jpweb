@@ -33,6 +33,7 @@ const AI_SCAN_EMAIL_NO_MAILBOX = 'Dit e-mailadres lijkt niet te bestaan. Control
 const AI_SCAN_EMAIL_SAME = 'Dat is al je huidige e-mailadres.';
 const AI_SCAN_EMAIL_PENDING_SENT = 'Ik heb een bevestigingsmail gestuurd naar het nieuwe adres. Tot die bevestigd is, blijft je oude e-mailadres actief.';
 const AI_SCAN_ACCOUNT_DEMO_MESSAGE = 'Dit is een demo-account. Ik laat hier geen wijziging van e-mailadres of wachtwoord en geen verwijdering toe.';
+const AI_SCAN_ACCOUNT_DEMO_RESET_MESSAGE = 'Dit is een demo-account. Ik laat hier geen nieuw wachtwoord kiezen en stuur daarom geen herstellink.';
 const AI_SCAN_EMAIL_NOT_SENT = 'Ik kon de bevestigingsmail niet versturen. Je e-mailadres is niet gewijzigd; probeer het later opnieuw.';
 
 /**
