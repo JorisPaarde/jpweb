@@ -12,18 +12,61 @@ function ai_scan_day_start(int $now): int
 }
 
 /**
- * Free-scan slots used today = jobs that are allowed to run (not waitlisted).
+ * Hashes of the configured internal test addresses (config 'internal_test_emails').
+ *
+ * @return list<string>
  */
-function ai_scan_count_free_scans_today(PDO $pdo, int $now): int
+function ai_scan_internal_email_hashes(array $config): array
+{
+    $hashes = [];
+    foreach ((array) ($config['internal_test_emails'] ?? []) as $email) {
+        $normalized = ai_scan_normalize_email(trim((string) $email));
+        if ($normalized !== '') {
+            $hashes[] = ai_scan_email_hash($normalized);
+        }
+    }
+
+    return array_values(array_unique($hashes));
+}
+
+/**
+ * SQL condition (and bound params) that is true for scans NOT owned by an internal test address.
+ * Empty list = no restriction (current behaviour).
+ *
+ * @return array{0: string, 1: array<string, string>}
+ */
+function ai_scan_exclude_internal_sql(array $config, string $column = 'email_hash'): array
+{
+    $hashes = ai_scan_internal_email_hashes($config);
+    if ($hashes === []) {
+        return ['1=1', []];
+    }
+    $params = [];
+    $names = [];
+    foreach ($hashes as $i => $hash) {
+        $params['int' . $i] = $hash;
+        $names[] = ':int' . $i;
+    }
+
+    return ["($column IS NULL OR $column NOT IN (" . implode(', ', $names) . '))', $params];
+}
+
+/**
+ * Free-scan slots used today = jobs that are allowed to run (not waitlisted).
+ * Scans of internal test addresses do not count.
+ */
+function ai_scan_count_free_scans_today(PDO $pdo, int $now, array $config = []): int
 {
     $start = ai_scan_day_start($now);
+    [$cond, $params] = ai_scan_exclude_internal_sql($config);
     $stmt = $pdo->prepare(
         "SELECT COUNT(*) AS c FROM scans
          WHERE status IN ('bevestigd', 'bezig', 'klaar', 'mislukt')
            AND queued_at IS NOT NULL
-           AND queued_at >= :start"
+           AND queued_at >= :start
+           AND $cond"
     );
-    $stmt->execute(['start' => $start]);
+    $stmt->execute(['start' => $start] + $params);
     $row = $stmt->fetch();
 
     return (int) ($row['c'] ?? 0);
@@ -195,7 +238,7 @@ function ai_scan_submit(PDO $pdo, array $config, array $input, string $ip, int $
     }
 
     $dailyLimit = (int) ($config['daily_free_scans'] ?? 20);
-    $dailyFull = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit;
+    $dailyFull = ai_scan_count_free_scans_today($pdo, $now, $config) >= $dailyLimit;
 
     $confirmToken = ai_scan_random_token(32);
     $ttl = (int) ($config['confirm_token_ttl'] ?? 86400);
@@ -342,7 +385,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
         // Write lock first: capacity is decided and reserved in the same transaction.
         $pdo->beginTransaction();
         ai_scan_take_write_lock($pdo);
-        $status = ai_scan_count_free_scans_today($pdo, $now) >= $dailyLimit ? 'wacht_dag' : 'bevestigd';
+        $status = ai_scan_count_free_scans_today($pdo, $now, $config) >= $dailyLimit ? 'wacht_dag' : 'bevestigd';
 
         $userStmt = $pdo->prepare('SELECT * FROM users WHERE email_hash = :h LIMIT 1');
         $userStmt->execute(['h' => $scan['email_hash']]);
@@ -460,7 +503,7 @@ function ai_scan_promote_waitlist(PDO $pdo, array $config, int $now = 0): int
             $pdo->beginTransaction();
             ai_scan_take_write_lock($pdo);
         }
-        $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now);
+        $slots = $dailyLimit - ai_scan_count_free_scans_today($pdo, $now, $config);
         $n = 0;
         if ($slots > 0) {
             $sel = $pdo->prepare(
@@ -792,7 +835,7 @@ function ai_scan_has_runnable_job(PDO $pdo, array $config, int $now = 0): bool
         return false;
     }
 
-    return ai_scan_count_free_scans_today($pdo, $now) < (int) ($config['daily_free_scans'] ?? 20);
+    return ai_scan_count_free_scans_today($pdo, $now, $config) < (int) ($config['daily_free_scans'] ?? 20);
 }
 
 function ai_scan_purge_expired_unconfirmed(PDO $pdo, int $now): int

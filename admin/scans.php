@@ -15,13 +15,14 @@ ai_scan_assert_allowed_host($config);
 $admin = ai_scan_require_admin_user($pdo, $config);
 
 $rows = $pdo->query(
-    "SELECT public_id, domain, status, attempts, queued_at, completed_at, last_failure, error_message
+    "SELECT public_id, domain, email_hash, status, attempts, queued_at, completed_at, last_failure, error_message
      FROM scans
      WHERE (status = 'mislukt' AND attempts > 0) OR (status IN ('bevestigd', 'bezig') AND attempts > 0)
      ORDER BY COALESCE(completed_at, queued_at) DESC, id DESC
      LIMIT 50"
 )->fetchAll();
 
+$internalHashes = ai_scan_internal_email_hashes($config);
 $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $when = static fn (mixed $ts): string => $ts === null || $ts === '' ? '-' : gmdate('Y-m-d H:i', (int) $ts) . ' UTC';
 ?><!DOCTYPE html>
@@ -51,7 +52,7 @@ $when = static fn (mixed $ts): string => $ts === null || $ts === '' ? '-' : gmda
         <tbody>
         <?php foreach ($rows as $r): ?>
           <tr>
-            <td><?= $h((string) $r['domain']) ?></td>
+            <td><?= $h((string) $r['domain']) ?><?= in_array((string) $r['email_hash'], $internalHashes, true) ? ' <strong>(intern)</strong>' : '' ?></td>
             <td><?= $h((string) $r['status']) ?></td>
             <td><?= (int) $r['attempts'] ?></td>
             <td><?= $h($when($r['completed_at'] ?? $r['queued_at'])) ?></td>
