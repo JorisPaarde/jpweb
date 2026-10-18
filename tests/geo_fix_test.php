@@ -340,6 +340,27 @@ test('mails sign with Groet, Joris', static function (): void {
     assert_same(3, count(geo_mails($mailLog)));
 });
 
+test('welcome mail is honest when the scan waits for a free day', static function (): void {
+    [$config, , , $mailLog] = boot_test_db();
+    @unlink($mailLog);
+    ai_scan_mail_welcome($config, 'a@firma.nl', 'firma.nl', 'https://x/p', 'https://x/d', 'wacht_dag');
+    ai_scan_mail_welcome($config, 'b@firma.nl', 'firma.nl', 'https://x/p', 'https://x/d', 'bevestigd');
+    $mails = geo_mails($mailLog);
+    assert_true(!str_contains((string) $mails[0]['body'], 'is gestart'));
+    assert_true(str_contains((string) $mails[0]['body'], 'Vandaag zijn alle gratis scans bezet'));
+    assert_true(str_contains((string) $mails[0]['body'], 'eerstvolgende dag met ruimte'));
+    assert_true(str_contains((string) $mails[1]['body'], 'De scan voor firma.nl is gestart'));
+});
+
+test('status page daily_full asks to confirm the address and has no login button', static function (): void {
+    $src = geo_src('ai-scan/index.php');
+    preg_match("/'daily_full' => \\[(.*)\\],\n/", $src, $m);
+    assert_true(isset($m[1]), 'daily_full entry');
+    assert_true(str_contains($m[1], 'bevestig je adres'));
+    assert_true(!str_contains($m[1], 'staat ingepland'));
+    assert_true(str_ends_with(trim($m[1]), 'false'), 'no login button');
+});
+
 test('GET /ai-scan.php without action redirects to the form page instead of 405', static function (): void {
     $src = geo_src('ai-scan.php');
     assert_true(str_contains($src, "\$method === 'GET' && !\$asJson"));
