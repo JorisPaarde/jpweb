@@ -419,7 +419,7 @@ function ai_scan_confirm(PDO $pdo, array $config, string $token, int $now = 0): 
     $base = rtrim((string) ($config['base_url'] ?? 'https://jpwebcreation.nl'), '/');
     $passwordUrl = $base . '/ai-scan/wachtwoord/?t=' . rawurlencode($passwordToken);
     $dashboardUrl = $base . '/dashboard/';
-    ai_scan_mail_welcome($config, (string) $scan['email'], (string) $scan['domain'], $passwordUrl, $dashboardUrl);
+    ai_scan_mail_welcome($config, (string) $scan['email'], (string) $scan['domain'], $passwordUrl, $dashboardUrl, $status);
     if ($status === 'bevestigd') {
         ai_scan_trigger_runner($config);
     }

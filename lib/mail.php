@@ -169,9 +169,12 @@ function ai_scan_mail_confirm(array $config, string $to, string $website, string
     return ai_scan_send_mail($config, $to, $subject, $body);
 }
 
-function ai_scan_mail_welcome(array $config, string $to, string $website, string $passwordUrl, string $dashboardUrl): array
+function ai_scan_mail_welcome(array $config, string $to, string $website, string $passwordUrl, string $dashboardUrl, string $scanStatus = 'bevestigd'): array
 {
     $subject = 'Je account voor de AI-scan staat klaar';
+    $scanLine = $scanStatus === 'wacht_dag'
+        ? 'Vandaag zijn alle gratis scans bezet. Je scan voor ' . $website . ' start automatisch op de eerstvolgende dag met ruimte; ik mail je als de uitslag klaar is.'
+        : 'De scan voor ' . $website . ' is gestart. Ik mail je als de uitslag klaar is.';
     $body = implode("\n", [
         'Hoi,',
         '',
@@ -182,7 +185,7 @@ function ai_scan_mail_welcome(array $config, string $to, string $website, string
         '',
         'Je dashboard: ' . $dashboardUrl,
         '',
-        'De scan voor ' . $website . ' is gestart. Ik mail je als de uitslag klaar is.',
+        $scanLine,
         '',
         'Groet,',
         'Joris',
