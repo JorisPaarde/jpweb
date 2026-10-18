@@ -394,6 +394,22 @@ test('queue indicator: true only when a job is ready for the runner (same defini
     unset($id);
 });
 
+test('queue indicator: expired bezig claim gives work, fresh claim does not, nothing is written', static function (): void {
+    [$config, $pdo, , $mailLog] = boot_test_db();
+    $now = time();
+    @unlink($mailLog);
+    $stale = (int) $config['stale_job_seconds'];
+    $id = geo_insert_scan($pdo, 'bevestigd', 0, 'crash.nl');
+    assert_true(ai_scan_claim_job($pdo, $id, $now) !== null);
+    assert_same(false, ai_scan_has_runnable_job($pdo, $config, $now + $stale - 1), 'verse claim');
+    $snap = static fn (): string => json_encode($pdo->query('SELECT * FROM scans ORDER BY id')->fetchAll(PDO::FETCH_ASSOC))
+        . json_encode($pdo->query('SELECT * FROM meta')->fetchAll(PDO::FETCH_ASSOC));
+    $before = $snap();
+    assert_same(true, ai_scan_has_runnable_job($pdo, $config, $now + $stale + 1), 'verlopen claim');
+    assert_same($before, $snap(), 'alleen lezen');
+    assert_same(0, count(geo_mails($mailLog)), 'geen mail');
+});
+
 test('queue endpoint prints only {"work":bool}, no-store, GET only', static function (): void {
     $dir = sys_get_temp_dir() . '/jpweb-queue-' . bin2hex(random_bytes(4));
     mkdir($dir, 0700, true);
@@ -411,6 +427,10 @@ test('queue endpoint prints only {"work":bool}, no-store, GET only', static func
     $pdo->prepare("INSERT INTO scans(public_id, email, email_hash, website_url, domain, domain_hash, status, created_at, queued_at) VALUES('p','e','eh','u','d','dh','bevestigd',1,1)")->execute();
     assert_same('{"work":true}', $run('GET'));
     assert_same('{"work":false}', $run('POST'));
+    $pdo->exec("UPDATE scans SET status = 'bezig', claimed_at = 1");
+    $before = json_encode($pdo->query('SELECT * FROM scans')->fetchAll(PDO::FETCH_ASSOC));
+    assert_same('{"work":true}', $run('GET'), 'verlopen claim');
+    assert_same($before, json_encode($pdo->query('SELECT * FROM scans')->fetchAll(PDO::FETCH_ASSOC)), 'queue-endpoint schrijft niets');
     $src = geo_src('ai-scan-queue.php');
     assert_true(str_contains($src, 'Cache-Control: no-store'));
     foreach ([$dir . '/q.sqlite', $dir . '/q.sqlite-wal', $dir . '/q.sqlite-shm', $dir . '/config.php'] as $f) {

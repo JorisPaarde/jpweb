@@ -771,12 +771,21 @@ function ai_scan_recover_expired_claims(PDO $pdo, array $config, int $now = 0): 
 
 /**
  * Staat er een job klaar voor de runner? Zelfde definitie als ai_scan_next_job, maar alleen lezen:
- * een bevestigde scan die wacht (ook opnieuw te proberen), of een wachtdag-job waarvoor vandaag ruimte is.
+ * een bevestigde scan die wacht (ook opnieuw te proberen), een wachtdag-job waarvoor vandaag ruimte is, of een
+ * bezig-job met een verlopen claim (gecrashte runner): de runner-aanroep herstelt die via check_stale_jobs.
+ * Hier nooit schrijven of mailen; het onderhoud zelf blijft in api/runner.php.
  */
 function ai_scan_has_runnable_job(PDO $pdo, array $config, int $now = 0): bool
 {
     $now = $now > 0 ? $now : time();
     if ($pdo->query("SELECT 1 FROM scans WHERE status = 'bevestigd' LIMIT 1")->fetch() !== false) {
+        return true;
+    }
+    $expired = $pdo->prepare(
+        "SELECT 1 FROM scans WHERE status = 'bezig' AND claimed_at IS NOT NULL AND claimed_at <= :cutoff LIMIT 1"
+    );
+    $expired->execute(['cutoff' => $now - (int) ($config['stale_job_seconds'] ?? 2700)]);
+    if ($expired->fetch() !== false) {
         return true;
     }
     if ($pdo->query("SELECT 1 FROM scans WHERE status = 'wacht_dag' LIMIT 1")->fetch() === false) {
