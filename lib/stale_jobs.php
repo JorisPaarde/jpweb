@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 /**
- * Alert info@ when jobs wait longer than the configured threshold (default 30 min).
- * At most one alert per hour. Called from public requests and the runner API.
+ * Alert info@ when jobs wait longer than the configured threshold (stale_job_seconds, default 2700 = 45 min).
+ * At most one alert per hour. Called from the runner API only (not from public requests).
  *
  * @return array{checked: bool, alerted: bool, stale: int}
  */
