@@ -27,3 +27,10 @@ test('N19-3: docs en code noemen dezelfde stale-drempel (45 min / 2700) en alle 
         assert_true((bool) preg_match('/^Keys: .*`' . $key . '`/m', $docs), 'sleutellijst mist ' . $key);
     }
 });
+
+test('N19-5: statuspagina daily_full herhaalt de kop niet in de tekst', static function (): void {
+    $src = (string) file_get_contents(dirname(__DIR__) . '/ai-scan/index.php');
+    assert_true((bool) preg_match("/'daily_full' => \\['([^']*)', '([^']*)'/", $src, $m), 'daily_full entry');
+    assert_true(!str_contains($m[2], $m[1]), 'kop staat ook in de tekst');
+    assert_true(str_contains($m[2], 'bevestig je adres') && str_contains($m[2], 'eerstvolgende dag met ruimte'), 'kernboodschap weg');
+});
