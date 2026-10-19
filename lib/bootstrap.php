@@ -28,6 +28,7 @@ require_once __DIR__ . '/stale_jobs.php';
 function ai_scan_boot(?string $configOverride = null): array
 {
     $config = ai_scan_load_config($configOverride);
+    ai_scan_quic_cloud_dir(dirname((string) $config['sqlite_path'])); // same folder as the runner refresh
     $pdo = ai_scan_db($config);
     ai_scan_migrate($pdo);
 
