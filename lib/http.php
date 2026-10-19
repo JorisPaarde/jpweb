@@ -389,7 +389,7 @@ function ai_scan_error_page(int $status, string $title, string $text, string $hr
         . '<meta name="robots" content="noindex, nofollow"><title>' . $h($title) . ' · JP Web Creation</title>'
         . '<link rel="stylesheet" href="/styles.css?v=ai-scan-1"></head>'
         . '<body><main style="max-width:32rem;margin:4rem auto;padding:0 1.25rem">'
-        . '<h1>' . $h($title) . '</h1><p>' . $h($text) . '</p>'
+        . '<h1 style="font-size:clamp(1.6rem,6.2vw,5.6rem);overflow-wrap:break-word;hyphens:auto">' . $h($title) . '</h1><p>' . $h($text) . '</p>'
         . '<p><a href="' . $h($href) . '">' . $h($label) . '</a></p></main></body></html>';
     exit;
 }

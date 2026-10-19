@@ -828,6 +828,7 @@ require __DIR__ . '/password_reset_test.php';
 require __DIR__ . '/client_ip_test.php';
 require __DIR__ . '/login_next_test.php';
 require __DIR__ . '/internal_test_emails_test.php';
+require __DIR__ . '/testronde_1019_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
