@@ -8,21 +8,41 @@ function ai_scan_request_method(): string
 }
 
 /**
- * Folder for the refreshed QUIC.cloud list (cache) and the log marker.
- * The cache lives in the private data folder (next to the SQLite file). Pass $dir to
- * point it elsewhere (tests) or $reset to rebuild the lookup.
+ * Folder for the refreshed QUIC.cloud list (cache) and the log markers.
+ * One folder for writing (runner refresh), reading (client IP) and signalling: the folder of the
+ * configured SQLite file. ai_scan_boot() sets it from the loaded config; pages without the app
+ * bootstrap (contact.php) resolve it from the same config. Pass $dir to point it elsewhere (tests)
+ * or $reset to rebuild the lookup.
  */
 function ai_scan_quic_cloud_dir(?string $set = null, bool $reset = false): string
 {
     static $dir = null;
-    if ($set !== null) {
+    if ($set !== null && $set !== $dir) {
+        $reset = $reset || $dir !== null; // another folder: rebuild the lookup from its cache
         $dir = $set;
     }
+    $dir ??= ai_scan_quic_cloud_default_dir();
     if ($reset) {
         ai_scan_quic_cloud_nodes(true);
     }
 
-    return $dir ?? dirname(__DIR__) . '/../private';
+    return $dir;
+}
+
+/** Folder of the configured SQLite file; falls back to SITE/../private when the config cannot be read. */
+function ai_scan_quic_cloud_default_dir(): string
+{
+    try {
+        require_once __DIR__ . '/config.php';
+        $path = (string) (ai_scan_load_config()['sqlite_path'] ?? '');
+        if ($path !== '') {
+            return dirname($path);
+        }
+    } catch (Throwable $e) {
+        // fall back below
+    }
+
+    return dirname(__DIR__) . '/../private';
 }
 
 /**

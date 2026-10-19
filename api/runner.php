@@ -60,7 +60,7 @@ if ($action === '' && $method === 'GET') {
     $action = 'next';
 }
 
-ai_scan_quic_cloud_refresh(dirname((string) $config['sqlite_path']));
+ai_scan_quic_cloud_refresh(ai_scan_quic_cloud_dir()); // same folder the client-IP lookup reads (set by ai_scan_boot)
 
 try {
     ai_scan_check_stale_jobs($pdo, $config);

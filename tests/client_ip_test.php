@@ -245,3 +245,38 @@ test('quic signal: spoofed X-Forwarded-For from an unknown IP keeps REMOTE_ADDR 
         quic_env_end($dir);
     }
 });
+
+test('quic dir: refresh, lookup and signal share the folder of a non-default sqlite_path (N19-1)', static function (): void {
+    $root = sys_get_temp_dir() . '/jpweb-n191-' . bin2hex(random_bytes(4));
+    $data = $root . '/elders/data';
+    mkdir($data, 0700, true);
+    $cfg = $root . '/ai-scan-config.php';
+    file_put_contents($cfg, '<?php return ["sqlite_path" => ' . var_export($data . '/ai-scan.sqlite', true) . '];');
+    try {
+        // Boot (runner and app pages) points the folder at the configured SQLite folder.
+        ai_scan_boot($cfg);
+        assert_same($data, ai_scan_quic_cloud_dir());
+        assert_true(ai_scan_quic_cloud_refresh(null, static fn (string $u): string => json_encode(quic_fake_list()), 1000), 'refresh failed');
+        assert_true(is_file($data . '/quic-cloud-ips.json'), 'cache not in sqlite folder');
+        assert_true(ai_scan_is_quic_cloud_ip('198.18.0.7'), 'refreshed node unknown after boot');
+
+        // contact.php has no app bootstrap: it resolves the same folder from the config.
+        $runner = $root . '/child.php';
+        file_put_contents($runner, '<?php
+            putenv("JPWEB_AI_SCAN_CONFIG=" . ' . var_export($cfg, true) . ');
+            require ' . var_export(dirname(__DIR__) . '/lib/http.php', true) . ';
+            $_SERVER["REMOTE_ADDR"] = "198.18.0.7";
+            $_SERVER["HTTP_X_FORWARDED_FOR"] = "6.6.6.6, 198.51.100.7";
+            echo ai_scan_quic_cloud_dir(), "|", ai_scan_client_ip();');
+        $out = (string) shell_exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($runner) . ' 2>&1');
+        assert_same($data . '|198.51.100.7', trim($out));
+    } finally {
+        foreach (array_merge(glob($data . '/*') ?: [], glob($root . '/*.php') ?: []) as $f) {
+            @unlink($f);
+        }
+        @rmdir($data);
+        @rmdir($root . '/elders');
+        @rmdir($root);
+        ai_scan_quic_cloud_dir(dirname(__DIR__) . '/../private', true);
+    }
+});
