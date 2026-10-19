@@ -132,7 +132,7 @@ Maximaal **één automatische herpoging** per scan (`scan_max_retries`, default 
 
 ### `GET|POST /api/runner.php?action=health`
 
-Queue-tellingen + stale-job check (alert naar `info@` als jobs >30 min wachten; max. 1 alert/uur).
+Queue-tellingen + stale-job check (alert naar `info@` als jobs langer dan `stale_job_seconds` wachten, standaard 45 min; max. 1 alert/uur).
 
 ```json
 { "ok": true, "counts": { "bevestigd": 1, "bezig": 0, "…": 0 }, "retrying": 0, "failed": [{ "public_id": "…", "domain": "…", "attempts": 2, "failed_at": 1791885701, "message": "…" }], "stale": { "checked": true, "alerted": false, "stale": 0 } }
@@ -146,7 +146,7 @@ Voor de scan-wachter. Antwoord altijd alleen `{"work":true}` of `{"work":false}`
 
 ## Stale-job alert
 
-Als een job in `bevestigd` of `wacht_dag` langer dan **30 minuten** (`stale_job_seconds`, default `1800`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Alleen gecheckt (en verlopen claims hersteld) bij runner-aanroepen (`api/runner.php`), niet bij publieke requests. `/ai-scan-queue.php` leest alleen, maar meldt `work:true` ook bij een `bezig`-job met een claim ouder dan dezelfde drempel, zodat de box-wachter de runner start en het herstel snel volgt. Cooldown: **1 uur** (`stale_alert_cooldown`).
+Als een job in `bevestigd` of `wacht_dag` langer dan **45 minuten** (`stale_job_seconds`, default `2700`) in de queue staat, mailt B2 `info@jpwebcreation.nl`. Alleen gecheckt (en verlopen claims hersteld) bij runner-aanroepen (`api/runner.php`), niet bij publieke requests. `/ai-scan-queue.php` leest alleen, maar meldt `work:true` ook bij een `bezig`-job met een claim ouder dan dezelfde drempel, zodat de box-wachter de runner start en het herstel snel volgt. Cooldown: **1 uur** (`stale_alert_cooldown`).
 
 ## Config (buiten webroot)
 
@@ -156,7 +156,7 @@ Zie `config-examples/ai-scan-config.php`. Lookup:
 2. `../private/ai-scan-config.php` (relatief t.o.v. webroot)
 3. `/home/jpwebcreation/private/ai-scan-config.php`
 
-Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `ready_mail_per_email_seconds`, `ready_mail_global_max_per_hour`, `email_blocked_tlds`, `website_allowed_tlds`, `disposable_email_domains`, `website_require_http`, `allowed_hosts`.
+Keys: `sqlite_path`, `runner_token`, `app_key`, `base_url`, `smtp` (`host`, `port`, `encryption`, `username`, `password`, `from_email`, `from_name`, `alert_to`), `daily_free_scans`, `confirm_token_ttl`, `password_token_ttl`, `stale_job_seconds`, `stale_alert_cooldown`, `scan_max_retries`, `internal_test_emails`, `login_max_attempts`, `login_window_seconds`, `form_ip_max_per_hour`, `form_ip_max_per_day`, `form_email_max_per_hour`, `form_domain_max_per_hour`, `form_burst_seconds`, `form_burst_max`, `confirm_mail_per_email_seconds`, `confirm_mail_global_max_per_hour`, `ready_mail_per_email_seconds`, `ready_mail_global_max_per_hour`, `email_blocked_tlds`, `website_allowed_tlds`, `disposable_email_domains`, `website_require_http`, `allowed_hosts`.
 
 ## Mailtoon
 
