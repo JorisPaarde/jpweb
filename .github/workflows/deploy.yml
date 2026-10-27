@@ -82,6 +82,7 @@ jobs:
             --exclude='config-examples/' \
             --exclude='ops/' \
             --exclude='tools/' \
+            --exclude='scripts/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
@@ -95,6 +96,7 @@ jobs:
             "/"
             "/ai/"
             "/ai-vindbaarheid/"
+            "/bots/"
             "/blog/"
             "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"
@@ -216,6 +218,7 @@ jobs:
             --exclude='config-examples/' \
             --exclude='ops/' \
             --exclude='tools/' \
+            --exclude='scripts/' \
             -e "ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes" \
             ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
@@ -245,6 +248,7 @@ jobs:
             "/"
             "/ai/"
             "/ai-vindbaarheid/"
+            "/bots/"
             "/blog/"
             "/blog/hoeveel-tijd-kost-een-vooropname-installatiebedrijf.html"
             "/digitale-opname/"

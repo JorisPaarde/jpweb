@@ -26,7 +26,8 @@ be tested in a PHP-capable environment, preferably on the test domain.
 - `contact.php`: validation, one-time form recovery, rate limiting, and mail delivery
 - `projecten/*/index.html`: six project cases
 - `assets/social/jpwebcreation-og.jpg`: shared 1200 x 630 social preview image
-- `sitemap.xml`: the ten canonical, indexable production routes
+- `assets/social/bots-og-v1.jpg`: `/bots/` social preview (1200 x 630); source `bots-og-v1.html`, render via `scripts/render-bots-og.sh`
+- `sitemap.xml`: canonical, indexable production routes
 - `.htaccess`: one-hop legacy redirects, caching, 404 handling, and staging noindex header
 - `.github/scripts/check-redirects.sh`: HTTP check for all documented legacy redirects
 - `.github/workflows/deploy.yml`: test and production deployment
