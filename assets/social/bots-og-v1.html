@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>bots-og-v1</title>
+    <style>
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 400 900;
+        src: local("Inter");
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #15392f;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        color: #ffffff;
+      }
+
+      .canvas {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        padding: 56px 64px 52px;
+        background:
+          radial-gradient(circle at 92% 8%, rgba(231, 173, 82, 0.18), transparent 34%),
+          linear-gradient(135deg, #15392f 0%, #315f4f 72%, #5f765d 100%);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 auto;
+      }
+
+      .brand-name {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+
+      .eyebrow {
+        margin-top: 54px;
+        color: #e7ad52;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .title {
+        margin-top: 18px;
+        max-width: 980px;
+        font-size: 58px;
+        font-weight: 850;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin-top: 16px;
+        max-width: 760px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+
+      .bots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin-top: 48px;
+        width: 100%;
+        max-width: 980px;
+      }
+
+      .bot {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        min-height: 148px;
+        padding: 22px 26px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 18px;
+        background: rgba(251, 250, 246, 0.96);
+        box-shadow: 0 22px 50px rgba(7, 26, 20, 0.28);
+        color: #18201d;
+      }
+
+      .avatar {
+        display: grid;
+        width: 96px;
+        height: 96px;
+        flex: 0 0 auto;
+        place-items: center;
+        overflow: hidden;
+        border: 4px solid #ffffff;
+        border-radius: 50%;
+        background: #fdf6e9;
+        box-shadow: 0 12px 30px rgba(21, 57, 47, 0.18);
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.5);
+      }
+
+      .avatar svg {
+        width: 48px;
+        height: 48px;
+        color: #15392f;
+      }
+
+      .bot-copy {
+        min-width: 0;
+      }
+
+      .bot-label {
+        color: #315f4f;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .bot-name {
+        margin-top: 6px;
+        font-size: 28px;
+        font-weight: 850;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .footer {
+        position: absolute;
+        right: 64px;
+        bottom: 46px;
+        color: rgba(255, 255, 255, 0.68);
+        font-size: 18px;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="brand">
+        <img class="brand-mark" src="../logo/logo-mark-diap.svg" alt="" width="42" height="42">
+        <div class="brand-name">JP Web Creation</div>
+      </div>
+
+      <p class="eyebrow">Free bots for Grok Bot</p>
+      <h1 class="title">Two kind Grok bots</h1>
+      <p class="subtitle">Plus One Back and Got Your Back — calm replies, human approval.</p>
+
+      <div class="bots">
+        <div class="bot">
+          <span class="avatar" aria-hidden="true">
+            <img src="../bots/plus-one-back-heart-384.webp" alt="" width="96" height="96">
+          </span>
+          <div class="bot-copy">
+            <p class="bot-label">Bot 01</p>
+            <p class="bot-name">Plus One Back</p>
+          </div>
+        </div>
+        <div class="bot">
+          <span class="avatar" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"></path><path d="M8.8 12.2l2.2 2.2 4.2-4.4"></path></svg>
+          </span>
+          <div class="bot-copy">
+            <p class="bot-label">Bot 02</p>
+            <p class="bot-name">Got Your Back</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="footer">jpwebcreation.nl/bots/</p>
+    </div>
+  </body>
+</html>

@@ -7,6 +7,8 @@ base_url="${1%/}"
 redirects=(
   "/index.html|/"
   "/ai/index.html|/ai/"
+  "/bots|/bots/"
+  "/bots/index.html|/bots/"
   "/projecten/haveka-installatie/index.html|/projecten/haveka-installatie/"
   "/contact-voor-hulp-met-jouw-website/|/#contact"
   "/projecten/website-mikes-pianoshow/|/projecten/mikes-pianoshow/"
