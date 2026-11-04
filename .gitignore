@@ -6,3 +6,5 @@
 /ai-scan-config.php
 .env
 .DS_Store
+# Runtime parking for operator-box GSC OAuth codes (never commit)
+/data/gsc-box-oauth/
