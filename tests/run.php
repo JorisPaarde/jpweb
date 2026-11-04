@@ -821,6 +821,7 @@ require __DIR__ . '/testronde_1256_meldingen_test.php';
 require __DIR__ . '/smooth_demo_test.php';
 require __DIR__ . '/account_tokens_test.php';
 require __DIR__ . '/route_guards_test.php';
+require __DIR__ . '/gsc_box_test.php';
 require __DIR__ . '/ops_gsc_purge_test.php';
 require __DIR__ . '/testronde_1256_auth_test.php';
 require __DIR__ . '/housekeeping_routes_test.php';

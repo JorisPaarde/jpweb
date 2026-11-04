@@ -47,7 +47,7 @@ test('htaccess: echte pagina en endpoints blijven bereikbaar', static function (
     foreach ([
         '/admin/scans.php', '/admin/tier.php', '/admin/blokkade.php',
         '/app/', '/app/overzicht.php', '/app/gsc/callback.php', '/app/gsc/connect.php',
-        '/app/gsc/disconnect.php', '/app/gsc/preview.php', '/app/confirm-email.php',
+        '/app/gsc/disconnect.php', '/app/gsc/box-pickup.php', '/app/gsc/preview.php', '/app/confirm-email.php',
     ] as $path) {
         assert_true(!htaccess_404_blocks($path), $path . ' must stay reachable');
     }

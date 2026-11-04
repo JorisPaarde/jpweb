@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 /**
  * Google OAuth callback. Validates state; redirect_uri comes only from config.
+ *
+ * Operator-box states (state = box- + 43–128 url-safe chars) are handled first:
+ * the authorization code is parked for one-time pickup. This path never starts
+ * a dashboard session and never exchanges the code for tokens.
  */
 
 require_once dirname(__DIR__, 2) . '/lib/bootstrap.php';
 require_once dirname(__DIR__, 2) . '/lib/gsc.php';
+require_once dirname(__DIR__, 2) . '/lib/gsc_box.php';
+
+$config = ai_scan_load_config();
+ai_scan_security_headers();
+ai_scan_assert_allowed_host($config);
+
+$boxState = (string) ($_GET['state'] ?? '');
+$boxCode = (string) ($_GET['code'] ?? '');
+$boxError = (string) ($_GET['error'] ?? '');
+if (ai_scan_gsc_box_state_valid($boxState)) {
+    ai_scan_gsc_box_handle_callback($boxState, $boxCode, $boxError);
+}
 
 [$config, $pdo] = ai_scan_boot();
 ai_scan_gsc_ensure_schema($pdo);
-ai_scan_security_headers();
-ai_scan_assert_allowed_host($config);
 
 ai_scan_start_session($config);
 $next = ai_scan_gsc_safe_next((string) ($_SESSION['gsc_oauth_next'] ?? ''), '/dashboard/');
