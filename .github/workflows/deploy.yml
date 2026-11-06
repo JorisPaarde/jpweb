@@ -110,6 +110,8 @@ jobs:
             "/projecten/archipel-bouwadvies/"
             "/projecten/wildfloweroffice/"
             "/projecten/synk-by-jeanette/"
+            "/projecten/gratis-planten/"
+            "/projecten/supper-dashboard/"
             "/sitemap.xml"
             "/robots.txt"
           )
@@ -262,6 +264,8 @@ jobs:
             "/projecten/archipel-bouwadvies/"
             "/projecten/wildfloweroffice/"
             "/projecten/synk-by-jeanette/"
+            "/projecten/gratis-planten/"
+            "/projecten/supper-dashboard/"
             "/sitemap.xml"
             "/robots.txt"
           )

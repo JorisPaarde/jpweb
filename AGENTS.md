@@ -26,12 +26,13 @@ Python preview.
 
 The homepage uses an editorial project showcase, not a card grid:
 
-- four primary cases are full-width rows inside `.work-list`, grouped with the relevant service;
+- primary cases are full-width rows inside `.work-list`, grouped with the relevant service;
 - odd rows show the screenshot on the left and even rows on the right;
 - the HTML order always remains screenshot first, copy second; CSS handles the
   visual alternation;
-- EC EEns and Mike illustrate websites, Supper illustrates maintenance and
-  ongoing development, and Haveka illustrates tools and integrations;
+- EC EEns, Mike, Synk and Gratis planten illustrate websites; Supper Services
+  illustrates maintenance and ongoing development; Haveka and Supper
+  omzetdashboard illustrate tools and integrations;
 - Archipel Bouwadvies and Wildfloweroffice remain compact links under the
   website service; Digitale Opname and AI are linked from tools;
 - project labels are plain inline text separated by dots, not pill badges;
@@ -55,6 +56,9 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `eceens-page-1.png`, `eceens-page-2.png`, `eceens-page-3.png`
 - `archipel-page-1.png`, `archipel-page-2.png`, `archipel-page-3.png`
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
+- `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
+- `supper-dashboard-page-1.png`, `supper-dashboard-page-2.png`, `supper-dashboard-page-3.png`
+  (placeholders until logged-in screenshots are available)
 
 Mike's Pianoshow also keeps `mikes-piano-planner.png` as an extra app panel,
 because the app is an important add-on but the website remains the base project.
@@ -98,7 +102,7 @@ items where a subtle entrance helps scanning. It currently applies to:
 
 - the three recognizable-problem items;
 - the four process principles;
-- the four primary project rows;
+- the primary project rows;
 - the three review blocks;
 - the three service items.
 

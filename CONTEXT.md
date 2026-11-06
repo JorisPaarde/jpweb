@@ -103,6 +103,31 @@ dagelijkse operatie, waaronder:
 De techniek volgt hier de interne werkwijze. Joris blijft betrokken bij beheer,
 foutopsporing en doorontwikkeling.
 
+### Gratis planten
+
+Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
+België. Joris bouwde en lanceerde het platform: gebruikersaccounts, aanbod,
+deelplekkenkaart (78 plekken) en stektips. Live: https://gratisplanten.nl
+
+Eerste meetweek 30 oktober–5 november 2026 (productie-page_views): ongeveer
+6.381 pageviews en 24 nieuwe accounts (21 bevestigd). Beste dag 4 november:
+ongeveer 1.496 pageviews. Altijd als pageviews benoemen, nooit als unieke
+bezoekers.
+
+Gebruik deze case als bewijs van een platform met leden — meer dan een
+brochure-site — en hoe snel verkeer na lancering kan oplopen.
+
+### Supper omzetdashboard
+
+Apart van de WooCommerce-webshop van Supper Services. Christian Gebeld
+(Supper) bekeek omzet in een AFAS Excel-werkboek. Joris bouwde een
+login-gated omzetdashboard op AFAS Profit-factuurregels (`Regelbedrag`):
+schermen Jaarlijks, Maandelijks en Producten, met filters op groep, land,
+hotel en familie. Live: https://dashboard.supperservices.com (geen open demo).
+
+Gebruik deze case als bewijs van een maatwerk financieel dashboard dat Excel
+op AFAS-exports vervangt. Niet verwarren met het webshop-beheer.
+
 ### EC EEns
 
 De uitdaging was niet alleen een nieuwe website, maar een beheerbare
@@ -206,9 +231,9 @@ De homepage begeleidt de bezoeker van aanbod naar passend voorbeeld en daarna
 naar samenwerking, aanpak, kosten en contact. Projecten staan direct bij de
 dienst die ze illustreren, niet als een los portfolio tussen andere blokken.
 
-- Websites/webshops: EC EEns en Mike's Pianoshow; compacte links naar Archipel en Wildfloweroffice.
-- Bestaande website verbeteren: Supper Services.
-- Tools en koppelingen: Haveka; links naar Digitale Opname en AI.
+- Websites/webshops: EC EEns, Mike's Pianoshow, Synk by Jeanette en Gratis planten; compacte links naar Archipel en Wildfloweroffice.
+- Bestaande website verbeteren: Supper Services (webshop).
+- Tools en koppelingen: Haveka en Supper omzetdashboard; links naar Digitale Opname en AI.
 
 Elke sectie beantwoordt een nieuwe vraag. Voeg geen losse SEO-, probleem- of
 voordelenblokken toe die eerdere uitleg herhalen. Zoektermen passen in de
