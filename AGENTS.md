@@ -58,7 +58,6 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
 - `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
 - `supper-dashboard-page-1.png`, `supper-dashboard-page-2.png`, `supper-dashboard-page-3.png`
-  (placeholders until logged-in screenshots are available)
 
 Mike's Pianoshow also keeps `mikes-piano-planner.png` as an extra app panel,
 because the app is an important add-on but the website remains the base project.
