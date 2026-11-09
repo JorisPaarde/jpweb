@@ -127,6 +127,17 @@ feature-attributie zonder bron. Geen oorzaak-gevolg claimen («daarna», niet
 Gebruik deze case als bewijs van een communityplatform met leden én hoe je
 na livegang verkeer en aanmeldingen gericht laat groeien.
 
+Aanvulling Joris (9 november 2026): Gratis planten is zijn eigen zijproject.
+De case moet laten zien dat hij snel een compleet ledenplatform met dashboard
+bouwde én de groei uitwerkte, voor klanten die meer willen dan een website
+waar niemand komt. Buiten de repo (door Joris bevestigd): met AI-agents (o.a.
+Grok Bot) een flow opgezet voor social-mediaposts die in verschillende
+Facebookgroepen zijn gedeeld; mailinglijsten opgebouwd; onderzoek gedaan naar
+welke organisaties te benaderen voor snel bereik. In de repo: feedbackknop
+vanaf het begin, badges (gamification), printbare posters/flyers met QR,
+deelberichten en deelknoppen, doelgroeppagina’s. Media: Positief nieuws,
+9 november 2026 (data/in-de-media.json in de gratis-stekjes-repo).
+
 ### EC EEns
 
 De uitdaging was niet alleen een nieuwe website, maar een beheerbare
