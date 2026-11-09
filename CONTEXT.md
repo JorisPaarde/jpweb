@@ -103,6 +103,26 @@ dagelijkse operatie, waaronder:
 De techniek volgt hier de interne werkwijze. Joris blijft betrokken bij beheer,
 foutopsporing en doorontwikkeling.
 
+### Gratis planten
+
+Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
+België. Doel: mensen in de buurt met elkaar in contact brengen en meer groen
+in de wereld. Joris bouwde en lanceerde het platform (accounts, aanbod,
+deelplekkenkaart, stadspagina’s, stektips) en pakte daarna verkeer en
+conversie aan: stadspagina’s, kaart, België, Facebook/Instagram-posts met UTM,
+trechtermeting en snelle releases. Live: https://gratisplanten.nl
+
+Cijfers alleen uit het GP-dashboard en de repo-historie (facts.md, gemeten
+9 november 2026). Geen Search Console. Sterkste dashboardcijfers: 153 → 1.527
+pageviews in zes dagen (≈10×); 9.038 pageviews in 30 okt–9 nov; 6.505 in week
+2–8 nov; 38 aanmeldingen sinds 29 okt. Repo: 71 tags in 9 dagen; 47
+stadspagina’s (43 NL + 4 BE); 88 deelplekken (51 NL + 37 BE); heel België
+sinds 31 okt. Geen persoutreach, post-performance of feature-attributie zonder
+bron. Geen oorzaak-gevolg claimen («daarna», niet «daardoor»).
+
+Gebruik deze case als bewijs van een communityplatform met leden én hoe je
+na livegang verkeer en aanmeldingen gericht laat groeien.
+
 ### EC EEns
 
 De uitdaging was niet alleen een nieuwe website, maar een beheerbare
@@ -206,7 +226,7 @@ De homepage begeleidt de bezoeker van aanbod naar passend voorbeeld en daarna
 naar samenwerking, aanpak, kosten en contact. Projecten staan direct bij de
 dienst die ze illustreren, niet als een los portfolio tussen andere blokken.
 
-- Websites/webshops: EC EEns en Mike's Pianoshow; compacte links naar Archipel en Wildfloweroffice.
+- Websites/webshops: EC EEns, Mike's Pianoshow, Synk by Jeanette en Gratis planten; compacte links naar Archipel en Wildfloweroffice.
 - Bestaande website verbeteren: Supper Services.
 - Tools en koppelingen: Haveka; links naar Digitale Opname en AI.
 
