@@ -111,6 +111,7 @@ jobs:
             "/projecten/wildfloweroffice/"
             "/projecten/synk-by-jeanette/"
             "/projecten/gratis-planten/"
+            "/projecten/supper-omzetdashboard/"
             "/sitemap.xml"
             "/robots.txt"
           )
@@ -264,6 +265,7 @@ jobs:
             "/projecten/wildfloweroffice/"
             "/projecten/synk-by-jeanette/"
             "/projecten/gratis-planten/"
+            "/projecten/supper-omzetdashboard/"
             "/sitemap.xml"
             "/robots.txt"
           )

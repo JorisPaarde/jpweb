@@ -57,6 +57,12 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `archipel-page-1.png`, `archipel-page-2.png`, `archipel-page-3.png`
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
 - `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
+- `supper-omzetdashboard-page-1.png`, `supper-omzetdashboard-page-2.png`, `supper-omzetdashboard-page-3.png`
+
+Supper omzetdashboard screenshots must use voorbeelddata only (never live AFAS
+customer hotels or amounts). Gallery assets: `supper-omzetdashboard-overzicht`,
+`supper-omzetdashboard-hotels`, `supper-omzetdashboard-hotel-grafiek` (+ `-390`
+mobile variants), with webp + jpg fallbacks.
 
 Mike's Pianoshow also keeps `mikes-piano-planner.png` as an extra app panel,
 because the app is an important add-on but the website remains the base project.

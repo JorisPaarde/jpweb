@@ -103,6 +103,21 @@ dagelijkse operatie, waaronder:
 De techniek volgt hier de interne werkwijze. Joris blijft betrokken bij beheer,
 foutopsporing en doorontwikkeling.
 
+### Supper omzetdashboard
+
+Apart van de WooCommerce-webshop. Login-gated PHP-dashboard (Supper Finance
+Metrics) op AFAS Profit-factuurregels: omzet als som van `Regelbedrag` (EUR),
+alleen administratie SUPPER B.V. Schermen: Overzicht, Hotels, Producten,
+Grootboek, Inzichten. Nachtelijke AFAS-sync; geen Excel-terugval in de UI.
+Feiten alleen uit feiten.md / de supper-dashboard-repo. Bouwduur: eerste
+commit 18 september 2026 tot v1.0.82 op 27 oktober 2026 (39 dagen). Screenshots
+op de casepagina: alleen voorbeelddata (generieke hotels), nooit
+productiedata. Geen klikbare link naar het live dashboard. Case-URL:
+`/projecten/supper-omzetdashboard/`.
+
+Gebruik deze case als bewijs van een maatwerk financieel dashboard dat Excel
+op AFAS-exports vervangt. Niet verwarren met het webshop-beheer.
+
 ### Gratis planten
 
 Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
@@ -263,7 +278,7 @@ dienst die ze illustreren, niet als een los portfolio tussen andere blokken.
 
 - Websites/webshops: EC EEns, Mike's Pianoshow, Synk by Jeanette en Gratis planten; compacte links naar Archipel en Wildfloweroffice.
 - Bestaande website verbeteren: Supper Services.
-- Tools en koppelingen: Haveka; links naar Digitale Opname en AI.
+- Tools en koppelingen: Haveka en Supper omzetdashboard; links naar Digitale Opname en AI.
 
 Elke sectie beantwoordt een nieuwe vraag. Voeg geen losse SEO-, probleem- of
 voordelenblokken toe die eerdere uitleg herhalen. Zoektermen passen in de
