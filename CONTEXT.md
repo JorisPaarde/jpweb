@@ -106,16 +106,19 @@ foutopsporing en doorontwikkeling.
 ### Gratis planten
 
 Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
-België. Joris bouwde en lanceerde het platform: gebruikersaccounts, aanbod,
-deelplekkenkaart (78 plekken) en stektips. Live: https://gratisplanten.nl
+België. Doel: mensen in de buurt met elkaar in contact brengen en meer groen
+in de wereld. Joris bouwde en lanceerde het platform (accounts, aanbod,
+deelplekkenkaart, stadspagina’s, stektips) en pakte daarna verkeer en
+conversie aan: stadspagina’s, kaart, België, Facebook/Instagram-posts met UTM,
+trechtermeting en snelle releases. Live: https://gratisplanten.nl
 
-Eerste meetweek 30 oktober–5 november 2026 (productie-page_views): ongeveer
-6.381 pageviews en 24 nieuwe accounts (21 bevestigd). Beste dag 4 november:
-ongeveer 1.496 pageviews. Altijd als pageviews benoemen, nooit als unieke
-bezoekers.
+Cijfers over verkeerstoename komen alleen uit het GP-dashboard (pageviews,
+leden, aanbiedingen per week). Geen Search Console als bron op de site.
+Dashboardcijfers staan als placeholders tot facts.md is aangeleverd; verzin
+geen getallen.
 
-Gebruik deze case als bewijs van een platform met leden — meer dan een
-brochure-site — en hoe snel verkeer na lancering kan oplopen.
+Gebruik deze case als bewijs van een communityplatform met leden én hoe je
+na livegang verkeer, leden en aanbod gericht laat groeien.
 
 ### Supper omzetdashboard
 
