@@ -112,13 +112,16 @@ deelplekkenkaart, stadspagina’s, stektips) en pakte daarna verkeer en
 conversie aan: stadspagina’s, kaart, België, Facebook/Instagram-posts met UTM,
 trechtermeting en snelle releases. Live: https://gratisplanten.nl
 
-Cijfers over verkeerstoename komen alleen uit het GP-dashboard (pageviews,
-leden, aanbiedingen per week). Geen Search Console als bron op de site.
-Dashboardcijfers staan als placeholders tot facts.md is aangeleverd; verzin
-geen getallen.
+Cijfers alleen uit het GP-dashboard en de repo-historie (facts.md, gemeten
+9 november 2026). Geen Search Console. Sterkste dashboardcijfers: 153 → 1.527
+pageviews in zes dagen (≈10×); 9.038 pageviews in 30 okt–9 nov; 6.505 in week
+2–8 nov; 38 aanmeldingen sinds 29 okt. Repo: 71 tags in 9 dagen; 47
+stadspagina’s (43 NL + 4 BE); 88 deelplekken (51 NL + 37 BE); heel België
+sinds 31 okt. Geen persoutreach, post-performance of feature-attributie zonder
+bron. Geen oorzaak-gevolg claimen («daarna», niet «daardoor»).
 
 Gebruik deze case als bewijs van een communityplatform met leden én hoe je
-na livegang verkeer, leden en aanbod gericht laat groeien.
+na livegang verkeer en aanmeldingen gericht laat groeien.
 
 ### Supper omzetdashboard
 
