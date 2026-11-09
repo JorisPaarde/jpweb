@@ -118,8 +118,9 @@ pageviews in zes dagen (≈10×); 9.038 pageviews in 30 okt–9 nov; 6.505 in we
 2–8 nov; 38 aanmeldingen sinds 29 okt. Repo: 71 releases live in 9 dagen.
 Stadspagina’s op prod: 100 (sitemap gratisplanten.nl, 9 nov 2026),
 waarvan 53 automatisch — één bron in `#gp-case-metrics` op de casepagina.
-Deelplekken in data: 88 (51 NL + 37 BE);
-heel België sinds 31 okt. Geen persoutreach, post-performance of
+Deelplekken: geen vast aantal noemen (wijzigt steeds); formuleer als
+steeds meer deelplekken in Nederland en België, elke week komen er nieuwe bij.
+Heel België sinds 31 okt. Geen persoutreach, post-performance of
 feature-attributie zonder bron. Geen oorzaak-gevolg claimen («daarna», niet
 «daardoor»). Instagram niet noemen tot bevestigd.
 
