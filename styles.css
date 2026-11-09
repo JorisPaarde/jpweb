@@ -1334,6 +1334,41 @@ main section[id] {
   margin-bottom: 0;
 }
 
+.case-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2.4vw, 28px);
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-gallery > li {
+  margin: 0;
+  min-width: 0;
+}
+
+.case-gallery figure {
+  margin: 0;
+}
+
+.case-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: 0 10px 36px rgba(21, 57, 47, 0.08);
+}
+
+.case-gallery figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
 .case-testimonial {
   margin: 32px 0;
   padding: clamp(24px, 4vw, 36px);
@@ -2424,6 +2459,10 @@ main section[id] {
   .ai-hero,
   .ai-offers,
   .ai-references {
+    grid-template-columns: 1fr;
+  }
+
+  .case-gallery {
     grid-template-columns: 1fr;
   }
 
