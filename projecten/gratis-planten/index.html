@@ -216,7 +216,7 @@
             <li>Deelplekkenkaart met vaste initiatieven naast aanbod van leden.</li>
             <li>Stadspagina’s per plaats, met lokale kaart en deelplekken; overzicht per land en provincie.</li>
             <li>Sinds 31 oktober heel België: Belgische postcodes, deelplekken en stadspagina’s.</li>
-            <li>Automatische stadspagina’s zodra een plaats live aanbod of een zichtbare deelplek heeft (CHANGELOG 0.78.20): 53 van de 65 pagina’s op prod zijn zo toegevoegd.</li>
+            <li>Automatische stadspagina’s zodra een plaats live aanbod of een zichtbare deelplek heeft (CHANGELOG 0.78.20): <span data-gp-metric="cityPagesAutomatic">53</span> van de <span data-gp-metric="cityPagesTotal">65</span> pagina’s op prod zijn zo toegevoegd.</li>
           </ul>
 
           <h3>Agenda, initiatieven en posters</h3>
@@ -236,7 +236,7 @@
           <ul>
             <li>Beheerpanel voor gebruikers, keuren (verenigingen, deelplekken, ervaringen), inbox en statistieken.</li>
             <li>Statistiekendashboard met pageviews en aanmeldingen; conversietrechter van klik tot eerste aanbod.</li>
-            <li>Postlogboek met UTM-links voor Facebook- en Instagram-posts.</li>
+            <li>Postlogboek met UTM-links voor Facebook-posts.</li>
             <li>Privacyvriendelijke pageview-teller (geen IP/UA/query) en AVG-export/wissen voor accounts.</li>
             <li>SEO-titels, sitemap, nette Nederlandse foutpagina’s (404/419/429/500), WebP-beelden, service worker/PWA-manifest.</li>
           </ul>
@@ -351,11 +351,10 @@
             <li><strong>6.505</strong> pageviews in de week 2–8 november (dashboard).</li>
             <li><strong>38</strong> aanmeldingen sinds 29 oktober; daarvan 33 bevestigd en 5 onbevestigd op het meetmoment (dashboard).</li>
             <li><strong>10</strong> nieuwe aanbiedingen in 14 dagen, alle 10 actief (dashboard).</li>
-            <li><strong>65</strong> stadspagina’s in de productie-sitemap (waarvan 53 automatisch op basis van aanbod en deelplekken); bron: sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.20).</li>
+            <li><strong data-gp-metric="cityPagesTotal">65</strong> stadspagina’s in de productie-sitemap (waarvan <span data-gp-metric="cityPagesAutomatic">53</span> automatisch op basis van aanbod en deelplekken); bron: <span data-gp-metric="cityPagesSource">sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.20)</span>.</li>
             <li><strong>88</strong> deelplekken in de data (51 NL + 37 BE), o.a. zaadbibliotheken, plantenasiels en plantenbiebs (repo).</li>
             <li><strong>36</strong> artikelen in de sitemap (CHANGELOG 0.61.0).</li>
-            <li><strong>71</strong> GitHub-tags / releases in 9 dagen (v0.24.8 → v0.78.19) (repo); productie staat op 0.78.20.</li>
-            <li><strong>177</strong> CHANGELOG-versies van 0.1.0 (29 okt) tot 0.78.19 (9 nov) (repo); daarna 0.78.20 met automatische stadspagina’s live op prod.</li>
+            <li><strong>71</strong> releases live in 9 dagen (v0.24.8 → v0.78.19) (repo); productie staat op 0.78.20.</li>
             <li><strong>318</strong> commits op master (stand 9 november 2026 ±12:45) (repo).</li>
           </ul>
         </div>
@@ -369,7 +368,7 @@
         <div>
           <p>
             De eerste commit was op 29 oktober 2026 (13:37 Europe/Amsterdam). Daarna volgden
-            korte releases: 71 tags in 9 dagen, van v0.24.8 (30 oktober) tot v0.78.19
+            korte releases: 71 releases live in 9 dagen, van v0.24.8 (30 oktober) tot v0.78.19
             (9 november); productie staat op 0.78.20. Een greep uit de mijlpalen:
           </p>
           <ul>
@@ -380,8 +379,8 @@
             <li><strong>2 nov</strong> — Help-mee met printbare posters en deelknoppen.</li>
             <li><strong>3–4 nov</strong> — Plantzoeker/stektips, Struikroven, initiatiefpagina’s en posters.</li>
             <li><strong>5 nov</strong> — STEKchallenge; conversiemeting, UTM/postlogboek en dashboardtrechter.</li>
-            <li><strong>6–7 nov</strong> — Tracking-URL’s voor FB/IG; landingspagina tuinverenigingen.</li>
-            <li><strong>8–9 nov</strong> — Stadspagina Den Helder; trechter-UI aangescherpt; tag v0.78.19; 0.78.20 met automatische stadspagina’s live op prod (65 in sitemap).</li>
+            <li><strong>6–7 nov</strong> — Tracking-URL’s voor Facebook; landingspagina tuinverenigingen.</li>
+            <li><strong>8–9 nov</strong> — Stadspagina Den Helder; trechter-UI aangescherpt; tag v0.78.19; 0.78.20 met automatische stadspagina’s live op prod (<span data-gp-metric="cityPagesTotal">65</span> in sitemap).</li>
           </ul>
         </div>
       </section>
@@ -389,7 +388,7 @@
       <section class="case-section">
         <div>
           <p class="eyebrow">AI</p>
-          <h2>Hoe AI in dit project is ingezet</h2>
+          <h2>Hoe AI in elk onderdeel van dit project is ingezet</h2>
         </div>
         <div>
           <p>
@@ -398,10 +397,10 @@
             naar buiten gaat.
           </p>
           <ul>
-            <li>AI-bots stellen Facebook- en Instagram-posts op; elke post krijgt een UTM-link, zodat ik in het postlogboek zie wat een post oplevert.</li>
-            <li>Bots helpen mailinglijsten opbouwen en mailings versturen naar tuinverenigingen (en andere outreach-contacten), via een mailingtool — steeds na mijn goedkeuring.</li>
+            <li>AI stelt Facebook-posts op; elke post krijgt een UTM-link, zodat ik in het postlogboek zie wat een post oplevert.</li>
+            <li>AI helpt mailinglijsten opbouwen en mailings versturen naar tuinverenigingen en andere organisaties — ongeveer 5 per werkdag, steeds na mijn goedkeuring.</li>
             <li>Binnenkomende mail wordt automatisch beantwoord of als concept voorbereid, zodat ik snel kan bijsturen of zelf versturen.</li>
-            <li>AI-agents helpen code bouwen, testen en releasen; in negen dagen gingen er 71 releases live.</li>
+            <li>AI helpt code bouwen, testen en releasen; in negen dagen gingen er 71 releases live.</li>
             <li>AI ondersteunt SEO-werk en stadspagina’s (tekst, structuur, uitbreiding), met controle voordat iets naar productie gaat.</li>
           </ul>
           <p>
@@ -475,6 +474,36 @@
         <a href="../../#contact">Contact</a>
       </nav>
     </footer>
+    <!--
+      Stadspagina-cijfers: één bron voor alle vermeldingen op deze pagina.
+      Na de hotfix (vaste + automatische pagina’s in de sitemap) hier updaten;
+      data-gp-metric-spanen elders volgen automatisch.
+    -->
+    <script type="application/json" id="gp-case-metrics">
+      {
+        "cityPagesTotal": 65,
+        "cityPagesAutomatic": 53,
+        "cityPagesSource": "sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.20)"
+      }
+    </script>
+    <script>
+      (function () {
+        var el = document.getElementById("gp-case-metrics");
+        if (!el) return;
+        var data;
+        try {
+          data = JSON.parse(el.textContent);
+        } catch (err) {
+          return;
+        }
+        document.querySelectorAll("[data-gp-metric]").forEach(function (node) {
+          var key = node.getAttribute("data-gp-metric");
+          if (Object.prototype.hasOwnProperty.call(data, key) && data[key] != null) {
+            node.textContent = String(data[key]);
+          }
+        });
+      })();
+    </script>
     <script src="../../script.js?v=19"></script>
   </body>
 </html>
