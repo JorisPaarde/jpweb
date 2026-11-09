@@ -235,6 +235,26 @@ Controleer voor iedere gewijzigde sectie:
   redactionele zoekwoordkeuzes. Noem een zoekterm alleen een bestaande kans op
   basis van meetgegevens met een duidelijke periode.
 
+## Positionering websites (besluit Joris, 9 november 2026)
+
+Het platform is geen hoofdbelofte: de klant moet iets krijgen wat voor hem
+werkt. Standaard bouwt Joris de site zelf (custom): makkelijker te
+onderhouden, sneller en beter vindbaar in Google. WordPress (Elementor of
+Bricks) en Squarespace blijven opties wanneer dat beter bij de klant past.
+Haal Squarespace niet weg waar het als optie staat; herschrijf alleen waar
+een platform de hoofdbelofte is.
+
+Kernzin (letterlijk of dichtbij gebruiken):
+
+> Het platform maakt mij niet zoveel uit: je moet iets krijgen wat voor jou
+> werkt. Standaard bouw ik je site zelf, omdat die makkelijker te onderhouden
+> is, sneller is en beter scoort in Google. Werk je liever in WordPress
+> (Elementor of Bricks) of Squarespace? Dan kan dat ook.
+
+Focus van het aanbod: bestaande sites vernieuwen voor klein mkb, en na
+oplevering helpen zodat de site klanten en groei oplevert. Begin teksten bij
+het werk of knelpunt; noem techniek pas als het de keuze uitlegt.
+
 ## Opbouw van de site (besluit Joris, 5 september 2026)
 
 De homepage begeleidt de bezoeker van aanbod naar passend voorbeeld en daarna

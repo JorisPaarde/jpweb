@@ -6,7 +6,7 @@ De blog helpt ondernemers een concrete keuze maken over werk dat JPWebcreation u
 
 | Artikel | Lezersvraag | Passende vervolgstap |
 | --- | --- | --- |
-| [WordPress verbeteren of opnieuw bouwen](wordpress-website-verbeteren-of-opnieuw-laten-maken.html) | Kan mijn bestaande website worden verbeterd? | Websites of onderhoud bespreken met Joris |
+| [Website verbeteren of opnieuw bouwen](wordpress-website-verbeteren-of-opnieuw-laten-maken.html) | Kan mijn bestaande website worden verbeterd? | Websites of onderhoud bespreken met Joris (URL blijft wordpress-… voor SEO) |
 | [Excel als bedrijfssysteem](excel-als-bedrijfssysteem-mkb.html) | Wanneer houdt een spreadsheet op te passen bij het werk? | Bestaande software, online tool of aanpassing beoordelen |
 | [Gegevens overtypen](waarom-typt-iemand-dit-nog-over-mkb.html) | Welke overdracht kan een koppeling overnemen? | Programma's, gegevens en uitzonderingen bespreken |
 | [Offerteproces](offerteproces-automatiseren-zonder-chaos.html) | Hoe krijg ik een aanvraag waarop ik kan offreren? | Aanvraagformulier of offertemodule; bij airco een opnamedossier |
