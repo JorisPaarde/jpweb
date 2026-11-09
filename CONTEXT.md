@@ -123,17 +123,6 @@ bron. Geen oorzaak-gevolg claimen («daarna», niet «daardoor»).
 Gebruik deze case als bewijs van een communityplatform met leden én hoe je
 na livegang verkeer en aanmeldingen gericht laat groeien.
 
-### Supper omzetdashboard
-
-Apart van de WooCommerce-webshop van Supper Services. Christian Gebeld
-(Supper) bekeek omzet in een AFAS Excel-werkboek. Joris bouwde een
-login-gated omzetdashboard op AFAS Profit-factuurregels (`Regelbedrag`):
-schermen Jaarlijks, Maandelijks en Producten, met filters op groep, land,
-hotel en familie. Live: https://dashboard.supperservices.com (geen open demo).
-
-Gebruik deze case als bewijs van een maatwerk financieel dashboard dat Excel
-op AFAS-exports vervangt. Niet verwarren met het webshop-beheer.
-
 ### EC EEns
 
 De uitdaging was niet alleen een nieuwe website, maar een beheerbare
@@ -238,8 +227,8 @@ naar samenwerking, aanpak, kosten en contact. Projecten staan direct bij de
 dienst die ze illustreren, niet als een los portfolio tussen andere blokken.
 
 - Websites/webshops: EC EEns, Mike's Pianoshow, Synk by Jeanette en Gratis planten; compacte links naar Archipel en Wildfloweroffice.
-- Bestaande website verbeteren: Supper Services (webshop).
-- Tools en koppelingen: Haveka en Supper omzetdashboard; links naar Digitale Opname en AI.
+- Bestaande website verbeteren: Supper Services.
+- Tools en koppelingen: Haveka; links naar Digitale Opname en AI.
 
 Elke sectie beantwoordt een nieuwe vraag. Voeg geen losse SEO-, probleem- of
 voordelenblokken toe die eerdere uitleg herhalen. Zoektermen passen in de

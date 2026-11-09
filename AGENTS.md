@@ -31,8 +31,8 @@ The homepage uses an editorial project showcase, not a card grid:
 - the HTML order always remains screenshot first, copy second; CSS handles the
   visual alternation;
 - EC EEns, Mike, Synk and Gratis planten illustrate websites; Supper Services
-  illustrates maintenance and ongoing development; Haveka and Supper
-  omzetdashboard illustrate tools and integrations;
+  illustrates maintenance and ongoing development; Haveka illustrates tools
+  and integrations;
 - Archipel Bouwadvies and Wildfloweroffice remain compact links under the
   website service; Digitale Opname and AI are linked from tools;
 - project labels are plain inline text separated by dots, not pill badges;
@@ -57,7 +57,6 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `archipel-page-1.png`, `archipel-page-2.png`, `archipel-page-3.png`
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
 - `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
-- `supper-dashboard-page-1.png`, `supper-dashboard-page-2.png`, `supper-dashboard-page-3.png`
 
 Mike's Pianoshow also keeps `mikes-piano-planner.png` as an extra app panel,
 because the app is an important add-on but the website remains the base project.
