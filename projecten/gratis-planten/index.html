@@ -216,7 +216,7 @@
             <li>Deelplekkenkaart met vaste initiatieven naast aanbod van leden.</li>
             <li>Stadspagina’s per plaats, met lokale kaart en deelplekken; overzicht per land en provincie.</li>
             <li>Sinds 31 oktober heel België: Belgische postcodes, deelplekken en stadspagina’s.</li>
-            <li>Automatische stadspagina’s zodra een plaats live aanbod of een zichtbare deelplek heeft (CHANGELOG 0.78.20): <span data-gp-metric="cityPagesAutomatic">53</span> van de <span data-gp-metric="cityPagesTotal">65</span> pagina’s op prod zijn zo toegevoegd.</li>
+            <li>Automatische stadspagina’s zodra een plaats live aanbod of een zichtbare deelplek heeft: <span data-gp-metric="cityPagesAutomatic">53</span> van de <span data-gp-metric="cityPagesTotal">100</span> pagina’s op prod zijn zo toegevoegd.</li>
           </ul>
 
           <h3>Agenda, initiatieven en posters</h3>
@@ -351,10 +351,10 @@
             <li><strong>6.505</strong> pageviews in de week 2–8 november (dashboard).</li>
             <li><strong>38</strong> aanmeldingen sinds 29 oktober; daarvan 33 bevestigd en 5 onbevestigd op het meetmoment (dashboard).</li>
             <li><strong>10</strong> nieuwe aanbiedingen in 14 dagen, alle 10 actief (dashboard).</li>
-            <li><strong data-gp-metric="cityPagesTotal">65</strong> stadspagina’s in de productie-sitemap (waarvan <span data-gp-metric="cityPagesAutomatic">53</span> automatisch op basis van aanbod en deelplekken); bron: <span data-gp-metric="cityPagesSource">sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.20)</span>.</li>
+            <li><strong data-gp-metric="cityPagesTotal">100</strong> stadspagina’s in de productie-sitemap (waarvan <span data-gp-metric="cityPagesAutomatic">53</span> automatisch op basis van aanbod en deelplekken); bron: <span data-gp-metric="cityPagesSource">sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.24)</span>.</li>
             <li><strong>88</strong> deelplekken in de data (51 NL + 37 BE), o.a. zaadbibliotheken, plantenasiels en plantenbiebs (repo).</li>
             <li><strong>36</strong> artikelen in de sitemap (CHANGELOG 0.61.0).</li>
-            <li><strong>71</strong> releases live in 9 dagen (v0.24.8 → v0.78.19) (repo); productie staat op 0.78.20.</li>
+            <li><strong>71</strong> releases live in 9 dagen (v0.24.8 → v0.78.19) (repo); productie staat op 0.78.24.</li>
             <li><strong>318</strong> commits op master (stand 9 november 2026 ±12:45) (repo).</li>
           </ul>
         </div>
@@ -369,7 +369,7 @@
           <p>
             De eerste commit was op 29 oktober 2026 (13:37 Europe/Amsterdam). Daarna volgden
             korte releases: 71 releases live in 9 dagen, van v0.24.8 (30 oktober) tot v0.78.19
-            (9 november); productie staat op 0.78.20. Een greep uit de mijlpalen:
+            (9 november); productie staat op 0.78.24. Een greep uit de mijlpalen:
           </p>
           <ul>
             <li><strong>29 okt</strong> — Basis, homepage, gestylede foutpagina’s, eerste SEO-stadspagina’s.</li>
@@ -380,7 +380,7 @@
             <li><strong>3–4 nov</strong> — Plantzoeker/stektips, Struikroven, initiatiefpagina’s en posters.</li>
             <li><strong>5 nov</strong> — STEKchallenge; conversiemeting, UTM/postlogboek en dashboardtrechter.</li>
             <li><strong>6–7 nov</strong> — Tracking-URL’s voor Facebook; landingspagina tuinverenigingen.</li>
-            <li><strong>8–9 nov</strong> — Stadspagina Den Helder; trechter-UI aangescherpt; tag v0.78.19; 0.78.20 met automatische stadspagina’s live op prod (<span data-gp-metric="cityPagesTotal">65</span> in sitemap).</li>
+            <li><strong>8–9 nov</strong> — Stadspagina Den Helder; trechter aangescherpt; automatische stadspagina’s live, nu <span data-gp-metric="cityPagesTotal">100</span> in de sitemap.</li>
           </ul>
         </div>
       </section>
@@ -476,14 +476,13 @@
     </footer>
     <!--
       Stadspagina-cijfers: één bron voor alle vermeldingen op deze pagina.
-      Na de hotfix (vaste + automatische pagina’s in de sitemap) hier updaten;
       data-gp-metric-spanen elders volgen automatisch.
     -->
     <script type="application/json" id="gp-case-metrics">
       {
-        "cityPagesTotal": 65,
+        "cityPagesTotal": 100,
         "cityPagesAutomatic": 53,
-        "cityPagesSource": "sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.20)"
+        "cityPagesSource": "sitemap gratisplanten.nl, 9 november 2026 (GP 0.78.24)"
       }
     </script>
     <script>
