@@ -109,16 +109,19 @@ Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
 België. Doel: mensen in de buurt met elkaar in contact brengen en meer groen
 in de wereld. Joris bouwde en lanceerde het platform (accounts, aanbod,
 deelplekkenkaart, stadspagina’s, stektips) en pakte daarna verkeer en
-conversie aan: stadspagina’s, kaart, België, Facebook/Instagram-posts met UTM,
+conversie aan: stadspagina’s, kaart, België, Facebook-posts met UTM,
 trechtermeting en snelle releases. Live: https://gratisplanten.nl
 
 Cijfers alleen uit het GP-dashboard en de repo-historie (facts.md, gemeten
 9 november 2026). Geen Search Console. Sterkste dashboardcijfers: 153 → 1.527
 pageviews in zes dagen (≈10×); 9.038 pageviews in 30 okt–9 nov; 6.505 in week
-2–8 nov; 38 aanmeldingen sinds 29 okt. Repo: 71 tags in 9 dagen; 47
-stadspagina’s (43 NL + 4 BE); 88 deelplekken (51 NL + 37 BE); heel België
-sinds 31 okt. Geen persoutreach, post-performance of feature-attributie zonder
-bron. Geen oorzaak-gevolg claimen («daarna», niet «daardoor»).
+2–8 nov; 38 aanmeldingen sinds 29 okt. Repo: 71 releases live in 9 dagen.
+Stadspagina’s op prod: 100 (sitemap gratisplanten.nl, 9 nov 2026),
+waarvan 53 automatisch — één bron in `#gp-case-metrics` op de casepagina.
+Deelplekken in data: 88 (51 NL + 37 BE);
+heel België sinds 31 okt. Geen persoutreach, post-performance of
+feature-attributie zonder bron. Geen oorzaak-gevolg claimen («daarna», niet
+«daardoor»). Instagram niet noemen tot bevestigd.
 
 Gebruik deze case als bewijs van een communityplatform met leden én hoe je
 na livegang verkeer en aanmeldingen gericht laat groeien.
