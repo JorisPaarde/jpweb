@@ -79,6 +79,15 @@ for url in urls:
 
 assert "noindex" in (root / "404.html").read_text()
 
+# /wie-ik-ben/ stays live but must not be discoverable via sitemap or indexing.
+WIE_IK_BEN = "https://jpwebcreation.nl/wie-ik-ben/"
+assert WIE_IK_BEN not in urls, "sitemap must not include /wie-ik-ben/"
+wie_html = (root / "wie-ik-ben" / "index.html").read_text()
+wie_head = Head()
+wie_head.feed(wie_html)
+assert wie_head.meta.get("robots") == ["noindex, nofollow"], "/wie-ik-ben/: robots meta"
+assert wie_head.canon == [WIE_IK_BEN], "/wie-ik-ben/: canonical"
+
 # /bots/ must not reuse the homepage social image, and its OG asset must be 1200x630.
 bots_html = (root / "bots" / "index.html").read_text()
 bots_head = Head()
