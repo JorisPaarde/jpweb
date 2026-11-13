@@ -327,6 +327,22 @@ h3 {
   font-size: var(--type-lead);
 }
 
+/* Keep hero copy clear of the 3D carousel on desktop; stacked mobile layout is unchanged. */
+@media (min-width: 901px) {
+  .hero-carousel {
+    --carousel-radius: clamp(270px, 29.5vw, 440px);
+    right: max(clamp(-230px, -13vw, -130px), calc((100vw - var(--site-max)) / 2 - 140px));
+  }
+
+  .hero h1 {
+    max-width: min(650px, 42vw);
+  }
+
+  .hero-content p {
+    max-width: min(620px, 40vw);
+  }
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
