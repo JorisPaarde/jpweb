@@ -1102,6 +1102,46 @@ main section[id] {
   font-size: var(--type-section-compact);
 }
 
+.price-note {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.price-list {
+  list-style: none;
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.price-list li {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.38fr) minmax(0, 1fr);
+  gap: 8px 28px;
+  align-items: baseline;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.price-label {
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.price-value {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.price-amount {
+  color: var(--ink);
+  font-weight: 750;
+  white-space: nowrap;
+}
+
 .faq-list {
   display: grid;
   width: 100%;
@@ -2545,6 +2585,11 @@ main section[id] {
 
   .process article {
     grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .price-list li {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .work-section .work-heading,
