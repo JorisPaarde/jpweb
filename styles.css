@@ -634,7 +634,18 @@ main section[id] {
 .work-heading h2 {
   max-width: 760px;
   margin-bottom: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
+.work-section > .work-heading:has(+ .work-heading) {
+  margin-bottom: 0;
+}
+
+.work-section > .work-heading + .work-heading {
+  margin-top: clamp(38px, 5vw, 64px);
+  padding-top: clamp(38px, 5vw, 64px);
+  border-top: 1px solid var(--line);
 }
 
 .work-heading > * {
@@ -659,6 +670,14 @@ main section[id] {
 
 .section-heading h2 {
   max-width: 720px;
+  text-wrap: balance;
+}
+
+.process-intro h2,
+.faq .section-heading h2,
+.about-section h2,
+.contact-section h2 {
+  text-wrap: balance;
 }
 
 .pain-points .section-heading,
@@ -1102,6 +1121,60 @@ main section[id] {
   font-size: var(--type-section-compact);
 }
 
+.price-note {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.price-list {
+  list-style: none;
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.price-list li {
+  display: grid;
+  grid-template-columns: minmax(13.5rem, 0.48fr) minmax(0, 1fr);
+  gap: 8px 28px;
+  align-items: start;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.price-label {
+  font-size: 1.05rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.price-value {
+  display: grid;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.price-main {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.price-detail {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.price-amount {
+  color: var(--ink);
+  font-weight: 750;
+  white-space: nowrap;
+}
+
 .faq-list {
   display: grid;
   width: 100%;
@@ -1158,7 +1231,7 @@ main section[id] {
 .project-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(320px, 1.35fr) minmax(0, 1fr);
   justify-content: center;
   gap: clamp(34px, 7vw, 90px);
   align-items: center;
@@ -1177,8 +1250,8 @@ main section[id] {
 
 .project-hero h1 {
   color: var(--ink);
-  max-width: 100%;
-  font-size: clamp(1.8rem, 4.4vw, 4rem);
+  max-width: 620px;
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
   white-space: normal;
   overflow-wrap: normal;
   word-break: normal;
@@ -2393,7 +2466,9 @@ main section[id] {
   }
 }
 
-@media (max-width: 900px) {
+/* Hamburger tot 1199px: vanaf ~1190 past de desktop-nav op één regel
+   (1101–1180 wrappen AI-vindbaarheid / Digitale Opname nog). */
+@media (max-width: 1199px) {
   .site-header {
     grid-template-columns: auto auto;
   }
@@ -2420,7 +2495,9 @@ main section[id] {
     padding: 14px 0;
     border-top: 1px solid var(--line);
   }
+}
 
+@media (max-width: 900px) {
   .hero {
     min-height: 0;
     grid-template-columns: minmax(0, 1fr);
@@ -2545,6 +2622,11 @@ main section[id] {
 
   .process article {
     grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .price-list li {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .work-section .work-heading,
