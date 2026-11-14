@@ -153,10 +153,12 @@ jobs:
             "$BASE_URL/ai-scan.php?action=state")"
           grep -q '"values":\[\]' <<< "$ai_scan_state"
 
-  # Productie volgt automatisch, maar alleen als test en de rooktest daar slagen.
+  # Productie volgt automatisch vanaf main, maar alleen als test en de rooktest daar slagen.
+  # Bij workflow_dispatch op een andere branch blijft productie overgeslagen.
   deploy_production:
     name: Deploy to production
     needs: deploy_test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     permissions:
