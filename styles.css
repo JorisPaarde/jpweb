@@ -1119,7 +1119,7 @@ main section[id] {
 
 .price-list li {
   display: grid;
-  grid-template-columns: minmax(140px, 0.38fr) minmax(0, 1fr);
+  grid-template-columns: minmax(13.5rem, 0.48fr) minmax(0, 1fr);
   gap: 8px 28px;
   align-items: baseline;
   padding: 15px 0;
@@ -1129,6 +1129,7 @@ main section[id] {
 .price-label {
   font-size: 1.05rem;
   font-weight: 850;
+  white-space: nowrap;
 }
 
 .price-value {
