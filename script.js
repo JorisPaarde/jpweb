@@ -70,7 +70,7 @@ document.querySelectorAll("[data-opname-calculator]").forEach((calculator) => {
 
   const avoidableShare = Number(calculator.dataset.avoidableShare) || 0.9;
   const travelMinutes = Number(calculator.dataset.travelMinutes) || 60;
-  const hourlyRate = Number(calculator.dataset.hourlyRate) || 70;
+  const hourlyRate = Number(calculator.dataset.hourlyRate) || 85;
   const numberFormatter = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 1 });
   const currencyFormatter = new Intl.NumberFormat("nl-NL", {
     style: "currency",
