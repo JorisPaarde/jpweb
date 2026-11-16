@@ -304,3 +304,18 @@ Op de homepage direct bij EC EEns en op de projectpagina staat een letterlijk
 fragment met een gemarkeerde weglating en een link naar de volledige review.
 Schrijf haar geen specifieke functie toe. Het eerdere citaat van Eric ging over
 Energie Verbonden en is op de EC EEns-pagina vervangen door Claudia's review.
+
+## Landingspagina installatiebedrijven (besluit Joris, 16 november 2026)
+
+`/website-installatiebedrijf/` is de landingspagina voor een Google Ads-campagne
+gericht op de gevestigde vakman met een verouderde site: een installateur of
+lokaal dienstbedrijf in de regio Haarlem waar de eigenaar zelf beslist. Hij wil
+meer aanvragen uit zijn eigen regio, één vast aanspreekpunt en vooraf weten wat
+het kost.
+
+De pagina is indexeerbaar en staat in de sitemap. Het menu bevat alleen ankers
+binnen de pagina. Het formulier gebruikt `return_to=/website-installatiebedrijf/`
+en krijgt een eigen onderwerpregel in de mail.
+
+Joris heeft bevestigd dat Heatcare en Elderenbos als klant genoemd mogen
+worden. Noem alleen de namen; verzin geen projectdetails of resultaten.
