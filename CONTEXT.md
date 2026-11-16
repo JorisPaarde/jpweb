@@ -319,3 +319,7 @@ en krijgt een eigen onderwerpregel in de mail.
 
 Joris heeft bevestigd dat Heatcare en Elderenbos als klant genoemd mogen
 worden. Noem alleen de namen; verzin geen projectdetails of resultaten.
+
+Voor Elderenbos Installatietechniek bouwde Joris nuaircolatenplaatsen.nl
+(airco-installateur, offerte- en afspraakformulier). Die site mag als voorbeeld
+worden genoemd en gelinkt (bevestigd door Joris, 16 november 2026).
