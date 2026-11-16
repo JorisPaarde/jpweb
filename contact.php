@@ -38,7 +38,7 @@ function input_length(string $value): int
 function contact_return_path(): string
 {
     $returnPath = (string) ($_POST['return_to'] ?? '/');
-    $allowedPaths = ['/', '/digitale-opname/'];
+    $allowedPaths = ['/', '/digitale-opname/', '/website-installatiebedrijf/'];
 
     return in_array($returnPath, $allowedPaths, true) ? $returnPath : '/';
 }
@@ -192,18 +192,19 @@ if (is_file($rateLimitFile) && (time() - (int) filemtime($rateLimitFile)) < 30) 
 @touch($rateLimitFile);
 
 $safeEmail = str_replace(["\r", "\n"], '', $email);
-$subject = $returnPath === '/digitale-opname/'
-    ? 'Kennismaking Digitale Opname via jpwebcreation.nl'
-    : 'Nieuwe aanvraag via jpwebcreation.nl';
+$subjectLabels = [
+    '/digitale-opname/' => 'Kennismaking Digitale Opname via jpwebcreation.nl',
+    '/website-installatiebedrijf/' => 'Aanvraag via landingspagina installatiebedrijf (jpwebcreation.nl)',
+];
+$subjectLabel = $subjectLabels[$returnPath] ?? 'Nieuwe aanvraag via jpwebcreation.nl';
+$subject = $subjectLabel;
 
 if (function_exists('mb_encode_mimeheader')) {
     $subject = mb_encode_mimeheader($subject, 'UTF-8');
 }
 
 $body = implode("\n", [
-    $returnPath === '/digitale-opname/'
-        ? 'Kennismaking Digitale Opname via jpwebcreation.nl'
-        : 'Nieuwe aanvraag via jpwebcreation.nl',
+    $subjectLabel,
     '',
     'Naam: ' . $name,
     'Bedrijf: ' . ($company !== '' ? $company : '-'),
