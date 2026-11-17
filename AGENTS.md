@@ -58,6 +58,10 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
 - `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
 - `supper-omzetdashboard-page-1.png`, `supper-omzetdashboard-page-2.png`, `supper-omzetdashboard-page-3.png`
+- `nuairco-page-1.png`, `nuairco-page-2.png`, `nuairco-page-3.png`
+
+Maak de pagina-, webp- en rij-afbeeldingen uit drie schermafbeeldingen met
+`python3 tools/make_case_images.py <prefix> page1.png page2.png page3.png`.
 
 Supper omzetdashboard screenshots must use voorbeelddata only (never live AFAS
 customer hotels or amounts). Gallery assets: `supper-omzetdashboard-overzicht`,
