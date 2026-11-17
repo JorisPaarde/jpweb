@@ -327,3 +327,20 @@ worden. Noem alleen de namen; verzin geen projectdetails of resultaten.
 Voor Elderenbos Installatietechniek bouwde Joris nuaircolatenplaatsen.nl
 (airco-installateur, offerte- en afspraakformulier). Die site mag als voorbeeld
 worden genoemd en gelinkt (bevestigd door Joris, 16 november 2026).
+
+## Case Elderenbos Installatietechniek (aangeleverd door Joris, 17 november 2026)
+
+Casepagina: `/projecten/nu-airco-laten-plaatsen/`. Aantoonbare feiten:
+
+- Jamie (Elderenbos Installatietechniek) wilde een website om klanten aan te
+  trekken voor airco-installaties. Hoe hij zijn vraag zelf formuleerde is niet
+  bekend; verzin geen citaat of aanleiding.
+- Gebouwd: WordPress-site in Elementor. Hoofdpagina die de diensten uitlegt en
+  naar contact leidt, inhoud op basis van zoekwoordenonderzoek naar airco laten
+  plaatsen, WooCommerce-productpagina's per airco en een contactpagina.
+  Opgeleverd en gefactureerd in oktober 2025.
+- Resultaat: de site levert aanvragen op. SEO-check van 4 november 2026:
+  Google Maps-posities 2 tot 4 in Weesp. Er is geen nulmeting en er zijn geen
+  aanvraagcijfers; noem geen percentages of aantallen aanvragen.
+- Lopend: uitbreiding met warmtepompen (offerte getekend 16 november 2026).
+- Noem het projectbedrag niet op de site.
