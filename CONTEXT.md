@@ -317,6 +317,10 @@ De pagina is indexeerbaar en staat in de sitemap. Het menu bevat alleen ankers
 binnen de pagina. Het formulier gebruikt `return_to=/website-installatiebedrijf/`
 en krijgt een eigen onderwerpregel in de mail.
 
+Interne links naar de pagina: op de homepage in de alinea over vernieuwen en
+als compacte link onder de websitevoorbeelden, op de Haveka-casepagina en op
+Digitale Opname. Bewust niet in het hoofdmenu.
+
 Joris heeft bevestigd dat Heatcare en Elderenbos als klant genoemd mogen
 worden. Noem alleen de namen; verzin geen projectdetails of resultaten.
 
