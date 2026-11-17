@@ -1222,7 +1222,8 @@ main section[id] {
   background: var(--paper);
 }
 
-.project-page .site-header {
+.project-page .site-header,
+.not-found-page .site-header {
   color: var(--ink);
   background: rgba(251, 250, 246, 0.94);
   box-shadow: 0 12px 36px rgba(24, 32, 29, 0.08);
@@ -1829,6 +1830,140 @@ main section[id] {
   flex-wrap: wrap;
   gap: 18px;
   font-weight: 750;
+}
+
+.site-footer {
+  align-items: flex-start;
+}
+
+.footer-company {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.footer-company p,
+.footer-company address {
+  margin: 0;
+  font-style: normal;
+}
+
+.footer-name {
+  color: var(--ink);
+}
+
+.footer-company a {
+  overflow-wrap: anywhere;
+}
+
+.footer-company a:hover,
+.footer-company a:focus-visible {
+  text-decoration: underline;
+}
+
+.footer-links {
+  justify-content: flex-end;
+}
+
+.footer-links a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+.legal-content.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  align-items: start;
+  gap: clamp(32px, 6vw, 96px);
+  max-width: var(--site-max);
+}
+
+.legal-content.contact-layout section + section {
+  margin-top: 0;
+}
+
+.contact-layout .contact-actions {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 360px;
+}
+
+.contact-layout .nap-list {
+  margin-top: 16px;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.contact-actions .button.ghost {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.contact-actions .button {
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.legal-content .nap-list + p {
+  margin-top: 24px;
+}
+
+.nap-list {
+  display: grid;
+  margin: 18px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.nap-list > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 190px) 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.nap-list dt {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.nap-list dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.nap-list address {
+  font-style: normal;
+}
+
+@media (max-width: 860px) {
+  .legal-content.contact-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-layout .contact-actions {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-links {
+    justify-content: flex-start;
+  }
+
+  .nap-list > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
 
 .legal-hero {
