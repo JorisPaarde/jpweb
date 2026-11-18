@@ -12,9 +12,11 @@
   --line: rgba(24, 32, 29, 0.14);
   --shadow: 0 22px 70px rgba(21, 57, 47, 0.18);
   --type-hero: clamp(3.1rem, 6.2vw, 5.6rem);
-  --type-section: clamp(2.45rem, 4.4vw, 4rem);
+  --type-section: clamp(2.2rem, 3.45vw, 3.35rem);
   --type-section-compact: clamp(2.2rem, 3.45vw, 3.35rem);
-  --type-feature: clamp(2.1rem, 3.7vw, 3.35rem);
+  --type-feature: clamp(1.6rem, 2.5vw, 2.2rem);
+  --type-page-title: clamp(2rem, 3.8vw, 3rem);
+  --type-page-section: clamp(1.5rem, 2.4vw, 2rem);
   --type-lead: clamp(1.08rem, 1.4vw, 1.22rem);
   --type-body-large: clamp(1.03rem, 1.1vw, 1.12rem);
   --type-item-title: clamp(1.12rem, 1.3vw, 1.3rem);
@@ -1252,7 +1254,7 @@ main section[id] {
 .project-hero h1 {
   color: var(--ink);
   max-width: 620px;
-  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  font-size: var(--type-page-title);
   white-space: normal;
   overflow-wrap: normal;
   word-break: normal;
@@ -1394,6 +1396,14 @@ main section[id] {
   min-width: 0;
 }
 
+/* Inhoudspagina's (cases, blog, juridisch, contact) delen één kopschaal:
+   --type-page-title voor de h1, --type-page-section voor de h2. */
+.case-page .case-section h2,
+.case-page .contact-section h2 {
+  font-size: var(--type-page-section);
+  line-height: 1.08;
+}
+
 .case-section p,
 .case-section li {
   color: var(--muted);
@@ -1422,7 +1432,7 @@ main section[id] {
 }
 
 .case-result h3 {
-  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
 }
 
 .case-result p:last-child {
@@ -1980,7 +1990,7 @@ main section[id] {
 }
 
 .legal-hero h1 {
-  font-size: clamp(2.8rem, 7vw, 6.2rem);
+  font-size: var(--type-page-title);
   overflow-wrap: normal;
 }
 
@@ -1995,7 +2005,7 @@ main section[id] {
 }
 
 .legal-content h2 {
-  font-size: clamp(1.55rem, 2.8vw, 2.4rem);
+  font-size: var(--type-page-section);
 }
 
 .legal-content p,
@@ -2827,7 +2837,7 @@ main section[id] {
   }
 
   .work-heading h2 {
-    font-size: clamp(2rem, 10vw, 2.45rem);
+    font-size: var(--type-section);
     line-height: 1.02;
   }
 
@@ -2882,7 +2892,13 @@ main section[id] {
   }
 
   .project-page h2 {
-    font-size: clamp(2rem, 7vw, 2.45rem);
+    font-size: var(--type-section);
+  }
+
+  .case-page .case-section h2,
+  .case-page .contact-section h2,
+  .legal-content h2 {
+    font-size: var(--type-page-section);
   }
 
   .project-hero-carousel {
@@ -2901,7 +2917,7 @@ main section[id] {
   }
 
   .legal-hero h1 {
-    font-size: clamp(2rem, 8.8vw, 2.45rem);
+    font-size: var(--type-page-title);
   }
 
   .form-row {
