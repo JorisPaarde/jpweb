@@ -80,6 +80,21 @@ to `.hero-carousel-track`; that exposes mirrored back faces. Apply visual
 opacity to the individual `.hero-carousel-panel` elements instead and verify in
 a real browser that only front-facing screenshots are visible.
 
+## Kopgroottes
+
+De site gebruikt één kopschaal (besluit Joris, 18 november 2026), via de
+variabelen in `:root` van `styles.css`:
+
+- landings- en overzichtspagina's: h1 `--type-hero`, h2 `--type-section`;
+- inhoudspagina's (cases met body-klasse `case-page`, blogartikelen,
+  juridische pagina's en contact): h1 `--type-page-title`, h2
+  `--type-page-section`;
+- titels in projectrijen (`.work-item h3`) gebruiken `--type-feature` en blijven
+  kleiner dan de h2 van de sectie.
+
+Geef koppen geen eigen `font-size` buiten deze variabelen. Een h2 of h3 is
+nooit groter dan de h1 op dezelfde pagina.
+
 ## CSS Cache Busting
 
 HTML files reference `styles.css` with a `?v=` cache-busting query. When
