@@ -118,6 +118,14 @@ productiedata. Geen klikbare link naar het live dashboard. Case-URL:
 Gebruik deze case als bewijs van een maatwerk financieel dashboard dat Excel
 op AFAS-exports vervangt. Niet verwarren met het webshop-beheer.
 
+Schrijfwijze (besluit Joris, 18 november 2026): de case moet een lezer laten
+denken "dit kan hij maken, dat zou voor mij handig zijn". Begin bij het
+werk zonder dashboard (Excel op exports) en beschrijf wat Supper nu kan
+zien en vragen. Geen technische opsomming: geen stack, connectornamen,
+versienummers, commit- of PR-aantallen, schermopbouw of veldnamen op de
+casepagina of de homepagekaart. Techniek alleen als het de lezer iets
+geruststelt (alleen-lezen in AFAS, eigen login, melding bij mislukte update).
+
 ### Gratis planten
 
 Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
