@@ -359,3 +359,11 @@ Casepagina: `/projecten/nu-airco-laten-plaatsen/`. Aantoonbare feiten:
   aanvraagcijfers; noem geen percentages of aantallen aanvragen.
 - Lopend: uitbreiding met warmtepompen (offerte getekend 16 november 2026).
 - Noem het projectbedrag niet op de site.
+
+## Homepage en menu (besluit Joris, 18 november 2026)
+
+De homepage is vervangen door een kortere opzet voor de installateur-avatar.
+Opbouw en vaste regels staan in `AGENTS.md` (secties Homepage en Menu). De
+vier projectrijen koos Joris zelf: Haveka Installatie, Mike's Pianoshow,
+Supper omzetdashboard en Gratis planten. Joris bevestigde dat "AI-workshops
+voor gemeente Leiden en gemeente Haarlem" bij de klantnamen mag staan.
