@@ -125,11 +125,13 @@ zien en vragen. Geen technische opsomming: geen stack, connectornamen,
 versienummers, commit- of PR-aantallen, schermopbouw of veldnamen op de
 casepagina of de homepagekaart. Techniek alleen als het de lezer iets
 geruststelt (alleen-lezen in AFAS, eigen login, melding bij mislukte update).
-Kern van de case (Joris, 18 november 2026): van een Excel-bestand waarin
-Supper zelf naar getallen moest zoeken, naar een dashboard dat direct de KPI's
-toont en aanwijst welke hotels aandacht nodig hebben (bijvoorbeeld al een tijd
-niet besteld, of iets anders mis) met suggesties voor actie. Het wegvallen van
-handmatige exports is bijzaak.
+Kern van de case (Joris, 18 november 2026): inzicht krijgen in je cijfers en
+daar acties uit halen. Supper had de cijfers wel, maar moest ze in Excel
+opzoeken; nu toont het dashboard direct de KPI's en wijst het aan wat opvalt,
+met suggesties voor actie. Schrijf voor lezers die meer grip op hun cijfers
+zoeken. De hotel-signalen ("Aandacht nodig", al een tijd niet besteld) zijn
+een voorbeeld, niet de kern; maak de pagina of de afsluiter niet zo specifiek.
+Het wegvallen van handmatige exports is bijzaak.
 
 ### Gratis planten
 
