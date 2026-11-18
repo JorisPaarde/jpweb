@@ -359,3 +359,20 @@ Casepagina: `/projecten/nu-airco-laten-plaatsen/`. Aantoonbare feiten:
   aanvraagcijfers; noem geen percentages of aantallen aanvragen.
 - Lopend: uitbreiding met warmtepompen (offerte getekend 16 november 2026).
 - Noem het projectbedrag niet op de site.
+
+## Concept homepage (18 november 2026)
+
+`/concept-homepage/` is een concept voor een kortere homepage, gericht op de
+installateur-avatar: hero met prijs vanaf, één aanspreekpunt en reactietijd;
+klantnamen en drie reviews; drie diensten; vier cases die Joris koos (Haveka,
+Mike's Pianoshow, Supper omzetdashboard, Gratis planten) met daaronder de
+overige cases en de AI-onderdelen als korte links; over mij met werkwijze;
+prijzen, FAQ en contact. De pagina heeft `noindex, nofollow`, staat niet in de
+sitemap en wordt nergens gelinkt. De live homepage blijft ongewijzigd tot
+Joris kiest.
+
+Het concept houdt alle ankers die andere pagina's gebruiken (`#diensten`,
+`#werk`, `#aanpak`, `#websites`, `#onderhoud`, `#tools`, `#kosten`,
+`#contact`), zodat overstappen geen links breekt. Nog te bevestigen door Joris
+vóór overstap: de vermelding "AI-workshops voor gemeente Leiden en gemeente
+Haarlem".
