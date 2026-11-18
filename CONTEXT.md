@@ -125,6 +125,11 @@ zien en vragen. Geen technische opsomming: geen stack, connectornamen,
 versienummers, commit- of PR-aantallen, schermopbouw of veldnamen op de
 casepagina of de homepagekaart. Techniek alleen als het de lezer iets
 geruststelt (alleen-lezen in AFAS, eigen login, melding bij mislukte update).
+Kern van de case (Joris, 18 november 2026): van een Excel-bestand waarin
+Supper zelf naar getallen moest zoeken, naar een dashboard dat direct de KPI's
+toont en aanwijst welke hotels aandacht nodig hebben (bijvoorbeeld al een tijd
+niet besteld, of iets anders mis) met suggesties voor actie. Het wegvallen van
+handmatige exports is bijzaak.
 
 ### Gratis planten
 
