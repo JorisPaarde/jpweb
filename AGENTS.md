@@ -22,28 +22,44 @@ The Python server is sufficient for layout and link checks, but it does not run
 end-to-end form check. Never claim that mail delivery works based only on the
 Python preview.
 
-## Homepage Project Showcase
+## Homepage
 
-The homepage uses an editorial project showcase, not a card grid:
+De homepage (sinds 18 november 2026) is kort en gericht op de installateur-
+avatar. Volgorde: hero met feitenregel (prijs vanaf, één aanspreekpunt,
+reactietijd) en twee knoppen; `.client-proof` met klantnamen en drie reviews;
+drie diensten (`#diensten`, met `#websites`, `#onderhoud`, `#tools`); werk
+(`#werk`) met vier projectrijen; "Meer werk", "Lees verder" en "Ook: AI en
+automatisering" als compacte linklijsten; over mij (`#over-mij`, met
+`#aanpak`); prijzen en FAQ (`#kosten`); contact (`#contact`).
 
-- primary cases are full-width rows inside `.work-list`, grouped with the relevant service;
+Andere pagina's linken naar deze ankers; haal er geen weg zonder de links
+mee te veranderen.
+
+De vier projectrijen zijn door Joris gekozen: Haveka Installatie, Mike's
+Pianoshow, Supper omzetdashboard en Gratis planten. Alle andere cases staan
+onder "Meer werk". Projectrijen blijven editoriale rijen, geen kaartenraster:
+
 - odd rows show the screenshot on the left and even rows on the right;
 - the HTML order always remains screenshot first, copy second; CSS handles the
   visual alternation;
-- EC EEns, Mike, Synk and Gratis planten illustrate websites; Supper Services
-  illustrates maintenance and ongoing development; Haveka illustrates tools
-  and integrations;
-- Archipel Bouwadvies and Wildfloweroffice remain compact links under the
-  website service; Digitale Opname and AI are linked from tools;
 - project labels are plain inline text separated by dots, not pill badges;
 - rows use horizontal dividers and whitespace instead of outer card borders and
   hover shadows.
 
-Do not turn this section back into a uniform card grid without an explicit
-design decision from Joris. When adding a primary case, copy an existing
-`.work-item`, update its number, image, alt text, result-led copy, labels, and
-case URL, then test both the alternating desktop layout and the single-column
-mobile order.
+Do not turn this section into a uniform card grid without an explicit design
+decision from Joris. When swapping a case, copy an existing `.work-item`,
+update its number, image, alt text, result-led copy, labels, and case URL,
+then test both the alternating desktop layout and the single-column mobile
+order.
+
+## Menu
+
+Alle pagina's gebruiken hetzelfde hoofdmenu: Websites (`/#diensten`), Werk
+(`/#werk`), Prijzen (`/#kosten`), Over mij (`/#over-mij`), AI (`/ai/`), Blog
+(`/blog/`), Contact (`/contact/`, op de homepage `#contact`). Uitzondering:
+`/website-installatiebedrijf/` heeft voor Google Ads een eigen menu met
+alleen ankers binnen de pagina. AI-vindbaarheid en Digitale Opname zijn
+bereikbaar via `/ai/` en de homepage, niet via het hoofdmenu.
 
 ## Project Screenshot Carousels
 
@@ -58,6 +74,10 @@ should have at least three flat page screenshots in `assets/projects/`:
 - `wildfloweroffice-page-1.png`, `wildfloweroffice-page-2.png`, `wildfloweroffice-page-3.png`
 - `gratis-planten-page-1.png`, `gratis-planten-page-2.png`, `gratis-planten-page-3.png`
 - `supper-omzetdashboard-page-1.png`, `supper-omzetdashboard-page-2.png`, `supper-omzetdashboard-page-3.png`
+- `nuairco-page-1.png`, `nuairco-page-2.png`, `nuairco-page-3.png`
+
+Maak de pagina-, webp- en rij-afbeeldingen uit drie schermafbeeldingen met
+`python3 tools/make_case_images.py <prefix> page1.png page2.png page3.png`.
 
 Supper omzetdashboard screenshots must use voorbeelddata only (never live AFAS
 customer hotels or amounts). Gallery assets: `supper-omzetdashboard-overzicht`,
@@ -75,6 +95,21 @@ The homepage carousel relies on a preserved 3D context. Never apply `opacity`,
 to `.hero-carousel-track`; that exposes mirrored back faces. Apply visual
 opacity to the individual `.hero-carousel-panel` elements instead and verify in
 a real browser that only front-facing screenshots are visible.
+
+## Kopgroottes
+
+De site gebruikt één kopschaal (besluit Joris, 18 november 2026), via de
+variabelen in `:root` van `styles.css`:
+
+- landings- en overzichtspagina's: h1 `--type-hero`, h2 `--type-section`;
+- inhoudspagina's (cases met body-klasse `case-page`, blogartikelen,
+  juridische pagina's en contact): h1 `--type-page-title`, h2
+  `--type-page-section`;
+- titels in projectrijen (`.work-item h3`) gebruiken `--type-feature` en blijven
+  kleiner dan de h2 van de sectie.
+
+Geef koppen geen eigen `font-size` buiten deze variabelen. Een h2 of h3 is
+nooit groter dan de h1 op dezelfde pagina.
 
 ## CSS Cache Busting
 

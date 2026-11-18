@@ -31,7 +31,71 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=69">
+    <link rel="stylesheet" href="../styles.css?v=76">
+      <script type="application/ld+json" id="nap-bedrijf">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://jpwebcreation.nl/#bedrijf",
+            "name": "JP Web Creation",
+            "legalName": "JP Web Creation",
+            "url": "https://jpwebcreation.nl/",
+            "email": "info@jpwebcreation.nl",
+            "telephone": "+31621228884",
+            "vatID": "NL004813310B95",
+            "identifier": {
+              "@type": "PropertyValue",
+              "propertyID": "KvK",
+              "value": "90397320"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Bernadottelaan 273",
+              "postalCode": "2037 GR",
+              "addressLocality": "Haarlem",
+              "addressCountry": "NL"
+            },
+            "areaServed": [
+              {
+                "@type": "City",
+                "name": "Haarlem"
+              },
+              {
+                "@type": "Country",
+                "name": "NL"
+              }
+            ],
+            "founder": {
+              "@id": "https://jpwebcreation.nl/#joris"
+            },
+            "sameAs": [
+              "https://www.linkedin.com/company/jpwebcreation",
+              "https://trustoo.nl/noord-holland/haarlem/webdesign/jpwebcreation/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://jpwebcreation.nl/#website",
+            "url": "https://jpwebcreation.nl/",
+            "name": "JP Web Creation",
+            "inLanguage": "nl-NL",
+            "publisher": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://jpwebcreation.nl/#joris",
+            "name": "Joris Paardekooper Overman",
+            "worksFor": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body class="project-page ai-page">
     <header class="site-header">
@@ -49,7 +113,7 @@
         <a href="#wat-je-krijgt">Wat je krijgt</a>
         <a href="#voorbeeld">Voorbeeld</a>
         <a href="#kosten">Kosten</a>
-        <a href="#contact">Contact</a>
+        <a href="/contact/">Contact</a>
       </nav>
       <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
     </header>
@@ -128,8 +192,8 @@
 
       <section id="voorbeeld" class="section work-section" aria-labelledby="landing-case-title">
         <div class="section-heading work-heading">
-          <div><p class="eyebrow">Voorbeeld uit de installatiebranche</p><h2 id="landing-case-title">Zo werkt het bij Haveka Installatie</h2></div>
-          <p class="work-intro">Voor Haveka Installatie bouwde ik een website met een offertemodule voor groepenkasten en laadpalen. Klanten beantwoorden stap voor stap vragen over hun aansluiting en meterkast en sturen foto's mee. Ik werk ook voor de installateurs Heatcare en Elderenbos.</p>
+          <div><p class="eyebrow">Voorbeeld uit de installatiebranche</p><h2 id="landing-case-title">Zo werkt het bij andere installateurs</h2></div>
+          <p class="work-intro context-link">Voor Haveka Installatie bouwde ik een website met een offertemodule voor groepenkasten en laadpalen. Klanten beantwoorden stap voor stap vragen over hun aansluiting en meterkast en sturen foto's mee. Voor Elderenbos Installatietechniek bouwde ik nuaircolatenplaatsen.nl, een website voor airco-aanvragen. Ik werk ook voor installateur Heatcare.</p>
         </div>
         <div class="work-list">
           <a class="work-item reveal-card" href="../projecten/haveka-installatie/">
@@ -153,6 +217,31 @@
                 <span>Offertemodule</span>
                 <span>Foto-upload</span>
                 <span>Online aanbetaling</span>
+              </div>
+              <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
+          <a class="work-item reveal-card" href="../projecten/nu-airco-laten-plaatsen/">
+            <div class="work-shot">
+              <picture>
+                <source srcset="../assets/projects/nuairco-flat-480.webp 480w, ../assets/projects/nuairco-flat-720.webp 720w, ../assets/projects/nuairco-flat-1080.webp 1080w, ../assets/projects/nuairco-flat.webp 1440w" sizes="(max-width: 900px) calc(100vw - 40px), (max-width: 1100px) 50vw, 720px" type="image/webp">
+                <img src="../assets/projects/nuairco-flat.jpg" alt="Screenshot van nuaircolatenplaatsen.nl, website van Elderenbos Installatietechniek" width="1440" height="1000" decoding="async" loading="lazy">
+              </picture>
+            </div>
+            <div class="work-copy">
+              <div class="work-meta">
+                <span class="work-number" aria-hidden="true">02</span>
+                <span class="work-type">Website voor airco-installateur</span>
+              </div>
+              <h3>Elderenbos Installatietechniek</h3>
+              <p>
+                Een site op basis van zoekwoordenonderzoek naar airco laten plaatsen. Die levert
+                Jamie inmiddels aanvragen op, en nu komen er warmtepompen bij.
+              </p>
+              <div class="work-details" aria-label="Projectonderdelen">
+                <span>WordPress</span>
+                <span>Zoekwoordenonderzoek</span>
+                <span>Productpagina's</span>
               </div>
               <span class="work-link">Bekijk case <span aria-hidden="true">→</span></span>
             </div>
@@ -274,11 +363,16 @@
     </main>
 
     <footer class="site-footer">
-      <span>© 2026 JP Web Creation</span>
+      <div class="footer-company">
+        <strong class="footer-name">&copy; 2026 JP Web Creation</strong>
+        <address class="footer-address">Bernadottelaan 273, 2037 GR Haarlem</address>
+        <p class="footer-contact"><a href="tel:+31621228884">06 21 22 88 84</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a></p>
+        <p class="footer-reg">KvK 90397320 <span aria-hidden="true">&middot;</span> Btw NL004813310B95</p>
+      </div>
       <nav class="footer-links" aria-label="Footer">
-        <a href="../privacyverklaring/">Privacyverklaring</a>
-        <a href="../algemene-voorwaarden/">Algemene voorwaarden</a>
-        <a href="#contact">Contact</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacyverklaring/">Privacyverklaring</a>
+        <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
       </nav>
     </footer>
     <script src="../script.js?v=20"></script>

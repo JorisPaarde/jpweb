@@ -110,5 +110,19 @@ width, height = jpeg_size(bots_og_path)
 assert (width, height) == (1200, 630), f"{bots_og_path}: {width}x{height}"
 assert bots_og_path.stat().st_size < 300 * 1024, f"{bots_og_path}: too large"
 
+# Bedrijfsgegevens: footer en JSON-LD komen uit .github/scripts/nap.py.
+import subprocess, sys
+subprocess.run([sys.executable, str(root / ".github" / "scripts" / "nap.py"), "--check"], check=True)
+
+# Schrijfwijze: "JP Web Creation" in tekst; alleen domein, mailadres en paden zijn "jpwebcreation".
+spelling = re.compile(r"jp[\s_-]?web[\s_-]?creation", re.I)
+for page in root.rglob("*.html"):
+    if page.relative_to(root).parts[0] == "assets":
+        continue
+    for m in spelling.finditer(page.read_text()):
+        assert m.group(0) in ("JP Web Creation", "jpwebcreation"), f"{page}: schrijfwijze {m.group(0)!r}"
+    text = page.read_text()
+    assert not re.search(r"Joris Paardekooper(?! Overman)", text), f"{page}: auteursnaam zonder Overman"
+
 print(f"SEO metadata and sitemap checked: {count} canonical pages.")
 print(f"Bots OG image OK: {bots_image} ({width}x{height}).")

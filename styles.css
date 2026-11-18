@@ -12,9 +12,11 @@
   --line: rgba(24, 32, 29, 0.14);
   --shadow: 0 22px 70px rgba(21, 57, 47, 0.18);
   --type-hero: clamp(3.1rem, 6.2vw, 5.6rem);
-  --type-section: clamp(2.45rem, 4.4vw, 4rem);
+  --type-section: clamp(2.2rem, 3.45vw, 3.35rem);
   --type-section-compact: clamp(2.2rem, 3.45vw, 3.35rem);
-  --type-feature: clamp(2.1rem, 3.7vw, 3.35rem);
+  --type-feature: clamp(1.6rem, 2.5vw, 2.2rem);
+  --type-page-title: clamp(2rem, 3.8vw, 3rem);
+  --type-page-section: clamp(1.5rem, 2.4vw, 2rem);
   --type-lead: clamp(1.08rem, 1.4vw, 1.22rem);
   --type-body-large: clamp(1.03rem, 1.1vw, 1.12rem);
   --type-item-title: clamp(1.12rem, 1.3vw, 1.3rem);
@@ -1222,7 +1224,8 @@ main section[id] {
   background: var(--paper);
 }
 
-.project-page .site-header {
+.project-page .site-header,
+.not-found-page .site-header {
   color: var(--ink);
   background: rgba(251, 250, 246, 0.94);
   box-shadow: 0 12px 36px rgba(24, 32, 29, 0.08);
@@ -1251,7 +1254,7 @@ main section[id] {
 .project-hero h1 {
   color: var(--ink);
   max-width: 620px;
-  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  font-size: var(--type-page-title);
   white-space: normal;
   overflow-wrap: normal;
   word-break: normal;
@@ -1393,6 +1396,14 @@ main section[id] {
   min-width: 0;
 }
 
+/* Inhoudspagina's (cases, blog, juridisch, contact) delen één kopschaal:
+   --type-page-title voor de h1, --type-page-section voor de h2. */
+.case-page .case-section h2,
+.case-page .contact-section h2 {
+  font-size: var(--type-page-section);
+  line-height: 1.08;
+}
+
 .case-section p,
 .case-section li {
   color: var(--muted);
@@ -1421,7 +1432,7 @@ main section[id] {
 }
 
 .case-result h3 {
-  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
 }
 
 .case-result p:last-child {
@@ -1831,6 +1842,140 @@ main section[id] {
   font-weight: 750;
 }
 
+.site-footer {
+  align-items: flex-start;
+}
+
+.footer-company {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.footer-company p,
+.footer-company address {
+  margin: 0;
+  font-style: normal;
+}
+
+.footer-name {
+  color: var(--ink);
+}
+
+.footer-company a {
+  overflow-wrap: anywhere;
+}
+
+.footer-company a:hover,
+.footer-company a:focus-visible {
+  text-decoration: underline;
+}
+
+.footer-links {
+  justify-content: flex-end;
+}
+
+.footer-links a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+.legal-content.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  align-items: start;
+  gap: clamp(32px, 6vw, 96px);
+  max-width: var(--site-max);
+}
+
+.legal-content.contact-layout section + section {
+  margin-top: 0;
+}
+
+.contact-layout .contact-actions {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 360px;
+}
+
+.contact-layout .nap-list {
+  margin-top: 16px;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.contact-actions .button.ghost {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.contact-actions .button {
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.legal-content .nap-list + p {
+  margin-top: 24px;
+}
+
+.nap-list {
+  display: grid;
+  margin: 18px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.nap-list > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 190px) 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.nap-list dt {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.nap-list dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.nap-list address {
+  font-style: normal;
+}
+
+@media (max-width: 860px) {
+  .legal-content.contact-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-layout .contact-actions {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-links {
+    justify-content: flex-start;
+  }
+
+  .nap-list > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
 .legal-hero {
   max-width: var(--site-max);
   margin-inline: auto;
@@ -1845,7 +1990,7 @@ main section[id] {
 }
 
 .legal-hero h1 {
-  font-size: clamp(2.8rem, 7vw, 6.2rem);
+  font-size: var(--type-page-title);
   overflow-wrap: normal;
 }
 
@@ -1860,7 +2005,7 @@ main section[id] {
 }
 
 .legal-content h2 {
-  font-size: clamp(1.55rem, 2.8vw, 2.4rem);
+  font-size: var(--type-page-section);
 }
 
 .legal-content p,
@@ -2692,7 +2837,7 @@ main section[id] {
   }
 
   .work-heading h2 {
-    font-size: clamp(2rem, 10vw, 2.45rem);
+    font-size: var(--type-section);
     line-height: 1.02;
   }
 
@@ -2747,7 +2892,13 @@ main section[id] {
   }
 
   .project-page h2 {
-    font-size: clamp(2rem, 7vw, 2.45rem);
+    font-size: var(--type-section);
+  }
+
+  .case-page .case-section h2,
+  .case-page .contact-section h2,
+  .legal-content h2 {
+    font-size: var(--type-page-section);
   }
 
   .project-hero-carousel {
@@ -2766,7 +2917,7 @@ main section[id] {
   }
 
   .legal-hero h1 {
-    font-size: clamp(2rem, 8.8vw, 2.45rem);
+    font-size: var(--type-page-title);
   }
 
   .form-row {
@@ -2826,4 +2977,68 @@ main section[id] {
 .legal-content h3 {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
+}
+
+/* Concept homepage (/concept-homepage/): feitenregel in de hero en bewijsblok .client-proof. */
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0 0 26px;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+}
+
+.hero-facts li::before {
+  content: "✓";
+  margin-right: 8px;
+  color: var(--accent, #e7ad52);
+}
+
+.proof-heading {
+  margin-bottom: 22px;
+}
+
+.proof-heading h2 {
+  font-size: var(--type-section);
+}
+
+.proof-quotes,
+.proof-quotes .case-testimonial {
+  margin: 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.proof-quotes .case-testimonial {
+  padding: clamp(20px, 2.4vw, 30px);
+}
+
+.proof-quotes blockquote {
+  font-size: var(--type-item-title);
+}
+
+.proof-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  padding: 0;
+  list-style: none;
+  font-size: var(--type-item-title);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.proof-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .proof-quotes {
+    grid-template-columns: 1fr;
+  }
 }

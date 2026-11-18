@@ -118,6 +118,21 @@ productiedata. Geen klikbare link naar het live dashboard. Case-URL:
 Gebruik deze case als bewijs van een maatwerk financieel dashboard dat Excel
 op AFAS-exports vervangt. Niet verwarren met het webshop-beheer.
 
+Schrijfwijze (besluit Joris, 18 november 2026): de case moet een lezer laten
+denken "dit kan hij maken, dat zou voor mij handig zijn". Begin bij het
+werk zonder dashboard (Excel op exports) en beschrijf wat Supper nu kan
+zien en vragen. Geen technische opsomming: geen stack, connectornamen,
+versienummers, commit- of PR-aantallen, schermopbouw of veldnamen op de
+casepagina of de homepagekaart. Techniek alleen als het de lezer iets
+geruststelt (alleen-lezen in AFAS, eigen login, melding bij mislukte update).
+Kern van de case (Joris, 18 november 2026): inzicht krijgen in je cijfers en
+daar acties uit halen. Supper had de cijfers wel, maar moest ze in Excel
+opzoeken; nu toont het dashboard direct de KPI's en wijst het aan wat opvalt,
+met suggesties voor actie. Schrijf voor lezers die meer grip op hun cijfers
+zoeken. De hotel-signalen ("Aandacht nodig", al een tijd niet besteld) zijn
+een voorbeeld, niet de kern; maak de pagina of de afsluiter niet zo specifiek.
+Het wegvallen van handmatige exports is bijzaak.
+
 ### Gratis planten
 
 Communityplatform voor gratis stekjes, planten en zaden delen in Nederland en
@@ -317,5 +332,38 @@ De pagina is indexeerbaar en staat in de sitemap. Het menu bevat alleen ankers
 binnen de pagina. Het formulier gebruikt `return_to=/website-installatiebedrijf/`
 en krijgt een eigen onderwerpregel in de mail.
 
+Interne links naar de pagina: op de homepage in de alinea over vernieuwen en
+als compacte link onder de websitevoorbeelden, op de Haveka-casepagina en op
+Digitale Opname. Bewust niet in het hoofdmenu.
+
 Joris heeft bevestigd dat Heatcare en Elderenbos als klant genoemd mogen
 worden. Noem alleen de namen; verzin geen projectdetails of resultaten.
+
+Voor Elderenbos Installatietechniek bouwde Joris nuaircolatenplaatsen.nl
+(airco-installateur, offerte- en afspraakformulier). Die site mag als voorbeeld
+worden genoemd en gelinkt (bevestigd door Joris, 16 november 2026).
+
+## Case Elderenbos Installatietechniek (aangeleverd door Joris, 17 november 2026)
+
+Casepagina: `/projecten/nu-airco-laten-plaatsen/`. Aantoonbare feiten:
+
+- Jamie (Elderenbos Installatietechniek) wilde een website om klanten aan te
+  trekken voor airco-installaties. Hoe hij zijn vraag zelf formuleerde is niet
+  bekend; verzin geen citaat of aanleiding.
+- Gebouwd: WordPress-site in Elementor. Hoofdpagina die de diensten uitlegt en
+  naar contact leidt, inhoud op basis van zoekwoordenonderzoek naar airco laten
+  plaatsen, WooCommerce-productpagina's per airco en een contactpagina.
+  Opgeleverd en gefactureerd in oktober 2025.
+- Resultaat: de site levert aanvragen op. SEO-check van 4 november 2026:
+  Google Maps-posities 2 tot 4 in Weesp. Er is geen nulmeting en er zijn geen
+  aanvraagcijfers; noem geen percentages of aantallen aanvragen.
+- Lopend: uitbreiding met warmtepompen (offerte getekend 16 november 2026).
+- Noem het projectbedrag niet op de site.
+
+## Homepage en menu (besluit Joris, 18 november 2026)
+
+De homepage is vervangen door een kortere opzet voor de installateur-avatar.
+Opbouw en vaste regels staan in `AGENTS.md` (secties Homepage en Menu). De
+vier projectrijen koos Joris zelf: Haveka Installatie, Mike's Pianoshow,
+Supper omzetdashboard en Gratis planten. Joris bevestigde dat "AI-workshops
+voor gemeente Leiden en gemeente Haarlem" bij de klantnamen mag staan.

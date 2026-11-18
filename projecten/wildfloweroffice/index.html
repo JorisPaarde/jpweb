@@ -85,9 +85,73 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../../styles.css?v=69">
+    <link rel="stylesheet" href="../../styles.css?v=76">
+      <script type="application/ld+json" id="nap-bedrijf">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://jpwebcreation.nl/#bedrijf",
+            "name": "JP Web Creation",
+            "legalName": "JP Web Creation",
+            "url": "https://jpwebcreation.nl/",
+            "email": "info@jpwebcreation.nl",
+            "telephone": "+31621228884",
+            "vatID": "NL004813310B95",
+            "identifier": {
+              "@type": "PropertyValue",
+              "propertyID": "KvK",
+              "value": "90397320"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Bernadottelaan 273",
+              "postalCode": "2037 GR",
+              "addressLocality": "Haarlem",
+              "addressCountry": "NL"
+            },
+            "areaServed": [
+              {
+                "@type": "City",
+                "name": "Haarlem"
+              },
+              {
+                "@type": "Country",
+                "name": "NL"
+              }
+            ],
+            "founder": {
+              "@id": "https://jpwebcreation.nl/#joris"
+            },
+            "sameAs": [
+              "https://www.linkedin.com/company/jpwebcreation",
+              "https://trustoo.nl/noord-holland/haarlem/webdesign/jpwebcreation/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://jpwebcreation.nl/#website",
+            "url": "https://jpwebcreation.nl/",
+            "name": "JP Web Creation",
+            "inLanguage": "nl-NL",
+            "publisher": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://jpwebcreation.nl/#joris",
+            "name": "Joris Paardekooper Overman",
+            "worksFor": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
-  <body class="project-page">
+  <body class="project-page case-page">
     <header class="site-header">
       <a class="brand" href="../../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -100,14 +164,13 @@
         <span></span><span></span><span></span>
       </button>
             <nav id="site-nav" class="site-nav" aria-label="Hoofdnavigatie">
-        <a href="../../#diensten">Diensten</a>
-        <a href="../../#werk">Voorbeelden</a>
-        <a href="../../#aanpak">Aanpak</a>
-        <a href="../../ai/">AI</a>
-        <a href="../../ai-vindbaarheid/">AI-vindbaarheid</a>
-        <a href="../../digitale-opname/">Digitale Opname</a>
-        <a href="../../blog/">Blog</a>
-        <a href="../../#contact">Contact</a>
+        <a href="/#diensten">Websites</a>
+        <a href="/#werk">Werk</a>
+        <a href="/#kosten">Prijzen</a>
+        <a href="/#over-mij">Over mij</a>
+        <a href="/ai/">AI</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
       </nav>
       <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
     </header>
@@ -224,11 +287,16 @@
     </main>
 
     <footer class="site-footer">
-      <span>© 2026 JP Web Creation</span>
+      <div class="footer-company">
+        <strong class="footer-name">&copy; 2026 JP Web Creation</strong>
+        <address class="footer-address">Bernadottelaan 273, 2037 GR Haarlem</address>
+        <p class="footer-contact"><a href="tel:+31621228884">06 21 22 88 84</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a></p>
+        <p class="footer-reg">KvK 90397320 <span aria-hidden="true">&middot;</span> Btw NL004813310B95</p>
+      </div>
       <nav class="footer-links" aria-label="Footer">
-        <a href="../../privacyverklaring/">Privacyverklaring</a>
-        <a href="../../algemene-voorwaarden/">Algemene voorwaarden</a>
-        <a href="../../#contact">Contact</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacyverklaring/">Privacyverklaring</a>
+        <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
       </nav>
     </footer>
     <script src="../../script.js?v=20"></script>

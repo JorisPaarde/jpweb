@@ -31,7 +31,7 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=69">
+    <link rel="stylesheet" href="../styles.css?v=76">
     <link rel="stylesheet" href="digitale-opname.css?v=4">
       <script type="application/ld+json">
       {
@@ -43,10 +43,72 @@
         "description": "Digitale intake voor airco-installateurs. Woninggegevens, antwoorden en foto’s per aanvraag, ter voorbereiding van een offerte of bezoek.",
         "url": "https://intake-engine.nl/",
         "author": {
-          "@type": "Organization",
-          "name": "JP Web Creation",
-          "url": "https://jpwebcreation.nl/"
+          "@id": "https://jpwebcreation.nl/#bedrijf"
         }
+      }
+    </script>
+      <script type="application/ld+json" id="nap-bedrijf">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://jpwebcreation.nl/#bedrijf",
+            "name": "JP Web Creation",
+            "legalName": "JP Web Creation",
+            "url": "https://jpwebcreation.nl/",
+            "email": "info@jpwebcreation.nl",
+            "telephone": "+31621228884",
+            "vatID": "NL004813310B95",
+            "identifier": {
+              "@type": "PropertyValue",
+              "propertyID": "KvK",
+              "value": "90397320"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Bernadottelaan 273",
+              "postalCode": "2037 GR",
+              "addressLocality": "Haarlem",
+              "addressCountry": "NL"
+            },
+            "areaServed": [
+              {
+                "@type": "City",
+                "name": "Haarlem"
+              },
+              {
+                "@type": "Country",
+                "name": "NL"
+              }
+            ],
+            "founder": {
+              "@id": "https://jpwebcreation.nl/#joris"
+            },
+            "sameAs": [
+              "https://www.linkedin.com/company/jpwebcreation",
+              "https://trustoo.nl/noord-holland/haarlem/webdesign/jpwebcreation/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://jpwebcreation.nl/#website",
+            "url": "https://jpwebcreation.nl/",
+            "name": "JP Web Creation",
+            "inLanguage": "nl-NL",
+            "publisher": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://jpwebcreation.nl/#joris",
+            "name": "Joris Paardekooper Overman",
+            "worksFor": {
+              "@id": "https://jpwebcreation.nl/#bedrijf"
+            }
+          }
+        ]
       }
     </script>
   </head>
@@ -63,14 +125,13 @@
         <span></span><span></span><span></span>
       </button>
             <nav id="site-nav" class="site-nav" aria-label="Hoofdnavigatie">
-        <a href="../#diensten">Diensten</a>
-        <a href="../#werk">Voorbeelden</a>
-        <a href="../#aanpak">Aanpak</a>
-        <a href="../ai/">AI</a>
-        <a href="../ai-vindbaarheid/">AI-vindbaarheid</a>
-        <a href="./" aria-current="page">Digitale Opname</a>
-        <a href="../blog/">Blog</a>
-        <a href="#contact">Contact</a>
+        <a href="/#diensten">Websites</a>
+        <a href="/#werk">Werk</a>
+        <a href="/#kosten">Prijzen</a>
+        <a href="/#over-mij">Over mij</a>
+        <a href="/ai/">AI</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
       </nav>
       <a class="header-phone" href="tel:+31621228884">06&nbsp;21&nbsp;22&nbsp;88&nbsp;84</a>
     </header>
@@ -261,7 +322,7 @@
         <div>
           <p class="eyebrow">Na de demo</p>
           <h2 id="opname-contact-title">Bespreek een pilot voor jouw bedrijf</h2>
-          <p class="context-link">Gaat de opdracht daarna naar een monteur? Bekijk <a href="/blog/monteur-krijgt-klus-via-whatsapp-mkb.html">hoe foto’s en afspraken met de klus meegaan</a>. Blijven gegevens daarna in een spreadsheet hangen? Lees <a href="/blog/excel-als-bedrijfssysteem-mkb.html">wanneer Excel als bedrijfssysteem nog past</a>.</p>
+          <p class="context-link">Gaat de opdracht daarna naar een monteur? Bekijk <a href="/blog/monteur-krijgt-klus-via-whatsapp-mkb.html">hoe foto’s en afspraken met de klus meegaan</a>. Blijven gegevens daarna in een spreadsheet hangen? Lees <a href="/blog/excel-als-bedrijfssysteem-mkb.html">wanneer Excel als bedrijfssysteem nog past</a>. Loopt ook je website achter? Bekijk <a href="/website-installatiebedrijf/">wat ik voor installateurs bouw</a>.</p>
           <p>Probeer de <a href="https://intake-engine.nl/#demo" target="_blank" rel="noopener">Intake Engine-demo</a> en vertel welke informatie jij nodig hebt bij een airco-aanvraag. Dan bespreken we of een pilot aansluit en wat daarvoor nodig is.</p>
           <p class="contact-promise">Je ontvangt binnen één werkdag een reactie.</p>
           <form class="contact-form" action="/contact.php" method="post" accept-charset="UTF-8">
@@ -319,11 +380,17 @@
     </main>
 
     <footer class="site-footer">
-      <span>© 2026 JP Web Creation</span>
+      <div class="footer-company">
+        <strong class="footer-name">&copy; 2026 JP Web Creation</strong>
+        <address class="footer-address">Bernadottelaan 273, 2037 GR Haarlem</address>
+        <p class="footer-contact"><a href="tel:+31621228884">06 21 22 88 84</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a></p>
+        <p class="footer-reg">KvK 90397320 <span aria-hidden="true">&middot;</span> Btw NL004813310B95</p>
+      </div>
       <nav class="footer-links" aria-label="Footer">
-        <a href="../privacyverklaring/">Privacyverklaring</a>
-        <a href="../algemene-voorwaarden/">Algemene voorwaarden</a>
-        <a href="#contact">Contact</a>
+        <a href="https://intake-engine.nl/" rel="noopener">Demo</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacyverklaring/">Privacyverklaring</a>
+        <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
       </nav>
     </footer>
     <script src="../script.js?v=20"></script>
