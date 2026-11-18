@@ -1394,6 +1394,13 @@ main section[id] {
   min-width: 0;
 }
 
+/* Op casepagina's blijven sectiekoppen kleiner dan de h1 in de hero. */
+.project-page .case-section h2,
+.project-page .contact-section h2 {
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  line-height: 1.08;
+}
+
 .case-section p,
 .case-section li {
   color: var(--muted);
@@ -1422,7 +1429,7 @@ main section[id] {
 }
 
 .case-result h3 {
-  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
 }
 
 .case-result p:last-child {
@@ -2881,8 +2888,10 @@ main section[id] {
     padding-top: 112px;
   }
 
-  .project-page h2 {
-    font-size: clamp(2rem, 7vw, 2.45rem);
+  .project-page h2,
+  .project-page .case-section h2,
+  .project-page .contact-section h2 {
+    font-size: clamp(1.45rem, 6vw, 1.75rem);
   }
 
   .project-hero-carousel {
