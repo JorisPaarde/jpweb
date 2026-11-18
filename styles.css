@@ -3080,3 +3080,15 @@ main section[id] {
   max-width: 1530px;
   margin-inline: auto;
 }
+
+/* Koppen in de linkerkolom plakken tijdens het scrollen (alleen breed scherm). */
+@media (min-width: 901px) {
+  .ai-offers .section-heading,
+  .faq .section-heading,
+  .work-more > div:first-child,
+  .client-proof .proof-heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+}

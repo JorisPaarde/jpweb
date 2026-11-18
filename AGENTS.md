@@ -109,7 +109,9 @@ variabelen in `:root` van `styles.css`:
   kleiner dan de h2 van de sectie.
 
 Itemkoppen (diensten, projectrijen, linklijsten) gebruiken allemaal
-`--type-feature`. Sectiekoppen zijn nooit `position: sticky`.
+`--type-feature`. Op schermen breder dan 900px plakken de koppen in de linkerkolom van
+tweekoloms secties (`position: sticky; top: 100px`), op alle pagina's
+hetzelfde (besluit Joris, 18 november 2026). Op smallere schermen plakt niets.
 
 Tweekoloms secties (kop links, inhoud rechts) gebruiken allemaal
 `--split-columns` en `--split-gap`, zodat de linker- en rechterkolom op elke
