@@ -2978,3 +2978,67 @@ main section[id] {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
 }
+
+/* Concept homepage (/concept-homepage/): feitenregel in de hero en bewijsblok .client-proof. */
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0 0 26px;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+}
+
+.hero-facts li::before {
+  content: "✓";
+  margin-right: 8px;
+  color: var(--accent, #e7ad52);
+}
+
+.proof-heading {
+  margin-bottom: 22px;
+}
+
+.proof-heading h2 {
+  font-size: var(--type-section);
+}
+
+.proof-quotes,
+.proof-quotes .case-testimonial {
+  margin: 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.proof-quotes .case-testimonial {
+  padding: clamp(20px, 2.4vw, 30px);
+}
+
+.proof-quotes blockquote {
+  font-size: var(--type-item-title);
+}
+
+.proof-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  padding: 0;
+  list-style: none;
+  font-size: var(--type-item-title);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.proof-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .proof-quotes {
+    grid-template-columns: 1fr;
+  }
+}
