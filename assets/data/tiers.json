@@ -2,12 +2,12 @@
   "version": 1,
   "currency": "EUR",
   "vat_note": "excl. btw",
-  "hourly_rate": 70,
+  "hourly_rate": 85,
   "bundle_discount": 0.05,
   "annual_months_charged": 10,
   "snap_rule": "ceil_to_next_tier",
-  "extra_hours_note": "Losse uitvoering kost €70 per uur. Alles excl. btw.",
-  "execute_line": "Voeg 3, 6 of 10 uur per maand toe, met 5% korting op de uren. Ook maandelijks opzegbaar. Losse uitvoering kost €70 per uur. Alles excl. btw.",
+  "extra_hours_note": "Losse uitvoering kost €85 per uur. Alles excl. btw.",
+  "execute_line": "Voeg 3, 6 of 10 uur per maand toe, met 5% korting op de uren. Ook maandelijks opzegbaar. Losse uitvoering kost €85 per uur. Alles excl. btw.",
   "example": {
     "services": 8,
     "places": 3,
@@ -18,7 +18,7 @@
     6,
     10
   ],
-  "compleet_note": "Bijvoorbeeld 25 vragen + 3 uur = €219 per maand.",
+  "compleet_note": "Bijvoorbeeld 25 vragen + 3 uur = €261 per maand.",
   "above_max": {
     "from_questions": 1000,
     "per_started_100": 39,
@@ -43,9 +43,9 @@
       "weekly": 4,
       "annual": 190,
       "compleet": {
-        "3": 219,
-        "6": 418,
-        "10": 684
+        "3": 261,
+        "6": 504,
+        "10": 827
       }
     },
     {
@@ -56,9 +56,9 @@
       "weekly": 8,
       "annual": 350,
       "compleet": {
-        "3": 235,
-        "6": 434,
-        "10": 700
+        "3": 277,
+        "6": 520,
+        "10": 843
       }
     },
     {
@@ -69,9 +69,9 @@
       "weekly": 11,
       "annual": 490,
       "compleet": {
-        "3": 249,
-        "6": 448,
-        "10": 714
+        "3": 291,
+        "6": 534,
+        "10": 857
       }
     },
     {
@@ -82,9 +82,9 @@
       "weekly": 15,
       "annual": 650,
       "compleet": {
-        "3": 265,
-        "6": 464,
-        "10": 730
+        "3": 307,
+        "6": 550,
+        "10": 873
       }
     },
     {
@@ -95,9 +95,9 @@
       "weekly": 21,
       "annual": 890,
       "compleet": {
-        "3": 289,
-        "6": 488,
-        "10": 754
+        "3": 331,
+        "6": 574,
+        "10": 897
       }
     },
     {
@@ -108,9 +108,9 @@
       "weekly": 25,
       "annual": 1090,
       "compleet": {
-        "3": 309,
-        "6": 508,
-        "10": 774
+        "3": 351,
+        "6": 594,
+        "10": 917
       }
     },
     {
@@ -121,9 +121,9 @@
       "weekly": 30,
       "annual": 1290,
       "compleet": {
-        "3": 329,
-        "6": 528,
-        "10": 794
+        "3": 371,
+        "6": 614,
+        "10": 937
       }
     },
     {
@@ -134,9 +134,9 @@
       "weekly": 41,
       "annual": 1790,
       "compleet": {
-        "3": 379,
-        "6": 578,
-        "10": 844
+        "3": 421,
+        "6": 664,
+        "10": 987
       }
     },
     {
@@ -147,9 +147,9 @@
       "weekly": 55,
       "annual": 2390,
       "compleet": {
-        "3": 439,
-        "6": 638,
-        "10": 904
+        "3": 481,
+        "6": 724,
+        "10": 1047
       }
     },
     {
@@ -160,9 +160,9 @@
       "weekly": 78,
       "annual": 3390,
       "compleet": {
-        "3": 539,
-        "6": 738,
-        "10": 1004
+        "3": 581,
+        "6": 824,
+        "10": 1147
       }
     },
     {
@@ -173,9 +173,9 @@
       "weekly": 99,
       "annual": 4290,
       "compleet": {
-        "3": 629,
-        "6": 828,
-        "10": 1094
+        "3": 671,
+        "6": 914,
+        "10": 1237
       }
     }
   ]
