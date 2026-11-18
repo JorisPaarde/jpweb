@@ -108,6 +108,17 @@ variabelen in `:root` van `styles.css`:
 - titels in projectrijen (`.work-item h3`) gebruiken `--type-feature` en blijven
   kleiner dan de h2 van de sectie.
 
+Itemkoppen (diensten, projectrijen, linklijsten) gebruiken allemaal
+`--type-feature`. Op schermen breder dan 900px plakken de koppen in de linkerkolom van
+tweekoloms secties (`position: sticky; top: 100px`), op alle pagina's
+hetzelfde (besluit Joris, 18 november 2026). Op smallere schermen plakt niets.
+
+Tweekoloms secties (kop links, inhoud rechts) gebruiken allemaal
+`--split-columns` en `--split-gap`, zodat de linker- en rechterkolom op elke
+schermbreedte op dezelfde lijn beginnen. Projectrijen en het contactblok zijn
+even breed (max. 1530px). Controleer bij lay-outwijzigingen op 1920, 1440,
+1280, 1024, 820 en 390 px.
+
 Geef koppen geen eigen `font-size` buiten deze variabelen. Een h2 of h3 is
 nooit groter dan de h1 op dezelfde pagina.
 
