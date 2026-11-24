@@ -1948,6 +1948,26 @@ main section[id] {
   margin-top: 16px;
 }
 
+.contact-map-link a {
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.contact-map-link a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.contact-map-link a span {
+  display: inline-block;
+  transition: transform 220ms ease;
+}
+
+.contact-map-link a:hover span {
+  transform: translateX(5px);
+}
+
 .contact-map + .contact-map-link + p,
 .legal-content .contact-map-link + p {
   margin-top: 24px;
