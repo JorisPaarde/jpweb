@@ -1886,8 +1886,12 @@ main section[id] {
 .legal-content.contact-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-areas:
+    "reach details"
+    "map details";
   align-items: start;
-  gap: clamp(32px, 6vw, 96px);
+  column-gap: clamp(32px, 6vw, 96px);
+  row-gap: 20px;
   max-width: var(--site-max);
 }
 
@@ -1895,10 +1899,23 @@ main section[id] {
   margin-top: 0;
 }
 
+.contact-reach {
+  grid-area: reach;
+}
+
+.contact-details {
+  grid-area: details;
+}
+
+.contact-map-block {
+  grid-area: map;
+  min-width: 0;
+}
+
 .contact-layout .contact-actions {
   flex-direction: column;
   align-items: stretch;
-  max-width: 360px;
+  max-width: none;
 }
 
 .contact-layout .nap-list {
@@ -1928,9 +1945,11 @@ main section[id] {
 }
 
 .contact-map {
-  margin-top: 28px;
+  margin-top: 0;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  /* Landscape on desktop so the left stack (buttons + map) matches
+     the company-details column height without a large empty gap. */
+  aspect-ratio: 3 / 1;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -1968,11 +1987,6 @@ main section[id] {
   transform: translateX(5px);
 }
 
-.contact-map + .contact-map-link + p,
-.legal-content .contact-map-link + p {
-  margin-top: 24px;
-}
-
 .nap-list {
   display: grid;
   margin: 18px 0 0;
@@ -2006,10 +2020,19 @@ main section[id] {
 @media (max-width: 860px) {
   .legal-content.contact-layout {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "reach"
+      "details"
+      "map";
+    row-gap: 34px;
   }
 
   .contact-layout .contact-actions {
     max-width: none;
+  }
+
+  .contact-map {
+    aspect-ratio: 16 / 10;
   }
 }
 
