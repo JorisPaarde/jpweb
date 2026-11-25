@@ -99,6 +99,8 @@ AddType image/webp .webp
 
 <IfModule mod_setenvif.c>
   SetEnvIfNoCase Host "^test\.jpwebcreation\.nl(?::[0-9]+)?$" staging_host
+  # /wie-ik-ben/ zet zelf een strengere X-Robots-Tag (ook op productie); niet overschrijven.
+  SetEnvIf Request_URI "^/wie-ik-ben/" !staging_host
 </IfModule>
 
 <IfModule mod_headers.c>
