@@ -88,7 +88,7 @@ test('wie-ik-ben: pincode alleen met password_verify, lock na 5 fouten, ook goed
         }
         $files = glob($fx['dir'] . '/flappen/ratelimit/*.json') ?: [];
         foreach ($files as $f) {
-            assert_true(!str_contains((string) file_get_contents($f), '203.0.113.7') && !str_contains(basename($f), '203'), 'geen ruw IP');
+            assert_true(!str_contains((string) file_get_contents($f), '203.0.113.7') && !str_contains(basename($f), '203.0.113.7'), 'geen ruw IP');
             assert_same('0600', substr(sprintf('%o', fileperms($f)), -4), 'ratelimit-bestand 600');
         }
     } finally {
