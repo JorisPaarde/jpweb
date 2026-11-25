@@ -51,6 +51,13 @@ jobs:
           chmod 600 ~/.ssh/jpweb_deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
 
+      - name: Prepare private dirs for /wie-ik-ben/
+        # Foto's, manifesten en de pincode-hash staan alleen op de server ($HOME/private), nooit in git.
+        # Deze stap maakt alleen de mappen aan en zet de rechten strak (map 700, bestand 600).
+        run: |
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            'set -e; base="$HOME/private/flappen"; mkdir -p "$base/dag-1-3" "$base/dag-7" "$base/bloem" "$base/ratelimit" "$base/sessions"; chmod 700 "$HOME/private"; find "$base" -type d -exec chmod 700 {} +; find "$base" -type f -exec chmod 600 {} +; [ ! -f "$HOME/private/flappen-config.php" ] || chmod 600 "$HOME/private/flappen-config.php"'
+
       - name: Write GSC OAuth config
         env:
           GSC_CLIENT_ID: ${{ secrets.JPWEB_GSC_CLIENT_ID }}
@@ -192,6 +199,13 @@ jobs:
           printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/jpweb_deploy_key
           chmod 600 ~/.ssh/jpweb_deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Prepare private dirs for /wie-ik-ben/
+        # Foto's, manifesten en de pincode-hash staan alleen op de server ($HOME/private), nooit in git.
+        # Deze stap maakt alleen de mappen aan en zet de rechten strak (map 700, bestand 600).
+        run: |
+          ssh -i ~/.ssh/jpweb_deploy_key -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            'set -e; base="$HOME/private/flappen"; mkdir -p "$base/dag-1-3" "$base/dag-7" "$base/bloem" "$base/ratelimit" "$base/sessions"; chmod 700 "$HOME/private"; find "$base" -type d -exec chmod 700 {} +; find "$base" -type f -exec chmod 600 {} +; [ ! -f "$HOME/private/flappen-config.php" ] || chmod 600 "$HOME/private/flappen-config.php"'
 
       - name: Write GSC OAuth config
         env:

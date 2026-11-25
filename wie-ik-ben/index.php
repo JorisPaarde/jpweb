@@ -1,31 +1,226 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * /wie-ik-ben/ achter een pincode. Zonder geldige sessie alleen het pincodeformulier;
+ * de inhoud en de foto's komen pas na een goede pincode. Zie _gate.php.
+ */
+
+require __DIR__ . '/_gate.php';
+
+wib_send_common_headers();
+header('Content-Type: text/html; charset=UTF-8');
+wib_start_session();
+
+$wibStatus = 200;
+$wibMelding = '';
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    $action = $_POST['action'] ?? 'pin';
+    if (!wib_csrf_valid($_POST['csrf'] ?? null)) {
+        $wibStatus = 400;
+        $wibMelding = 'Het formulier was verlopen. Probeer het opnieuw.';
+    } elseif ($action === 'logout') {
+        $_SESSION = [];
+        session_regenerate_id(true);
+        header('Location: ./', true, 303);
+        exit;
+    } else {
+        $result = wib_check_pin(wib_client_ip(), $_POST['pin'] ?? null);
+        if ($result['status'] === 'ok') {
+            session_regenerate_id(true);
+            $_SESSION = ['wib_auth' => true, 'wib_auth_at' => time()];
+            header('Location: ./', true, 303);
+            exit;
+        }
+        usleep(random_int(400000, 900000));
+        if ($result['status'] === 'locked') {
+            $wibStatus = 429;
+            header('Retry-After: ' . (string) $result['retry_after']);
+            $wibMelding = 'Te veel pogingen. Probeer het over ' . (string) max(1, (int) ceil($result['retry_after'] / 60)) . ' minuten opnieuw.';
+        } elseif ($result['status'] === 'unavailable') {
+            $wibStatus = 503;
+            $wibMelding = 'Deze pagina is tijdelijk niet beschikbaar.';
+        } else {
+            $wibMelding = 'Deze pincode klopt niet.';
+        }
+    }
+} else {
+    $wait = wib_lock_seconds(wib_client_ip());
+    if ($wait > 0 && !wib_session_is_authed($_SESSION)) {
+        $wibStatus = 429;
+        header('Retry-After: ' . (string) $wait);
+        $wibMelding = 'Te veel pogingen. Probeer het over ' . (string) max(1, (int) ceil($wait / 60)) . ' minuten opnieuw.';
+    }
+}
+
+if (!wib_session_is_authed($_SESSION)) {
+    if (isset($_SESSION['wib_auth'])) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+    }
+    http_response_code($wibStatus);
+    $csrf = wib_csrf_token();
+?>
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Afgeschermd | JP Web Creation</title>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <link rel="icon" href="/favicon.svg?v=20260714" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
+    <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
+    <link rel="stylesheet" href="../styles.css?v=82">
+    <style>
+      .wib-gate-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background:
+          radial-gradient(ellipse 90% 48% at 8% -8%, rgba(111, 143, 120, 0.18), transparent 58%),
+          radial-gradient(ellipse 70% 40% at 92% 4%, rgba(231, 173, 82, 0.16), transparent 52%),
+          var(--paper);
+      }
+
+      .wib-gate {
+        flex: 1;
+        display: grid;
+        place-items: center;
+        padding: clamp(120px, 16vw, 170px) var(--site-gutter) clamp(56px, 8vw, 96px);
+      }
+
+      .wib-gate-card {
+        width: min(100%, 380px);
+        padding: clamp(26px, 4vw, 34px);
+        border: 1px solid color-mix(in srgb, var(--green) 18%, transparent);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5)), #e8f0eb;
+        box-shadow: 0 10px 28px rgba(24, 32, 29, 0.06);
+      }
+
+      .wib-gate-card label {
+        display: block;
+        margin: 0 0 10px;
+        color: var(--green-dark);
+        font-size: 1.15rem;
+        font-weight: 750;
+      }
+
+      .wib-gate-card input[type="password"] {
+        width: 100%;
+        min-height: 52px;
+        padding: 10px 14px;
+        border: 1px solid color-mix(in srgb, var(--green) 35%, transparent);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        font-size: 1.4rem;
+        letter-spacing: 0.35em;
+        text-align: center;
+      }
+
+      .wib-gate-card input[type="password"]:focus-visible {
+        outline: 3px solid var(--green-dark);
+        outline-offset: 2px;
+      }
+
+      .wib-gate-card button {
+        width: 100%;
+        min-height: 50px;
+        margin-top: 14px;
+        border: 0;
+        border-radius: 12px;
+        background: var(--green-dark);
+        color: #fff;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .wib-gate-card button:hover {
+        background: var(--green);
+      }
+
+      .wib-gate-melding {
+        margin: 0 0 14px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: #fbeee6;
+        color: #7a2e12;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body class="project-page wib-gate-page">
+    <header class="site-header">
+      <a class="brand" href="../" aria-label="JP Web Creation home">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-mark-image brand-mark-image-light" src="/assets/logo/logo-mark-diap.svg" alt="" width="38" height="38">
+          <img class="brand-mark-image brand-mark-image-dark" src="/assets/logo/logo-mark.svg" alt="" width="38" height="38">
+        </span>
+        <span>JP Web Creation</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Hoofdnavigatie">
+        <a href="/#diensten">Websites</a>
+        <a href="/#werk">Werk</a>
+        <a href="/#kosten">Prijzen</a>
+        <a href="/#over-mij">Over mij</a>
+        <a href="/ai/">AI</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <a class="header-phone" href="tel:+31621228884">06 21 22 88 84</a>
+    </header>
+
+
+    <main class="wib-gate">
+      <form class="wib-gate-card" method="post" action="./" autocomplete="off">
+<?php if ($wibMelding !== ''): ?>
+        <p class="wib-gate-melding" role="alert"><?= wib_e($wibMelding) ?></p>
+<?php endif; ?>
+        <label for="wib-pin">Pincode</label>
+        <input id="wib-pin" name="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" required autofocus>
+        <input type="hidden" name="csrf" value="<?= wib_e($csrf) ?>">
+        <button type="submit">Openen</button>
+      </form>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-company">
+        <strong class="footer-name">&copy; 2026 JP Web Creation</strong>
+        <address class="footer-address">Bernadottelaan 273, 2037 GR Haarlem</address>
+        <p class="footer-contact"><a href="tel:+31621228884">06 21 22 88 84</a> <span aria-hidden="true">&middot;</span> <a href="mailto:info@jpwebcreation.nl">info@jpwebcreation.nl</a></p>
+        <p class="footer-reg">KvK 90397320 <span aria-hidden="true">&middot;</span> Btw NL004813310B95</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/contact/">Contact</a>
+        <a href="/privacyverklaring/">Privacyverklaring</a>
+        <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
+      </nav>
+    </footer>
+    <script src="../script.js?v=20"></script>
+  </body>
+</html>
+<?php
+    exit;
+}
+?>
 <!doctype html>
 <html lang="nl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Wie ik ben en hoe ik leef | Joris Paardekooper Overman</title>
-    <meta
-      name="description"
-      content="Persoonlijke lessen en afspraken van Joris Paardekooper Overman: hoe hij leeft, wat hij belangrijk vindt, en hoe hij rust en verantwoordelijkheid bewaakt."
-    >
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="canonical" href="https://jpwebcreation.nl/wie-ik-ben/">
-    <meta property="og:locale" content="nl_NL">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="JP Web Creation">
-    <meta property="og:title" content="Wie ik ben en hoe ik leef | Joris Paardekooper Overman">
-    <meta property="og:description" content="Persoonlijke lessen en afspraken van Joris: hoe hij leeft, wat hij belangrijk vindt, en hoe hij rust en verantwoordelijkheid bewaakt.">
-    <meta property="og:url" content="https://jpwebcreation.nl/wie-ik-ben/">
-    <meta property="og:image" content="https://jpwebcreation.nl/assets/wie-ik-ben/bloem-1200.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="900">
-    <meta property="og:image:height" content="1200">
-    <meta property="og:image:alt" content="Oranje gerbera in een zwarte vaas">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Wie ik ben en hoe ik leef | Joris Paardekooper Overman">
-    <meta name="twitter:description" content="Persoonlijke lessen en afspraken van Joris: hoe hij leeft, wat hij belangrijk vindt, en hoe hij rust en verantwoordelijkheid bewaakt.">
-    <meta name="twitter:image" content="https://jpwebcreation.nl/assets/wie-ik-ben/bloem-1200.jpg">
-    <meta name="twitter:image:alt" content="Oranje gerbera in een zwarte vaas">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <link rel="preconnect" href="https://jpwebcreation.nl">
     <link rel="icon" href="/favicon.svg?v=20260714" type="image/svg+xml">
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
@@ -350,6 +545,177 @@
         border: 1px dashed color-mix(in srgb, var(--theme-accent) 28%, transparent);
       }
 
+      /* Flappen van de training: zelfde kaartstijl, breder raster. */
+      .wie-ik-ben-page .wib-list {
+        padding-bottom: clamp(18px, 2.4vw, 26px);
+      }
+
+      .wie-ik-ben-page .wib-flappen {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 var(--site-gutter) clamp(64px, 9vw, 110px);
+        display: grid;
+        gap: clamp(18px, 2.4vw, 26px);
+      }
+
+      .wie-ik-ben-page .wib-card--flappen {
+        --theme-accent: #8a6a2f;
+        --theme-wash: #f4eee2;
+      }
+
+      .wie-ik-ben-page .wib-card--flappen-7 {
+        --theme-accent: #4f6f8a;
+        --theme-wash: #e7eef3;
+      }
+
+      .wie-ik-ben-page .wib-flappen-intro {
+        margin: 0 0 18px;
+      }
+
+      .wie-ik-ben-page .wib-gallery {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+        gap: clamp(14px, 2vw, 22px);
+        align-items: start;
+      }
+
+      .wie-ik-ben-page .wib-gallery li {
+        padding: 0;
+        max-width: none;
+      }
+
+      .wie-ik-ben-page .wib-gallery li::before {
+        content: none;
+      }
+
+      .wie-ik-ben-page .wib-flap {
+        margin: 0;
+        padding: 10px 10px 12px;
+        border-radius: var(--wib-radius-sm);
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid color-mix(in srgb, var(--theme-accent) 16%, transparent);
+        box-shadow: 0 6px 18px rgba(24, 32, 29, 0.05);
+      }
+
+      .wie-ik-ben-page .wib-flap a {
+        display: block;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .wie-ik-ben-page .wib-flap a:focus-visible {
+        outline: 3px solid var(--green-dark);
+        outline-offset: 2px;
+      }
+
+      .wie-ik-ben-page .wib-flap img {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: transform 0.25s ease;
+      }
+
+      .wie-ik-ben-page .wib-flap a:hover img {
+        transform: scale(1.02);
+      }
+
+      .wie-ik-ben-page .wib-flap figcaption {
+        margin: 10px 4px 0;
+        color: var(--green-dark);
+        font-size: 0.98rem;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+
+      .wie-ik-ben-page .wib-flappen-leeg {
+        margin: 0;
+      }
+
+      .wib-lightbox {
+        width: min(96vw, 1100px);
+        max-height: 94vh;
+        padding: 0;
+        border: 0;
+        border-radius: 16px;
+        background: var(--paper);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      .wib-lightbox::backdrop {
+        background: rgba(16, 22, 20, 0.78);
+      }
+
+      .wib-lightbox figure {
+        margin: 0;
+        padding: 12px 12px 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .wib-lightbox img {
+        display: block;
+        max-width: 100%;
+        max-height: calc(94vh - 90px);
+        width: auto;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 10px;
+      }
+
+      .wib-lightbox figcaption {
+        color: var(--green-dark);
+        font-weight: 650;
+        text-align: center;
+        padding-right: 44px;
+        padding-left: 44px;
+      }
+
+      .wib-lightbox-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--ink);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      }
+
+      .wie-ik-ben-page .wib-uitloggen {
+        max-width: 860px;
+        margin: calc(-1 * clamp(40px, 6vw, 80px)) auto 0;
+        padding: 0 var(--site-gutter) clamp(48px, 7vw, 80px);
+        display: flex;
+        justify-content: center;
+      }
+
+      .wie-ik-ben-page .wib-uitloggen button {
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid color-mix(in srgb, var(--green) 35%, transparent);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--green-dark);
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      @media (max-width: 720px) {
+        .wie-ik-ben-page .wib-gallery {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 900px) {
         .wie-ik-ben-page .wib-hero {
           grid-template-columns: 1fr;
@@ -491,9 +857,9 @@
         </div>
         <figure class="wib-bloom">
           <picture>
-            <source type="image/webp" srcset="../assets/wie-ik-ben/bloem-1200.webp">
+            <source type="image/webp" srcset="<?= wib_photo_url('bloem', 'bloem-1200.webp') ?>">
             <img
-              src="../assets/wie-ik-ben/bloem-1200.jpg"
+              src="<?= wib_photo_url('bloem', 'bloem-1200.jpg') ?>"
               width="900"
               height="1200"
               alt="Oranje gerbera in een zwarte vaas"
@@ -658,7 +1024,46 @@
           </ul>
         </section>
       </div>
+
+      <div class="wib-flappen">
+<?php foreach ([['dag-1-3', 'Flappen dag 1-3', 'wib-card--flappen'], ['dag-7', 'Flappen dag 7', 'wib-card--flappen wib-card--flappen-7']] as [$set, $kop, $klasse]): ?>
+<?php $fotos = wib_manifest($set); ?>
+        <section class="wib-card <?= $klasse ?>" aria-labelledby="wib-<?= $set ?>">
+          <h2 id="wib-<?= $set ?>"><?= wib_e($kop) ?></h2>
+<?php if ($fotos === []): ?>
+          <p class="wib-flappen-leeg">De foto's van dit blok staan nog niet klaar.</p>
+<?php else: ?>
+          <ul class="wib-gallery">
+<?php foreach ($fotos as $foto): ?>
+            <li>
+              <figure class="wib-flap">
+                <a href="<?= wib_photo_url($set, $foto['file']) ?>" data-wib-lightbox>
+                  <img src="<?= wib_photo_url($set, $foto['file']) ?>" width="<?= $foto['width'] ?>" height="<?= $foto['height'] ?>" alt="<?= wib_e($foto['caption']) ?>" loading="lazy" decoding="async">
+                </a>
+                <figcaption><?= wib_e($foto['caption']) ?></figcaption>
+              </figure>
+            </li>
+<?php endforeach; ?>
+          </ul>
+<?php endif; ?>
+        </section>
+<?php endforeach; ?>
+      </div>
+
+      <form class="wib-uitloggen" method="post" action="./">
+        <input type="hidden" name="csrf" value="<?= wib_e(wib_csrf_token()) ?>">
+        <input type="hidden" name="action" value="logout">
+        <button type="submit">Uitloggen</button>
+      </form>
     </main>
+
+    <dialog class="wib-lightbox" aria-label="Foto groot">
+      <button class="wib-lightbox-close" type="button" aria-label="Sluiten">&times;</button>
+      <figure>
+        <img alt="">
+        <figcaption></figcaption>
+      </figure>
+    </dialog>
 
     <footer class="site-footer">
       <div class="footer-company">
@@ -674,5 +1079,26 @@
       </nav>
     </footer>
     <script src="../script.js?v=20"></script>
+    <script>
+      (function () {
+        var dialog = document.querySelector('.wib-lightbox');
+        if (!dialog || typeof dialog.showModal !== 'function') return;
+        var img = dialog.querySelector('img');
+        var cap = dialog.querySelector('figcaption');
+        document.addEventListener('click', function (event) {
+          var link = event.target.closest('a[data-wib-lightbox]');
+          if (!link) return;
+          event.preventDefault();
+          var thumb = link.querySelector('img');
+          img.src = link.getAttribute('href');
+          img.alt = thumb ? thumb.alt : '';
+          cap.textContent = thumb ? thumb.alt : '';
+          dialog.showModal();
+        });
+        dialog.querySelector('.wib-lightbox-close').addEventListener('click', function () { dialog.close(); });
+        dialog.addEventListener('click', function (event) { if (event.target === dialog) dialog.close(); });
+        dialog.addEventListener('close', function () { img.removeAttribute('src'); });
+      })();
+    </script>
   </body>
 </html>

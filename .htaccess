@@ -32,6 +32,9 @@ RedirectMatch 404 (?i)^/app/(?:nav|layout|_init|_action_card)\.php$
 RedirectMatch 404 (?i)^/app/gsc/settings-card\.php$
 RedirectMatch 404 (?i)^/(?:admin|app/gsc)/?$
 RedirectMatch 404 (?i)^/docs(?:/|$)
+# /wie-ik-ben/: alleen index.php en foto.php; includes en oude asset-paden bestaan niet.
+RedirectMatch 404 (?i)^/wie-ik-ben/(?!(?:index\.php|foto\.php)?$)
+RedirectMatch 404 (?i)^/assets/wie-ik-ben(?:/|$)
 
 # Gebruik één hoofdadres voor alle publieke pagina's.
 <IfModule mod_rewrite.c>
