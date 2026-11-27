@@ -2,6 +2,27 @@
 <html lang="nl">
   <head>
     <meta charset="utf-8">
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500});
+      (function () {
+        try {
+          var c = JSON.parse(localStorage.getItem('jpwc_consent') || 'null');
+          if (c && c.v === 1 && Date.now() - c.ts < 31536000000) {
+            var ads = c.ads ? 'granted' : 'denied';
+            gtag('consent', 'update', {analytics_storage: c.analytics ? 'granted' : 'denied', ad_storage: ads, ad_user_data: ads, ad_personalization: ads});
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WQ8RDBNK');</script>
+    <!-- End Google Tag Manager -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Airco-vooropname: WhatsApp, formulier of software?</title>
     <meta
@@ -30,7 +51,7 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../../styles.css?v=85">
+    <link rel="stylesheet" href="../../styles.css?v=86">
     <link rel="stylesheet" href="../digitale-opname.css?v=4">
       <script type="application/ld+json" id="nap-bedrijf">
       {
@@ -98,6 +119,9 @@
     </script>
   </head>
   <body class="project-page opname-page opname-compare-page">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ8RDBNK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <header class="site-header">
       <a class="brand" href="../../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -227,8 +251,10 @@
         <a href="/contact/">Contact</a>
         <a href="/privacyverklaring/">Privacyverklaring</a>
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
+        <button type="button" class="footer-cookie-link" data-cookie-settings>Cookie-instellingen</button>
       </nav>
     </footer>
     <script src="../../script.js?v=20"></script>
+    <script src="/consent.js?v=1" defer></script>
   </body>
 </html>

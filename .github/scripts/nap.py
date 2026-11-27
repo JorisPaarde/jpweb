@@ -58,6 +58,7 @@ def footer_html(rel):
         f'<a href="/contact/"{contact_current}>Contact</a>',
         '<a href="/privacyverklaring/">Privacyverklaring</a>',
         '<a href="/algemene-voorwaarden/">Algemene voorwaarden</a>',
+        '<button type="button" class="footer-cookie-link" data-cookie-settings>Cookie-instellingen</button>',
     ]
     links_html = "\n".join(f"        {l}" for l in links)
     return f"""<footer class="site-footer">
