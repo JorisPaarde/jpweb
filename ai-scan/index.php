@@ -44,7 +44,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title><?= $h($title) ?> · JP Web Creation</title>
-  <link rel="stylesheet" href="/styles.css?v=89">
+  <link rel="stylesheet" href="/styles.css?v=90">
   <?php jpwc_consent_head(); ?>
   <style>
     .ai-auth { max-width: 32rem; margin: 4rem auto; padding: 0 1.25rem; }
