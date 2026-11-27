@@ -765,9 +765,28 @@ main section[id] {
 
 .work-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 6px 14px;
   margin-bottom: 18px;
+}
+
+/* "Klant sinds 2025" / "Eigen project": rustig label naast work-type, in Meer werk en in de case-eyebrow. */
+.client-since {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* Op kaarten altijd een eigen regel onder het type, zodat elke kaart er hetzelfde uitziet. */
+.work-meta .client-since {
+  flex-basis: 100%;
+}
+
+.eyebrow .client-since {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .work-number {

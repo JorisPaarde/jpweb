@@ -72,7 +72,7 @@ $csrf = ai_scan_csrf_token($config);
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Inloggen · JP Web Creation</title>
-  <link rel="stylesheet" href="/styles.css?v=89">
+  <link rel="stylesheet" href="/styles.css?v=90">
   <?php jpwc_consent_head(); ?>
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
