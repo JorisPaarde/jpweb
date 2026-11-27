@@ -6,6 +6,8 @@ require_once dirname(__DIR__, 2) . '/lib/bootstrap.php';
 
 [$config, $pdo] = ai_scan_boot();
 ai_scan_security_headers();
+// Token in de URL: geen referrer naar de volgende pagina (die GTM laadt).
+header('Referrer-Policy: no-referrer');
 ai_scan_assert_allowed_host($config);
 
 $token = (string) ($_GET['t'] ?? $_POST['t'] ?? '');

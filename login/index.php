@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/lib/bootstrap.php';
+require_once dirname(__DIR__) . '/lib/consent.php';
 
 [$config, $pdo] = ai_scan_boot();
 ai_scan_security_headers();
@@ -65,13 +66,14 @@ if ($method === 'POST') {
 
 $csrf = ai_scan_csrf_token($config);
 ?><!DOCTYPE html>
-<html lang="nl">
+<html lang="nl"<?= jpwc_consent_html_attr(true) ?>>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Inloggen · JP Web Creation</title>
-  <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
+  <link rel="stylesheet" href="/styles.css?v=87">
+  <?php jpwc_consent_head(); ?>
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
     .ai-auth .auth-back { display: inline-block; margin-bottom: 1.5rem; }
@@ -94,6 +96,7 @@ $csrf = ai_scan_csrf_token($config);
   </style>
 </head>
 <body>
+  <?php jpwc_consent_noscript(); ?>
   <main class="ai-auth">
     <a class="auth-back" href="/">← Terug naar jpwebcreation.nl</a>
     <h1>Inloggen</h1>

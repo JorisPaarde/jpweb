@@ -16,6 +16,8 @@ require_once dirname(__DIR__) . '/lib/questions.php';
 [$config, $pdo] = ai_scan_boot();
 ai_scan_ensure_questions_schema($pdo);
 ai_scan_security_headers();
+// Token in de URL: geen referrer naar de volgende pagina (die GTM laadt).
+header('Referrer-Policy: no-referrer');
 ai_scan_assert_allowed_host($config);
 header('Content-Type: text/html; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');

@@ -136,8 +136,10 @@ if ($requestMethod !== 'POST') {
 
 $returnPath = contact_return_path();
 
+// Honeypot: een bot krijgt een gewone bevestiging, maar met een eigen status zodat de
+// conversie (contact_form_success) alleen na een echte verzending afgaat.
 if (clean_input('website', 200) !== '') {
-    redirect_with_status('success', $returnPath);
+    redirect_with_status('received', $returnPath);
 }
 
 $name = clean_input('name', 120);

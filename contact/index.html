@@ -25,7 +25,7 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="/styles.css?v=86">
+    <link rel="stylesheet" href="/styles.css?v=87">
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -174,15 +174,11 @@
         </section>
 
         <div class="contact-map-block">
-          <div class="contact-map">
-            <iframe
-              class="contact-map-frame"
-              title="Kaart van JP Web Creation op Google Maps"
-              src="https://www.google.com/maps?cid=10877726827564355710&amp;output=embed"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              allowfullscreen=""
-            ></iframe>
+          <div class="contact-map" data-map-src="https://www.google.com/maps?cid=10877726827564355710&amp;output=embed" data-map-title="Kaart van JP Web Creation op Google Maps">
+            <div class="contact-map-placeholder">
+              <p>De kaart komt van Google Maps. Die laad ik pas als je erop klikt of akkoord geeft voor meten of advertenties.</p>
+              <button type="button" class="cookie-button contact-map-button" data-map-load>Kaart tonen</button>
+            </div>
           </div>
           <p class="contact-map-link context-link">
             <a
@@ -210,7 +206,7 @@
       </nav>
     </footer>
 
-    <script src="/script.js?v=20"></script>
-    <script src="/consent.js?v=1" defer></script>
+    <script src="/script.js?v=21"></script>
+    <script src="/consent.js?v=2" defer></script>
   </body>
 </html>

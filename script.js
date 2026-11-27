@@ -178,7 +178,8 @@ if (contactStatus) {
     }
   };
 
-  if (contactResult === "success") {
+  // "received" is de honeypot-status: zelfde bevestiging, maar consent.js telt die niet als conversie.
+  if (contactResult === "success" || contactResult === "received") {
     contactStatus.innerHTML = `
       <span class="form-status-icon" aria-hidden="true">✓</span>
       <span class="form-status-kicker">Bericht verzonden</span>

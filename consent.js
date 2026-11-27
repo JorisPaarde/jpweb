@@ -42,17 +42,59 @@
       consent_analytics: choice.analytics ? "granted" : "denied",
       consent_ads: choice.ads ? "granted" : "denied"
     });
+    if (choice.analytics || choice.ads) {
+      loadMaps();
+    }
     return choice;
   }
 
-  /* Conversie: alleen na een geslaagde verzending via /contact.php (303 naar ?contact=success). */
-  if (new URLSearchParams(window.location.search).get("contact") === "success") {
+  /* Google Maps (contactpagina): de iframe komt pas na een klik op "Kaart tonen"
+     of zodra meten of advertenties zijn toegestaan. */
+  function loadMap(holder) {
+    if (holder.querySelector("iframe")) {
+      return;
+    }
+    var frame = document.createElement("iframe");
+    frame.className = "contact-map-frame";
+    frame.title = holder.getAttribute("data-map-title") || "Kaart";
+    frame.src = holder.getAttribute("data-map-src");
+    frame.loading = "lazy";
+    frame.referrerPolicy = "no-referrer-when-downgrade";
+    frame.allowFullscreen = true;
+    holder.replaceChildren(frame);
+  }
+
+  function loadMaps() {
+    var holders = document.querySelectorAll("[data-map-src]");
+    for (var i = 0; i < holders.length; i++) {
+      loadMap(holders[i]);
+    }
+  }
+
+  document.addEventListener("click", function (event) {
+    var button = event.target instanceof Element ? event.target.closest("[data-map-load]") : null;
+    var holder = button ? button.closest("[data-map-src]") : null;
+    if (holder) {
+      loadMap(holder);
+    }
+  });
+
+  var stored = readChoice();
+  if (stored && (stored.analytics || stored.ads)) {
+    loadMaps();
+  }
+
+  /* Ingelogde en app-pagina's zetten data-no-conversion-events op <html>: daar alleen de cookiekeuze. */
+  var conversionEvents = !document.documentElement.hasAttribute("data-no-conversion-events");
+
+  /* Conversie: alleen na een geslaagde verzending via /contact.php (303 naar ?contact=success). De honeypot stuurt naar ?contact=received en telt dus niet mee. */
+  if (conversionEvents && new URLSearchParams(window.location.search).get("contact") === "success") {
     window.dataLayer.push({ event: "contact_form_success", form_page: window.location.pathname });
   }
 
   /* Conversie: klik op een tel:-link. Het bellen zelf gaat gewoon door. */
   document.addEventListener("click", function (event) {
-    var link = event.target instanceof Element ? event.target.closest('a[href^="tel:"]') : null;
+    var link = conversionEvents && event.target instanceof Element ? event.target.closest('a[href^="tel:"]') : null;
     if (link) {
       window.dataLayer.push({ event: "phone_click", link_url: link.getAttribute("href") });
     }
