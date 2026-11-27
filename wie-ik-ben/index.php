@@ -74,7 +74,7 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=82">
+    <link rel="stylesheet" href="../styles.css?v=89">
     <style>
       .wib-gate-page {
         min-height: 100vh;
@@ -207,7 +207,7 @@ if (!wib_session_is_authed($_SESSION)) {
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
       </nav>
     </footer>
-    <script src="../script.js?v=20"></script>
+    <script src="../script.js?v=21"></script>
   </body>
 </html>
 <?php
@@ -226,7 +226,7 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=82">
+    <link rel="stylesheet" href="../styles.css?v=89">
     <!-- Page-only styles: soft themed sections without touching global styles.css. -->
     <style>
       .wie-ik-ben-page {
@@ -1078,7 +1078,7 @@ if (!wib_session_is_authed($_SESSION)) {
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
       </nav>
     </footer>
-    <script src="../script.js?v=20"></script>
+    <script src="../script.js?v=21"></script>
     <script>
       (function () {
         var dialog = document.querySelector('.wib-lightbox');

@@ -27,6 +27,8 @@ if ($method === 'GET' && (string) ($_GET['action'] ?? '') === 'state') {
 if ($method === 'GET' && isset($_GET['confirm'])) {
     $confirmToken = htmlspecialchars((string) $_GET['confirm'], ENT_QUOTES, 'UTF-8');
     $confirmState = ai_scan_confirm_token_state($pdo, (string) $_GET['confirm']);
+    // Token in de URL: geen referrer naar /ai-scan/?s=… of /login/ (die GTM laden).
+    header('Referrer-Policy: no-referrer');
     header('Content-Type: text/html; charset=utf-8');
     header('X-Robots-Tag: noindex, nofollow');
     ?><!DOCTYPE html>

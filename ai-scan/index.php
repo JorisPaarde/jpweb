@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 
 require_once dirname(__DIR__) . '/lib/bootstrap.php';
+require_once dirname(__DIR__) . '/lib/consent.php';
 
 ai_scan_security_headers();
 
@@ -37,13 +38,14 @@ if (!isset($pages[$code]) && $code === '') {
 }
 $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?><!DOCTYPE html>
-<html lang="nl">
+<html lang="nl"<?= jpwc_consent_html_attr(true) ?>>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title><?= $h($title) ?> · JP Web Creation</title>
-  <link rel="stylesheet" href="/styles.css?v=ai-scan-1">
+  <link rel="stylesheet" href="/styles.css?v=89">
+  <?php jpwc_consent_head(); ?>
   <style>
     .ai-auth { max-width: 32rem; margin: 4rem auto; padding: 0 1.25rem; }
     .ai-auth h1 { font-size: 1.75rem; margin-bottom: 0.75rem; }
@@ -52,6 +54,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
   </style>
 </head>
 <body>
+  <?php jpwc_consent_noscript(); ?>
   <main class="ai-auth">
     <h1><?= $h($title) ?></h1>
     <p><?= $h($text) ?></p>

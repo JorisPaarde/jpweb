@@ -25,7 +25,28 @@
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=85">
+    <link rel="stylesheet" href="../styles.css?v=89">
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500});
+      (function () {
+        try {
+          var c = JSON.parse(localStorage.getItem('jpwc_consent') || 'null');
+          if (c && c.v === 1 && Date.now() - c.ts < 31536000000) {
+            var ads = c.ads ? 'granted' : 'denied';
+            gtag('consent', 'update', {analytics_storage: c.analytics ? 'granted' : 'denied', ad_storage: ads, ad_user_data: ads, ad_personalization: ads});
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WQ8RDBNK');</script>
+    <!-- End Google Tag Manager -->
       <script type="application/ld+json" id="nap-bedrijf">
       {
         "@context": "https://schema.org",
@@ -92,6 +113,9 @@
     </script>
   </head>
   <body class="project-page">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ8RDBNK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <header class="site-header">
       <a class="brand" href="../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -145,7 +169,9 @@
           <p>
             Als je contact opneemt, kunnen je naam, bedrijfsnaam, e-mailadres, telefoonnummer en de
             inhoud van je bericht worden verwerkt. Daarnaast kunnen technische gegevens in serverlogs
-            staan, zoals IP-adres, browser, tijdstip en bezochte pagina's.
+            staan, zoals IP-adres, browser, tijdstip en bezochte pagina's. Geef je akkoord voor meten
+            of advertenties, dan worden ook gegevens over je bezoek verwerkt. Dat lees je onder
+            <a href="#cookies">Cookies en meten</a>.
           </p>
         </section>
 
@@ -156,6 +182,7 @@
             <li>Om een offerte te maken of een opdracht uit te voeren.</li>
             <li>Voor administratie en wettelijke verplichtingen.</li>
             <li>Voor beveiliging en goede werking van de website.</li>
+            <li>Alleen met je akkoord: om te meten hoe de site wordt gebruikt en of mijn advertenties werken.</li>
           </ul>
         </section>
 
@@ -174,18 +201,52 @@
           <p>
             Persoonsgegevens worden niet verkocht. Gegevens worden alleen gedeeld met partijen die
             nodig zijn voor de dienstverlening, zoals hosting, e-mail, boekhouding of andere
-            technische dienstverleners.
+            technische dienstverleners. Geef je akkoord voor meten of advertenties, dan verwerkt Google
+            gegevens over je bezoek via Google Tag Manager, Google Analytics en Google Ads.
           </p>
         </section>
 
-        <section>
-          <h2>Cookies</h2>
+        <section id="cookies">
+          <h2>Cookies en meten</h2>
           <p>
-            Deze website gebruikt geen trackingcookies en geen advertentiecookies. Daarom is er op
-            dit moment geen aparte cookiemelding nodig. Na een ongeldige formulierinzending wordt
-            alleen een noodzakelijke sessiecookie gebruikt om je invoer maximaal tien minuten
-            server-side te bewaren. De invoer wordt direct gewist zodra deze eenmaal is teruggezet.
-            Als het cookiegebruik later verandert, wordt deze verklaring aangepast.
+            Bij je eerste bezoek vraag ik of ik mag meten hoe je de site gebruikt en of advertenties
+            dat mogen doen. Zonder jouw akkoord plaats ik geen meet- of advertentiecookies.
+          </p>
+          <p>Je kiest zelf:</p>
+          <ul>
+            <li>
+              <strong>Noodzakelijk</strong> (staat altijd aan). Je keuze bewaar ik in de lokale opslag
+              van je browser, zodat ik het niet bij elke pagina opnieuw vraag. Na 12 maanden vraag ik het opnieuw. Na een ongeldige formulierinzending gebruik ik
+              daarnaast een noodzakelijke sessiecookie om je invoer maximaal tien minuten op de server te
+              bewaren. Die invoer wis ik direct zodra hij eenmaal is teruggezet.
+            </li>
+            <li>
+              <strong>Meten.</strong> Met Google Analytics zie ik welke pagina's bezocht worden en waar
+              bezoekers afhaken. Zo kan ik de site verbeteren.
+            </li>
+            <li>
+              <strong>Advertenties.</strong> Met Google Ads meet ik of iemand na een advertentie contact
+              opneemt, bijvoorbeeld via het formulier of door te bellen, en kunnen advertenties daarop
+              worden afgestemd.
+            </li>
+          </ul>
+          <p>
+            Ik laad deze diensten via Google Tag Manager. Dat is een hulpmiddel van Google dat bepaalt
+            welke meting wordt gestart. Het houdt rekening met je keuze: zonder akkoord blijven meten en
+            advertenties uit. Google kan daarbij gegevens zoals je IP-adres en apparaatgegevens verwerken,
+            ook buiten de Europese Unie. Meer over hoe Google daarmee omgaat lees je in de
+            <a href="https://policies.google.com/privacy?hl=nl" rel="noopener">privacyverklaring van Google</a>.
+          </p>
+          <p>
+            Op de contactpagina staat een kaart van Google Maps. Die laad ik pas als je op &lsquo;Kaart tonen&rsquo;
+            klikt of akkoord geeft voor meten of advertenties. Vanaf dat moment kan Google cookies plaatsen en
+            gegevens zoals je IP-adres verwerken.
+          </p>
+          <p>
+            Je keuze wijzigen kan altijd via
+            <button type="button" class="footer-cookie-link legal-cookie-link" data-cookie-settings>Cookie-instellingen</button>,
+            ook onderaan elke pagina. Je kunt de opgeslagen keuze ook wissen door de websitegegevens van
+            jpwebcreation.nl in je browser te verwijderen.
           </p>
         </section>
 
@@ -242,7 +303,7 @@
 
         <section>
           <h2>Laatste update</h2>
-          <p>Deze privacyverklaring is voor het laatst bijgewerkt op 12 oktober 2026.</p>
+          <p>Deze privacyverklaring is voor het laatst bijgewerkt op 27 november 2026.</p>
         </section>
       </div>
     </main>
@@ -258,8 +319,10 @@
         <a href="/contact/">Contact</a>
         <a href="/privacyverklaring/">Privacyverklaring</a>
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
+        <button type="button" class="footer-cookie-link" data-cookie-settings>Cookie-instellingen</button>
       </nav>
     </footer>
-    <script src="../script.js?v=20"></script>
+    <script src="../script.js?v=21"></script>
+    <script src="/consent.js?v=2" defer></script>
   </body>
 </html>

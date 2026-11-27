@@ -831,6 +831,7 @@ require __DIR__ . '/login_next_test.php';
 require __DIR__ . '/internal_test_emails_test.php';
 require __DIR__ . '/testronde_1019_test.php';
 require __DIR__ . '/wie_ik_ben_gate_test.php';
+require __DIR__ . '/consent_tracking_test.php';
 
 echo PHP_EOL . "Passed: {$passed}; Failed: {$failures}" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);
