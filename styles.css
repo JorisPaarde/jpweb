@@ -3161,3 +3161,64 @@ main section[id] {
     align-self: start;
   }
 }
+
+/* Landingspagina installatiebedrijf: geen overlap in je regio. */
+.no-overlap-copy {
+  max-width: 640px;
+}
+
+.no-overlap-copy p {
+  font-size: var(--type-body-large);
+  line-height: 1.55;
+}
+
+.no-overlap-copy p + p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+/* Landingspagina installatiebedrijf: lichtere terracotta op de donkere hero (minstens 4,5:1). */
+.ai-hero .landing-hero-eyebrow {
+  color: #f2b49b;
+}
+
+/* Landingspagina installatiebedrijf: lichter goud op de kaart in de hero (minstens 4,5:1). */
+.ai-process-card .landing-card-eyebrow {
+  color: #f6d9a6;
+}
+
+/* Opengeklapt menu: volledig dekkend, zodat de pagina er niet doorheen schijnt. */
+.site-header.is-open {
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Belnummer alleen in het opengeklapte menu; op breed scherm staat het al in de header. */
+.site-nav .nav-phone {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .site-header.is-open .site-nav .nav-phone {
+    display: block;
+  }
+}
+
+/* Toestemmingsregel: tikvlak van minstens 44 px voor vinkje en privacylink. */
+.contact-form .form-consent {
+  min-height: 44px;
+}
+
+.form-consent a {
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -12px;
+}
+
+/* Landingspagina installatiebedrijf: lange kop past op smalle telefoons. */
+@media (max-width: 560px) {
+  #landing-title {
+    font-size: min(var(--type-hero), 10.8vw);
+  }
+}
