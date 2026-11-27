@@ -13,7 +13,7 @@ declare(strict_types=1);
  * pagina's krijgen data-no-conversion-events op <html> (zie jpwc_consent_html_attr), zodat
  * consent.js daar alleen consent_update pusht.
  *
- * Bewust NIET op: /app/* (bedrijfsnaam van de klant in de titel), /dashboard/, /admin/*,
+ * Bewust NIET op: /wie-ik-ben/ (keuze Joris, 27 nov 2026), /app/* (bedrijfsnaam van de klant in de titel), /dashboard/, /admin/*,
  * /ai-scan.php?confirm=… en /ai-scan/wachtwoord/?t=… en /app/confirm-email.php?t=…
  * (token in de URL, die GTM als page_location zou meesturen).
  */

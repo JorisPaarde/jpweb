@@ -57,7 +57,7 @@ test('consent: PHP-fragment is gelijk aan het statische fragment op de homepage'
 });
 
 test('consent: GTM op publieke PHP-pagina\'s, niet op app, admin en token-pagina\'s', static function (): void {
-    foreach (['login/index.php', 'login/vergeten/index.php', 'ai-scan/index.php', 'wie-ik-ben/index.php'] as $rel) {
+    foreach (['login/index.php', 'login/vergeten/index.php', 'ai-scan/index.php'] as $rel) {
         $src = consent_test_src($rel);
         assert_true(substr_count($src, 'jpwc_consent_head()') === substr_count($src, '<head>'), $rel . ': head');
         assert_true(substr_count($src, 'jpwc_consent_noscript()') === substr_count($src, '<head>'), $rel . ': noscript');
@@ -65,7 +65,7 @@ test('consent: GTM op publieke PHP-pagina\'s, niet op app, admin en token-pagina
     }
     foreach ([
         'app/layout.php', 'app/confirm-email.php', 'dashboard/index.php', 'admin/scans.php', 'admin/tier.php',
-        'admin/blokkade.php', 'ai-scan.php', 'ai-scan/wachtwoord/index.php',
+        'admin/blokkade.php', 'ai-scan.php', 'ai-scan/wachtwoord/index.php', 'wie-ik-ben/index.php',
     ] as $rel) {
         $src = consent_test_src($rel);
         assert_true(!str_contains($src, 'GTM-') && !str_contains($src, 'jpwc_consent_head'), $rel . ': geen GTM');

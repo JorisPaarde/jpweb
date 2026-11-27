@@ -8,7 +8,6 @@ declare(strict_types=1);
  */
 
 require __DIR__ . '/_gate.php';
-require_once dirname(__DIR__) . '/lib/consent.php';
 
 wib_send_common_headers();
 header('Content-Type: text/html; charset=UTF-8');
@@ -65,7 +64,7 @@ if (!wib_session_is_authed($_SESSION)) {
     $csrf = wib_csrf_token();
 ?>
 <!doctype html>
-<html lang="nl"<?= jpwc_consent_html_attr(true) ?>>
+<html lang="nl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -76,7 +75,6 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
     <link rel="stylesheet" href="../styles.css?v=89">
-    <?php jpwc_consent_head(); ?>
     <style>
       .wib-gate-page {
         min-height: 100vh;
@@ -160,7 +158,6 @@ if (!wib_session_is_authed($_SESSION)) {
     </style>
   </head>
   <body class="project-page wib-gate-page">
-    <?php jpwc_consent_noscript(); ?>
     <header class="site-header">
       <a class="brand" href="../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -208,7 +205,6 @@ if (!wib_session_is_authed($_SESSION)) {
         <a href="/contact/">Contact</a>
         <a href="/privacyverklaring/">Privacyverklaring</a>
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
-        <?= jpwc_consent_footer_button() ?>
       </nav>
     </footer>
     <script src="../script.js?v=21"></script>
@@ -219,7 +215,7 @@ if (!wib_session_is_authed($_SESSION)) {
 }
 ?>
 <!doctype html>
-<html lang="nl"<?= jpwc_consent_html_attr(true) ?>>
+<html lang="nl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -231,7 +227,6 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
     <link rel="stylesheet" href="../styles.css?v=89">
-    <?php jpwc_consent_head(); ?>
     <!-- Page-only styles: soft themed sections without touching global styles.css. -->
     <style>
       .wie-ik-ben-page {
@@ -825,7 +820,6 @@ if (!wib_session_is_authed($_SESSION)) {
     </script>
   </head>
   <body class="project-page wie-ik-ben-page">
-    <?php jpwc_consent_noscript(); ?>
     <header class="site-header">
       <a class="brand" href="../" aria-label="JP Web Creation home">
         <span class="brand-mark" aria-hidden="true">
@@ -1082,7 +1076,6 @@ if (!wib_session_is_authed($_SESSION)) {
         <a href="/contact/">Contact</a>
         <a href="/privacyverklaring/">Privacyverklaring</a>
         <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
-        <?= jpwc_consent_footer_button() ?>
       </nav>
     </footer>
     <script src="../script.js?v=21"></script>
