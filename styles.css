@@ -3161,3 +3161,25 @@ main section[id] {
     align-self: start;
   }
 }
+
+/* Landingspagina installatiebedrijf: geen overlap in je regio. */
+.no-overlap-copy {
+  max-width: 640px;
+}
+
+.no-overlap-copy p {
+  font-size: var(--type-body-large);
+  line-height: 1.55;
+}
+
+.no-overlap-copy p + p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+/* Landingspagina installatiebedrijf: lange kop past op smalle telefoons. */
+@media (max-width: 560px) {
+  #landing-title {
+    font-size: min(var(--type-hero), 10.8vw);
+  }
+}
