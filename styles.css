@@ -1976,7 +1976,7 @@ main section[id] {
   line-height: 1.45;
 }
 
-.contact-map-button {
+.contact-map .contact-map-button {
   flex: 0 0 auto;
   padding-inline: 22px;
 }

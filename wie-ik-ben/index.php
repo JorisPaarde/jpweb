@@ -75,7 +75,7 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=88">
+    <link rel="stylesheet" href="../styles.css?v=89">
     <?php jpwc_consent_head(); ?>
     <style>
       .wib-gate-page {
@@ -230,7 +230,7 @@ if (!wib_session_is_authed($_SESSION)) {
     <link rel="icon" href="/favicon-32.png?v=20260714" sizes="32x32" type="image/png">
     <link rel="shortcut icon" href="/favicon.ico?v=20260714" type="image/x-icon">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260714">
-    <link rel="stylesheet" href="../styles.css?v=88">
+    <link rel="stylesheet" href="../styles.css?v=89">
     <?php jpwc_consent_head(); ?>
     <!-- Page-only styles: soft themed sections without touching global styles.css. -->
     <style>
