@@ -3177,6 +3177,33 @@ main section[id] {
   color: var(--muted);
 }
 
+/* Landingspagina installatiebedrijf: lichtere terracotta op de donkere hero (minstens 4,5:1). */
+.ai-hero .landing-hero-eyebrow {
+  color: #f2b49b;
+}
+
+/* Belnummer alleen in het opengeklapte menu; op breed scherm staat het al in de header. */
+.site-nav .nav-phone {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .site-header.is-open .site-nav .nav-phone {
+    display: block;
+  }
+}
+
+/* Toestemmingsregel: tikvlak van minstens 44 px voor vinkje en privacylink. */
+.contact-form .form-consent {
+  min-height: 44px;
+}
+
+.form-consent a {
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -12px;
+}
+
 /* Landingspagina installatiebedrijf: lange kop past op smalle telefoons. */
 @media (max-width: 560px) {
   #landing-title {
