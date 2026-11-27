@@ -1976,6 +1976,11 @@ main section[id] {
   line-height: 1.45;
 }
 
+.contact-map-button {
+  flex: 0 0 auto;
+  padding-inline: 22px;
+}
+
 .contact-map-frame {
   display: block;
   width: 100%;

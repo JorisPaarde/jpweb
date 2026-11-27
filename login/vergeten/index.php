@@ -53,7 +53,7 @@ $h = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Wachtwoord vergeten · JP Web Creation</title>
-  <link rel="stylesheet" href="/styles.css?v=87">
+  <link rel="stylesheet" href="/styles.css?v=88">
   <?php jpwc_consent_head(); ?>
   <style>
     .ai-auth { max-width: 28rem; margin: 4rem auto; padding: 0 1.25rem; }
