@@ -3182,6 +3182,18 @@ main section[id] {
   color: #f2b49b;
 }
 
+/* Landingspagina installatiebedrijf: lichter goud op de kaart in de hero (minstens 4,5:1). */
+.ai-process-card .landing-card-eyebrow {
+  color: #f6d9a6;
+}
+
+/* Opengeklapt menu: volledig dekkend, zodat de pagina er niet doorheen schijnt. */
+.site-header.is-open {
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 /* Belnummer alleen in het opengeklapte menu; op breed scherm staat het al in de header. */
 .site-nav .nav-phone {
   display: none;
